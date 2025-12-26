@@ -58,19 +58,19 @@ const SolutionsSection = () => {
         </div>
 
         {/* Solutions Grid */}
-        <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch pt-6">
+        <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
           {solutions.map((solution, index) => (
             <div
               key={solution.tier}
-              className={`relative glass-card p-8 flex flex-col ${
+              className={`relative glass-card p-8 flex flex-col overflow-visible ${
                 solution.featured
                   ? "lg:scale-105 border-primary/50 shadow-2xl z-10"
                   : "border-border/50"
-              } ${solution.badge ? "mt-4" : ""}`}
+              }`}
             >
-              {/* Featured Badge */}
+              {/* Featured Badge - positioned inside with negative margin */}
               {solution.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                <div className="flex justify-center -mt-12 mb-4">
                   <div className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-lg shadow-primary/30">
                     <Sparkles className="w-3 h-3" />
                     {solution.badge}
@@ -79,7 +79,7 @@ const SolutionsSection = () => {
               )}
 
               {/* Tier Label */}
-              <p className="text-xs font-bold tracking-ultra-wide text-muted-foreground mb-4">
+              <p className={`text-xs font-bold tracking-ultra-wide text-muted-foreground mb-4 ${solution.badge ? "" : "mt-0"}`}>
                 {solution.tier}
               </p>
 
