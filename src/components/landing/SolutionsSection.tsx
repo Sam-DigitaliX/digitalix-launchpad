@@ -1,0 +1,122 @@
+import { Button } from "@/components/ui/button";
+import { Check, Sparkles } from "lucide-react";
+
+const solutions = [
+  {
+    tier: "SETUP",
+    title: "Architecture Server-Side",
+    description: "Migration infrastructure propriétaire, CAPI Meta/Google, Conformité RGPD.",
+    cta: "Lancer le Setup",
+    featured: false,
+    features: [
+      "Audit technique complet",
+      "Setup infrastructure cloud",
+      "Intégration CAPI Meta & Google",
+      "Documentation technique",
+    ],
+  },
+  {
+    tier: "ASSURANCE",
+    title: "Assurance Data Quality",
+    description: "Monitoring 24/7. Garantie de uptime et maintien du Match Rate. Le tracking ne casse plus.",
+    cta: "Sécuriser ma Data",
+    featured: true,
+    badge: "Recommandé",
+    features: [
+      "Tout du Setup inclus",
+      "Monitoring 24/7",
+      "Garantie Match Rate",
+      "Support prioritaire",
+      "Rapports mensuels",
+    ],
+  },
+  {
+    tier: "PARTNER",
+    title: "Partenaire Technique",
+    description: "Votre CTO Data externalisé. Support dédié et templates multi-comptes pour Agences.",
+    cta: "Devenir Partenaire",
+    featured: false,
+    features: [
+      "Tout de l'Assurance inclus",
+      "CTO Data dédié",
+      "Templates multi-comptes",
+      "Formation équipe",
+      "Tarifs préférentiels",
+    ],
+  },
+];
+
+const SolutionsSection = () => {
+  return (
+    <section id="services" className="py-24 md:py-32 bg-card">
+      <div className="container mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            3 Niveaux d'Intervention
+          </h2>
+        </div>
+
+        {/* Solutions Grid */}
+        <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
+          {solutions.map((solution, index) => (
+            <div
+              key={solution.tier}
+              className={`relative glass-card p-8 flex flex-col ${
+                solution.featured
+                  ? "lg:scale-105 border-primary/50 shadow-2xl z-10"
+                  : "border-border/50"
+              }`}
+            >
+              {/* Featured Badge */}
+              {solution.badge && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
+                  <div className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full">
+                    <Sparkles className="w-3 h-3" />
+                    {solution.badge}
+                  </div>
+                </div>
+              )}
+
+              {/* Tier Label */}
+              <p className="text-xs font-bold tracking-ultra-wide text-muted-foreground mb-4">
+                {solution.tier}
+              </p>
+
+              {/* Title */}
+              <h3 className="text-2xl font-bold text-foreground mb-3">
+                {solution.title}
+              </h3>
+
+              {/* Description */}
+              <p className="text-muted-foreground mb-8 flex-grow">
+                {solution.description}
+              </p>
+
+              {/* Features */}
+              <ul className="space-y-3 mb-8">
+                {solution.features.map((feature) => (
+                  <li key={feature} className="flex items-start gap-3">
+                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground/80">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+
+              {/* CTA */}
+              <Button
+                variant={solution.featured ? "hero" : "heroOutline"}
+                size="lg"
+                className="w-full"
+              >
+                {solution.cta}
+              </Button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default SolutionsSection;
