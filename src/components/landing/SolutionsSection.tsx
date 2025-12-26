@@ -5,13 +5,15 @@ const solutions = [
   {
     tier: "SETUP",
     title: "Architecture Server-Side",
-    description: "Migration infrastructure propriétaire, CAPI Meta/Google, Conformité RGPD.",
+    description: "Migration infrastructure propriétaire, CAPI Meta/LinkedIn/Google, Conformité RGPD, intégration de CMP.",
     cta: "Lancer le Setup",
     featured: false,
     features: [
       "Audit technique complet",
       "Setup infrastructure cloud",
-      "Intégration CAPI Meta & Google",
+      "Intégration CMP",
+      "Paramétrage Consent Mode",
+      "Intégration CAPI Meta, LinkedIn & Google",
       "Documentation technique",
     ],
   },
