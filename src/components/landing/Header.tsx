@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
+import logo from "@/assets/digitalix-logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -30,20 +31,29 @@ const Header = () => {
     >
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
-          <a href="#" className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-lg">D</span>
+          {/* Logo avec glow effect */}
+          <a href="#" className="flex items-center relative group">
+            {/* Glow background */}
+            <div className="absolute inset-0 blur-lg opacity-50 group-hover:opacity-70 transition-opacity">
+              <img 
+                src={logo}
+                alt="" 
+                className="h-10 w-auto"
+              />
             </div>
-            <span className="text-xl font-bold tracking-tight text-foreground">
-              DigitaliX
-            </span>
+            
+            {/* Logo principal */}
+            <img 
+              src={logo}
+              alt="DigitaliX" 
+              className="relative h-10 w-auto"
+            />
           </a>
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {navLinks.map((link) => (
-              <a
+              
                 key={link.href}
                 href={link.href}
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
@@ -53,11 +63,23 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* CTA Button */}
+          {/* CTA Button avec gradient */}
           <div className="hidden md:block">
-            <Button variant="hero" size="lg">
-              Audit Data Quality
-            </Button>
+            <button className="relative inline-flex items-center justify-center px-6 py-3 rounded-full overflow-hidden group">
+              {/* Glow background */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-red-500/30 blur-md group-hover:blur-lg transition-all" />
+              
+              {/* Gradient border */}
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full opacity-100 group-hover:opacity-80 transition-opacity" />
+              
+              {/* Button background */}
+              <div className="absolute inset-[1px] bg-black rounded-full" />
+              
+              {/* Text avec gradient */}
+              <span className="relative text-sm font-semibold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                Audit Data Quality
+              </span>
+            </button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -74,7 +96,7 @@ const Header = () => {
           <div className="md:hidden py-6 border-t border-border/50">
             <nav className="flex flex-col gap-4">
               {navLinks.map((link) => (
-                <a
+                
                   key={link.href}
                   href={link.href}
                   className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
@@ -83,9 +105,23 @@ const Header = () => {
                   {link.label}
                 </a>
               ))}
-              <Button variant="hero" size="lg" className="mt-4">
-                Audit Data Quality
-              </Button>
+              
+              {/* CTA Button mobile avec gradient */}
+              <button className="relative inline-flex items-center justify-center px-6 py-3 rounded-full overflow-hidden group mt-4">
+                {/* Glow background */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-red-500/30 blur-md" />
+                
+                {/* Gradient border */}
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full" />
+                
+                {/* Button background */}
+                <div className="absolute inset-[1px] bg-black rounded-full" />
+                
+                {/* Text avec gradient */}
+                <span className="relative text-sm font-semibold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                  Audit Data Quality
+                </span>
+              </button>
             </nav>
           </div>
         )}
