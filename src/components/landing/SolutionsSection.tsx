@@ -32,16 +32,16 @@ const solutions = [
   },
   {
     tier: "PARTNER",
-    title: "Partenaire Technique",
-    description: "Votre CTO Data externalisé. Support dédié et templates multi-comptes pour Agences.",
+    title: "Partenaire Technique Agile",
+    description: "Votre pôle technique à la demande. Fonctionnement par Crédits d'Intervention (Pack Journée). Zéro coût fixe inutile : vous ne consommez que ce qui est nécessaire pour vos Setups et Maintenance. Validité 60 jours.",
     cta: "Devenir Partenaire",
     featured: false,
     features: [
-      "Tout de l'Assurance inclus",
-      "CTO Data dédié",
-      "Templates multi-comptes",
-      "Formation équipe",
-      "Tarifs préférentiels",
+      "Crédits d'intervention flexibles",
+      "Pack Journée à la demande",
+      "Zéro engagement fixe",
+      "Validité 60 jours",
+      "Support prioritaire",
     ],
   },
 ];
@@ -58,7 +58,7 @@ const SolutionsSection = () => {
         </div>
 
         {/* Solutions Grid */}
-        <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
+        <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch pt-6">
           {solutions.map((solution, index) => (
             <div
               key={solution.tier}
@@ -66,12 +66,12 @@ const SolutionsSection = () => {
                 solution.featured
                   ? "lg:scale-105 border-primary/50 shadow-2xl z-10"
                   : "border-border/50"
-              }`}
+              } ${solution.badge ? "mt-4" : ""}`}
             >
               {/* Featured Badge */}
               {solution.badge && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <div className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-20">
+                  <div className="flex items-center gap-1.5 px-4 py-1.5 bg-primary text-primary-foreground text-xs font-bold rounded-full shadow-lg shadow-primary/30">
                     <Sparkles className="w-3 h-3" />
                     {solution.badge}
                   </div>
