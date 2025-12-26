@@ -1,0 +1,66 @@
+import { SignalLow, EyeOff, ShieldAlert } from "lucide-react";
+
+const problems = [
+  {
+    icon: SignalLow,
+    title: "Ad-Blockers & ITP",
+    description: "30% de vos conversions disparaissent. Vos rapports sont faux.",
+    gradient: "from-red-500/20 to-transparent",
+  },
+  {
+    icon: EyeOff,
+    title: "Algos Aveugles",
+    description: "Le Smart Bidding dépense votre budget au hasard sans données fiables.",
+    gradient: "from-orange-500/20 to-transparent",
+  },
+  {
+    icon: ShieldAlert,
+    title: "Dépendance Cookie",
+    description: "La donnée tierce meurt. Construisez votre propre First-Party Data.",
+    gradient: "from-yellow-500/20 to-transparent",
+  },
+];
+
+const ProblemSection = () => {
+  return (
+    <section className="relative py-24 md:py-32 bg-card">
+      <div className="container mx-auto px-6">
+        {/* Section Header */}
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
+            Le Tracking Client-Side est{" "}
+            <span className="text-destructive">obsolète.</span>
+          </h2>
+        </div>
+
+        {/* Problem Cards */}
+        <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+          {problems.map((problem, index) => (
+            <div
+              key={problem.title}
+              className="glass-card p-8 group hover:border-primary/30 transition-all duration-500"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div
+                className={`absolute inset-0 bg-gradient-to-br ${problem.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
+              />
+              <div className="relative z-10">
+                <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <problem.icon className="w-7 h-7 text-foreground" />
+                </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">
+                  {problem.title}
+                </h3>
+                <p className="text-muted-foreground leading-relaxed">
+                  {problem.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default ProblemSection;
