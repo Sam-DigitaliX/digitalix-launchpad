@@ -29,7 +29,7 @@ const ProblemSection = () => {
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             Le Tracking Client-Side est{" "}
-            <span className="text-destructive">obsolète.</span>
+            <span className="text-gradient-primary">obsolète.</span>
           </h2>
         </div>
 
