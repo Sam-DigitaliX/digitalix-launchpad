@@ -38,7 +38,9 @@ const HeroSection = () => {
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
             L'infrastructure Server-Side pour contourner les bloqueurs, fiabiliser le signal et sécuriser vos performances publicitaires.{" "}
-            <span className="text-foreground font-medium">Stop au pilotage à l'aveugle.</span>
+            <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500 font-semibold">
+              Stop au pilotage à l'aveugle.
+            </span>
           </p>
 
           {/* CTA Buttons */}
