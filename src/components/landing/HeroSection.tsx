@@ -3,7 +3,7 @@ import heroImage from "@/assets/hero-data-flow.jpg";
 
 const HeroSection = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+    <section className="relative min-h-[calc(100vh-80px)] flex items-center justify-center overflow-hidden pt-20 pb-28 md:pb-32">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <img
@@ -64,7 +64,7 @@ const HeroSection = () => {
       </div>
 
       {/* Scroll Indicator */}
-      <div className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 animate-bounce">
+      <div className="absolute bottom-12 md:bottom-16 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 animate-bounce pointer-events-none">
         <span className="text-xs text-foreground/80 uppercase tracking-wide font-medium">Découvrir</span>
         <div className="w-6 h-10 rounded-full border-2 border-primary/60 flex items-start justify-center p-2 bg-background/20 backdrop-blur-sm">
           <div className="w-1.5 h-3 bg-gradient-to-b from-primary to-secondary rounded-full animate-pulse" />
