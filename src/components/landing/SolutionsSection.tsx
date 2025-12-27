@@ -72,14 +72,17 @@ const SolutionsSection = () => {
             >
               {/* Featured Badge - positioned inside with negative margin */}
               {solution.badge && (
-                <div className="relative flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-primary to-secondary text-white border border-white/20 shadow-lg">
-                <span className="relative z-10 flex items-center gap-1.5">
-                  <Sparkles className="w-3 h-3" />
-                  {solution.badge}
-                </span>
-                  {/* Glow layer */}
+                <div className="flex justify-center -mt-12 mb-4">
+                  <div className="relative flex items-center gap-1.5 px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-primary to-secondary text-white border border-white/20 shadow-lg">
+                  <span className="relative z-10 flex items-center gap-1.5">
+                    <Sparkles className="w-3 h-3" />
+                    {solution.badge}
+                  </span>
+              {/* Glow layer */}
                   <span className="absolute inset-0 rounded-full blur-md opacity-50 bg-gradient-to-r from-primary to-secondary -z-10" />
                 </div>
+              </div>
+            )}
 
 
               {/* Tier Label */}
