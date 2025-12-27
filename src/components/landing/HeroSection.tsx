@@ -19,7 +19,7 @@ const HeroSection = () => {
         <div className="max-w-4xl mx-auto">
           {/* Badge avec gradient + glow effect */}
           <div className="relative inline-flex mb-8 animate-fade-in-up">
-            <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-red-500/30 rounded-full blur-md" />
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-md" />
             <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 border border-primary/30 backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
               <span className="text-sm font-medium text-gradient-primary">
