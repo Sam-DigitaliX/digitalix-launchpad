@@ -43,10 +43,10 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-in-up animation-delay-300">
-            <Button variant="hero" size="xl">
+            <Button variant="heroGradient" size="xl">
               Sécuriser mon Tracking
             </Button>
-            <Button variant="heroOutline" size="xl">
+            <Button variant="heroGradientOutline" size="xl">
               Offre Partenaires
             </Button>
           </div>
