@@ -83,16 +83,16 @@ const Header = () => {
               onClick={() => goTo("#audit")}
             >
               {/* Glow background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-red-500/30 blur-md group-hover:blur-lg transition-all" />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-500/30 to-red-500/30 blur-md group-hover:blur-lg transition-all" />
 
               {/* Gradient border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full opacity-100 group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full opacity-100 group-hover:opacity-80 transition-opacity" />
 
               {/* Button background */}
               <div className="absolute inset-[1px] bg-black rounded-full" />
 
               {/* Text */}
-              <span className="relative text-sm font-semibold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+              <span className="relative text-sm font-semibold text-gradient-primary">
                 Audit Data Quality
               </span>
             </button>
@@ -139,16 +139,16 @@ const Header = () => {
                 }}
               >
                 {/* Glow background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-red-500/30 blur-md" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-500/30 to-red-500/30 blur-md" />
 
                 {/* Gradient border */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 rounded-full" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full" />
 
                 {/* Button background */}
                 <div className="absolute inset-[1px] bg-black rounded-full" />
 
                 {/* Text */}
-                <span className="relative text-sm font-semibold bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent">
+                <span className="relative text-sm font-semibold text-gradient-primary">
                   Audit Data Quality
                 </span>
               </button>
