@@ -107,7 +107,7 @@ const SolutionsSection = () => {
 
               {/* CTA */}
               <Button
-                variant={solution.featured ? "hero" : "heroOutline"}
+                variant={solution.featured ? "heroGradient" : "heroGradientOutline"}
                 size="lg"
                 className="w-full"
               >
