@@ -83,10 +83,10 @@ const Header = () => {
               onClick={() => goTo("#audit")}
             >
               {/* Glow background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-500/30 to-red-500/30 blur-md group-hover:blur-lg transition-all" />
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md group-hover:blur-lg transition-all" />
 
               {/* Gradient border */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full opacity-100 group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 rounded-full opacity-100 group-hover:opacity-80 transition-opacity bg-gradient-to-r from-primary to-secondary" />
 
               {/* Button background */}
               <div className="absolute inset-[1px] bg-black rounded-full" />
@@ -139,10 +139,10 @@ const Header = () => {
                 }}
               >
                 {/* Glow background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400/30 via-pink-500/30 to-red-500/30 blur-md" />
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md" />
 
                 {/* Gradient border */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 rounded-full" />
+                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary" />
 
                 {/* Button background */}
                 <div className="absolute inset-[1px] bg-black rounded-full" />
