@@ -33,13 +33,13 @@ const HeroSection = () => {
             Rentabilisez vos campagnes SEA grâce à un
             <br />
             <span className="text-gradient-primary">tracking server-side
-              <br />sur-mesure
+              <br />haute précision
             </span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
-            L'infrastructure Server-Side pour contourner les bloqueurs, fiabiliser le signal et sécuriser vos performances publicitaires.{" "}
+           Contournez les bloqueurs (iOS, AdBlocks...) et récupérez 99,9% de vos données de conversion pour nourrir vos algorithmes publicitaires{" "}
             <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500 font-semibold">
               Stop au pilotage à l'aveugle.
             </span>
