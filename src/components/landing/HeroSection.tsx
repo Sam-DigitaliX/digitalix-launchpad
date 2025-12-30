@@ -30,9 +30,11 @@ const HeroSection = () => {
 
           {/* Headline */}
           <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 animate-fade-in-up animation-delay-100">
-            Reprenez le contrôle
+            Récupérez 20% de conversions perdues
             <br />
-            <span className="text-gradient-primary">de votre tracking.</span>
+            et rentabilisez enfin vos campagnes SEA grâce à un
+            <br />
+            <span className="text-gradient-primary">tracking server-side sur-mesure.</span>
           </h1>
 
           {/* Subheadline */}
