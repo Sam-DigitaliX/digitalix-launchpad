@@ -59,7 +59,7 @@ const HeroSection = () => {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto animate-fade-in-up animation-delay-400">
             <MetricCard value="99.9%" label="Précision" />
             <MetricCard value="7j" label="Setup" />
-            <MetricCard value="24/7" label="Support" />
+            <MetricCard value="24/7" label="Monitoring" />
             <MetricCard value="100%" label="RGPD" />
           </div>
         </div>
