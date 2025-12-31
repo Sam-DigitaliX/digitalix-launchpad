@@ -10,7 +10,7 @@ const problems = [
   {
     icon: EyeOff,
     title: "Algos Aveugles",
-    description: "Le Smart Bidding dépense votre budget au hasard sans données fiables. Résultat : les plateformes optimisent, mais pas toujours au bon endroit.",
+    description: "Les algorythmes manquent de signaux. Le Smart Bidding dépense votre budget au hasard sans données fiables. Résultat : les plateformes optimisent, mais pas toujours au bon endroit.",
     gradient: "from-orange-500/20 to-transparent",
   },
   {
