@@ -4,7 +4,8 @@ const problems = [
   {
     icon: ShieldAlert,
     title: "Ad-Blockers & ITP",
-    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. </br>Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
+    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle.
+      Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
     gradient: "from-red-500/20 to-transparent",
   },
   {
