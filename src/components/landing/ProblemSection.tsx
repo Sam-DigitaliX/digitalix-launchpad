@@ -4,19 +4,19 @@ const problems = [
   {
     icon: ShieldAlert,
     title: "Ad-Blockers & ITP",
-    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. </br>Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
+    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
     gradient: "from-red-500/20 to-transparent",
   },
   {
     icon: EyeOff,
     title: "Algos Aveugles",
-    description: "Le Smart Bidding dépense votre budget au hasard sans données fiables.",
+    description: "Le Smart Bidding dépense votre budget au hasard sans données fiables. Résultat : les plateformes optimisent, mais pas toujours au bon endroit.",
     gradient: "from-orange-500/20 to-transparent",
   },
   {
     icon: Cookie,
     title: "Dépendance Cookie",
-    description: "La fin des cookies tiers est actée. Ne laissez plus votre business dépendre du bon vouloir des navigateurs. Le Server-Side vous rend enfin 100% propriétaire de vos données (First-Party).",
+    description: "La fin des cookies est actée et cette donnée tierce disparaît progressivement. La donéée First-Party devient indispensable. Résultat : sans adaptation, les performances se dégradent dans le temps.",
     gradient: "from-yellow-500/20 to-transparent",
   },
 ];
