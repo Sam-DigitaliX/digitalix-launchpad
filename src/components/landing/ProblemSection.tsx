@@ -1,4 +1,4 @@
-import { SignalLow, EyeOff, ShieldAlert } from "lucide-react";
+import { SignalLow, EyeOff, Cookie } from "lucide-react";
 
 const problems = [
   {
@@ -14,9 +14,9 @@ const problems = [
     gradient: "from-orange-500/20 to-transparent",
   },
   {
-    icon: ShieldAlert,
+    icon: Cookie,
     title: "Dépendance Cookie",
-    description: "La donnée tierce meurt. Construisez votre propre First-Party Data.",
+    description: "La fin des cookies tiers est actée. Ne laissez plus votre business dépendre du bon vouloir des navigateurs. Le Server-Side vous rend enfin 100% propriétaire de vos données (First-Party).",
     gradient: "from-yellow-500/20 to-transparent",
   },
 ];
@@ -28,8 +28,8 @@ const ProblemSection = () => {
         {/* Section Header */}
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
-            Le Tracking Client-Side est{" "}
-            <span className="text-gradient-primary">obsolète.</span>
+            Le Tracking Client-Side {" "}
+            <span className="text-gradient-primary">ne suffit plus.</span>
           </h2>
         </div>
 
@@ -38,7 +38,7 @@ const ProblemSection = () => {
           {problems.map((problem, index) => (
             <div
               key={problem.title}
-              className="glass-card p-8 group hover:border-primary/30 transition-all duration-500"
+              className="glass-card p-8 group border border-primary/30 transition-colors duration-300 hover:border-primary/60"
               style={{ animationDelay: `${index * 100}ms` }}
             >
               <div
