@@ -5,19 +5,16 @@ const problems = [
     icon: ShieldAlert,
     title: "Ad-Blockers & ITP",
     description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
-    gradient: "from-red-500/20 to-transparent",
   },
   {
     icon: EyeOff,
     title: "Algos Aveugles",
     description: "Les algorythmes manquent de signaux. Le Smart Bidding dépense votre budget au hasard sans données fiables. Résultat : les plateformes optimisent, mais pas toujours au bon endroit.",
-    gradient: "from-orange-500/20 to-transparent",
   },
   {
     icon: Cookie,
     title: "Dépendance Cookie",
     description: "La fin des cookies est actée et cette donnée tierce disparaît progressivement. La donéée First-Party devient indispensable. Résultat : sans adaptation, les performances se dégradent dans le temps.",
-    gradient: "from-yellow-500/20 to-transparent",
   },
 ];
 
@@ -41,9 +38,7 @@ const ProblemSection = () => {
               className="glass-card p-8 group border border-primary/30 transition-colors duration-300 hover:border-primary/60"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div
-                className={`absolute inset-0 bg-gradient-to-br ${problem.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl`}
-              />
+              <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/15 via-secondary/10 to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
               <div className="relative z-10">
                 <div className="w-14 h-14 rounded-xl bg-muted flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                   <problem.icon className="w-7 h-7 text-foreground" />
