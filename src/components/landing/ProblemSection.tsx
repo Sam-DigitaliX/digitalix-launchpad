@@ -1,10 +1,10 @@
-import { SignalLow, EyeOff, Cookie } from "lucide-react";
+import { HatGlasses, EyeOff, Cookie } from "lucide-react";
 
 const problems = [
   {
-    icon: SignalLow,
+    icon: HatGlasses,
     title: "Ad-Blockers & ITP",
-    description: "30% de vos conversions disparaissent. Vos rapports sont faux.",
+    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
     gradient: "from-red-500/20 to-transparent",
   },
   {
