@@ -4,11 +4,7 @@ const problems = [
   {
     icon: ShieldAlert,
     title: "Ad-Blockers & ITP",
-    description: [
-      "Jusqu’à 30 % des conversions disparaissent.",
-      "Vos rapports sous-estiment la performance réelle.",
-      "Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
-    ],
+    description: "Jusqu’à 30 % des conversions disparaissent. Vos rapports sous-estiment la performance réelle. </br>Résultat : vous optimisez et arbitrez sur des chiffres incomplets.",
     gradient: "from-red-500/20 to-transparent",
   },
   {
@@ -55,13 +51,9 @@ const ProblemSection = () => {
                 <h3 className="text-xl font-bold text-foreground mb-3">
                   {problem.title}
                 </h3>
-               <div className="space-y-3">
-                  {problem.description.map((line, i) => (
-                    <p key={i} className="text-muted-foreground leading-relaxed">
-                      {line}
-                    </p>
-                  ))}
-                </div>
+                <p className="text-muted-foreground leading-relaxed">
+                  {problem.description}
+                </p>
               </div>
             </div>
           ))}
