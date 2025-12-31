@@ -30,9 +30,9 @@ const HeroSection = () => {
 
           {/* Headline */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 animate-fade-in-up animation-delay-100">
-            Rentabilisez vos campagnes avec un
+            Rentabilisez vos campagnes
             <br />
-            <span className="text-gradient-primary">tracking server-side
+            <span className="text-gradient-primary">Tracking server-side
               <br />haute précision
             </span>
           </h1>
