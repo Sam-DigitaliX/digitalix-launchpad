@@ -2,14 +2,14 @@ import React from "react";
 
 const ProblemSection = () => {
   return (
-    <section className="py-20 bg-gradient-hero relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-6xl">
-        {/* Titre principal */}
-        <h2 className="text-5xl font-bold text-gradient-primary mb-6 animate-fade-in-up">
+    <section className="py-20 bg-card relative overflow-hidden">
+      <div className="container mx-auto px-4 max-w-5xl"> {/* max-w-5xl pour éviter l'étirement */}
+        {/* Titre principal avec couleurs ajustées */}
+        <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center animate-fade-in-up">
           Votre tracking client-side vous fait perdre{" "}
-          <span className="text-destructive">30% de vos conversions</span>. Voici pourquoi.
+          <span className="text-gradient-primary">30% de vos conversions</span>. Voici pourquoi.
         </h2>
-        <p className="text-xl text-muted-foreground mb-16 max-w-3xl animate-fade-in-up animation-delay-100">
+        <p className="text-xl text-muted-foreground mb-16 max-w-3xl mx-auto text-center animate-fade-in-up animation-delay-100">
           iOS 17, les AdBlockers et le RGPD rendent votre tracking actuel{" "}
           <span className="font-semibold">inefficace et coûteux</span>. Voici comment le server-side résout ces problèmes.
         </p>
@@ -57,7 +57,7 @@ const ProblemSection = () => {
           </div>
         </div>
 
-        {/* Solution */}
+        {/* Solution avec schéma visuel corrigé */}
         <div className="glass-card p-8 md:p-12 border-glass-border glow-primary mb-12 animate-fade-in-up animation-delay-500">
           <div className="flex flex-col md:flex-row items-center gap-8">
             <div className="flex-1">
@@ -89,23 +89,20 @@ const ProblemSection = () => {
               </p>
             </div>
             <div className="flex-1 flex justify-center">
-              {/* Schéma comparatif */}
-              <div className="relative w-64 h-64">
-                <div className="absolute inset-0 bg-gradient-to-br from-destructive/10 to-primary/10 rounded-full flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-primary mb-2">Client-Side</div>
-                    <div className="text-5xl font-bold text-destructive mb-4">30%</div>
-                    <div className="text-sm text-muted-foreground">Données<br />perdues</div>
-                  </div>
-                </div>
-                <div className="absolute -right-8 w-64 h-64 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full flex items-center justify-center border-4 border-primary/30">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-secondary mb-2">Server-Side</div>
-                    <div className="text-5xl font-bold text-secondary mb-4">100%</div>
-                    <div className="text-sm text-muted-foreground">Données<br />récupérées</div>
-                  </div>
-                </div>
-              </div>
+              {/* Schéma visuel clarifié avec SVG */}
+              <svg width="300" height="300" viewBox="0 0 300 300" className="w-full max-w-xs">
+                {/* Cercle Client-Side (rouge) */}
+                <circle cx="150" cy="150" r="80" fill="none" stroke="#ef4444" strokeWidth="3" strokeDasharray="5, 2" />
+                <text x="150" y="120" textAnchor="middle" className="text-lg font-bold fill-white">Client-Side</text>
+                <text x="150" y="160" textAnchor="middle" className="text-3xl font-bold fill-red-400">30%</text>
+                <text x="150" y="190" textAnchor="middle" className="text-xs fill-white">Données<br />perdues</text>
+
+                {/* Cercle Server-Side (bleu) */}
+                <circle cx="150" cy="150" r="110" fill="none" stroke="#3b82f6" strokeWidth="3" />
+                <text x="150" y="100" textAnchor="middle" className="text-lg font-bold fill-white">Server-Side</text>
+                <text x="150" y="170" textAnchor="middle" className="text-3xl font-bold fill-blue-400">100%</text>
+                <text x="150" y="200" textAnchor="middle" className="text-xs fill-white">Données<br />récupérées</text>
+              </svg>
             </div>
           </div>
         </div>
@@ -122,21 +119,15 @@ const ProblemSection = () => {
 
         {/* Intégrations */}
         <div className="flex justify-center gap-12 mt-16 opacity-60 animate-fade-in-up animation-delay-700">
-          <span className="text-2xl font-bold text-foreground">Intégrations :</span>
+          <span className="text-xl font-bold text-foreground">Intégrations :</span>
           <div className="flex gap-8 items-center">
-            <span className="text-3xl text-blue-500">📊</span>
-            <span className="text-3xl text-red-500">🔍</span>
-            <span className="text-3xl text-green-500">☁️</span>
-            <span className="text-3xl text-orange-500">📦</span>
-            <span className="text-3xl text-blue-400">🔗</span>
+            <span className="text-3xl text-blue-500">📊</span> {/* Meta */}
+            <span className="text-3xl text-red-500">🔍</span> {/* Google Ads */}
+            <span className="text-3xl text-green-500">☁️</span> {/* GCP */}
+            <span className="text-3xl text-orange-500">📦</span> {/* AWS */}
+            <span className="text-3xl text-blue-400">🔗</span> {/* CAPI */}
           </div>
         </div>
-      </div>
-
-      {/* Animation de fond */}
-      <div className="absolute inset-0 overflow-hidden -z-10">
-        <div className="absolute inset-0 bg-[url('/noise.png')] opacity-10"></div>
-        <div className="absolute w-full h-0.5 bg-gradient-to-r from-primary to-secondary animate-data-flow"></div>
       </div>
     </section>
   );
