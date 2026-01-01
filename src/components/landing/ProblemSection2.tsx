@@ -67,8 +67,11 @@ const ProblemSection = () => {
 
             {/* Intégration de ton PNG */}
             <div className="flex justify-center w-full">
-              {/* Option 1 : Si tu utilises `public/assets/` (recommandé pour Next.js) */}
-              <img src="/public/Server-side tagging.png" alt="Schéma du server-side tagging" className="w-full max-w-2xl h-auto" />              
+              <img
+                src="/Server-side tagging.png"  // Chemin relatif depuis public/
+                alt="Schéma du server-side tagging"
+                className="w-full max-w-2xl h-auto"
+              />
             </div>
 
             {/* Liste des avantages */}
