@@ -3,8 +3,8 @@ import React from "react";
 const ProblemSection = () => {
   return (
     <section className="py-20 bg-card relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-5xl"> {/* max-w-5xl pour éviter l'étirement */}
-        {/* Titre principal avec couleurs ajustées */}
+      <div className="container mx-auto px-4 max-w-5xl">
+        {/* Titre principal */}
         <h2 className="text-4xl md:text-5xl font-bold text-foreground mb-4 text-center animate-fade-in-up">
           Votre tracking client-side vous fait perdre{" "}
           <span className="text-gradient-primary">30% de vos conversions</span>. Voici pourquoi.
@@ -57,53 +57,53 @@ const ProblemSection = () => {
           </div>
         </div>
 
-        {/* Solution avec schéma visuel corrigé */}
+        {/* Solution avec cercles améliorés */}
         <div className="glass-card p-8 md:p-12 border-glass-border glow-primary mb-12 animate-fade-in-up animation-delay-500">
-          <div className="flex flex-col md:flex-row items-center gap-8">
-            <div className="flex-1">
-              <h3 className="text-3xl font-bold text-foreground mb-4">
-                Le server-side est la <span className="text-gradient-primary">seule solution fiable</span>
-              </h3>
-              <ul className="space-y-3 text-muted-foreground mb-6">
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✅</span> Contourne{" "}
-                  <span className="font-semibold">100% des bloqueurs</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✅</span>{" "}
-                  <span className="font-semibold">99.9% de précision</span> sur vos données
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✅</span> Alimente vos algorithmes avec des{" "}
-                  <span className="font-semibold">données complètes</span>
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-primary">✅</span>{" "}
-                  <span className="font-semibold">100% conforme RGPD</span>
-                </li>
-              </ul>
-              <p className="text-lg text-foreground/80 mb-6">
-                Résultat : Des campagnes{" "}
-                <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des{" "}
-                <span className="font-bold">données fiables</span>.
-              </p>
-            </div>
-            <div className="flex-1 flex justify-center">
-              {/* Schéma visuel clarifié avec SVG */}
-              <svg width="300" height="300" viewBox="0 0 300 300" className="w-full max-w-xs">
-                {/* Cercle Client-Side (rouge) */}
-                <circle cx="150" cy="150" r="80" fill="none" stroke="#ef4444" strokeWidth="3" strokeDasharray="5, 2" />
-                <text x="150" y="120" textAnchor="middle" className="text-lg font-bold fill-white">Client-Side</text>
-                <text x="150" y="160" textAnchor="middle" className="text-3xl font-bold fill-red-400">30%</text>
-                <text x="150" y="190" textAnchor="middle" className="text-xs fill-white">Données<br />perdues</text>
+          <div className="flex flex-col items-center gap-8">
+            <h3 className="text-3xl font-bold text-foreground mb-4 text-center">
+              Le server-side est la <span className="text-gradient-primary">seule solution fiable</span>
+            </h3>
 
-                {/* Cercle Server-Side (bleu) */}
-                <circle cx="150" cy="150" r="110" fill="none" stroke="#3b82f6" strokeWidth="3" />
-                <text x="150" y="100" textAnchor="middle" className="text-lg font-bold fill-white">Server-Side</text>
-                <text x="150" y="170" textAnchor="middle" className="text-3xl font-bold fill-blue-400">100%</text>
-                <text x="150" y="200" textAnchor="middle" className="text-xs fill-white">Données<br />récupérées</text>
-              </svg>
-            </div>
+            {/* Schéma avec cercles */}
+            <svg width="400" height="300" viewBox="0 0 400 300" className="w-full max-w-md">
+              {/* Cercle Client-Side (rouge) */}
+              <circle cx="150" cy="150" r="80" fill="none" stroke="#ef4444" strokeWidth="3" strokeDasharray="5, 2" />
+              <text x="150" y="110" textAnchor="middle" className="text-lg font-bold fill-red-400">Client-Side</text>
+              <text x="150" y="150" textAnchor="middle" className="text-3xl font-bold fill-red-400">30%</text>
+              <text x="150" y="180" textAnchor="middle" className="text-xs fill-white">Données<br />perdues</text>
+
+              {/* Cercle Server-Side (bleu) */}
+              <circle cx="250" cy="150" r="80" fill="none" stroke="#3b82f6" strokeWidth="3" />
+              <text x="250" y="110" textAnchor="middle" className="text-lg font-bold fill-blue-400">Server-Side</text>
+              <text x="250" y="150" textAnchor="middle" className="text-3xl font-bold fill-blue-400">100%</text>
+              <text x="250" y="180" textAnchor="middle" className="text-xs fill-white">Données<br />récupérées</text>
+
+              {/* Légende */}
+              <line x1="150" y1="220" x2="250" y2="220" stroke="#6b7280" strokeWidth="1" strokeDasharray="3, 2" />
+              <text x="200" y="240" textAnchor="middle" className="text-xs fill-white">vs</text>
+            </svg>
+
+            {/* Liste des avantages */}
+            <ul className="space-y-3 text-muted-foreground mb-6 text-center md:text-left">
+              <li className="flex items-center gap-2 justify-center md:justify-start">
+                <span className="text-primary">✅</span> Contourne <span className="font-semibold">100% des bloqueurs</span>
+              </li>
+              <li className="flex items-center gap-2 justify-center md:justify-start">
+                <span className="text-primary">✅</span> <span className="font-semibold">99.9% de précision</span> sur vos données
+              </li>
+              <li className="flex items-center gap-2 justify-center md:justify-start">
+                <span className="text-primary">✅</span> Alimente vos algorithmes avec des <span className="font-semibold">données complètes</span>
+              </li>
+              <li className="flex items-center gap-2 justify-center md:justify-start">
+                <span className="text-primary">✅</span> <span className="font-semibold">100% conforme RGPD</span>
+              </li>
+            </ul>
+
+            {/* Résultat */}
+            <p className="text-lg text-foreground/80 text-center">
+              Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des
+              <span className="font-bold">données fiables</span>.
+            </p>
           </div>
         </div>
 
@@ -121,11 +121,11 @@ const ProblemSection = () => {
         <div className="flex justify-center gap-12 mt-16 opacity-60 animate-fade-in-up animation-delay-700">
           <span className="text-xl font-bold text-foreground">Intégrations :</span>
           <div className="flex gap-8 items-center">
-            <span className="text-3xl text-blue-500">📊</span> {/* Meta */}
-            <span className="text-3xl text-red-500">🔍</span> {/* Google Ads */}
-            <span className="text-3xl text-green-500">☁️</span> {/* GCP */}
-            <span className="text-3xl text-orange-500">📦</span> {/* AWS */}
-            <span className="text-3xl text-blue-400">🔗</span> {/* CAPI */}
+            <span className="text-3xl text-blue-500">📊</span>
+            <span className="text-3xl text-red-500">🔍</span>
+            <span className="text-3xl text-green-500">☁️</span>
+            <span className="text-3xl text-orange-500">📦</span>
+            <span className="text-3xl text-blue-400">🔗</span>
           </div>
         </div>
       </div>
