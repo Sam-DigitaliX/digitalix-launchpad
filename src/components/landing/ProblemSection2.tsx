@@ -1,5 +1,5 @@
 import React from "react";
-import ServerSideImage from "@/assets/Server-side tagging.png"; // Import direct depuis src/assets/
+import ServerSideImage from "@/public/Server-side tagging.png"; // Import direct depuis src/public/
 
 const ProblemSection = () => {
   return (
@@ -68,14 +68,7 @@ const ProblemSection = () => {
             {/* Intégration de ton PNG */}
             <div className="flex justify-center w-full">
               {/* Option 1 : Si tu utilises `public/assets/` (recommandé pour Next.js) */}
-              {/* <img src="/assets/Server-side tagging.png" alt="Schéma du server-side tagging" className="w-full max-w-2xl h-auto" /> */}
-
-              {/* Option 2 : Import direct depuis `src/assets/` (nécessite une config Next.js pour les assets statiques) */}
-              <img
-                src={ServerSideImage.src} // Utilise `src` car Next.js optimise les imports d'images statiques
-                alt="Schéma du server-side tagging"
-                className="w-full max-w-2xl h-auto"
-              />
+              <img src="/public/Server-side tagging.png" alt="Schéma du server-side tagging" className="w-full max-w-2xl h-auto" />              
             </div>
 
             {/* Liste des avantages */}
