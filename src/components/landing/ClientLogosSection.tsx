@@ -17,6 +17,7 @@ const ClientLogosSection = () => {
     { name: "Be Langue", src: "/logos/cropped-logo-belangue.webp" },
     { name: "CybershowParis", src: "/logos/CybershowParis.png" },
     { name: "Mprez", src: "/logos/mprez-logo.png" },
+    { name: "FISE Montpellier", src: "/logos/FISE-montpellier.png" },
   ];
 
   return (
