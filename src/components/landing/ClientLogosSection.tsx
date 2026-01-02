@@ -10,7 +10,7 @@ const ClientLogosSection = () => {
     { name: "Wamiz", src: "/logos/Wamiz-logo.png" },
     { name: "NetOffensive", src: "/logos/Netoffensive-logo.png" },
     { name: "Talents Digital", src: "/logos/logo-talents-digital.webp" },
-    { name: "LNE", src: "/logos/La Nouvelle Equipe -Agence Ads - logo.webp" },
+    { name: "Talents Legal", src: "/logos/logo-talents-legal.webp" },
   ];
 
   return (
