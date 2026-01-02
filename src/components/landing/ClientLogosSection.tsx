@@ -1,12 +1,12 @@
 const ClientLogosSection = () => {
   // Placeholder logos - à remplacer par les vrais logos clients
   const clientLogos = [
-    { name: "Client 1", src: "/logos/client-1.png" },
-    { name: "Client 2", src: "/logos/client-2.png" },
-    { name: "Client 3", src: "/logos/client-3.png" },
-    { name: "Client 4", src: "/logos/client-4.png" },
-    { name: "Client 5", src: "/logos/client-5.png" },
-    { name: "Client 6", src: "/logos/client-6.png" },
+    { name: "Bambuser", src: "/logos/Bambuser-logo-blue.png" },
+    { name: "Métropole Grand Nancy", src: "/logos/Logo_Métropole_Grand_Nancy.webp" },
+    { name: "Ville de Nancy", src: "/logos/Logo_Nancy_désaturé.webp" },
+    { name: "Nestlé", src: "/logos/Nestlé_OSW_logo.png" },
+    { name: "Purina One", src: "/logos/Purina_ONE_logo.png" },
+    { name: "Cosa", src: "/logos/logo-square-COSA.png" },
   ];
 
   return (
