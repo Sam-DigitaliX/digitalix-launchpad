@@ -25,7 +25,7 @@ const ClientLogosSection = () => {
               <img
                 src={logo.src}
                 alt={logo.name}
-                className="client-logo h-8 md:h-10 w-auto max-w-[120px] md:max-w-[140px] object-contain"
+                className="client-logo h-10 md:h-14 w-auto max-w-[160px] md:max-w-[200px] object-contain"
               />
             </div>
           ))}
