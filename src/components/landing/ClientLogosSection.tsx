@@ -22,7 +22,7 @@ const ClientLogosSection = () => {
           </span>
         </p>
         
-        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-16">
+        <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-14">
           {clientLogos.map((logo, index) => (
             <div
               key={index}
