@@ -7,6 +7,7 @@ const ClientLogosSection = () => {
     { name: "Nestlé", src: "/logos/Nestlé_OSW_logo.png" },
     { name: "Purina One", src: "/logos/purina-logo.png" },
     { name: "Cosa", src: "/logos/logo-square-COSA.png" },
+    { name: "Wamiz", src: "/logos/Wamiz-logo.png" },
   ];
 
   return (
