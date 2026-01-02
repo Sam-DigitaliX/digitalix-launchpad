@@ -15,6 +15,8 @@ const ClientLogosSection = () => {
     { name: "Prescient Studio", src: "/logos/PrescientStudio.png" },
     { name: "Ades Bootcamp", src: "/logos/ADESBOOTCAMP_Logo.webp" },
     { name: "Be Langue", src: "/logos/cropped-logo-belangue.webp" },
+    { name: "CybershowParis", src: "/logos/CybershowParis.png" },
+    { name: "Mprez", src: "/logos/mprez-logo.png" },
   ];
 
   return (
