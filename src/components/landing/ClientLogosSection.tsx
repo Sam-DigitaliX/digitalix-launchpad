@@ -12,6 +12,7 @@ const ClientLogosSection = () => {
     { name: "Talents Digital", src: "/logos/logo-talents-digital.webp" },
     { name: "Talents Legal", src: "/logos/logo-talents-legal.webp" },
     { name: "Le Mage du SEA", src: "/logos/LeMageduSEA.png" },
+    { name: "Prescient Studio", src: "/logos/PrescientStudio.png" },
   ];
 
   return (
