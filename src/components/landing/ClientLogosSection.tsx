@@ -11,6 +11,7 @@ const ClientLogosSection = () => {
     { name: "NetOffensive", src: "/logos/Netoffensive-logo.png" },
     { name: "Talents Digital", src: "/logos/logo-talents-digital.webp" },
     { name: "Talents Legal", src: "/logos/logo-talents-legal.webp" },
+    { name: "Le Mage du SEA", src: "/logos/LeMageduSEA.png" },
   ];
 
   return (
