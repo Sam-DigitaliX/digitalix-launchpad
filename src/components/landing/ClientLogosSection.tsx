@@ -1,7 +1,7 @@
 const ClientLogosSection = () => {
   // Placeholder logos - à remplacer par les vrais logos clients
   const clientLogos = [
-    { name: "Bambuser", src: "/logos/Bambuser_logo.png" },
+    { name: "Bambuser", src: "/logos/Bambuser_logo_tr.png" },
     { name: "Métropole Grand Nancy", src: "/logos/Logo_Métropole_Grand_Nancy.webp" },
     { name: "Ville de Nancy", src: "/logos/Logo_Nancy_désaturé.webp" },
     { name: "Nestlé", src: "/logos/Nestlé_OSW_logo.png" },
