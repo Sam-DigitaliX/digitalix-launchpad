@@ -8,6 +8,9 @@ const ClientLogosSection = () => {
     { name: "Purina One", src: "/logos/purina-logo.png" },
     { name: "Cosa", src: "/logos/logo-square-COSA.png" },
     { name: "Wamiz", src: "/logos/Wamiz-logo.png" },
+    { name: "NetOffensive", src: "/logos/Netoffensive-logo.png" },
+    { name: "Talents Digital", src: "/logos/logo-talents-digital.webp" },
+    { name: "LNE", src: "/logos/La Nouvelle Equipe -Agence Ads - logo.webp" },
   ];
 
   return (
