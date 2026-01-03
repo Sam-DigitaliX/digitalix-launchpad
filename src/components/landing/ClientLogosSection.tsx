@@ -4,7 +4,7 @@ const ClientLogosSection = () => {
     { name: "Bambuser", src: "/logos/Bambuser_logo_tr.png" },
     { name: "Métropole Grand Nancy", src: "/logos/Logo_Métropole_Grand_Nancy.webp" },
     { name: "Ville de Nancy", src: "/logos/Logo_Nancy_désaturé.webp" },
-    { name: "Nestlé", src: "/logos/Nestlé_OSW_logo.png" },
+    { name: "Nestlé", src: "/logos/Nestle.png" },
     { name: "Purina One", src: "/logos/Purina-One.png" },
     { name: "Cosa", src: "/logos/logo-square-COSA.png" },
     { name: "Wamiz", src: "/logos/WamizClub.png" },
