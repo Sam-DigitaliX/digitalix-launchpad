@@ -18,6 +18,9 @@ const ClientLogosSection = () => {
     { name: "CybershowParis", src: "/logos/CybershowParis.png" },
     { name: "Mprez", src: "/logos/mprez-logo.png" },
     { name: "FISE Montpellier", src: "/logos/FISE-montpellier.png" },
+    { name: "Hotel Clement Ader", src: "/logos/logo Clement Ader.png" },
+    { name: "Hotel Saint Exupery", src: "/logos/logo Saint Exupery.png" },
+    { name: "Réserver.fr", src: "/logos/Réserver.fr.png" },
   ];
 
   return (
