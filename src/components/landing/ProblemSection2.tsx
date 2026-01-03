@@ -21,11 +21,17 @@ const ProblemSection = () => {
           {/* Carte 1 : Ad-Blockers & ITP */}
           <div className="glass-card p-6 border-glass-border animate-scale-in animation-delay-200">
             <div className="mb-4 flex justify-center">
-              <img
-                src={AdblockIcon}
-                alt="Ad blockers & ITP"
-                className="h-16 w-16 object-contain"
-              />
+              <div className="relative">
+                {/* Glow */}
+                <span className="absolute inset-0 rounded-full blur-lg bg-primary/30 opacity-70" />
+            
+                {/* Icon */}
+                <img
+                  src={AdblockIcon}
+                  alt="Ad blockers & ITP"
+                  className="relative z-10 h-16 w-16 object-contain"
+                />
+              </div>
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">Ad-Blockers & ITP</h3>
             <p className="text-muted-foreground mb-4">
