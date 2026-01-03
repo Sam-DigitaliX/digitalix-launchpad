@@ -33,6 +33,7 @@ const ProblemSection = () => {
                 />
               </div>
             </div>
+          </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">Ad-Blockers & ITP</h3>
             <p className="text-muted-foreground mb-4">
               Les bloqueurs et restrictions (iOS 17, AdBlockers){" "}
