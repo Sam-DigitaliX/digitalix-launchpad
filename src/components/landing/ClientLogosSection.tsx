@@ -2,8 +2,8 @@ const ClientLogosSection = () => {
   // Placeholder logos - à remplacer par les vrais logos clients
   const clientLogos = [
     { name: "Bambuser", src: "/logos/Bambuser_logo_tr.png" },
-    { name: "Métropole Grand Nancy", src: "/logos/Logo_Métropole_Grand_Nancy.webp" },
-    { name: "Ville de Nancy", src: "/logos/Logo_Nancy_désaturé.webp" },
+    { name: "Métropole Grand Nancy", src: "/logos/MetropoleGrandNancy.png" },
+    { name: "Ville de Nancy", src: "/logos/VilledeNancy.png" },
     { name: "Nestlé", src: "/logos/Nestle.png" },
     { name: "Purina One", src: "/logos/Purina-One.png" },
     { name: "Cosa", src: "/logos/logo-square-COSA.png" },
@@ -29,6 +29,7 @@ const ClientLogosSection = () => {
     { name: "Vertigo Media Performance", src: "/logos/VertigoMedia.png" },
     { name: "AgenceSW", src: "/logos/AgenceSW.png" },
     { name: "La Nouvelle Equipe", src: "/logos/LNE-logo.png" },
+    { name: "La Nouvelle Equipe", src: "/logos/CosaVostra2.png" },
   ];
 
   return (
