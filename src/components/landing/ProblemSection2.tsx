@@ -72,7 +72,6 @@ const ProblemSection = () => {
                 style={{ width: "80%" }}
               />
             </div>
-            
             <p className="text-sm text-muted-foreground mt-2">
               20% de baisse <span className="font-semibold">du CPA constaté après intervention</span>
             </p>
@@ -98,8 +97,14 @@ const ProblemSection = () => {
               Le RGPD et la disparition des cookies tiers rendent votre tracking{" "}
               <span className="font-semibold">obsolète</span>.
             </p>
+            <div className="h-2 w-full rounded-full bg-primary/20 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-secondary"
+                style={{ width: "50%" }}
+              />
+            </div>
             <p className="text-sm text-muted-foreground mt-2">
-              Solution : <span className="font-bold text-primary">First-Party Data</span> avec le server-side.
+              Environ <span className="font-bold text-primary">un utilisateur sur 2 </span>refuse les cookies.
             </p>
           </div>
         </div>
