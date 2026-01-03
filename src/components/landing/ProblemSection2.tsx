@@ -2,6 +2,7 @@ import React from "react";
 import ServerSideImage from "@/public/Server-side tagging.png"; // Import direct depuis src/public/
 import AdblockIcon from "@/assets/icon-adblock.png";
 import PrivacyIcon from "@/assets/icon-privacy.png";
+import AlgoIcon from "@/assets/icon-algorythm.png";
 
 const ProblemSection = () => {
   return (
@@ -47,7 +48,19 @@ const ProblemSection = () => {
 
           {/* Carte 2 : Algos Aveugles */}
           <div className="glass-card p-6 border-glass-border animate-scale-in animation-delay-300">
-            <div className="text-4xl mb-4 text-secondary">🤖</div>
+            <div className="mb-4 flex justify-center">
+              <div className="relative">
+                {/* Glow */}
+                <span className="absolute inset-0 rounded-full blur-lg bg-primary/30 opacity-70" />
+            
+                {/* Icon */}
+                <img
+                  src={AlgoIcon}
+                  alt="Algo aveugle"
+                  className="relative z-10 h-16 w-16 object-contain"
+                />
+              </div>
+            </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">Algos Aveugles</h3>
             <p className="text-muted-foreground mb-4">
               Vos algorithmes publicitaires{" "}
