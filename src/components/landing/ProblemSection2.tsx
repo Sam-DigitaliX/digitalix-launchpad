@@ -76,9 +76,6 @@ const ProblemSection = () => {
             <p className="text-sm text-muted-foreground mt-2">
               20% de baisse <span className="font-semibold">du CPA constaté après intervention</span>
             </p>
-            <p className="text-sm text-secondary mt-2">
-              Exemple : Un client a <span className="font-bold">réduit son CPA de 20%</span> après notre intervention.
-            </p>
           </div>
 
           {/* Carte 3 : Dépendance Cookie */}
