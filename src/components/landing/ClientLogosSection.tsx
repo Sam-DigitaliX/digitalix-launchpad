@@ -28,6 +28,7 @@ const ClientLogosSection = () => {
     { name: "Alpes Blanc", src: "/logos/AlpesBlanc.png" },
     { name: "Vertigo Media Performance", src: "/logos/VertigoMedia.png" },
     { name: "AgenceSW", src: "/logos/AgenceSW.png" },
+    { name: "La Nouvelle Equipe", src: "/logos/LNE-logo.png" },
   ];
 
   return (
