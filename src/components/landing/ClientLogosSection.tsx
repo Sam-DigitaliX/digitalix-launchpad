@@ -18,18 +18,19 @@ const ClientLogosSection = () => {
     { name: "CybershowParis", src: "/logos/CybershowParis.png" },
     { name: "Mprez", src: "/logos/mprez-logo.png" },
     { name: "FISE Montpellier", src: "/logos/FISE-montpellier.png" },
-    { name: "Hotel Clement Ader", src: "/logos/logo Clement Ader.png" },
-    { name: "Hotel Saint Exupery", src: "/logos/logo Saint Exupery.png" },
+    { name: "Hotel Clement Ader", src: "/logos/HotelClementAder.png" },
+    { name: "Hotel Saint Exupery", src: "/logos/HotelStExupery.png" },
     { name: "Réserver.fr", src: "/logos/Réserver.fr.png" },
     { name: "French Tax Online", src: "/logos/FTO.png" },
     { name: "Promo Assurances", src: "/logos/PromoAssurances.png" },
     { name: "Actiomservice", src: "/logos/Actiomservice.png" },
     { name: "Véritable Immobilier", src: "/logos/VéritableImmo.png" },
+    { name: "RefBikes", src: "/logos/RefBikes.png" },
     { name: "Alpes Blanc", src: "/logos/AlpesBlanc.png" },
     { name: "Vertigo Media Performance", src: "/logos/VertigoMedia.png" },
     { name: "AgenceSW", src: "/logos/AgenceSW.png" },
     { name: "La Nouvelle Equipe", src: "/logos/LNE-logo.png" },
-    { name: "La Nouvelle Equipe", src: "/logos/CosaVostra2.png" },
+    { name: "CosaVostra", src: "/logos/CosaVostra2.png" },
   ];
 
   return (
