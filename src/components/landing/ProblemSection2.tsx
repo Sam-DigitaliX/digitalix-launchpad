@@ -97,9 +97,9 @@ const ProblemSection = () => {
               Le RGPD et la disparition des cookies tiers rendent votre tracking{" "}
               <span className="font-semibold">obsolète</span>.
             </p>
-            <div className="h-2 w-full rounded-full bg-primary/20 overflow-hidden">
+            <div className="h-2 w-full rounded-full bg-primary/15 overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-primary via-primary to-secondary"
+                className="h-full rounded-full bg-primary"
                 style={{ width: "50%" }}
               />
             </div>
