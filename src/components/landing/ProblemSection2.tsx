@@ -24,7 +24,7 @@ const ProblemSection = () => {
               <img
                 src={AdblockIcon}
                 alt="Ad blockers & ITP"
-                className="h-10 w-10 object-contain"
+                className="h-12 w-12 object-contain"
               />
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">Ad-Blockers & ITP</h3>
