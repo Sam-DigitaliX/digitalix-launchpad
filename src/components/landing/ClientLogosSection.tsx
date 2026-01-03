@@ -27,6 +27,7 @@ const ClientLogosSection = () => {
     { name: "Véritable Immobilier", src: "/logos/VéritableImmo.png" },
     { name: "RefBikes", src: "/logos/RefBikes.png" },
     { name: "Alpes Blanc", src: "/logos/AlpesBlanc.png" },
+    { name: "Réseau Stan", src: "/logos/ReseauStan.png" },
     { name: "Vertigo Media Performance", src: "/logos/VertigoMedia.png" },
     { name: "AgenceSW", src: "/logos/AgenceSW.png" },
     { name: "La Nouvelle Equipe", src: "/logos/LNE-logo.png" },
