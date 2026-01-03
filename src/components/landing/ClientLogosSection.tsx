@@ -21,6 +21,13 @@ const ClientLogosSection = () => {
     { name: "Hotel Clement Ader", src: "/logos/logo Clement Ader.png" },
     { name: "Hotel Saint Exupery", src: "/logos/logo Saint Exupery.png" },
     { name: "Réserver.fr", src: "/logos/Réserver.fr.png" },
+    { name: "French Tax Online", src: "/logos/logo_fto_horizontal.png" },
+    { name: "Promo Assurances", src: "/logos/Logo Promo assurances.png" },
+    { name: "Actiomservice", src: "/logos/Actiomservice.png" },
+    { name: "Véritable Immobilier", src: "/logos/VéritableImmo.png" },
+    { name: "Alpes Blanc", src: "/logos/AlpesBlanc.png" },
+    { name: "Vertigo Media Performance", src: "/logos/VertigoMedia.png" },
+    { name: "AgenceSW", src: "/logos/AgenceSW.png" },
   ];
 
   return (
