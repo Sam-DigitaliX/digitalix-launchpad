@@ -66,6 +66,16 @@ const ProblemSection = () => {
               Vos algorithmes publicitaires{" "}
               <span className="font-semibold">dépensent votre budget au hasard</span> sans données complètes.
             </p>
+            <div className="h-2 w-full rounded-full bg-gradient-to-r from-primary/20 to-secondary/20 overflow-hidden">
+              <div
+                className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                style={{ width: "30%" }}
+              />
+            </div>
+            
+            <p className="text-sm text-muted-foreground mt-2">
+              30% de données <span className="font-semibold">perdues</span>
+            </p>
             <p className="text-sm text-secondary mt-2">
               Exemple : Un client a <span className="font-bold">réduit son CPA de 20%</span> après notre intervention.
             </p>
