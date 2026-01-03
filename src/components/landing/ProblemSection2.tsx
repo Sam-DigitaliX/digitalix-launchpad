@@ -1,5 +1,6 @@
 import React from "react";
 import ServerSideImage from "@/public/Server-side tagging.png"; // Import direct depuis src/public/
+import AdblockIcon from "@/assets/icon-adblock.png";
 
 const ProblemSection = () => {
   return (
@@ -19,7 +20,13 @@ const ProblemSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           {/* Carte 1 : Ad-Blockers & ITP */}
           <div className="glass-card p-6 border-glass-border animate-scale-in animation-delay-200">
-            <div className="text-4xl mb-4 text-destructive">🛡️</div>
+            <div className="mb-4 flex justify-center">
+              <img
+                src={AdblockIcon}
+                alt="Ad blockers & ITP"
+                className="h-10 w-10 object-contain"
+              />
+            </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">Ad-Blockers & ITP</h3>
             <p className="text-muted-foreground mb-4">
               Les bloqueurs et restrictions (iOS 17, AdBlockers){" "}
