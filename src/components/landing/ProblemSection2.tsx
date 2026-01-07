@@ -1,5 +1,6 @@
 import React from "react";
-import ServerSideImage from "@/public/Server-side tagging.png"; // Import direct depuis src/public/
+import Lottie from "lottie-react";
+import serverSideAnimation from "@/assets/server-side-schema.json";
 import AdblockIcon from "@/assets/icon-adblock.png";
 import PrivacyIcon from "@/assets/icon-privacy.png";
 import AlgoIcon from "@/assets/icon-algorythm.png";
@@ -116,11 +117,11 @@ const ProblemSection = () => {
               Le server-side est la <span className="text-gradient-primary">seule solution fiable</span>
             </h3>
 
-            {/* Intégration de ton PNG */}
+            {/* Animation Lottie */}
             <div className="flex justify-center w-full">
-              <img
-                src="/Server-side tagging.png"  // Chemin relatif depuis public/
-                alt="Schéma du server-side tagging"
+              <Lottie
+                animationData={serverSideAnimation}
+                loop={true}
                 className="w-full max-w-2xl h-auto"
               />
             </div>
