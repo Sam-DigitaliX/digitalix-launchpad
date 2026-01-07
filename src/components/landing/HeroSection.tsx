@@ -30,18 +30,18 @@ const HeroSection = () => {
 
           {/* Headline */}
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-6 animate-fade-in-up animation-delay-100">
-            Rentabilisez vos campagnes
+            Sans données fiables,
             <br />
-            <span className="text-gradient-primary">Tracking server-side
-              <br />haute précision
-            </span>
+            <span className="text-gradient-primary">la performance n'est rien.</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
-           Contournez les bloqueurs (iOS, AdBlocks...) et récupérez 99,9% de vos données de conversion pour nourrir vos algorithmes publicitaires{" "}
-            <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500 font-semibold">
-              Stop au pilotage à l'aveugle.
+            La performance publicitaire ne se décrète pas.
+            <br />
+            Elle se construit sur des données maîtrisées.
+            <span className="block mt-4 text-gradient-primary font-semibold">
+              Aujourd'hui, le tracking client-side ne suffit plus à garantir la maîtrise des données.
             </span>
           </p>
 
