@@ -36,14 +36,14 @@ const HeroSection = () => {
           </h1>
 
           {/* Subheadline */}
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
+          <p className="text-lg md:text-xl text-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
             La performance publicitaire ne se décrète pas.
             <br />
             Elle se construit sur des données maîtrisées.
             <span className="block mt-4 text-gradient-primary font-semibold">
               Aujourd'hui, le tracking classique ne suffit plus à garantir la maîtrise des données.
               <br />
-              Désormais il faut opter pour un tracking ser-side
+              Désormais il faut opter pour un tracking server-side
             </span>
           </p>
 
