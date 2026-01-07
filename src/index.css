@@ -105,7 +105,7 @@
   }
 
   .animate-glow {
-    animation: glow-pulse 6s ease-in-out infinite;
+    animation: glow-pulse 9s linear infinite;
   }
 
   .animate-float {
