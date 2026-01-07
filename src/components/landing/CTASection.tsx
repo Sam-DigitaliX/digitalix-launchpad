@@ -17,7 +17,7 @@ const CTASection = () => {
           {/* Headline */}
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
             Votre tracking actuel vous{" "}
-            <span className="text-primary">coûte de l'argent.</span>
+            <span className="text-gradient-primary">coûte de l'argent.</span>
           </h2>
 
           {/* Subheadline */}
