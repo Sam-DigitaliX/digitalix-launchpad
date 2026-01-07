@@ -79,21 +79,21 @@ const Header = () => {
           <div className="hidden md:block">
             <button
               type="button"
-              className="relative inline-flex items-center justify-center px-6 py-3 rounded-full overflow-hidden group"
+              className="relative inline-flex items-center justify-center px-6 py-3 rounded-xl overflow-hidden group"
               onClick={() => goTo("#audit")}
             >
               {/* Glow background */}
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md group-hover:blur-lg transition-all" />
 
               {/* Gradient border */}
-              <div className="absolute inset-0 rounded-full opacity-100 group-hover:opacity-80 transition-opacity bg-gradient-to-r from-primary to-secondary" />
+              <div className="absolute inset-0 rounded-xl opacity-100 group-hover:opacity-80 transition-opacity bg-gradient-to-r from-primary to-secondary" />
 
               {/* Button background */}
-              <div className="absolute inset-[1px] bg-black rounded-full" />
+              <div className="absolute inset-[1px] bg-black rounded-lg" />
 
               {/* Text */}
               <span className="relative text-sm font-semibold text-gradient-primary">
-                Audit Data Quality
+                Réserver mon Audit à 0€
               </span>
             </button>
           </div>
