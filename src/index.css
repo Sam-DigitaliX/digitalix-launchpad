@@ -105,7 +105,7 @@
   }
 
   .animate-glow {
-    animation: glow-pulse 9s linear infinite;
+    animation: glow-pulse 7s ease-in-out infinite;
   }
 
   .animate-float {
@@ -147,28 +147,11 @@
 }
 
 @keyframes glow-pulse {
-   0% {
-    box-shadow:
-      0 0 28px hsl(262 83% 58% / 0.45),
-      0 0 56px hsl(262 83% 58% / 0.22);
+   from {
+    box-shadow: 0 0 32px hsl(262 83% 58% / 0.45), 0 0 64px hsl(262 83% 58% / 0.22);
   }
-
-  30% {
-    box-shadow:
-      0 0 34px hsl(262 83% 58% / 0.55),
-      0 0 68px hsl(262 83% 58% / 0.28);
-  }
-
-  70% {
-    box-shadow:
-      0 0 34px hsl(262 83% 58% / 0.55),
-      0 0 68px hsl(262 83% 58% / 0.28);
-  }
-
-  100% {
-    box-shadow:
-      0 0 28px hsl(262 83% 58% / 0.45),
-      0 0 56px hsl(262 83% 58% / 0.22);
+  to {
+    box-shadow: 0 0 36px hsl(262 83% 58% / 0.52), 0 0 72px hsl(262 83% 58% / 0.26);
   }
 }
 
