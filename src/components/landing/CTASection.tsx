@@ -26,7 +26,7 @@ const CTASection = () => {
           </p>
 
           {/* CTA Button */}
-          <Button variant="heroGradient" size="xl" className="group animate-glow">
+          <Button variant="heroGradient" size="xl" className="group">
             Réserver mon Audit
             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
           </Button>
