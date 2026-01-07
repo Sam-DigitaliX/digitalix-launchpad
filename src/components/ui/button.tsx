@@ -17,7 +17,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         hero: "bg-primary text-primary-foreground font-bold tracking-wide shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 animate-glow",
         heroOutline: "border-2 border-foreground/30 bg-transparent text-foreground hover:bg-foreground/10 hover:border-foreground/50 font-medium tracking-wide transition-all duration-300",
-        heroGradient: "relative overflow-hidden bg-gradient-to-r from-primary to-secondary text-white font-bold tracking-wide shadow-lg hover:opacity-90 transition-all duration-300 glow-static",
+        heroGradient: "relative overflow-hidden bg-gradient-to-r from-primary to-secondary text-white font-bold tracking-wide shadow-lg hover:opacity-90 transition-all duration-300",
         heroGradientOutline: "relative border-2 border-transparent bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent font-bold tracking-wide shadow-[0_0_0_2px_hsl(var(--primary))] hover:shadow-[0_0_0_3px_hsl(var(--primary))] transition-all duration-300",
         glass: "bg-muted/20 border border-muted/30 backdrop-blur-xl text-foreground hover:bg-muted/30 font-medium",
         cta: "bg-primary text-primary-foreground font-bold tracking-wide shadow-2xl hover:shadow-primary/40 hover:scale-105 transition-all duration-300",
