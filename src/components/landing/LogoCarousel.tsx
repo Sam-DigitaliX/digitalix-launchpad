@@ -35,22 +35,22 @@ const clientLogos = [
 
 const LogoCarousel = () => {
   return (
-    <div className="relative w-full overflow-hidden h-16 md:h-20">
-      {/* Fade edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-20 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+    <div className="relative w-full overflow-hidden h-12 sm:h-16 md:h-20">
+      {/* Fade edges - smaller on mobile */}
+      <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
       
       {/* Scrolling track - duplicate logos for seamless infinite loop */}
-      <div className="flex items-center h-full logo-scroll-track">
+      <div className="flex items-center justify-start h-full logo-scroll-track">
         {[...clientLogos, ...clientLogos].map((logo, index) => (
           <div
             key={index}
-            className="flex-shrink-0 mx-6 md:mx-8"
+            className="flex-shrink-0 mx-3 sm:mx-5 md:mx-8"
           >
             <img
               src={logo.src}
               alt={logo.name}
-              className="h-8 md:h-10 w-auto max-w-[100px] md:max-w-[120px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+              className="h-6 sm:h-8 md:h-10 w-auto max-w-[70px] sm:max-w-[90px] md:max-w-[120px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
             />
           </div>
         ))}
