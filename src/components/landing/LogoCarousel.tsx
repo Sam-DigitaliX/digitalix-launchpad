@@ -50,7 +50,7 @@ const LogoCarousel = () => {
             <img
               src={logo.src}
               alt={logo.name}
-              className="client-logo h-8 md:h-10 w-auto max-w-[100px] md:max-w-[120px] object-contain"
+              className="h-8 md:h-10 w-auto max-w-[100px] md:max-w-[120px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
             />
           </div>
         ))}
