@@ -40,6 +40,9 @@ const HeroSection = () => {
             La performance publicitaire ne se décrète pas.
             <span className="block mt-4 text-gradient-primary font-semibold">
               Elle se construit sur des données réellement maîtrisées.
+            </span>Commencez par auditer la fiabilité de votre tracking.
+            <span className="block mt-4 text-muted-foreground font-light">
+              Elle se construit sur des données réellement maîtrisées.
             </span>
           </p>
 
