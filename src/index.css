@@ -186,8 +186,9 @@
   }
 }
 
-.animate-scroll-left {
-  animation: scroll-left 30s linear infinite;
+.logo-scroll-track {
+  animation: scroll-left 60s linear infinite;
+  width: max-content;
 }
 
 @keyframes fade-in-up {
