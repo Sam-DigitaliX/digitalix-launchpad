@@ -29,7 +29,7 @@ const HeroSection = () => {
           </div>
 
           {/* Headline */}
-          <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight md:leading-relaxed text-foreground mb-6 animate-fade-in-up animation-delay-100">
+          <h1 className="text-5xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-tight md:leading-relaxed text-foreground mb-6 animate-fade-in-up animation-delay-100">
             Sans données fiables,
             <br />
             <span className="text-gradient-primary">la performance n'est rien.</span>
