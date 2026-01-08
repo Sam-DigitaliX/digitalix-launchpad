@@ -41,9 +41,7 @@ const HeroSection = () => {
             <br />
             Elle se construit sur des données maîtrisées.
             <span className="block mt-4 text-muted-foreground font-light">
-              Aujourd'hui, le tracking classique ne suffit plus
-              <br />
-              à garantir la maîtrise des données.
+              Aujourd'hui, le tracking classique ne suffit plus à garantir la maîtrise des données.
             </span>
             <span className="block mt-2 text-gradient-primary font-semibold">
               Désormais il faut opter pour un tracking server-side
