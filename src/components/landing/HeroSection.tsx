@@ -40,9 +40,10 @@ const HeroSection = () => {
             La performance publicitaire ne se décrète pas.
             <br />
             Elle se construit sur des données maîtrisées.
-            <span className="block mt-4 text-gradient-primary font-semibold">
+            <span className="block mt-4 text-muted-foreground font-light">
               Aujourd'hui, le tracking classique ne suffit plus à garantir la maîtrise des données.
-              <br />
+            </span>
+            <span className="block mt-2 text-gradient-primary font-semibold">
               Désormais il faut opter pour un tracking server-side
             </span>
           </p>
