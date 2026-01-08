@@ -35,7 +35,7 @@ const clientLogos = [
 
 const LogoCarousel = () => {
   return (
-    <div className="relative w-full overflow-hidden h-12 sm:h-16 md:h-20">
+    <div className="relative w-full overflow-hidden h-14 sm:h-16 md:h-20">
       {/* Fade edges - smaller on mobile */}
       <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
@@ -50,7 +50,7 @@ const LogoCarousel = () => {
             <img
               src={logo.src}
               alt={logo.name}
-              className="h-6 sm:h-8 md:h-10 w-auto max-w-[70px] sm:max-w-[90px] md:max-w-[120px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
+              className="h-8 sm:h-9 md:h-10 w-auto max-w-[90px] sm:max-w-[100px] md:max-w-[120px] object-contain brightness-0 invert opacity-60 hover:opacity-100 transition-opacity"
             />
           </div>
         ))}
