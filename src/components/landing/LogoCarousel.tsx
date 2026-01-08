@@ -23,7 +23,6 @@ const clientLogos = [
   { name: "Hotel Clément Ader", src: "/logos/HotelClementAder.png" },
   { name: "Hotel St Exupéry", src: "/logos/HotelStExupery.png" },
   { name: "LNE", src: "/logos/LNE-logo.png" },
-  { name: "La Nouvelle Equipe", src: "/logos/La Nouvelle Equipe -Agence Ads - logo.webp" },
   { name: "Promo Assurances", src: "/logos/PromoAssurances.png" },
   { name: "Ref Bikes", src: "/logos/RefBikes.png" },
   { name: "Réseau Stan", src: "/logos/ReseauStan.png" },
