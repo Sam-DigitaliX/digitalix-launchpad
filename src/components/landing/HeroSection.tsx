@@ -38,11 +38,11 @@ const HeroSection = () => {
           {/* Subheadline */}
           <p className="text-lg md:text-xl text-foreground max-w-2xl mx-auto mb-10 animate-fade-in-up animation-delay-200 leading-relaxed">
             La performance publicitaire ne se décrète pas.
-            <span className="block mt-4 text-gradient-primary font-semibold">
+            <span className="block mt-2 text-gradient-primary font-semibold">
               Elle se construit sur des données réellement maîtrisées.
-            </span>Commencez par auditer la fiabilité de votre tracking.
-            <span className="block mt-4 text-muted-foreground font-light">
-              Elle se construit sur des données réellement maîtrisées.
+            </span>
+            <span className="block mt-6 text-muted-foreground font-thin">
+              Commencez par auditer la fiabilité de votre tracking.
             </span>
           </p>
 
