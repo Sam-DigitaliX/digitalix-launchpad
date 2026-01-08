@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-data-flow.jpg";
+import LogoCarousel from "./LogoCarousel";
 
 const HeroSection = () => {
   return (
@@ -53,12 +54,9 @@ const HeroSection = () => {
             </Button>
           </div>
 
-          {/* Trust Metrics (Alternative à Trust Bar) */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto animate-fade-in-up animation-delay-400">
-            <MetricCard value="+25%" label="Données récupérées" />
-            <MetricCard value="100%" label="First-party Data" />
-            <MetricCard value="24/7" label="Monitoring" />
-            <MetricCard value="100%" label="RGPD Friendly" />
+          {/* Logo Carousel */}
+          <div className="animate-fade-in-up animation-delay-400">
+            <LogoCarousel />
           </div>
         </div>
       </div>
@@ -76,12 +74,5 @@ const HeroSection = () => {
     </section>
   );
 };
-
-const MetricCard = ({ value, label }: { value: string; label: string }) => (
-  <div className="text-center p-4 rounded-lg bg-white/5 border border-white/10 backdrop-blur-sm">
-    <div className="text-2xl md:text-3xl font-bold text-gradient-primary mb-1">{value}</div>
-    <p className="text-xs text-muted-foreground uppercase tracking-wide">{label}</p>
-  </div>
-);
 
 export default HeroSection;

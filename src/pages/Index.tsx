@@ -17,7 +17,6 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
-        <ClientLogosSection />
         <ProblemSection />
         <ProblemSection2 />
         <BenefitsSection />
@@ -25,6 +24,7 @@ const Index = () => {
         <DeepDiveSection />
         <ProcessSection />
         <IntegrationSection />
+        <ClientLogosSection />
         <CTASection />
       </main>
       <Footer />
