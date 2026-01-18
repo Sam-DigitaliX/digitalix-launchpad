@@ -1,5 +1,5 @@
 import { Check } from "lucide-react";
-import setupImg from "@/assets/deepdive/Tagsfiring.png;
+import setupImg from "@/assets/deepdive/Tagsfiring.png";
 const blocks = [
   {
     id: "setup",
