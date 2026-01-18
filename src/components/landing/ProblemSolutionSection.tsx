@@ -177,7 +177,7 @@ const ProblemSolutionSection = () => {
 
           {/* Transition Arrow */}
           <div className="flex justify-center mt-16 md:mt-20">
-            <div className="flex flex-col items-center gap-3">
+            <div className="flex flex-col items-center gap-1">
               <span className="text-sm text-muted-foreground uppercase tracking-wider">La solution</span>
               <div className="w-10 h-10 rounded-full border-2 border-primary/50 flex items-center justify-center animate-bounce">
                 <ArrowDown className="w-5 h-5 text-primary" />
@@ -231,7 +231,7 @@ const ProblemSolutionSection = () => {
 
             {/* Benefits Overlay - Bottom */}
             <div 
-              className={`relative -mt-16 md:-mt-24 transition-all duration-700 delay-500 ${
+              className={`relative mt-8 md:mt-12 transition-all duration-700 delay-500 ${
                 isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
               }`}
             >
