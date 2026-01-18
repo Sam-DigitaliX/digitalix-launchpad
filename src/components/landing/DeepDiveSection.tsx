@@ -1,16 +1,16 @@
 import { Check } from "lucide-react";
-
+import setupImg from "@/assets/deepdive/Tagsfiring.png;
 const blocks = [
   {
     id: "setup",
     title: "Une Infrastructure Propriétaire & Conforme.",
-    description: "Fini le bricolage. Nous déployons un serveur dédié (GCP/AWS) sur votre sous-domaine.",
+    description: "Fini le bricolage. Nous déployons un serveur dédié sur votre sous-domaine.",
     bullets: [
       "Clean Data (Exclusion des bots)",
       "Implémentation CAPI Meta/Google/LinkedIn",
       "Pack RGPD & Consent Mode V2 inclus",
     ],
-    imagePlaceholder: "GTM Server Container showing tags firing successfully.",
+    image: setupImg,
     imagePosition: "right" as const,
   },
   {
