@@ -1,8 +1,7 @@
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import ClientLogosSection from "@/components/landing/ClientLogosSection";
-import ProblemSection from "@/components/landing/ProblemSection";
-import ProblemSection2 from "@/components/landing/ProblemSection2";
+import ProblemSolutionSection from "@/components/landing/ProblemSolutionSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
 import SolutionsSection from "@/components/landing/SolutionsSection";
 import DeepDiveSection from "@/components/landing/DeepDiveSection";
@@ -17,8 +16,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
-        <ProblemSection />
-        <ProblemSection2 />
+        <ProblemSolutionSection />
         <BenefitsSection />
         <SolutionsSection />
         <DeepDiveSection />
