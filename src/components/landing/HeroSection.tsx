@@ -16,7 +16,7 @@ const HeroSection = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 container mx-auto px-6 text-center">
+      <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="max-w-4xl mx-auto">
           {/* Badge avec gradient + glow effect */}
           <div className="relative inline-flex mb-8 animate-fade-in-up">

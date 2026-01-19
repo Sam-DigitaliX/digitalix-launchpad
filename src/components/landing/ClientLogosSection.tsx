@@ -36,7 +36,7 @@ const ClientLogosSection = () => {
 
   return (
     <section className="py-16 md:py-24 bg-background border-t border-border/20">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-center text-sm uppercase tracking-widest mb-12 text-muted-foreground">
           <span className="text-gradient-primary">
             Ils nous font confiance
