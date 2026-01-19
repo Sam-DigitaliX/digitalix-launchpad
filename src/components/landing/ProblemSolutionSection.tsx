@@ -260,7 +260,7 @@ const ProblemSolutionSection = () => {
 
                 {/* CTA */}
                 <div className="flex justify-center mt-8">
-                  <Button variant="heroGradient" size="l">
+                  <Button variant="heroGradient" size="xl">
                     Je réserve mon audit tracking à 0€
                   </Button>
                 </div>
