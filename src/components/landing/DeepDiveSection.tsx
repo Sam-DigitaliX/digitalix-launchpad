@@ -89,49 +89,42 @@ const DeepDiveSection = () => {
                 </ul>
               </div>
 
-              {/* Visual Placeholder */}
+              {/* Image Container */}
               <div className="flex-1 w-full">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden glass-card border border-border/50">
-                  {/* Placeholder gradient background */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5" />
-                  
-                  {/* Grid pattern overlay */}
-                  <div 
-                    className="absolute inset-0 opacity-10"
-                    style={{
-                      backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
-                                        linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`,
-                      backgroundSize: '20px 20px',
-                    }}
+                {block.image ? (
+                  <img
+                    src={block.image}
+                    alt={block.title}
+                    className="w-full h-auto rounded-[7px] border border-primary"
+                    loading="lazy"
                   />
-                  {/* Image ou placeholder */}
-                  {block.image ? (
-                    <img
-                      src={block.image}
-                      alt={block.title}
-                      className="absolute inset-0 w-full h-full object-contain p-4"
-                      loading="lazy"
+                ) : (
+                  <div className="relative aspect-[4/3] rounded-[7px] overflow-hidden border border-primary bg-gradient-to-br from-primary/5 via-primary/10 to-primary/5">
+                    {/* Grid pattern overlay */}
+                    <div 
+                      className="absolute inset-0 opacity-10"
+                      style={{
+                        backgroundImage: `linear-gradient(hsl(var(--primary) / 0.3) 1px, transparent 1px),
+                                          linear-gradient(90deg, hsl(var(--primary) / 0.3) 1px, transparent 1px)`,
+                        backgroundSize: '20px 20px',
+                      }}
                     />
-                  ) : (
-                    <>
-                      {/* Placeholder content */}
-                      <div className="absolute inset-0 flex items-center justify-center p-8">
-                        <div className="text-center space-y-4">
-                          <div className="w-16 h-16 mx-auto rounded-xl bg-primary/20 flex items-center justify-center">
-                            <div className="w-8 h-8 rounded-lg bg-primary/40" />
-                          </div>
-                          <p className="text-sm text-muted-foreground max-w-xs">
-                            Image à venir
-                          </p>
+                    {/* Placeholder content */}
+                    <div className="absolute inset-0 flex items-center justify-center p-8">
+                      <div className="text-center space-y-4">
+                        <div className="w-16 h-16 mx-auto rounded-xl bg-primary/20 flex items-center justify-center">
+                          <div className="w-8 h-8 rounded-lg bg-primary/40" />
                         </div>
+                        <p className="text-sm text-muted-foreground max-w-xs">
+                          Image à venir
+                        </p>
                       </div>
-
-                      {/* Corner decorations */}
-                      <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
-                      <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
-                    </>
-                  )}
-                </div>
+                    </div>
+                    {/* Corner decorations */}
+                    <div className="absolute top-4 left-4 w-8 h-8 border-l-2 border-t-2 border-primary/30 rounded-tl-lg" />
+                    <div className="absolute bottom-4 right-4 w-8 h-8 border-r-2 border-b-2 border-primary/30 rounded-br-lg" />
+                  </div>
+                )}
               </div>
             </div>
           ))}
