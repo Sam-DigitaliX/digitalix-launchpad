@@ -1,6 +1,8 @@
 import { Check } from "lucide-react";
 import setupImg from "@/assets/deepdive/Tagsfiring.png";
 import assurImg from "@/assets/deepdive/dashboard.png";
+import projectsImg from "@/assets/deepdive/projects.png";
+
 
 const blocks = [
   {
@@ -36,7 +38,7 @@ const blocks = [
       "Onboarding client fluide",
       "Marque blanche totale ou partielle",
     ],
-    imagePlaceholder: "Project Board or Multi-account management interface.",
+    image: projectsImg,
     imagePosition: "right" as const,
   },
 ];
