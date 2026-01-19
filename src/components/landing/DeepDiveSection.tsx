@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
 import setupImg from "@/assets/deepdive/Tagsfiring.png";
+import assurImg from "@/assets/deepdive/dashboard.png";
+
 const blocks = [
   {
     id: "setup",
@@ -22,7 +24,7 @@ const blocks = [
       "Maintien du score 'Great' sur Facebook",
       "Support prioritaire en <48h",
     ],
-    imagePlaceholder: "Data Dashboard showing Green Uptime & High Match Quality Scores.",
+    image: assurImg,
     imagePosition: "left" as const,
   },
   {
