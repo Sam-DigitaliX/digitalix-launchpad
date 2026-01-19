@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
-import setupImg from "@/assets/deepdive/Tagsfiring.png";
-import assurImg from "@/assets/deepdive/dashboard.png";
+import setupImg from "@/assets/deepdive/Stape_analytics_dashboard.png";
+import assurImg from "@/assets/deepdive/Addingwell_dashboard.png";
 import projectsImg from "@/assets/deepdive/projects.png";
 
 
