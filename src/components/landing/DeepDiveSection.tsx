@@ -109,7 +109,7 @@ const DeepDiveSection = () => {
                     <img
                       src={block.image}
                       alt={block.title}
-                      className="absolute inset-0 w-full h-full object-cover"
+                      className="absolute inset-0 w-full h-full object-contain p-4"
                       loading="lazy"
                     />
                   ) : (
