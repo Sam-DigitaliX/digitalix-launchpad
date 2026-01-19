@@ -104,7 +104,15 @@ const DeepDiveSection = () => {
                       backgroundSize: '20px 20px',
                     }}
                   />
-                  
+                  {/* Image ou placeholder */}
+                  {block.image ? (
+                    <img
+                      src={block.image}
+                      alt={block.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  ) : (
                   {/* Placeholder content */}
                   <div className="absolute inset-0 flex items-center justify-center p-8">
                     <div className="text-center space-y-4">
@@ -112,7 +120,7 @@ const DeepDiveSection = () => {
                         <div className="w-8 h-8 rounded-lg bg-primary/40" />
                       </div>
                       <p className="text-sm text-muted-foreground max-w-xs">
-                        {block.imagePlaceholder}
+                        Image à venir
                       </p>
                     </div>
                   </div>
