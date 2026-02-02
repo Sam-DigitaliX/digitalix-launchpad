@@ -26,10 +26,10 @@ const clientLogos = [
   { name: "Promo Assurances", src: "/logos/PromoAssurances.png" },
   { name: "Ref Bikes", src: "/logos/RefBikes.png" },
   { name: "Réseau Stan", src: "/logos/ReseauStan.png" },
-  { name: "Réserver.fr", src: "/logos/Réserver.fr.png" },
+  { name: "Réserver.fr", src: "/logos/R%C3%A9server.fr.png" },
   { name: "Thermoclima Est", src: "/logos/Thermoclima-est.webp" },
   { name: "Vertigo Media", src: "/logos/VertigoMedia.png" },
-  { name: "Véritable Immo", src: "/logos/VéritableImmo.png" },
+  { name: "Véritable Immo", src: "/logos/V%C3%A9ritableImmo.png" },
   { name: "Mprez", src: "/logos/mprez-logo.png" },
 ];
 
