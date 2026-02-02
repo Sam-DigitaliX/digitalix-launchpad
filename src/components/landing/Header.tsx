@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/digitalix-logo.png";
 
@@ -17,6 +18,7 @@ const Header = () => {
     { href: "#services", label: "Services" },
     { href: "#process", label: "Process" },
     { href: "#integration", label: "Intégration" },
+    { href: "/contact", label: "Contact", isRoute: true },
   ];
 
   const goTo = (href: string) => {
@@ -60,27 +62,36 @@ const Header = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
-                onClick={(e) => {
-                  e.preventDefault();
-                  goTo(link.href);
-                }}
-              >
-                {link.label}
-              </a>
-            ))}
+            {navLinks.map((link) => 
+              link.isRoute ? (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                >
+                  {link.label}
+                </Link>
+              ) : (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors duration-300"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goTo(link.href);
+                  }}
+                >
+                  {link.label}
+                </a>
+              )
+            )}
           </nav>
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <button
-              type="button"
+            <Link
+              to="/contact"
               className="relative inline-flex items-center justify-center px-6 py-3 rounded-xl overflow-hidden group"
-              onClick={() => goTo("#audit")}
             >
               {/* Glow background */}
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md group-hover:blur-lg transition-all" />
@@ -89,13 +100,13 @@ const Header = () => {
               <div className="absolute inset-0 rounded-xl opacity-100 group-hover:opacity-80 transition-opacity bg-gradient-to-r from-primary to-secondary" />
 
               {/* Button background */}
-              <div className="absolute inset-[1px] bg-black rounded-lg" />
+              <div className="absolute inset-[1px] bg-background rounded-lg" />
 
               {/* Text */}
               <span className="relative text-sm font-semibold text-gradient-primary">
                 Réserver mon Audit à 0€
               </span>
-            </button>
+            </Link>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -114,29 +125,37 @@ const Header = () => {
         {isMobileMenuOpen && (
           <div className="md:hidden py-6 border-t border-border/50">
             <nav className="flex flex-col gap-4">
-              {navLinks.map((link) => (
-                <a
-                  key={link.href}
-                  href={link.href}
-                  className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    goTo(link.href);
-                    setIsMobileMenuOpen(false);
-                  }}
-                >
-                  {link.label}
-                </a>
-              ))}
+              {navLinks.map((link) => 
+                link.isRoute ? (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ) : (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goTo(link.href);
+                      setIsMobileMenuOpen(false);
+                    }}
+                  >
+                    {link.label}
+                  </a>
+                )
+              )}
 
               {/* CTA Button mobile */}
-              <button
-                type="button"
+              <Link
+                to="/contact"
                 className="relative inline-flex items-center justify-center px-6 py-3 rounded-full overflow-hidden group mt-4"
-                onClick={() => {
-                  goTo("#audit");
-                  setIsMobileMenuOpen(false);
-                }}
+                onClick={() => setIsMobileMenuOpen(false)}
               >
                 {/* Glow background */}
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md" />
@@ -145,13 +164,13 @@ const Header = () => {
                 <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary" />
 
                 {/* Button background */}
-                <div className="absolute inset-[1px] bg-black rounded-full" />
+                <div className="absolute inset-[1px] bg-background rounded-full" />
 
                 {/* Text */}
                 <span className="relative text-sm font-semibold text-gradient-primary">
-                  Audit Data Quality
+                  Réserver mon Audit à 0€
                 </span>
-              </button>
+              </Link>
             </nav>
           </div>
         )}

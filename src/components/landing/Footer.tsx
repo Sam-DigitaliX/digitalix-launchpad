@@ -1,17 +1,15 @@
+import { Link } from "react-router-dom";
+import logo from "@/assets/digitalix-logo.png";
+
 const Footer = () => {
   return (
     <footer className="py-12 bg-background border-t border-border/50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <span className="text-primary-foreground font-bold text-sm">D</span>
-            </div>
-            <span className="text-lg font-bold tracking-tight text-foreground">
-              DigitaliX
-            </span>
-          </div>
+          <Link to="/" className="flex items-center">
+            <img src={logo} alt="DigitaliX" className="h-8 w-auto" />
+          </Link>
 
           {/* Links */}
           <nav className="flex items-center gap-8">
@@ -21,12 +19,12 @@ const Footer = () => {
             >
               Mentions Légales
             </a>
-            <a
-              href="#"
+            <Link
+              to="/contact"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               Contact
-            </a>
+            </Link>
           </nav>
 
           {/* Copyright */}

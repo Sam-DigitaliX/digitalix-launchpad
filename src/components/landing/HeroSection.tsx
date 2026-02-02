@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-data-flow.jpg";
 import LogoCarousel from "./LogoCarousel";
@@ -49,8 +50,10 @@ const HeroSection = () => {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-in-up animation-delay-300">
-            <Button variant="heroGradient" size="xl">
-              Je réserve mon audit tracking à 0€
+            <Button variant="heroGradient" size="xl" asChild>
+              <Link to="/contact">
+                Je réserve mon audit tracking à 0€
+              </Link>
             </Button>
           </div>
 
