@@ -29,6 +29,8 @@ const clientLogos = [
   { name: "Thermoclima Est", src: "/logos/Thermoclima-est.webp" },
   { name: "Vertigo Media", src: "/logos/VertigoMedia.png" },
   { name: "Mprez", src: "/logos/mprez-logo.png" },
+  { name: "Réserver.fr", src: "/logos/Reserver.fr.png" },
+  { name: "Véritable Immo", src: "/logos/VeritableImmo.png" },
 ];
 
 const LogoCarousel = () => {
