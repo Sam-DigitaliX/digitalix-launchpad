@@ -95,11 +95,11 @@ export function SituationStep({ data, updateData, onNext, onPrev }: StepProps) {
         </div>
       </div>
 
-      <div className="flex justify-between pt-4">
+      <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
         <Button 
           variant="ghost" 
           onClick={onPrev}
-          className="gap-2"
+          className="gap-2 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour
@@ -108,7 +108,7 @@ export function SituationStep({ data, updateData, onNext, onPrev }: StepProps) {
           variant="heroGradient" 
           size="lg"
           onClick={onNext}
-          className="min-w-[200px]"
+          className="w-full sm:w-auto sm:min-w-[200px]"
         >
           Continuer
         </Button>
