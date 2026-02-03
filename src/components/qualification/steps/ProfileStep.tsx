@@ -61,13 +61,13 @@ export function ProfileStep({ data, updateData, onNext }: StepProps) {
         })}
       </div>
 
-      <div className="flex justify-center pt-4">
+      <div className="flex justify-center pt-4 px-4 sm:px-0">
         <Button 
           variant="heroGradient" 
           size="lg"
           onClick={onNext}
           disabled={!data.profile_type}
-          className="min-w-[200px]"
+          className="w-full sm:w-auto sm:min-w-[200px]"
         >
           Continuer
         </Button>
