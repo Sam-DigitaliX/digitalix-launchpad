@@ -2,6 +2,7 @@ import { QualificationForm } from '@/components/qualification';
 import Header from '@/components/landing/Header';
 import Footer from '@/components/landing/Footer';
 import LogoCarousel from '@/components/landing/LogoCarousel';
+import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import { Shield, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function Contact() {
@@ -10,7 +11,7 @@ export default function Contact() {
       <Header />
       
       <main className="pt-28 pb-20 px-4">
-        <div className="container max-w-5xl mx-auto">
+        <div className="container max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-10 space-y-4">
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide">
@@ -41,8 +42,25 @@ export default function Contact() {
             </div>
           </div>
           
-          {/* Qualification Form */}
-          <QualificationForm />
+          {/* Main Content: Form + Testimonials Sidebar */}
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+            {/* Form */}
+            <div className="flex-1 lg:max-w-3xl">
+              <QualificationForm />
+            </div>
+
+            {/* Testimonials Sidebar - Desktop only */}
+            <aside className="hidden lg:block w-80 shrink-0">
+              <div className="sticky top-28">
+                <TestimonialsSection variant="sidebar" />
+              </div>
+            </aside>
+          </div>
+
+          {/* Testimonials - Mobile only */}
+          <div className="lg:hidden mt-12">
+            <TestimonialsSection variant="full" />
+          </div>
 
           {/* Social Proof Section */}
           <div className="mt-16 pt-12 border-t border-border/50">
