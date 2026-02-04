@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/digitalix-logo.png";
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -21,13 +23,27 @@ const Header = () => {
     { href: "/contact", label: "Contact", isRoute: true },
   ];
 
-  const goTo = (href: string) => {
-    // Optionnel: scroll smooth si tu veux
-    const el = document.querySelector(href);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "start" });
+  const goTo = (hash: string) => {
+    if (location.pathname !== "/") {
+      // Navigate to homepage with hash
+      navigate("/" + hash);
     } else {
-      window.location.hash = href;
+      // Already on homepage, smooth scroll
+      const el = document.querySelector(hash);
+      if (el) {
+        el.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      // Update URL hash
+      window.history.pushState(null, "", hash);
+    }
+  };
+
+  const goHome = () => {
+    if (location.pathname !== "/") {
+      navigate("/");
+    } else {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      window.history.pushState(null, "", "/");
     }
   };
 
@@ -47,7 +63,7 @@ const Header = () => {
             className="flex items-center relative group"
             onClick={(e) => {
               e.preventDefault();
-              window.scrollTo({ top: 0, behavior: "smooth" });
+              goHome();
               setIsMobileMenuOpen(false);
             }}
           >
