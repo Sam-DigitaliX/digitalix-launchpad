@@ -56,7 +56,7 @@ export default function TestimonialsSection({ variant = 'full', className = '' }
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">{testimonial.name}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-medium">
                     <CheckCircle2 className="w-3 h-3" />
                     Vérifié
                   </span>
@@ -103,7 +103,7 @@ export default function TestimonialsSection({ variant = 'full', className = '' }
                 {/* Header */}
                 <div className="flex items-center gap-2">
                   <span className="font-semibold text-sm">{testimonial.name}</span>
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 text-[10px] font-medium">
                     <CheckCircle2 className="w-3 h-3" />
                     Vérifié
                   </span>
