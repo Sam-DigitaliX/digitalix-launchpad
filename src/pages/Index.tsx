@@ -9,6 +9,7 @@ import SolutionsSection from "@/components/landing/SolutionsSection";
 import DeepDiveSection from "@/components/landing/DeepDiveSection";
 import ProcessSection from "@/components/landing/ProcessSection";
 import IntegrationSection from "@/components/landing/IntegrationSection";
+import FAQSection from "@/components/landing/FAQSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
 
@@ -38,6 +39,7 @@ const Index = () => {
         <ProcessSection />
         <IntegrationSection />
         <ClientLogosSection />
+        <FAQSection />
         <CTASection />
       </main>
       <Footer />
