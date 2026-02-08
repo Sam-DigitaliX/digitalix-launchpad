@@ -75,19 +75,12 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
 
         {/* Calendar Modal */}
         <Dialog open={isCalendarOpen} onOpenChange={handleCalendarOpen}>
-          <DialogContent className="max-w-2xl h-[80vh] p-0 overflow-hidden">
+          <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden border-0 bg-[#1a1a1a] [&>button]:hidden">
             <DialogTitle className="sr-only">Réserver un créneau</DialogTitle>
-            <button
-              onClick={() => handleCalendarOpen(false)}
-              className="absolute right-3 top-3 z-10 p-1.5 rounded-full bg-background/80 hover:bg-background transition-colors"
-              aria-label="Fermer"
-            >
-              <X className="w-4 h-4" />
-            </button>
             
             {/* Loading Spinner */}
             {isCalendarLoading && (
-              <div className="absolute inset-0 flex flex-col items-center justify-center bg-background z-0">
+              <div className="absolute inset-0 flex flex-col items-center justify-center bg-[#1a1a1a] z-0">
                 <Loader2 className="w-10 h-10 text-primary animate-spin mb-4" />
                 <p className="text-muted-foreground text-sm">Chargement du calendrier...</p>
               </div>
