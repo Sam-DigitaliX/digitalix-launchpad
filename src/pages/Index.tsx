@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
+import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
 import ClientLogosSection from "@/components/landing/ClientLogosSection";
 import ProblemSolutionSection from "@/components/landing/ProblemSolutionSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
@@ -32,6 +33,7 @@ const Index = () => {
       <Header />
       <main>
         <HeroSection />
+        <TrackingDemoSection />
         <ProblemSolutionSection />
         <BenefitsSection />
         <SolutionsSection />
