@@ -131,8 +131,12 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   };
 
   const handleBookCall = () => {
-    // TODO: Integrate with Google Calendar API
-    window.open('https://calendly.com', '_blank');
+    const calendarUrl = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0g1W0t1KcMGk_wBbT28y5PEnG5bhavF3_YMB3P8H-H2SbVDoAv9ZoC2yyLmLTvXgLoIfYbSgCx?gv=true';
+    const width = 600;
+    const height = 700;
+    const left = (window.innerWidth - width) / 2;
+    const top = (window.innerHeight - height) / 2;
+    window.open(calendarUrl, 'google-calendar', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes`);
   };
 
   const handleDownloadResource = () => {
