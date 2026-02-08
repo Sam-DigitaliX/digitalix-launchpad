@@ -49,25 +49,36 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     return COUNTRY_CODES.find(c => c.code === countryCode)?.dialCode || '+33';
   };
 
-  // Format phone to E.164
-  const formatPhoneE164 = (number: string, countryCode: string): string => {
-    // Remove all non-digit characters except +
+  // Format national number (remove leading zero, keep only digits)
+  const formatNationalNumber = (number: string): string => {
     const cleaned = number.replace(/[^\d]/g, '');
-    // Remove leading zero if present
-    const withoutLeadingZero = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
-    const dialCode = getDialCode(countryCode);
-    return `${dialCode}${withoutLeadingZero}`;
+    return cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
   };
 
-  // Handle phone input change
+  // Build E.164 format
+  const buildE164 = (nationalNumber: string, countryCode: string): string => {
+    const dialCode = getDialCode(countryCode);
+    return `${dialCode}${nationalNumber}`;
+  };
+
+  // Handle phone input change - auto-format as user types
   const handlePhoneChange = (value: string) => {
-    // Only allow digits, spaces, and common separators
-    const cleaned = value.replace(/[^\d\s\-\.]/g, '');
-    setPhoneNumber(cleaned);
+    // Only allow digits (strip everything else immediately)
+    let digitsOnly = value.replace(/[^\d]/g, '');
+    
+    // Auto-remove leading zero
+    if (digitsOnly.startsWith('0')) {
+      digitsOnly = digitsOnly.slice(1);
+    }
+    
+    // Limit to reasonable length (max 15 digits for national number)
+    digitsOnly = digitsOnly.slice(0, 15);
+    
+    setPhoneNumber(digitsOnly);
     
     // Update form data with E.164 format
-    if (cleaned.replace(/[\s\-\.]/g, '').length >= 6) {
-      updateData({ phone: formatPhoneE164(cleaned, selectedCountry) });
+    if (digitsOnly.length >= 6) {
+      updateData({ phone: buildE164(digitsOnly, selectedCountry) });
     } else {
       updateData({ phone: '' });
     }
@@ -78,13 +89,12 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     setSelectedCountry(countryCode);
     // Re-format phone with new country code
     if (phoneNumber) {
-      updateData({ phone: formatPhoneE164(phoneNumber, countryCode) });
+      updateData({ phone: buildE164(phoneNumber, countryCode) });
     }
   };
 
   // Validation: phone must have at least 6 digits (national number)
-  const phoneDigits = phoneNumber.replace(/[\s\-\.]/g, '');
-  const isPhoneValid = phoneDigits.length >= 6;
+  const isPhoneValid = phoneNumber.length >= 6;
 
   const isValid = data.full_name && data.full_name.length >= 2 && 
                   data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) &&
@@ -188,23 +198,24 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
               </SelectContent>
             </Select>
 
-            {/* Phone input */}
+            {/* Phone input - shows only national digits */}
             <Input
               id="phone"
               type="tel"
+              inputMode="numeric"
               placeholder="6 12 34 56 78"
               value={phoneNumber}
               onChange={(e) => handlePhoneChange(e.target.value)}
-              className="flex-1 bg-muted/50 border-glass-border focus:border-primary"
+              className="flex-1 bg-muted/50 border-glass-border focus:border-primary font-mono"
               required
             />
           </div>
           {phoneNumber && !isPhoneValid && (
-            <p className="text-xs text-destructive">Numéro de téléphone invalide</p>
+            <p className="text-xs text-destructive">Minimum 6 chiffres requis</p>
           )}
           {phoneNumber && isPhoneValid && (
-            <p className="text-xs text-muted-foreground">
-              Format E.164 : {data.phone}
+            <p className="text-xs text-primary font-mono">
+              → {data.phone}
             </p>
           )}
         </div>
