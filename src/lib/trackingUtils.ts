@@ -72,11 +72,70 @@ export function getTrafficSource(visit: Visit): string {
   }
 }
 
+// Behavioral profile types
+export type BehavioralProfile = 'hot' | 'engaged' | 'cold';
+
+export interface BehavioralData {
+  profile: BehavioralProfile;
+  profileLabel: string;
+  pageviews: number;
+  sessions: number;
+  firstVisitSource: string;
+  currentSource: string;
+  bonusScore: number;
+  isHotProspect: boolean;
+}
+
 // Calculate behavioral profile
 export function calculateProfile(pageviews: number): string {
   if (pageviews >= 8) return 'Prospect chaud 🔥';
   if (pageviews >= 4) return 'Prospect engagé';
   return 'Prospect';
+}
+
+// Get behavioral profile type (for scoring)
+export function getBehavioralProfileType(pageviews: number): BehavioralProfile {
+  if (pageviews >= 8) return 'hot';
+  if (pageviews >= 4) return 'engaged';
+  return 'cold';
+}
+
+// Calculate bonus score based on behavioral data
+export function calculateBehavioralBonus(data: VisitorData | null): number {
+  if (!data) return 0;
+  
+  let bonus = 0;
+  
+  // Profile bonus
+  const profileType = getBehavioralProfileType(data.pageviews);
+  if (profileType === 'hot') bonus += 15;
+  else if (profileType === 'engaged') bonus += 5;
+  
+  // Multi-session bonus (shows serious intent)
+  if (data.sessions >= 3) bonus += 5;
+  
+  return bonus;
+}
+
+// Get full behavioral data for form integration
+export function getBehavioralData(): BehavioralData | null {
+  const data = getVisitorData();
+  if (!data) return null;
+  
+  const firstVisit = data.visits[0];
+  const lastVisit = data.visits[data.visits.length - 1];
+  const profileType = getBehavioralProfileType(data.pageviews);
+  
+  return {
+    profile: profileType,
+    profileLabel: calculateProfile(data.pageviews),
+    pageviews: data.pageviews,
+    sessions: data.sessions,
+    firstVisitSource: firstVisit ? getTrafficSource(firstVisit) : 'direct',
+    currentSource: lastVisit ? getTrafficSource(lastVisit) : 'direct',
+    bonusScore: calculateBehavioralBonus(data),
+    isHotProspect: profileType === 'hot',
+  };
 }
 
 // Format date in French
