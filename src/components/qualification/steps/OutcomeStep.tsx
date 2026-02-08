@@ -20,6 +20,16 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
     setIsCalendarOpen(open);
     if (open) {
       setIsCalendarLoading(true);
+      
+      // Track calendar modal open for qualified leads
+      const dataLayer = (window as Window & { dataLayer?: Record<string, unknown>[] }).dataLayer;
+      if (dataLayer) {
+        dataLayer.push({
+          event: 'calendar_modal_open',
+          event_category: 'engagement',
+          event_label: 'qualified_lead_booking',
+        });
+      }
     }
   };
   
