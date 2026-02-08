@@ -1,8 +1,39 @@
+import { useState } from 'react';
 import { StepProps } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Building2, User, Mail, Phone } from 'lucide-react';
+import { ArrowLeft, Building2, User, Mail, Phone, ChevronDown } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+
+// Country codes with E.164 format - Francophone countries first, then Anglophone
+const COUNTRY_CODES = [
+  // Francophone countries (priority)
+  { code: 'FR', name: 'France', dialCode: '+33', flag: '🇫🇷' },
+  { code: 'BE', name: 'Belgique', dialCode: '+32', flag: '🇧🇪' },
+  { code: 'CH', name: 'Suisse', dialCode: '+41', flag: '🇨🇭' },
+  { code: 'CA', name: 'Canada', dialCode: '+1', flag: '🇨🇦' },
+  { code: 'LU', name: 'Luxembourg', dialCode: '+352', flag: '🇱🇺' },
+  { code: 'MC', name: 'Monaco', dialCode: '+377', flag: '🇲🇨' },
+  { code: 'SN', name: 'Sénégal', dialCode: '+221', flag: '🇸🇳' },
+  { code: 'CI', name: 'Côte d\'Ivoire', dialCode: '+225', flag: '🇨🇮' },
+  { code: 'MA', name: 'Maroc', dialCode: '+212', flag: '🇲🇦' },
+  { code: 'TN', name: 'Tunisie', dialCode: '+216', flag: '🇹🇳' },
+  { code: 'DZ', name: 'Algérie', dialCode: '+213', flag: '🇩🇿' },
+  // Anglophone countries
+  { code: 'US', name: 'États-Unis', dialCode: '+1', flag: '🇺🇸' },
+  { code: 'GB', name: 'Royaume-Uni', dialCode: '+44', flag: '🇬🇧' },
+  { code: 'AU', name: 'Australie', dialCode: '+61', flag: '🇦🇺' },
+  { code: 'IE', name: 'Irlande', dialCode: '+353', flag: '🇮🇪' },
+  { code: 'NZ', name: 'Nouvelle-Zélande', dialCode: '+64', flag: '🇳🇿' },
+  { code: 'ZA', name: 'Afrique du Sud', dialCode: '+27', flag: '🇿🇦' },
+] as const;
 
 interface ContactStepProps extends StepProps {
   isSubmitting: boolean;
@@ -10,8 +41,56 @@ interface ContactStepProps extends StepProps {
 }
 
 export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }: ContactStepProps) {
+  const [selectedCountry, setSelectedCountry] = useState<string>('FR');
+  const [phoneNumber, setPhoneNumber] = useState<string>('');
+
+  // Get country dial code
+  const getDialCode = (countryCode: string) => {
+    return COUNTRY_CODES.find(c => c.code === countryCode)?.dialCode || '+33';
+  };
+
+  // Format phone to E.164
+  const formatPhoneE164 = (number: string, countryCode: string): string => {
+    // Remove all non-digit characters except +
+    const cleaned = number.replace(/[^\d]/g, '');
+    // Remove leading zero if present
+    const withoutLeadingZero = cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
+    const dialCode = getDialCode(countryCode);
+    return `${dialCode}${withoutLeadingZero}`;
+  };
+
+  // Handle phone input change
+  const handlePhoneChange = (value: string) => {
+    // Only allow digits, spaces, and common separators
+    const cleaned = value.replace(/[^\d\s\-\.]/g, '');
+    setPhoneNumber(cleaned);
+    
+    // Update form data with E.164 format
+    if (cleaned.replace(/[\s\-\.]/g, '').length >= 6) {
+      updateData({ phone: formatPhoneE164(cleaned, selectedCountry) });
+    } else {
+      updateData({ phone: '' });
+    }
+  };
+
+  // Handle country change
+  const handleCountryChange = (countryCode: string) => {
+    setSelectedCountry(countryCode);
+    // Re-format phone with new country code
+    if (phoneNumber) {
+      updateData({ phone: formatPhoneE164(phoneNumber, countryCode) });
+    }
+  };
+
+  // Validation: phone must have at least 6 digits (national number)
+  const phoneDigits = phoneNumber.replace(/[\s\-\.]/g, '');
+  const isPhoneValid = phoneDigits.length >= 6;
+
   const isValid = data.full_name && data.full_name.length >= 2 && 
-                  data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
+                  data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) &&
+                  isPhoneValid;
+
+  const selectedCountryData = COUNTRY_CODES.find(c => c.code === selectedCountry);
 
   return (
     <div className="space-y-8 animate-fade-in-up">
@@ -73,20 +152,61 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
           />
         </div>
 
-        {/* Phone */}
+        {/* Phone with country selector */}
         <div className="space-y-2">
           <Label htmlFor="phone" className="flex items-center gap-2">
             <Phone className="w-4 h-4 text-muted-foreground" />
-            Téléphone <span className="text-muted-foreground text-xs">(optionnel)</span>
+            Téléphone *
           </Label>
-          <Input
-            id="phone"
-            type="tel"
-            placeholder="+33 6 12 34 56 78"
-            value={data.phone || ''}
-            onChange={(e) => updateData({ phone: e.target.value })}
-            className="bg-muted/50 border-glass-border focus:border-primary"
-          />
+          <div className="flex gap-2">
+            {/* Country selector */}
+            <Select value={selectedCountry} onValueChange={handleCountryChange}>
+              <SelectTrigger className="w-[130px] bg-muted/50 border-glass-border focus:border-primary">
+                <SelectValue>
+                  {selectedCountryData && (
+                    <span className="flex items-center gap-2">
+                      <span>{selectedCountryData.flag}</span>
+                      <span className="text-sm">{selectedCountryData.dialCode}</span>
+                    </span>
+                  )}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent className="max-h-[280px] bg-background border-glass-border">
+                {COUNTRY_CODES.map((country) => (
+                  <SelectItem 
+                    key={country.code} 
+                    value={country.code}
+                    className="cursor-pointer"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{country.flag}</span>
+                      <span className="text-sm font-medium">{country.dialCode}</span>
+                      <span className="text-xs text-muted-foreground">{country.name}</span>
+                    </span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Phone input */}
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="6 12 34 56 78"
+              value={phoneNumber}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              className="flex-1 bg-muted/50 border-glass-border focus:border-primary"
+              required
+            />
+          </div>
+          {phoneNumber && !isPhoneValid && (
+            <p className="text-xs text-destructive">Numéro de téléphone invalide</p>
+          )}
+          {phoneNumber && isPhoneValid && (
+            <p className="text-xs text-muted-foreground">
+              Format E.164 : {data.phone}
+            </p>
+          )}
         </div>
       </div>
 

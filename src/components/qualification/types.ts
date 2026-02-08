@@ -18,7 +18,7 @@ export const leadSchema = z.object({
   company_name: z.string().optional(),
   full_name: z.string().min(2, "Prénom et nom requis").max(100),
   email: z.string().email("Email invalide").max(255),
-  phone: z.string().optional(),
+  phone: z.string().min(8, "Téléphone requis").regex(/^\+\d{8,15}$/, "Format E.164 invalide"),
 });
 
 export type LeadFormData = z.infer<typeof leadSchema>;
