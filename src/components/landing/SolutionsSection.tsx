@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Check, Sparkles } from "lucide-react";
 
@@ -115,8 +116,9 @@ const SolutionsSection = () => {
                 variant={solution.featured ? "heroGradient" : "heroGradientOutline"}
                 size="lg"
                 className="w-full"
+                asChild
               >
-                {solution.cta}
+                <Link to="/contact">{solution.cta}</Link>
               </Button>
             </div>
           ))}

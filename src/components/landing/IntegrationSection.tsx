@@ -34,8 +34,8 @@ const IntegrationSection = () => {
               key={item.number}
               className="text-center md:text-left group"
             >
-              {/* Large Number */}
-              <span className="text-7xl md:text-8xl font-black text-primary/20 group-hover:text-primary/40 transition-colors duration-500 leading-none">
+              {/* Large Number with Gradient */}
+              <span className="text-7xl md:text-8xl font-black leading-none text-gradient-primary opacity-30 group-hover:opacity-50 transition-opacity duration-500">
                 {item.number}
               </span>
 
