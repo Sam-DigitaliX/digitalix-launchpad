@@ -112,10 +112,13 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
       setCurrentStep(totalSteps);
       
       toast({
-        title: "Demande envoyée",
+        title: scoringResult.isQualified ? "🎉 Félicitations !" : "Demande envoyée",
         description: scoringResult.isQualified 
-          ? "Nous allons vous recontacter rapidement !" 
+          ? "Vous êtes éligible à un audit tracking gratuit !" 
           : "Consultez nos ressources gratuites.",
+        className: scoringResult.isQualified 
+          ? "bg-gradient-to-r from-primary to-secondary text-white border-0 shadow-lg shadow-primary/25" 
+          : undefined,
       });
       
     } catch (err) {
