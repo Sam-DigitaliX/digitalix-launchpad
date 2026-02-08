@@ -1,15 +1,19 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScoringResult } from '../types';
-import { Calendar, Download, CheckCircle2, XCircle, ArrowRight } from 'lucide-react';
+import { Calendar, Download, CheckCircle2, ArrowRight, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+const CALENDAR_URL = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0g1W0t1KcMGk_wBbT28y5PEnG5bhavF3_YMB3P8H-H2SbVDoAv9ZoC2yyLmLTvXgLoIfYbSgCx?gv=true';
 
 interface OutcomeStepProps {
   result: ScoringResult;
-  onBookCall?: () => void;
   onDownloadResource?: () => void;
 }
 
-export function OutcomeStep({ result, onBookCall, onDownloadResource }: OutcomeStepProps) {
+export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   if (result.isQualified) {
     return (
       <div className="space-y-8 animate-fade-in-up text-center">
@@ -51,7 +55,7 @@ export function OutcomeStep({ result, onBookCall, onDownloadResource }: OutcomeS
           <Button 
             variant="heroGradient" 
             size="xl"
-            onClick={onBookCall}
+            onClick={() => setIsCalendarOpen(true)}
             className="w-full gap-2"
           >
             <Calendar className="w-5 h-5" />
@@ -59,6 +63,25 @@ export function OutcomeStep({ result, onBookCall, onDownloadResource }: OutcomeS
             <ArrowRight className="w-5 h-5" />
           </Button>
         </div>
+
+        {/* Calendar Modal */}
+        <Dialog open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+          <DialogContent className="max-w-2xl h-[80vh] p-0 overflow-hidden">
+            <DialogTitle className="sr-only">Réserver un créneau</DialogTitle>
+            <button
+              onClick={() => setIsCalendarOpen(false)}
+              className="absolute right-3 top-3 z-10 p-1.5 rounded-full bg-background/80 hover:bg-background transition-colors"
+              aria-label="Fermer"
+            >
+              <X className="w-4 h-4" />
+            </button>
+            <iframe
+              src={CALENDAR_URL}
+              className="w-full h-full border-0"
+              title="Réserver un rendez-vous"
+            />
+          </DialogContent>
+        </Dialog>
       </div>
     );
   }
