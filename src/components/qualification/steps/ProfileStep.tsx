@@ -14,7 +14,7 @@ const ICONS: Record<string, React.ReactNode> = {
   other: <HelpCircle className="w-6 h-6" />,
 };
 
-export function ProfileStep({ data, updateData, onNext }: StepProps) {
+export function ProfileStep({ data, updateData, onNext, isHotProspect }: StepProps) {
   const handleSelect = (value: string) => {
     updateData({ profile_type: value });
   };
@@ -23,10 +23,17 @@ export function ProfileStep({ data, updateData, onNext }: StepProps) {
     <div className="space-y-8 animate-fade-in-up">
       <div className="text-center space-y-3">
         <h2 className="text-2xl md:text-3xl font-bold">
-          Quel est votre <span className="text-gradient-primary">profil</span> ?
+          {isHotProspect ? (
+            <>On voit que vous êtes <span className="text-gradient-primary">intéressé</span> !</>
+          ) : (
+            <>Quel est votre <span className="text-gradient-primary">profil</span> ?</>
+          )}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Pour vous proposer l'accompagnement le plus adapté
+          {isHotProspect 
+            ? "Formulaire express : quelques infos et on vous rappelle rapidement"
+            : "Pour vous proposer l'accompagnement le plus adapté"
+          }
         </p>
       </div>
 

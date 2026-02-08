@@ -28,6 +28,7 @@ export interface StepProps {
   updateData: (updates: Partial<LeadFormData>) => void;
   onNext: () => void;
   onPrev?: () => void;
+  isHotProspect?: boolean;
 }
 
 // Options de profil
@@ -90,11 +91,13 @@ export const PRIORITY_OPTIONS = [
 // Scoring logic
 export interface ScoringResult {
   score: number;
+  baseScore: number;
+  behavioralBonus: number;
   isQualified: boolean;
   disqualifyReason?: string;
 }
 
-export function calculateScore(data: Partial<LeadFormData>): ScoringResult {
+export function calculateScore(data: Partial<LeadFormData>, behavioralBonus: number = 0): ScoringResult {
   let score = 0;
   let disqualifyReason: string | undefined;
 
@@ -145,8 +148,13 @@ export function calculateScore(data: Partial<LeadFormData>): ScoringResult {
     score += priority.score;
   }
 
+  const baseScore = score;
+  
+  // Add behavioral bonus (doesn't override disqualification)
+  score += behavioralBonus;
+
   // Qualification threshold: 30 points minimum without disqualification
   const isQualified = score >= 30 && !disqualifyReason;
 
-  return { score, isQualified, disqualifyReason };
+  return { score, baseScore, behavioralBonus, isQualified, disqualifyReason };
 }
