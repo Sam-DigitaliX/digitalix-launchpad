@@ -45,8 +45,7 @@ const TrackingDemoSection = () => {
   ];
 
   const handleCTAClick = () => {
-    // Navigate to contact or Calendly
-    window.open('https://calendly.com/digitalix', '_blank');
+    window.location.href = '/contact';
   };
 
   return (
