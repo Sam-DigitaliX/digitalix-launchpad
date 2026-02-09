@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScoringResult } from '../types';
-import { Calendar, Download, CheckCircle2, ArrowRight, X, Loader2 } from 'lucide-react';
+import { Calendar, Download, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const CALENDAR_URL = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0g1W0t1KcMGk_wBbT28y5PEnG5bhavF3_YMB3P8H-H2SbVDoAv9ZoC2yyLmLTvXgLoIfYbSgCx?gv=true';

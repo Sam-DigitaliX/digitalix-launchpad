@@ -238,7 +238,7 @@ const ProblemSolutionSection = () => {
               <div className="bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl p-6 md:p-10 shadow-2xl">
                 {/* Benefits Grid */}
                 <div className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-8">
-                  {benefits.map((benefit, index) => (
+                  {benefits.map((benefit) => (
                     <div 
                       key={benefit}
                       className="flex items-center gap-3 group"
