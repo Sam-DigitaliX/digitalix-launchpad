@@ -114,8 +114,9 @@ const ProblemSolutionSection = () => {
               ⚠️ Le problème
             </span>
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
-              Votre tracking client-side vous fait perdre{" "}
-              <span className="text-destructive">30% de vos conversions.</span>
+              Votre tracking client-side vous fait perdre
+              <br className="hidden lg:block" />
+              <span className="text-destructive"> 30% de vos conversions.</span>
             </h2>
             <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
               iOS 17, les AdBlockers et le RGPD rendent votre tracking actuel{" "}
