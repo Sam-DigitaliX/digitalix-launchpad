@@ -19,13 +19,14 @@ const Index = () => {
 
   useEffect(() => {
     if (location.hash) {
-      // Small delay to ensure DOM is ready
+      const SCROLL_DELAY_MS = 100;
       setTimeout(() => {
-        const element = document.querySelector(location.hash);
+        const id = location.hash.replace(/^#/, '');
+        const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: "smooth", block: "start" });
         }
-      }, 100);
+      }, SCROLL_DELAY_MS);
     }
   }, [location.hash]);
   return (

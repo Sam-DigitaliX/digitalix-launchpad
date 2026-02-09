@@ -1,11 +1,12 @@
+import { useMemo, useCallback } from 'react';
 import { useVisitorTracking } from '@/hooks/useVisitorTracking';
 import { Button } from '@/components/ui/button';
 import { Trash2, ArrowRight, Activity } from 'lucide-react';
 
 const TrackingDemoSection = () => {
-  const { displayData, deleteData, isTracking } = useVisitorTracking();
+  const { displayData, deleteData } = useVisitorTracking();
 
-  const stats = [
+  const stats = useMemo(() => [
     {
       id: 'firstVisit',
       value: displayData?.firstVisit || '--',
@@ -42,11 +43,11 @@ const TrackingDemoSection = () => {
       label: 'Nombre de sessions',
       isPrimary: true,
     },
-  ];
+  ], [displayData]);
 
-  const handleCTAClick = () => {
+  const handleCTAClick = useCallback(() => {
     window.location.href = '/contact';
-  };
+  }, []);
 
   return (
     <section className="relative py-16 md:py-24 bg-card overflow-hidden">

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase';
 import { toast } from '@/hooks/use-toast';
-import { LeadFormData, calculateScore, ScoringResult } from './types';
+import { LeadFormData, leadSchema, calculateScore, ScoringResult } from './types';
 import { StepProgress } from './StepProgress';
 import { ProfileStep } from './steps/ProfileStep';
 import { SituationStep } from './steps/SituationStep';
@@ -67,25 +67,49 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   };
 
   const handleSubmit = async () => {
+    // Validate required fields before submission
+    if (!formData.profile_type || !formData.full_name || !formData.email) {
+      toast({
+        title: "Champs manquants",
+        description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    // Validate with Zod schema
+    const validation = leadSchema.safeParse(formData);
+    if (!validation.success) {
+      const firstError = validation.error.errors[0];
+      toast({
+        title: "Validation",
+        description: firstError?.message ?? "Données invalides. Veuillez vérifier le formulaire.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsSubmitting(true);
-    
+
     try {
       // Calculate score with behavioral bonus
       const behavioralBonus = behavioralData?.bonusScore ?? 0;
       const scoringResult = calculateScore(formData, behavioralBonus);
-      
+
+      const validData = validation.data;
+
       // Save to Supabase with behavioral data
-      const { error } = await supabase.from('leads').insert({
-        profile_type: formData.profile_type!,
-        current_situation: formData.current_situation,
-        pain_points: formData.pain_points,
-        budget_range: formData.budget_range,
-        timeline: formData.timeline,
-        priority: formData.priority,
-        company_name: formData.company_name,
-        full_name: formData.full_name!,
-        email: formData.email!,
-        phone: formData.phone,
+      const { data: insertedData, error } = await supabase.from('leads').insert({
+        profile_type: validData.profile_type,
+        current_situation: validData.current_situation,
+        pain_points: validData.pain_points,
+        budget_range: validData.budget_range,
+        timeline: validData.timeline,
+        priority: validData.priority,
+        company_name: validData.company_name,
+        full_name: validData.full_name,
+        email: validData.email,
+        phone: validData.phone,
         qualification_score: scoringResult.score,
         is_qualified: scoringResult.isQualified,
         // Behavioral enrichment data
@@ -95,13 +119,24 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         first_visit_source: behavioralData?.firstVisitSource,
         current_visit_source: behavioralData?.currentSource,
         behavioral_bonus: behavioralBonus,
-      });
+      }).select();
 
       if (error) {
-        console.error('Error saving lead:', error);
+        const isNetworkError = error.message?.includes('fetch') || error.message?.includes('network');
         toast({
           title: "Erreur",
-          description: "Une erreur est survenue. Veuillez réessayer.",
+          description: isNetworkError
+            ? "Problème de connexion. Vérifiez votre réseau et réessayez."
+            : "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      if (!insertedData || insertedData.length === 0) {
+        toast({
+          title: "Erreur",
+          description: "L'envoi n'a pas pu être confirmé. Veuillez réessayer.",
           variant: "destructive",
         });
         return;
@@ -110,22 +145,21 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
       // Show result
       setResult(scoringResult);
       setCurrentStep(totalSteps);
-      
+
       toast({
-        title: scoringResult.isQualified ? "🎉 Félicitations !" : "Demande envoyée",
-        description: scoringResult.isQualified 
-          ? "Vous êtes éligible à un audit tracking gratuit !" 
+        title: scoringResult.isQualified ? "Félicitations !" : "Demande envoyée",
+        description: scoringResult.isQualified
+          ? "Vous êtes éligible à un audit tracking gratuit !"
           : "Consultez nos ressources gratuites.",
-        className: scoringResult.isQualified 
-          ? "bg-gradient-to-r from-primary to-secondary text-white border-0 shadow-lg shadow-primary/25" 
+        className: scoringResult.isQualified
+          ? "bg-gradient-to-r from-primary to-secondary text-white border-0 shadow-lg shadow-primary/25"
           : undefined,
       });
-      
+
     } catch (err) {
-      console.error('Submit error:', err);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        title: "Erreur réseau",
+        description: "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.",
         variant: "destructive",
       });
     } finally {

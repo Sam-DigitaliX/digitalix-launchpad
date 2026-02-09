@@ -75,6 +75,13 @@ export function getTrafficSource(visit: Visit): string {
 // Behavioral profile types
 export type BehavioralProfile = 'hot' | 'engaged' | 'cold';
 
+// Single source of truth for profile thresholds
+const PROFILE_THRESHOLDS: Record<BehavioralProfile, { min: number; label: string }> = {
+  hot:     { min: 8, label: 'Prospect chaud' },
+  engaged: { min: 4, label: 'Prospect engag\u00e9' },
+  cold:    { min: 0, label: 'Prospect' },
+} as const;
+
 export interface BehavioralData {
   profile: BehavioralProfile;
   profileLabel: string;
@@ -86,18 +93,17 @@ export interface BehavioralData {
   isHotProspect: boolean;
 }
 
-// Calculate behavioral profile
-export function calculateProfile(pageviews: number): string {
-  if (pageviews >= 8) return 'Prospect chaud 🔥';
-  if (pageviews >= 4) return 'Prospect engagé';
-  return 'Prospect';
-}
-
 // Get behavioral profile type (for scoring)
 export function getBehavioralProfileType(pageviews: number): BehavioralProfile {
-  if (pageviews >= 8) return 'hot';
-  if (pageviews >= 4) return 'engaged';
+  if (pageviews >= PROFILE_THRESHOLDS.hot.min) return 'hot';
+  if (pageviews >= PROFILE_THRESHOLDS.engaged.min) return 'engaged';
   return 'cold';
+}
+
+// Calculate behavioral profile label for display
+export function calculateProfile(pageviews: number): string {
+  const profile = getBehavioralProfileType(pageviews);
+  return PROFILE_THRESHOLDS[profile].label;
 }
 
 // Calculate bonus score based on behavioral data
