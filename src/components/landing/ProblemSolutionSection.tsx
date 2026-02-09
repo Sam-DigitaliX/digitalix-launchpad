@@ -226,8 +226,6 @@ const ProblemSolutionSection = () => {
                 className="w-full h-auto"
               />
               
-              {/* Gradient Overlay for text readability */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
             </div>
 
             {/* Benefits Overlay - Bottom */}
