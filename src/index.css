@@ -187,8 +187,9 @@
 }
 
 .logo-scroll-track {
+  display: inline-flex;
   animation: scroll-left 60s linear infinite;
-  width: max-content;
+  will-change: transform;
 }
 
 @keyframes fade-in-up {
