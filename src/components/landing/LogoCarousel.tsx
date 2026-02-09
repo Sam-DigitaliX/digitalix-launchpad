@@ -41,7 +41,7 @@ const LogoCarousel = () => {
       <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
       
       {/* Scrolling track - duplicate logos for seamless infinite loop */}
-      <div className="flex items-center justify-start h-full logo-scroll-track">
+      <div className="flex items-center justify-start h-full logo-scroll-track" style={{ willChange: 'transform', minWidth: 'max-content' }}>
         {[...clientLogos, ...clientLogos].map((logo, index) => (
           <div
             key={index}
