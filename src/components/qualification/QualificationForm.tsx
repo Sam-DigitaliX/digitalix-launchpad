@@ -98,6 +98,15 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
 
       const validData = validation.data;
 
+      if (!supabase) {
+        toast({
+          title: "Configuration manquante",
+          description: "Le service de base de données n'est pas configuré.",
+          variant: "destructive",
+        });
+        return;
+      }
+
       // Save to Supabase with behavioral data
       const { data: insertedData, error } = await supabase.from('leads').insert({
         profile_type: validData.profile_type,
