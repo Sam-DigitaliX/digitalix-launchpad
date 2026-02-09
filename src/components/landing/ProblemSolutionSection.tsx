@@ -177,8 +177,8 @@ const ProblemSolutionSection = () => {
           </div>
 
           {/* Transition Arrow */}
-          <div className="flex justify-center mt-16 md:mt-20">
-            <div className="flex flex-col items-center gap-1">
+          <div className="flex justify-center mt-20 md:mt-28 mb-[-2rem]">
+            <div className="flex flex-col items-center gap-2">
               <span className="text-sm text-muted-foreground uppercase tracking-wider">La solution</span>
               <div className="w-10 h-10 rounded-full border-2 border-primary/50 flex items-center justify-center animate-bounce">
                 <ArrowDown className="w-5 h-5 text-primary" />
@@ -191,7 +191,7 @@ const ProblemSolutionSection = () => {
       {/* SOLUTION SECTION - Bright with Lottie */}
       <section 
         ref={lottieRef}
-        className="relative py-24 md:py-32 overflow-hidden"
+        className="relative py-16 md:py-20 overflow-hidden"
       >
         {/* Gradient Background */}
         <div className="absolute inset-0 bg-gradient-to-b from-card via-primary/5 to-background" />
