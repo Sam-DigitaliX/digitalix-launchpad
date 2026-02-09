@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import HeroSection from "@/components/landing/HeroSection";
 import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
+import ReviewsCarouselSection from "@/components/landing/ReviewsCarouselSection";
 import ClientLogosSection from "@/components/landing/ClientLogosSection";
 import ProblemSolutionSection from "@/components/landing/ProblemSolutionSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
@@ -35,6 +36,7 @@ const Index = () => {
       <main>
         <HeroSection />
         <TrackingDemoSection />
+        <ReviewsCarouselSection />
         <ProblemSolutionSection />
         <BenefitsSection />
         <SolutionsSection />
