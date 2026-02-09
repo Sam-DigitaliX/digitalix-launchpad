@@ -98,6 +98,8 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
             
             <iframe
               src={CALENDAR_URL}
+              sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+              referrerPolicy="no-referrer-when-downgrade"
               className={cn(
                 "w-full h-full border-0 relative z-[1]",
                 isCalendarLoading && "opacity-0"

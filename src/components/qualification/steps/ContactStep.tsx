@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import { StepProps } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { ArrowLeft, Building2, User, Mail, Phone, ChevronDown } from 'lucide-react';
+import { ArrowLeft, Building2, User, Mail, Phone } from 'lucide-react';
 import {
   Select,
   SelectContent,
@@ -43,6 +43,15 @@ interface ContactStepProps extends StepProps {
 export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }: ContactStepProps) {
   const [selectedCountry, setSelectedCountry] = useState<string>('FR');
   const [phoneNumber, setPhoneNumber] = useState<string>('');
+  const phoneDebounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Debounced phone update to avoid re-rendering parent on every keystroke
+  const debouncedUpdatePhone = useCallback((phone: string) => {
+    clearTimeout(phoneDebounceRef.current);
+    phoneDebounceRef.current = setTimeout(() => {
+      updateData({ phone });
+    }, 300);
+  }, [updateData]);
 
   // Get country dial code
   const getDialCode = (countryCode: string) => {
@@ -76,11 +85,12 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     
     setPhoneNumber(digitsOnly);
     
-    // Update form data with E.164 format
-    if (digitsOnly.length >= 6) {
-      updateData({ phone: buildE164(digitsOnly, selectedCountry) });
+    // Update form data with E.164 format (debounced)
+    const e164 = buildE164(digitsOnly, selectedCountry);
+    if (/^\+\d{8,15}$/.test(e164)) {
+      debouncedUpdatePhone(e164);
     } else {
-      updateData({ phone: '' });
+      debouncedUpdatePhone('');
     }
   };
 
@@ -93,11 +103,12 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     }
   };
 
-  // Validation: phone must have at least 6 digits (national number)
-  const isPhoneValid = phoneNumber.length >= 6;
+  // Validation: phone must produce a valid E.164 string (8-15 digits after +)
+  const e164Phone = phoneNumber ? buildE164(phoneNumber, selectedCountry) : '';
+  const isPhoneValid = /^\+\d{8,15}$/.test(e164Phone);
 
-  const isValid = data.full_name && data.full_name.length >= 2 && 
-                  data.email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email) &&
+  const isValid = data.full_name && data.full_name.length >= 2 &&
+                  data.email && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(data.email) &&
                   isPhoneValid;
 
   const selectedCountryData = COUNTRY_CODES.find(c => c.code === selectedCountry);
@@ -211,7 +222,7 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
             />
           </div>
           {phoneNumber && !isPhoneValid && (
-            <p className="text-xs text-destructive">Minimum 6 chiffres requis</p>
+            <p className="text-xs text-destructive">Numéro invalide (vérifiez le nombre de chiffres)</p>
           )}
           {phoneNumber && isPhoneValid && (
             <p className="text-xs text-primary font-mono">
