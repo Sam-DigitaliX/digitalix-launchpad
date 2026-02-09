@@ -212,11 +212,10 @@ const ProblemSolutionSection = () => {
             </h2>
           </div>
 
-          {/* Lottie Animation Full-Width with Overlay */}
-          <div className="relative max-w-5xl mx-auto">
-            {/* Lottie Container */}
+          {/* Lottie in Glassmorphism Card */}
+          <div className="max-w-4xl mx-auto">
             <div 
-              className={`relative transition-all duration-1000 ${
+              className={`relative rounded-2xl border border-primary/15 bg-card/40 backdrop-blur-xl p-4 md:p-8 shadow-[0_0_60px_-8px_hsl(262_83%_58%/0.25),0_0_20px_-4px_hsl(262_83%_68%/0.15)] transition-all duration-1000 ${
                 isLottieVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
@@ -225,46 +224,39 @@ const ProblemSolutionSection = () => {
                 loop={true}
                 className="w-full h-auto"
               />
-              
             </div>
+          </div>
 
-            {/* Benefits Overlay - Bottom */}
-            <div 
-              className={`relative mt-8 md:mt-12 transition-all duration-700 delay-500 ${
-                isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
-              }`}
-            >
-              <div className="bg-background/80 backdrop-blur-xl border border-border/50 rounded-2xl p-6 md:p-10 shadow-2xl">
-                {/* Benefits Grid */}
-                <div className="grid sm:grid-cols-2 gap-4 md:gap-6 mb-8">
-                  {benefits.map((benefit) => (
-                    <div 
-                      key={benefit}
-                      className="flex items-center gap-3 group"
-                    >
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                        <CheckCircle className="w-5 h-5 text-primary" />
-                      </div>
-                      <span className="text-foreground font-medium">{benefit}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Result Statement */}
-                <div className="text-center pt-6 border-t border-border/50">
-                  <p className="text-lg text-muted-foreground">
-                    Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des <span className="font-bold text-foreground">données fiables</span>.
-                  </p>
-                </div>
-
-                {/* CTA */}
-                <div className="flex justify-center mt-8">
-                  <Button variant="heroGradient" size="xl">
-                    Je réserve mon audit tracking à 0€
-                  </Button>
-                </div>
+          {/* Benefits Mini-Cards */}
+          <div 
+            className={`grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mt-10 md:mt-14 transition-all duration-700 delay-500 ${
+              isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            {benefits.map((benefit, index) => (
+              <div 
+                key={benefit}
+                className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 flex items-center gap-3 hover:border-primary/30 transition-colors"
+                style={{ transitionDelay: `${600 + index * 100}ms` }}
+              >
+                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                <span className="text-sm text-foreground font-medium">{benefit}</span>
               </div>
-            </div>
+            ))}
+          </div>
+
+          {/* Result + CTA */}
+          <div 
+            className={`text-center mt-10 md:mt-14 max-w-3xl mx-auto transition-all duration-700 delay-700 ${
+              isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+            }`}
+          >
+            <p className="text-lg text-muted-foreground mb-8">
+              Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des <span className="font-bold text-foreground">données fiables</span>.
+            </p>
+            <Button variant="heroGradient" size="xl">
+              Je réserve mon audit tracking à 0€
+            </Button>
           </div>
         </div>
       </section>
