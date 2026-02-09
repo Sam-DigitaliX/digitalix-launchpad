@@ -1,7 +1,7 @@
 import { StepProps, BUDGET_OPTIONS, TIMELINE_OPTIONS, PRIORITY_OPTIONS } from '../types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Check, Wallet, Clock, Target } from 'lucide-react';
+import { ArrowLeft, Wallet, Clock, Target } from 'lucide-react';
 
 export function NeedStep({ data, updateData, onNext, onPrev }: StepProps) {
   return (

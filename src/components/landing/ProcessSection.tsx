@@ -1,4 +1,4 @@
-import { Search, Server, CheckCircle, Activity, FileSearch, Cog, Shield, TrendingUp } from "lucide-react";
+import { CheckCircle, Activity, FileSearch, Cog, Shield, TrendingUp } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 const steps = [

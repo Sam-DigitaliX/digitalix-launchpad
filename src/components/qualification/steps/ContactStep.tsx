@@ -58,11 +58,7 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     return COUNTRY_CODES.find(c => c.code === countryCode)?.dialCode || '+33';
   };
 
-  // Format national number (remove leading zero, keep only digits)
-  const formatNationalNumber = (number: string): string => {
-    const cleaned = number.replace(/[^\d]/g, '');
-    return cleaned.startsWith('0') ? cleaned.slice(1) : cleaned;
-  };
+
 
   // Build E.164 format
   const buildE164 = (nationalNumber: string, countryCode: string): string => {

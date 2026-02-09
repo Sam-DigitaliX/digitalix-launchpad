@@ -65,10 +65,10 @@ const TrackingDemoSection = () => {
       />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-[1400px] relative z-10">
-        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+        <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
           
           {/* Left Column - Explanatory Card */}
-          <div className="bg-muted/60 backdrop-blur-xl rounded-xl border border-border/50 p-6 md:p-8 shadow-[0_0_60px_hsl(var(--primary)_/_0.15)]">
+          <div className="bg-muted/60 backdrop-blur-xl rounded-xl border border-border/50 p-4 sm:p-6 md:p-8 shadow-[0_0_60px_hsl(var(--primary)_/_0.15)]">
             {/* Live Demo Badge */}
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="relative flex h-3 w-3">
@@ -81,19 +81,19 @@ const TrackingDemoSection = () => {
             </div>
 
             {/* Title */}
-            <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-foreground mb-3 md:mb-4">
               Découvrez votre tracking en{' '}
               <span className="text-gradient-primary">temps réel</span>
             </h3>
 
             {/* Description */}
-            <p className="text-muted-foreground mb-6 text-base leading-relaxed">
+            <p className="text-muted-foreground mb-4 md:mb-6 text-sm sm:text-base leading-relaxed">
               Depuis votre arrivée sur ce site, nous avons collecté et analysé ces données 
               sur votre navigation. C'est <strong className="text-foreground">exactement ce que nous mettons en place</strong> pour vos clients.
             </p>
 
             {/* Privacy Note */}
-            <div className="flex items-start gap-3 p-4 bg-background/50 rounded-lg border border-border/30 mb-6">
+            <div className="flex items-start gap-3 p-3 sm:p-4 bg-background/50 rounded-lg border border-border/30 mb-4 md:mb-6">
               <Activity className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <p className="text-sm text-muted-foreground">
                 <strong className="text-foreground">100% local</strong> — Ces données sont stockées uniquement sur votre appareil 
@@ -126,28 +126,19 @@ const TrackingDemoSection = () => {
           </div>
 
           {/* Right Column - Stats Grid */}
-          <div className="grid grid-cols-2 gap-3 md:gap-4">
-            {stats.map((stat, index) => (
+          <div className="grid grid-cols-2 gap-2 sm:gap-3 md:gap-4 w-full">
+            {stats.map((stat) => (
               <div 
                 key={stat.id}
-                className={`
-                  bg-muted/60 backdrop-blur-xl rounded-xl border border-border/50 
-                  p-4 md:p-6 text-center 
-                  hover:border-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)_/_0.1)]
-                  transition-all duration-300
-                  ${index === 4 ? 'col-span-2 md:col-span-1' : ''}
-                `}
+                className="bg-muted/60 backdrop-blur-xl rounded-lg sm:rounded-xl border border-border/50 p-3 sm:p-4 md:p-6 text-center hover:border-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)_/_0.1)] transition-all duration-300"
               >
                 <div 
                   id={stat.id}
-                  className={`
-                    text-xl md:text-2xl lg:text-3xl font-bold mb-2 truncate
-                    ${stat.isPrimary ? 'text-primary' : 'text-secondary'}
-                  `}
+                  className={`text-base sm:text-xl md:text-2xl lg:text-3xl font-bold mb-1 sm:mb-2 truncate ${stat.isPrimary ? 'text-primary' : 'text-secondary'}`}
                 >
                   {stat.value}
                 </div>
-                <p className="text-xs md:text-sm text-muted-foreground">
+                <p className="text-[10px] sm:text-xs md:text-sm text-muted-foreground leading-tight">
                   {stat.label}
                 </p>
               </div>

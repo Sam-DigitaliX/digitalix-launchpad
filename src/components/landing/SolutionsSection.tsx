@@ -62,7 +62,7 @@ const SolutionsSection = () => {
 
         {/* Solutions Grid */}
         <div className="grid lg:grid-cols-3 gap-6 max-w-6xl mx-auto items-stretch">
-          {solutions.map((solution, index) => (
+          {solutions.map((solution) => (
             <div
               key={solution.tier}
               className={`relative glass-card p-8 flex flex-col overflow-visible ${
