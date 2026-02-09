@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Lottie from "lottie-react";
 import serverSideAnimation from "@/assets/server-side-schema.json";
 import AdblockIcon from "@/assets/icon-adblock.png";
@@ -48,6 +49,7 @@ const benefits = [
 ];
 
 const ProblemSolutionSection = () => {
+  const navigate = useNavigate();
   const [isLottieVisible, setIsLottieVisible] = useState(false);
   const lottieRef = useRef<HTMLDivElement>(null);
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
@@ -254,7 +256,7 @@ const ProblemSolutionSection = () => {
             <p className="text-lg text-muted-foreground mb-8">
               Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des <span className="font-bold text-foreground">données fiables</span>.
             </p>
-            <Button variant="heroGradient" size="xl">
+            <Button variant="heroGradient" size="xl" onClick={() => navigate('/contact')}>
               Je réserve mon audit tracking à 0€
             </Button>
           </div>
