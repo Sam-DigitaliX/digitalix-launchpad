@@ -72,8 +72,8 @@ const TrackingDemoSection = () => {
             {/* Live Demo Badge */}
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-destructive opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-destructive"></span>
               </span>
               <span className="px-3 py-1 bg-gradient-to-r from-primary to-secondary text-primary-foreground text-sm font-bold rounded-full">
                 DÉMONSTRATION LIVE
