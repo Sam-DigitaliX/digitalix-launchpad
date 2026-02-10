@@ -22,8 +22,8 @@ const problems = [
   {
     icon: AlgoIcon,
     title: "Algos Aveugles",
-    stat: "-20%",
-    statLabel: "CPA après intervention",
+    stat: "+20%",
+    statLabel: "CPA anormalement élevé",
     description: "Vos algorithmes publicitaires dépensent votre budget au hasard sans données complètes.",
     barWidth: "80%",
     barColor: "bg-gradient-to-r from-primary to-secondary",
