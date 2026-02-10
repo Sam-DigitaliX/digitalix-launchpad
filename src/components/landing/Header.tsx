@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Menu, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import logo from "@/assets/digitalix-logo.png";
 
 const Header = () => {
@@ -105,24 +106,9 @@ const Header = () => {
 
           {/* CTA Button */}
           <div className="hidden md:block">
-            <Link
-              to="/contact"
-              className="relative inline-flex items-center justify-center px-6 py-3 rounded-xl overflow-hidden group"
-            >
-              {/* Glow background */}
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md group-hover:blur-lg transition-all" />
-
-              {/* Gradient border */}
-              <div className="absolute inset-0 rounded-xl opacity-100 group-hover:opacity-80 transition-opacity bg-gradient-to-r from-primary to-secondary" />
-
-              {/* Button background */}
-              <div className="absolute inset-[1px] bg-background rounded-lg" />
-
-              {/* Text */}
-              <span className="relative text-sm font-semibold text-gradient-primary">
-                Réserver mon Audit à 0€
-              </span>
-            </Link>
+            <Button variant="heroGradient" size="lg" asChild>
+              <Link to="/contact">Réserver mon Audit à 0€</Link>
+            </Button>
           </div>
 
           {/* Mobile Menu Toggle */}
@@ -168,25 +154,11 @@ const Header = () => {
               )}
 
               {/* CTA Button mobile */}
-              <Link
-                to="/contact"
-                className="relative inline-flex items-center justify-center px-6 py-3 rounded-full overflow-hidden group mt-4"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {/* Glow background */}
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500/30 via-cyan-500/30 to-cyan-500/30 blur-md" />
-
-                {/* Gradient border */}
-                <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary to-secondary" />
-
-                {/* Button background */}
-                <div className="absolute inset-[1px] bg-background rounded-full" />
-
-                {/* Text */}
-                <span className="relative text-sm font-semibold text-gradient-primary">
+              <Button variant="heroGradient" size="lg" className="w-full mt-4" asChild>
+                <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)}>
                   Réserver mon Audit à 0€
-                </span>
-              </Link>
+                </Link>
+              </Button>
             </nav>
           </div>
         )}
