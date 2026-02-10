@@ -181,8 +181,8 @@ const ProblemSolutionSection = () => {
           {/* Transition Arrow */}
           <div className="flex justify-center mt-20 md:mt-28 mb-[-2rem]">
           <div className="flex flex-col items-center gap-3">
-              <h3 className="text-lg md:text-xl font-semibold text-muted-foreground text-center max-w-md">
-                Comment rendre vos campagnes <span className="text-foreground">à nouveau rentables</span> ?
+              <h3 className="text-xl md:text-2xl lg:text-3xl font-bold text-muted-foreground text-center max-w-lg">
+                Comment rendre vos campagnes <span className="text-gradient-primary">à nouveau rentables</span> ?
               </h3>
               <div className="w-10 h-10 rounded-full border-2 border-primary/50 flex items-center justify-center animate-bounce">
                 <ArrowDown className="w-5 h-5 text-primary" />
