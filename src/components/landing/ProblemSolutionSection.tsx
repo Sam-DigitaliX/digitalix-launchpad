@@ -43,8 +43,8 @@ const problems = [
 
 const benefits = [
   "Contourne 100% des bloqueurs",
-  "99.9% de précision sur vos données",
-  "Alimente vos algos avec des données complètes",
+  "+90% de précision sur vos données",
+  "-20% baisse de votre CPA",
   "100% conforme RGPD",
 ];
 
