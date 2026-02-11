@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowRight, Server, ShieldCheck, BarChart3, Users } from "lucide-react";
 import LogoCarousel from "@/components/landing/LogoCarousel";
 import Header from "@/components/landing/Header";
+import CardBeamSection from "@/components/landing/CardBeamSection";
 import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
 import ReviewsCarouselSection from "@/components/landing/ReviewsCarouselSection";
 import ProcessSection from "@/components/landing/ProcessSection";
@@ -91,6 +92,9 @@ const Home = () => {
             </div>
           </div>
         </section>
+
+        {/* Expertise Beam */}
+        <CardBeamSection />
 
         {/* Tracking Demo */}
         <TrackingDemoSection />
