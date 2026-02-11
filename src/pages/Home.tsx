@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Server, ShieldCheck, BarChart3, Users } from "lucide-react";
 import Header from "@/components/landing/Header";
+import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
+import ReviewsCarouselSection from "@/components/landing/ReviewsCarouselSection";
+import ProcessSection from "@/components/landing/ProcessSection";
+import FAQSection from "@/components/landing/FAQSection";
 import ClientLogosSection from "@/components/landing/ClientLogosSection";
 import CTASection from "@/components/landing/CTASection";
 import Footer from "@/components/landing/Footer";
@@ -76,6 +80,9 @@ const Home = () => {
           </div>
         </section>
 
+        {/* Tracking Demo */}
+        <TrackingDemoSection />
+
         {/* Value Props */}
         <section className="py-20 md:py-28 bg-card">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -95,6 +102,9 @@ const Home = () => {
             </div>
           </div>
         </section>
+
+        {/* Reviews */}
+        <ReviewsCarouselSection />
 
         {/* Pour qui ? */}
         <section className="py-20 md:py-28">
@@ -138,8 +148,16 @@ const Home = () => {
           </div>
         </section>
 
-        {/* Logos + CTA */}
+        {/* Process */}
+        <ProcessSection />
+
+        {/* Logos */}
         <ClientLogosSection />
+
+        {/* FAQ */}
+        <FAQSection />
+
+        {/* CTA */}
         <CTASection />
       </main>
       <Footer />
