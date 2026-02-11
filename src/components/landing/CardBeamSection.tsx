@@ -262,10 +262,10 @@ function CardBeamSection() {
       lastTimeRef.current = now;
 
       if (!isDraggingRef.current) {
-        posRef.current -= SPEED * dt;
+        posRef.current += SPEED * dt;
         const singleSetWidth = CARDS.length * CARD_TOTAL;
-        if (posRef.current < -singleSetWidth) posRef.current += singleSetWidth;
         if (posRef.current > 0) posRef.current -= singleSetWidth;
+        if (posRef.current < -singleSetWidth) posRef.current += singleSetWidth;
       }
 
       if (containerRef.current) {
@@ -427,16 +427,18 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
       const sR = scannerX + scannerW / 2;
 
       if (rect.left < sR && rect.right > sL) {
-        const clipRight = Math.max(0, ((sL - rect.left) / rect.width) * 100);
-        const clipLeft = Math.min(100, ((sR - rect.left) / rect.width) * 100);
-        normal.style.clipPath = `inset(0 0 0 ${clipRight}%)`;
-        ascii.style.clipPath = `inset(0 ${100 - clipLeft}% 0 0)`;
-      } else if (rect.right < sL) {
-        normal.style.clipPath = 'inset(0 0 0 100%)';
-        ascii.style.clipPath = 'inset(0 0 0 0)';
-      } else {
+        // Card visible on left, code revealed on right
+        const scanPct = Math.max(0, ((sR - rect.left) / rect.width) * 100);
+        normal.style.clipPath = `inset(0 ${scanPct}% 0 0)`;
+        ascii.style.clipPath = `inset(0 0 0 ${Math.max(0, ((sL - rect.left) / rect.width) * 100)}%)`;
+      } else if (rect.left > sR) {
+        // Card hasn't reached scanner yet — fully visible
         normal.style.clipPath = 'inset(0 0 0 0)';
-        ascii.style.clipPath = 'inset(0 100% 0 0)';
+        ascii.style.clipPath = 'inset(0 0 0 100%)';
+      } else {
+        // Card has passed scanner — fully code
+        normal.style.clipPath = 'inset(0 100% 0 0)';
+        ascii.style.clipPath = 'inset(0 0 0 0)';
       }
 
       animId = requestAnimationFrame(update);
@@ -476,8 +478,8 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
           style={{
             color: theme.asciiColor,
             fontFamily: '"Courier New", monospace',
-            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
+            maskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
+            WebkitMaskImage: 'linear-gradient(to left, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
           }}
         />
       </div>
