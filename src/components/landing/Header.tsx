@@ -17,12 +17,19 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navLinks = [
-    { href: "#services", label: "Services" },
-    { href: "#process", label: "Process" },
-    { href: "#integration", label: "Intégration" },
-    { href: "/contact", label: "Contact", isRoute: true },
-  ];
+  const isConsultantsPage = location.pathname === "/consultants";
+
+  const navLinks = isConsultantsPage
+    ? [
+        { href: "#services", label: "Services" },
+        { href: "#process", label: "Process" },
+        { href: "#integration", label: "Intégration" },
+        { href: "/contact", label: "Contact", isRoute: true },
+      ]
+    : [
+        { href: "/consultants", label: "Consultants", isRoute: true },
+        { href: "/contact", label: "Contact", isRoute: true },
+      ];
 
   const goTo = (hash: string) => {
     if (location.pathname !== "/") {
