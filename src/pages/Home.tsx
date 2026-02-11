@@ -60,9 +60,15 @@ const Home = () => {
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/15 rounded-full blur-3xl" />
 
           <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p className="text-xs font-bold tracking-ultra-wide text-primary uppercase mb-6">
-              Server-Side Tracking Experts
-            </p>
+            <div className="relative inline-flex mb-8 animate-fade-in-up">
+              <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-md" />
+              <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 border border-primary/30 backdrop-blur-sm">
+                <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                <span className="text-sm font-medium text-gradient-primary">
+                  Server-Side Tracking Experts
+                </span>
+              </div>
+            </div>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 max-w-4xl mx-auto leading-tight">
               Reprenez le contrôle de{" "}
               <span className="text-gradient-primary">vos données marketing</span>
