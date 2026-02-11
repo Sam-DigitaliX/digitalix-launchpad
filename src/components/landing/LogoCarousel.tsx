@@ -35,7 +35,7 @@ const clientLogos = [
 
 const LogoCarousel = () => {
   return (
-    <div className="relative w-full overflow-hidden h-14 sm:h-16 md:h-20">
+    <div className="relative w-full overflow-hidden min-h-[56px] h-14 sm:min-h-[64px] sm:h-16 md:min-h-[80px] md:h-20">
       {/* Fade edges - smaller on mobile */}
       <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
       <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
