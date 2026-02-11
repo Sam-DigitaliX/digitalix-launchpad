@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Server, ShieldCheck, BarChart3, Users } from "lucide-react";
+import LogoCarousel from "@/components/landing/LogoCarousel";
 import Header from "@/components/landing/Header";
 import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
 import ReviewsCarouselSection from "@/components/landing/ReviewsCarouselSection";
@@ -83,6 +84,11 @@ const Home = () => {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
+
+            {/* Logo Carousel */}
+            <div className="mt-12 animate-fade-in-up animation-delay-400">
+              <LogoCarousel />
+            </div>
           </div>
         </section>
 
