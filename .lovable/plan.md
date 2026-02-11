@@ -1,54 +1,27 @@
 
 
-## Plan : Restructuration du site avec Home generique
+## Inversion des sections 3 et 4 sur la Home
 
-### Structure des routes
+Modification de `src/pages/Home.tsx` pour inverser l'ordre de la section **Value Props** (actuellement en position 3) et **TrackingDemoSection** (position 4).
 
-| Route | Contenu | Statut |
-|-------|---------|--------|
-| `/` | Nouvelle page d'accueil generique | A creer |
-| `/consultants` | Landing actuelle (deplacee depuis `/`) | Renommer |
-| `/ecommerce` | Landing e-commerce (future) | Plus tard |
-| `/contact` | Formulaire de qualification (inchange) | Existant |
-| `/brand` | Guide de style (inchange) | Existant |
+### Nouvel enchaînement
 
-### Etape 1 : Deplacer la landing actuelle vers `/consultants`
+1. Header
+2. Hero generique
+3. **TrackingDemoSection** (remonte)
+4. **Value Props - 3 cards** (descend)
+5. ReviewsCarouselSection
+6. Pour qui ? - 2 cards audiences
+7. ProcessSection
+8. ClientLogosSection
+9. FAQSection
+10. CTASection
+11. Footer
 
-- Renommer `src/pages/Index.tsx` en `src/pages/Consultants.tsx`
-- Mettre a jour la route dans `App.tsx` : `<Route path="/consultants" element={<Consultants />} />`
+### Modification technique
 
-### Etape 2 : Creer la nouvelle Home generique (`/`)
+Fichier : `src/pages/Home.tsx`
 
-- Creer `src/pages/Home.tsx`
-- Contenu simplifie et universel :
-  - Header (reutilise, avec navigation mise a jour)
-  - Hero generique : message clair sur le tracking server-side sans jargon SEA
-  - Section proposition de valeur en 3-4 points
-  - Section "Pour qui ?" avec cards orientant vers les audiences (Consultants, E-commerce/Annonceurs) avec CTAs vers les landing dediees
-  - Logos clients (reutilise)
-  - CTA final vers `/contact`
-  - Footer (reutilise)
-
-### Etape 3 : Mettre a jour la navigation (Header)
-
-- Ajouter un lien "Consultants" dans le menu principal pointant vers `/consultants`
-- Adapter les liens d'ancrage (`#services`, `#process`, `#integration`) pour qu'ils fonctionnent uniquement sur la page `/consultants` ou les retirer du menu principal
-- Le menu de la Home pourrait etre : **Consultants | E-commerce (bientot) | Contact**
-- Le CTA "Reserver mon Audit a 0€" reste inchange
-
-### Etape 4 : Mettre a jour `App.tsx`
-
-```
-<Route path="/" element={<Home />} />
-<Route path="/consultants" element={<Consultants />} />
-<Route path="/contact" element={<Contact />} />
-<Route path="/brand" element={<Brand />} />
-```
-
-### Points techniques
-
-- Le Header devra detecter la page courante pour adapter ses liens (ancres sur `/consultants`, routes sur `/`)
-- Les composants de sections existants (Hero, FAQ, CTA, etc.) restent inchanges dans la page `/consultants`
-- La nouvelle Home reutilise les composants partages (Header, Footer, ClientLogosSection, CTASection)
-- Le `ScrollToTop` et la config `vercel.json` fonctionnent deja pour les nouvelles routes
+- Deplacer le bloc `TrackingDemoSection` avant la section "Pourquoi passer au Server-Side ?" (Value Props)
+- Aucun autre changement
 
