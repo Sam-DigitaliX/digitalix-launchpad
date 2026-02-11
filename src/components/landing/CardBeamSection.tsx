@@ -427,10 +427,11 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
       const sR = scannerX + scannerW / 2;
 
       if (rect.left < sR && rect.right > sL) {
-        // Card visible on left, code revealed on right
-        const scanPct = Math.max(0, ((sR - rect.left) / rect.width) * 100);
-        normal.style.clipPath = `inset(0 ${scanPct}% 0 0)`;
-        ascii.style.clipPath = `inset(0 0 0 ${Math.max(0, ((sL - rect.left) / rect.width) * 100)}%)`;
+        // Card intersects beam — normal visible on left, code on right
+        const normalClipRight = Math.max(0, Math.min(100, ((rect.right - sL) / rect.width) * 100));
+        const asciiClipLeft = Math.max(0, Math.min(100, ((sR - rect.left) / rect.width) * 100));
+        normal.style.clipPath = `inset(0 ${normalClipRight}% 0 0)`;
+        ascii.style.clipPath = `inset(0 0 0 ${asciiClipLeft}%)`;
       } else if (rect.right < sL) {
         // Card is fully LEFT of scanner — not yet scanned — fully visible
         normal.style.clipPath = 'inset(0 0 0 0)';
