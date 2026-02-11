@@ -27,6 +27,7 @@ const Header = () => {
         { href: "/contact", label: "Contact", isRoute: true },
       ]
     : [
+        { href: "/services", label: "Services", isRoute: true },
         { href: "/consultants", label: "Consultants", isRoute: true },
         { href: "/contact", label: "Contact", isRoute: true },
       ];
