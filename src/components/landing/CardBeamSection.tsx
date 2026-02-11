@@ -1,58 +1,62 @@
 import { useEffect, useRef, useCallback, useState } from 'react';
 
+/* ─── Card data ─── */
+
 interface ExpertiseCard {
   title: string;
   subtitle: string;
-  icon: string;
-  gradient: [string, string];
+  iconPath: string; // SVG path(s)
+  viewBox: string;
 }
 
 const CARDS: ExpertiseCard[] = [
   {
     title: 'GTM Server-Side',
     subtitle: 'Infrastructure sGTM sur Google Cloud',
-    icon: '⚡',
-    gradient: ['#7c3aed', '#4f46e5'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M5 12h14M12 5l7 7-7 7', // arrow-right-style bolt
   },
   {
     title: 'Meta CAPI',
     subtitle: 'Conversion API Facebook & Instagram',
-    icon: '📡',
-    gradient: ['#6366f1', '#0ea5e9'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2', // signal/clock
   },
   {
     title: 'Enhanced Conversions',
     subtitle: 'Google Ads Server-Side',
-    icon: '🎯',
-    gradient: ['#0ea5e9', '#06b6d4'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // layers/stack
   },
   {
     title: 'Consent Mode v2',
     subtitle: 'Conformité RGPD native',
-    icon: '🛡️',
-    gradient: ['#7c3aed', '#a855f7'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', // shield
   },
   {
     title: 'Audit Data Layer',
     subtitle: 'Diagnostic & optimisation tracking',
-    icon: '🔍',
-    gradient: ['#6366f1', '#7c3aed'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z', // book-open
   },
   {
     title: 'Analytics GA4',
     subtitle: 'Configuration & dashboards',
-    icon: '📊',
-    gradient: ['#0ea5e9', '#6366f1'],
+    viewBox: '0 0 24 24',
+    iconPath: 'M18 20V10M12 20V4M6 20v-6', // bar-chart
   },
 ];
 
-const CARD_W = 320;
-const CARD_H = 180;
-const CARD_GAP = 48;
-const CARD_TOTAL = CARD_W + CARD_GAP;
-const SPEED = 80; // px/s
+/* ─── Dimensions ─── */
 
-const CODE_CHARS = 'abcdefghijklmnopqrstuvwxyz0123456789(){}[]<>;:._-+=!@#$%^&*';
+const CARD_W = 400;
+const CARD_H = 250;
+const CARD_GAP = 60;
+const CARD_TOTAL = CARD_W + CARD_GAP;
+const SPEED = 70;
+
+/* ─── Code generator ─── */
 
 function generateCodeBlock(cols: number, rows: number): string {
   const snippets = [
@@ -62,10 +66,12 @@ function generateCodeBlock(cols: number, rows: number): string {
     '}',
     'if (consent.granted) { track(event); }',
     'dataLayer.push({ event: "purchase" });',
-    'const hash = sha256(email.trim());',
-    'gtag("config", "AW-XXXXX");',
-    'fbq("track", "Purchase", { value: 42 });',
+    'const hash = sha256(email.trim().toLowerCase());',
+    'gtag("config", "AW-CONVERSION_ID");',
+    'fbq("track", "Purchase", { value: 42.00 });',
     'export const CONSENT_MODE = "v2";',
+    'const pixel = await initPixel(config);',
+    'server.tag("GA4", { measurement_id });',
   ];
   let flow = snippets.join(' ');
   const total = cols * rows;
@@ -79,6 +85,8 @@ function generateCodeBlock(cols: number, rows: number): string {
   return out;
 }
 
+/* ─── Main section ─── */
+
 function CardBeamSection() {
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -90,9 +98,7 @@ function CardBeamSection() {
   const dragPosRef = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
 
-  // Duplicate cards for seamless loop
   const allCards = [...CARDS, ...CARDS, ...CARDS];
-  const totalWidth = allCards.length * CARD_TOTAL;
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -101,11 +107,10 @@ function CardBeamSection() {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
-  // Scanner beam canvas
+  /* Scanner beam canvas */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
@@ -114,8 +119,7 @@ function CardBeamSection() {
       r: number; alpha: number; life: number; decay: number;
     }> = [];
 
-    const maxParticles = isMobile ? 60 : 150;
-
+    const maxParticles = isMobile ? 80 : 200;
     let w = 0;
     let h = 0;
 
@@ -134,21 +138,20 @@ function CardBeamSection() {
     function spawnParticle() {
       const cx = w / 2;
       return {
-        x: cx + (Math.random() - 0.5) * 4,
+        x: cx + (Math.random() - 0.5) * 6,
         y: Math.random() * h,
-        vx: (Math.random() * 0.8 + 0.2) * (Math.random() > 0.5 ? 1 : -1),
-        vy: (Math.random() - 0.5) * 0.3,
-        r: Math.random() * 1.5 + 0.5,
-        alpha: Math.random() * 0.6 + 0.4,
+        vx: (Math.random() * 1.0 + 0.3) * (Math.random() > 0.5 ? 1 : -1),
+        vy: (Math.random() - 0.5) * 0.4,
+        r: Math.random() * 2 + 0.5,
+        alpha: Math.random() * 0.7 + 0.3,
         life: 1,
-        decay: Math.random() * 0.015 + 0.005,
+        decay: Math.random() * 0.012 + 0.004,
       };
     }
 
-    // Pre-populate
     for (let i = 0; i < maxParticles; i++) {
       const p = spawnParticle();
-      p.x += (Math.random() - 0.5) * 200;
+      p.x += (Math.random() - 0.5) * 300;
       p.life = Math.random();
       particles.push(p);
     }
@@ -158,43 +161,48 @@ function CardBeamSection() {
     function draw() {
       if (!ctx) return;
       ctx.clearRect(0, 0, w, h);
-
       const cx = w / 2;
-      const fadeZone = 40;
+      const fadeZone = 50;
 
-      // Draw beam line
+      // Beam core
       ctx.globalCompositeOperation = 'source-over';
       const beamGrad = ctx.createLinearGradient(0, 0, 0, h);
       beamGrad.addColorStop(0, 'transparent');
-      beamGrad.addColorStop(fadeZone / h, 'rgba(139, 92, 246, 0.9)');
-      beamGrad.addColorStop(1 - fadeZone / h, 'rgba(139, 92, 246, 0.9)');
+      beamGrad.addColorStop(fadeZone / h, 'rgba(139, 92, 246, 1)');
+      beamGrad.addColorStop(1 - fadeZone / h, 'rgba(139, 92, 246, 1)');
       beamGrad.addColorStop(1, 'transparent');
-
-      // Core line
       ctx.globalAlpha = 1;
       ctx.fillStyle = beamGrad;
       ctx.beginPath();
-      ctx.roundRect(cx - 1.5, 0, 3, h, 10);
+      ctx.roundRect(cx - 2, 0, 4, h, 10);
       ctx.fill();
 
-      // Glow 1
-      const glow1 = ctx.createLinearGradient(cx - 12, 0, cx + 12, 0);
-      glow1.addColorStop(0, 'transparent');
-      glow1.addColorStop(0.5, 'rgba(139, 92, 246, 0.4)');
-      glow1.addColorStop(1, 'transparent');
+      // Glow layers
       ctx.globalCompositeOperation = 'lighter';
-      ctx.globalAlpha = 0.8;
-      ctx.fillStyle = glow1;
-      ctx.fillRect(cx - 12, 0, 24, h);
 
-      // Glow 2
-      const glow2 = ctx.createLinearGradient(cx - 30, 0, cx + 30, 0);
+      const glow1 = ctx.createLinearGradient(cx - 16, 0, cx + 16, 0);
+      glow1.addColorStop(0, 'transparent');
+      glow1.addColorStop(0.5, 'rgba(196, 181, 253, 0.5)');
+      glow1.addColorStop(1, 'transparent');
+      ctx.globalAlpha = 0.9;
+      ctx.fillStyle = glow1;
+      ctx.fillRect(cx - 16, 0, 32, h);
+
+      const glow2 = ctx.createLinearGradient(cx - 40, 0, cx + 40, 0);
       glow2.addColorStop(0, 'transparent');
-      glow2.addColorStop(0.5, 'rgba(139, 92, 246, 0.15)');
+      glow2.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)');
       glow2.addColorStop(1, 'transparent');
-      ctx.globalAlpha = 0.6;
+      ctx.globalAlpha = 0.7;
       ctx.fillStyle = glow2;
-      ctx.fillRect(cx - 30, 0, 60, h);
+      ctx.fillRect(cx - 40, 0, 80, h);
+
+      const glow3 = ctx.createLinearGradient(cx - 80, 0, cx + 80, 0);
+      glow3.addColorStop(0, 'transparent');
+      glow3.addColorStop(0.5, 'rgba(139, 92, 246, 0.08)');
+      glow3.addColorStop(1, 'transparent');
+      ctx.globalAlpha = 0.5;
+      ctx.fillStyle = glow3;
+      ctx.fillRect(cx - 80, 0, 160, h);
 
       // Particles
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -245,7 +253,7 @@ function CardBeamSection() {
     };
   }, [isMobile]);
 
-  // Card animation loop
+  /* Card scroll loop */
   useEffect(() => {
     lastTimeRef.current = performance.now();
 
@@ -255,23 +263,16 @@ function CardBeamSection() {
 
       if (!isDraggingRef.current) {
         posRef.current -= SPEED * dt;
-
-        // Seamless loop: wrap when first set is fully off-screen
         const singleSetWidth = CARDS.length * CARD_TOTAL;
-        if (posRef.current < -singleSetWidth) {
-          posRef.current += singleSetWidth;
-        }
-        if (posRef.current > 0) {
-          posRef.current -= singleSetWidth;
-        }
+        if (posRef.current < -singleSetWidth) posRef.current += singleSetWidth;
+        if (posRef.current > 0) posRef.current -= singleSetWidth;
       }
 
       if (containerRef.current) {
         const cards = containerRef.current.children;
         for (let i = 0; i < cards.length; i++) {
           const el = cards[i] as HTMLElement;
-          const x = posRef.current + i * CARD_TOTAL;
-          el.style.transform = `translateX(${x}px)`;
+          el.style.transform = `translateX(${posRef.current + i * CARD_TOTAL}px)`;
         }
       }
 
@@ -282,7 +283,7 @@ function CardBeamSection() {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  // Drag handlers
+  /* Drag */
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     isDraggingRef.current = true;
     dragStartXRef.current = e.clientX;
@@ -292,28 +293,32 @@ function CardBeamSection() {
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
     if (!isDraggingRef.current) return;
-    const dx = e.clientX - dragStartXRef.current;
-    posRef.current = dragPosRef.current + dx;
+    posRef.current = dragPosRef.current + (e.clientX - dragStartXRef.current);
   }, []);
 
   const onPointerUp = useCallback(() => {
     isDraggingRef.current = false;
   }, []);
 
+  const trackHeight = CARD_H + 80;
+
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden bg-background">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
+    <section className="relative py-20 md:py-32 overflow-hidden bg-background">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center relative z-10">
+        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-5">
           Notre <span className="text-gradient-primary">expertise</span> à votre service
         </h2>
-        <p className="text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Chaque domaine que nous maîtrisons pour récupérer vos données perdues et maximiser votre ROI.
         </p>
       </div>
 
       <div
         className="relative w-full select-none touch-pan-y"
-        style={{ height: CARD_H + 40 }}
+        style={{ height: trackHeight }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -323,17 +328,17 @@ function CardBeamSection() {
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full pointer-events-none z-10"
-          style={{ height: CARD_H + 40 }}
+          style={{ height: trackHeight }}
         />
 
         {/* Card track */}
         <div
           ref={containerRef}
-          className="absolute top-5 left-0 w-full"
-          style={{ height: CARD_H, cursor: isDraggingRef.current ? 'grabbing' : 'grab' }}
+          className="absolute left-0 w-full"
+          style={{ height: CARD_H, top: (trackHeight - CARD_H) / 2, cursor: 'grab' }}
         >
           {allCards.map((card, i) => (
-            <CardWrapper key={i} card={card} index={i} isMobile={isMobile} />
+            <PlatinumCard key={i} card={card} isMobile={isMobile} />
           ))}
         </div>
       </div>
@@ -341,7 +346,9 @@ function CardBeamSection() {
   );
 }
 
-function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: number; isMobile: boolean }) {
+/* ─── Platinum card ─── */
+
+function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boolean }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const normalRef = useRef<HTMLDivElement>(null);
   const asciiRef = useRef<HTMLDivElement>(null);
@@ -355,7 +362,7 @@ function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: nu
     codeRef.current.textContent = generateCodeBlock(cols, rows);
   }, []);
 
-  // Clipping based on scanner position
+  // Clip-path scanner
   useEffect(() => {
     let animId = 0;
 
@@ -370,7 +377,7 @@ function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: nu
 
       const rect = wrapper.getBoundingClientRect();
       const scannerX = window.innerWidth / 2;
-      const scannerW = 6;
+      const scannerW = 8;
       const sL = scannerX - scannerW / 2;
       const sR = scannerX + scannerW / 2;
 
@@ -394,7 +401,7 @@ function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: nu
     return () => cancelAnimationFrame(animId);
   }, []);
 
-  // Periodically glitch the ASCII
+  // Glitch ASCII
   useEffect(() => {
     if (isMobile) return;
     const interval = setInterval(() => {
@@ -412,10 +419,10 @@ function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: nu
       className="absolute top-0 left-0 will-change-transform"
       style={{ width: CARD_W, height: CARD_H }}
     >
-      {/* ASCII layer (behind) */}
+      {/* ASCII layer */}
       <div
         ref={asciiRef}
-        className="absolute inset-0 rounded-xl overflow-hidden"
+        className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{ clipPath: 'inset(0 100% 0 0)' }}
       >
         <pre
@@ -424,30 +431,163 @@ function CardWrapper({ card, index, isMobile }: { card: ExpertiseCard; index: nu
           style={{
             color: 'rgba(196, 181, 253, 0.6)',
             fontFamily: '"Courier New", monospace',
-            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.2) 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.2) 100%)',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
           }}
         />
       </div>
 
-      {/* Normal card (front) */}
+      {/* Platinum card */}
       <div
         ref={normalRef}
-        className="absolute inset-0 rounded-xl overflow-hidden"
-        style={{
-          background: `linear-gradient(135deg, ${card.gradient[0]}, ${card.gradient[1]})`,
-          clipPath: 'inset(0 0 0 0)',
-        }}
+        className="absolute inset-0 rounded-2xl overflow-hidden"
+        style={{ clipPath: 'inset(0 0 0 0)' }}
       >
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative h-full flex flex-col justify-between p-6">
+        {/* Metallic base gradient */}
+        <div
+          className="absolute inset-0"
+          style={{
+            background: `
+              linear-gradient(135deg,
+                #2a2035 0%,
+                #3d3352 15%,
+                #4a3f60 25%,
+                #2e2440 40%,
+                #1f1830 55%,
+                #3d3352 70%,
+                #4a3f60 85%,
+                #2a2035 100%
+              )`,
+          }}
+        />
+
+        {/* Brushed metal texture */}
+        <div
+          className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `repeating-linear-gradient(
+              90deg,
+              transparent,
+              transparent 1px,
+              rgba(255,255,255,0.5) 1px,
+              rgba(255,255,255,0.5) 2px
+            )`,
+            backgroundSize: '3px 100%',
+          }}
+        />
+
+        {/* Shine sweep */}
+        <div
+          className="absolute inset-0 opacity-30"
+          style={{
+            background: `linear-gradient(
+              115deg,
+              transparent 0%,
+              transparent 30%,
+              rgba(139, 92, 246, 0.15) 40%,
+              rgba(196, 181, 253, 0.25) 45%,
+              rgba(255, 255, 255, 0.12) 50%,
+              rgba(196, 181, 253, 0.15) 55%,
+              rgba(139, 92, 246, 0.08) 60%,
+              transparent 70%,
+              transparent 100%
+            )`,
+          }}
+        />
+
+        {/* Edge highlight */}
+        <div
+          className="absolute inset-0 rounded-2xl"
+          style={{
+            boxShadow: `
+              inset 0 1px 0 rgba(255,255,255,0.12),
+              inset 0 -1px 0 rgba(0,0,0,0.3),
+              inset 1px 0 0 rgba(255,255,255,0.06),
+              inset -1px 0 0 rgba(255,255,255,0.06)
+            `,
+          }}
+        />
+
+        {/* Card shadow */}
+        <div
+          className="absolute -inset-1 rounded-2xl -z-10"
+          style={{
+            boxShadow: `
+              0 20px 60px rgba(0, 0, 0, 0.5),
+              0 8px 20px rgba(0, 0, 0, 0.3),
+              0 0 40px rgba(139, 92, 246, 0.08)
+            `,
+          }}
+        />
+
+        {/* Card content */}
+        <div className="relative h-full flex flex-col justify-between p-7">
+          {/* Top row */}
           <div className="flex items-start justify-between">
-            <span className="text-3xl">{card.icon}</span>
-            <span className="text-xs font-mono text-white/50 uppercase tracking-widest">DigitaliX</span>
+            {/* Engraved SVG icon */}
+            <div className="relative">
+              <svg
+                viewBox={card.viewBox}
+                className="w-10 h-10"
+                fill="none"
+                stroke="url(#engrave)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                style={{
+                  filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.1)) drop-shadow(0 -1px 0 rgba(0,0,0,0.4))',
+                }}
+              >
+                <defs>
+                  <linearGradient id="engrave" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stopColor="rgba(196, 181, 253, 0.5)" />
+                    <stop offset="50%" stopColor="rgba(139, 92, 246, 0.7)" />
+                    <stop offset="100%" stopColor="rgba(196, 181, 253, 0.4)" />
+                  </linearGradient>
+                </defs>
+                <path d={card.iconPath} />
+              </svg>
+            </div>
+
+            {/* Brand */}
+            <span
+              className="text-xs font-semibold uppercase tracking-[0.25em]"
+              style={{
+                color: 'rgba(196, 181, 253, 0.35)',
+                textShadow: '0 1px 0 rgba(255,255,255,0.05), 0 -1px 0 rgba(0,0,0,0.3)',
+              }}
+            >
+              DigitaliX
+            </span>
           </div>
+
+          {/* Bottom content */}
           <div>
-            <h3 className="text-lg font-bold text-white mb-1">{card.title}</h3>
-            <p className="text-sm text-white/70">{card.subtitle}</p>
+            {/* Decorative line */}
+            <div
+              className="w-16 h-px mb-4"
+              style={{
+                background: 'linear-gradient(90deg, rgba(139,92,246,0.4), rgba(196,181,253,0.2), transparent)',
+              }}
+            />
+            <h3
+              className="text-xl font-bold mb-1.5 tracking-wide"
+              style={{
+                color: 'rgba(255, 255, 255, 0.85)',
+                textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(139,92,246,0.1)',
+              }}
+            >
+              {card.title}
+            </h3>
+            <p
+              className="text-sm tracking-wide"
+              style={{
+                color: 'rgba(196, 181, 253, 0.45)',
+                textShadow: '0 1px 0 rgba(0,0,0,0.3)',
+              }}
+            >
+              {card.subtitle}
+            </p>
           </div>
         </div>
       </div>
