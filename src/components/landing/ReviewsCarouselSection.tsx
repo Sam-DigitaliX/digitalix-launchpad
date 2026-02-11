@@ -61,12 +61,16 @@ const ReviewCard = ({ review }: { review: Review }) => (
 
 const ReviewsCarouselSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const row1Ref = useRef<HTMLDivElement>(null);
-  const row2Ref = useRef<HTMLDivElement>(null);
   const [scrollOffset, setScrollOffset] = useState(0);
-  const lastScrollY = useRef(0);
+
+  // Approximate width of one full set of cards for wrapping
+  const CARD_WIDTH = 404; // ~400px card + 4px margin
+  const ROW1_SET_WIDTH = reviewsRow1.length * CARD_WIDTH;
+  const ROW2_SET_WIDTH = reviewsRow2.length * CARD_WIDTH;
 
   useEffect(() => {
+    let lastY = window.scrollY;
+
     const handleScroll = () => {
       const section = sectionRef.current;
       if (!section) return;
@@ -75,18 +79,28 @@ const ReviewsCarouselSection = () => {
       const windowH = window.innerHeight;
 
       // Only animate when section is in viewport
-      if (rect.bottom < 0 || rect.top > windowH) return;
+      if (rect.bottom < 0 || rect.top > windowH) {
+        lastY = window.scrollY;
+        return;
+      }
 
-      const delta = window.scrollY - lastScrollY.current;
-      lastScrollY.current = window.scrollY;
+      const delta = window.scrollY - lastY;
+      lastY = window.scrollY;
 
       setScrollOffset(prev => prev + delta * 0.3);
     };
 
-    lastScrollY.current = window.scrollY;
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  // Modulo wrapping to prevent gaps regardless of scroll amount
+  const wrapOffset = (offset: number, setWidth: number) => {
+    return ((offset % setWidth) + setWidth) % setWidth;
+  };
+
+  const row1X = -wrapOffset(scrollOffset, ROW1_SET_WIDTH);
+  const row2X = -wrapOffset(-scrollOffset, ROW2_SET_WIDTH);
 
   return (
     <section ref={sectionRef} className="py-16 md:py-24 overflow-hidden bg-background">
@@ -99,12 +113,11 @@ const ReviewsCarouselSection = () => {
         </h2>
       </div>
 
-      {/* Row 1 — moves right on scroll down */}
+      {/* Row 1 — moves left on scroll down */}
       <div className="mb-4">
         <div
-          ref={row1Ref}
           className="flex"
-          style={{ transform: `translateX(${-scrollOffset}px)` }}
+          style={{ transform: `translate3d(${row1X}px, 0, 0)`, willChange: 'transform' }}
         >
           {[...reviewsRow1, ...reviewsRow1, ...reviewsRow1].map((review, i) => (
             <ReviewCard key={`r1-${i}`} review={review} />
@@ -112,12 +125,11 @@ const ReviewsCarouselSection = () => {
         </div>
       </div>
 
-      {/* Row 2 — moves left on scroll down (opposite) */}
+      {/* Row 2 — moves right on scroll down (opposite direction) */}
       <div>
         <div
-          ref={row2Ref}
           className="flex"
-          style={{ transform: `translateX(${scrollOffset - 600}px)` }}
+          style={{ transform: `translate3d(${row2X}px, 0, 0)`, willChange: 'transform' }}
         >
           {[...reviewsRow2, ...reviewsRow2, ...reviewsRow2].map((review, i) => (
             <ReviewCard key={`r2-${i}`} review={review} />
