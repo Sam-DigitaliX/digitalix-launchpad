@@ -338,7 +338,7 @@ function CardBeamSection() {
           style={{ height: CARD_H, top: (trackHeight - CARD_H) / 2, cursor: 'grab' }}
         >
           {allCards.map((card, i) => (
-            <PlatinumCard key={i} card={card} isMobile={isMobile} />
+            <MetalCard key={i} card={card} variant={i % 2 === 0 ? 'platinum' : 'silver'} isMobile={isMobile} />
           ))}
         </div>
       </div>
@@ -346,13 +346,58 @@ function CardBeamSection() {
   );
 }
 
-/* ─── Platinum card ─── */
+/* ─── Card variant themes ─── */
 
-function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boolean }) {
+const THEMES = {
+  platinum: {
+    base: `linear-gradient(135deg,
+      #2a2035 0%, #3d3352 15%, #4a3f60 25%, #2e2440 40%,
+      #1f1830 55%, #3d3352 70%, #4a3f60 85%, #2a2035 100%)`,
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 30%,
+      rgba(139,92,246,0.15) 40%, rgba(196,181,253,0.25) 45%,
+      rgba(255,255,255,0.12) 50%, rgba(196,181,253,0.15) 55%,
+      rgba(139,92,246,0.08) 60%, transparent 70%, transparent 100%)`,
+    accentGlow: 'rgba(139, 92, 246, 0.08)',
+    iconGrad: ['rgba(196,181,253,0.5)', 'rgba(139,92,246,0.7)', 'rgba(196,181,253,0.4)'],
+    textColor: 'rgba(255,255,255,0.85)',
+    subtextColor: 'rgba(196,181,253,0.45)',
+    brandColor: 'rgba(196,181,253,0.35)',
+    lineGrad: 'linear-gradient(90deg, rgba(139,92,246,0.4), rgba(196,181,253,0.2), transparent)',
+    asciiColor: 'rgba(196, 181, 253, 0.6)',
+  },
+  silver: {
+    base: `linear-gradient(135deg,
+      #1a1d2e 0%, #2a2f45 12%, #353b55 24%, #2e3348 36%,
+      #252a3e 48%, #303650 60%, #3a4060 72%, #2a2f45 84%, #1a1d2e 100%)`,
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 25%,
+      rgba(14,165,233,0.1) 32%, rgba(139,92,246,0.12) 38%,
+      rgba(196,181,253,0.18) 42%, rgba(255,255,255,0.14) 46%,
+      rgba(14,165,233,0.16) 50%, rgba(139,92,246,0.12) 54%,
+      rgba(6,182,212,0.1) 58%, rgba(255,255,255,0.08) 62%,
+      transparent 72%, transparent 100%)`,
+    accentGlow: 'rgba(14, 165, 233, 0.08)',
+    iconGrad: ['rgba(14,165,233,0.5)', 'rgba(139,92,246,0.6)', 'rgba(6,182,212,0.5)'],
+    textColor: 'rgba(255,255,255,0.9)',
+    subtextColor: 'rgba(148,163,184,0.55)',
+    brandColor: 'rgba(148,163,184,0.35)',
+    lineGrad: 'linear-gradient(90deg, rgba(14,165,233,0.4), rgba(139,92,246,0.25), transparent)',
+    asciiColor: 'rgba(14, 165, 233, 0.5)',
+  },
+} as const;
+
+type CardVariant = keyof typeof THEMES;
+
+/* ─── Metal card ─── */
+
+function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const normalRef = useRef<HTMLDivElement>(null);
   const asciiRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLPreElement>(null);
+  const theme = THEMES[variant];
+  const gradId = `engrave-${variant}`;
 
   // Generate code text
   useEffect(() => {
@@ -429,7 +474,7 @@ function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boole
           ref={codeRef}
           className="absolute inset-0 m-0 p-0 overflow-hidden whitespace-pre text-[11px] leading-[13px]"
           style={{
-            color: 'rgba(196, 181, 253, 0.6)',
+            color: theme.asciiColor,
             fontFamily: '"Courier New", monospace',
             maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
             WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
@@ -437,74 +482,52 @@ function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boole
         />
       </div>
 
-      {/* Platinum card */}
+      {/* Metal card face */}
       <div
         ref={normalRef}
         className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{ clipPath: 'inset(0 0 0 0)' }}
       >
-        {/* Metallic base gradient */}
-        <div
-          className="absolute inset-0"
-          style={{
-            background: `
-              linear-gradient(135deg,
-                #2a2035 0%,
-                #3d3352 15%,
-                #4a3f60 25%,
-                #2e2440 40%,
-                #1f1830 55%,
-                #3d3352 70%,
-                #4a3f60 85%,
-                #2a2035 100%
-              )`,
-          }}
-        />
+        {/* Metallic base */}
+        <div className="absolute inset-0" style={{ background: theme.base }} />
 
         {/* Brushed metal texture */}
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
-            backgroundImage: `repeating-linear-gradient(
-              90deg,
-              transparent,
-              transparent 1px,
-              rgba(255,255,255,0.5) 1px,
-              rgba(255,255,255,0.5) 2px
-            )`,
+            backgroundImage: `repeating-linear-gradient(90deg,
+              transparent, transparent 1px,
+              rgba(255,255,255,0.5) 1px, rgba(255,255,255,0.5) 2px)`,
             backgroundSize: '3px 100%',
           }}
         />
 
-        {/* Shine sweep */}
-        <div
-          className="absolute inset-0 opacity-30"
-          style={{
-            background: `linear-gradient(
-              115deg,
-              transparent 0%,
-              transparent 30%,
-              rgba(139, 92, 246, 0.15) 40%,
-              rgba(196, 181, 253, 0.25) 45%,
-              rgba(255, 255, 255, 0.12) 50%,
-              rgba(196, 181, 253, 0.15) 55%,
-              rgba(139, 92, 246, 0.08) 60%,
-              transparent 70%,
-              transparent 100%
-            )`,
-          }}
-        />
+        {/* Iridescent shine */}
+        <div className="absolute inset-0 opacity-40" style={{ background: theme.shine }} />
+
+        {/* Silver variant: extra rainbow shimmer */}
+        {variant === 'silver' && (
+          <div
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              background: `linear-gradient(160deg,
+                transparent 20%,
+                rgba(139,92,246,0.6) 30%, rgba(14,165,233,0.5) 40%,
+                rgba(6,182,212,0.5) 50%, rgba(139,92,246,0.4) 60%,
+                transparent 70%)`,
+            }}
+          />
+        )}
 
         {/* Edge highlight */}
         <div
           className="absolute inset-0 rounded-2xl"
           style={{
             boxShadow: `
-              inset 0 1px 0 rgba(255,255,255,0.12),
+              inset 0 1px 0 rgba(255,255,255,${variant === 'silver' ? '0.15' : '0.12'}),
               inset 0 -1px 0 rgba(0,0,0,0.3),
               inset 1px 0 0 rgba(255,255,255,0.06),
-              inset -1px 0 0 rgba(255,255,255,0.06)
-            `,
+              inset -1px 0 0 rgba(255,255,255,0.06)`,
           }}
         />
 
@@ -513,47 +536,44 @@ function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boole
           className="absolute -inset-1 rounded-2xl -z-10"
           style={{
             boxShadow: `
-              0 20px 60px rgba(0, 0, 0, 0.5),
-              0 8px 20px rgba(0, 0, 0, 0.3),
-              0 0 40px rgba(139, 92, 246, 0.08)
-            `,
+              0 20px 60px rgba(0,0,0,0.5),
+              0 8px 20px rgba(0,0,0,0.3),
+              0 0 40px ${theme.accentGlow}`,
           }}
         />
 
-        {/* Card content */}
+        {/* Content */}
         <div className="relative h-full flex flex-col justify-between p-7">
           {/* Top row */}
           <div className="flex items-start justify-between">
             {/* Engraved SVG icon */}
-            <div className="relative">
-              <svg
-                viewBox={card.viewBox}
-                className="w-10 h-10"
-                fill="none"
-                stroke="url(#engrave)"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                style={{
-                  filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.1)) drop-shadow(0 -1px 0 rgba(0,0,0,0.4))',
-                }}
-              >
-                <defs>
-                  <linearGradient id="engrave" x1="0" y1="0" x2="1" y2="1">
-                    <stop offset="0%" stopColor="rgba(196, 181, 253, 0.5)" />
-                    <stop offset="50%" stopColor="rgba(139, 92, 246, 0.7)" />
-                    <stop offset="100%" stopColor="rgba(196, 181, 253, 0.4)" />
-                  </linearGradient>
-                </defs>
-                <path d={card.iconPath} />
-              </svg>
-            </div>
+            <svg
+              viewBox={card.viewBox}
+              className="w-10 h-10"
+              fill="none"
+              stroke={`url(#${gradId})`}
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              style={{
+                filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.1)) drop-shadow(0 -1px 0 rgba(0,0,0,0.4))',
+              }}
+            >
+              <defs>
+                <linearGradient id={gradId} x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor={theme.iconGrad[0]} />
+                  <stop offset="50%" stopColor={theme.iconGrad[1]} />
+                  <stop offset="100%" stopColor={theme.iconGrad[2]} />
+                </linearGradient>
+              </defs>
+              <path d={card.iconPath} />
+            </svg>
 
             {/* Brand */}
             <span
               className="text-xs font-semibold uppercase tracking-[0.25em]"
               style={{
-                color: 'rgba(196, 181, 253, 0.35)',
+                color: theme.brandColor,
                 textShadow: '0 1px 0 rgba(255,255,255,0.05), 0 -1px 0 rgba(0,0,0,0.3)',
               }}
             >
@@ -561,20 +581,14 @@ function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boole
             </span>
           </div>
 
-          {/* Bottom content */}
+          {/* Bottom */}
           <div>
-            {/* Decorative line */}
-            <div
-              className="w-16 h-px mb-4"
-              style={{
-                background: 'linear-gradient(90deg, rgba(139,92,246,0.4), rgba(196,181,253,0.2), transparent)',
-              }}
-            />
+            <div className="w-16 h-px mb-4" style={{ background: theme.lineGrad }} />
             <h3
               className="text-xl font-bold mb-1.5 tracking-wide"
               style={{
-                color: 'rgba(255, 255, 255, 0.85)',
-                textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 20px rgba(139,92,246,0.1)',
+                color: theme.textColor,
+                textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 20px ' + theme.accentGlow,
               }}
             >
               {card.title}
@@ -582,7 +596,7 @@ function PlatinumCard({ card, isMobile }: { card: ExpertiseCard; isMobile: boole
             <p
               className="text-sm tracking-wide"
               style={{
-                color: 'rgba(196, 181, 253, 0.45)',
+                color: theme.subtextColor,
                 textShadow: '0 1px 0 rgba(0,0,0,0.3)',
               }}
             >
