@@ -194,6 +194,7 @@
   backface-visibility: hidden;
   -webkit-transform-style: preserve-3d;
   transform-style: preserve-3d;
+  min-height: 32px;
 }
 
 @keyframes fade-in-up {
