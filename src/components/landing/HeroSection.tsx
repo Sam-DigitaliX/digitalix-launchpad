@@ -65,7 +65,7 @@ const HeroSection = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5 animate-fade-in-up animation-delay-300">
             <Button variant="heroGradient" size="xl" asChild>
               <Link to="/contact">
-                Je réserve mon audit tracking à 0€
+                Réserver mon Audit Offert
               </Link>
             </Button>
           </div>
