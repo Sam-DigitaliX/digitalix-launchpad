@@ -13,7 +13,7 @@ const GradientSection = ({ children, className = "" }: GradientSectionProps) => 
 
       {/* Main section container */}
       <div
-        className={`relative rounded-t-[40px] pt-16 md:pt-24 px-8 md:px-20 pb-16 md:pb-24 ${className}`}
+        className={`relative rounded-t-[40px] pt-16 md:pt-24 px-4 md:px-8 lg:px-20 pb-16 md:pb-24 ${className}`}
         style={{
           background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.18) 0%, hsl(262 83% 58% / 0.06) 30%, hsl(0 0% 0% / 0) 100%)',
         }}

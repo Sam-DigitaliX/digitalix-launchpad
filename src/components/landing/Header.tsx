@@ -461,7 +461,7 @@ const Header = () => {
               {/* CTA mobile */}
               <Button variant="heroGradient" size="lg" className="w-full mt-4" asChild>
                 <Link to="/contact" onClick={closeMobile}>
-                  Réserver mon Audit à 0€
+                  Réserver mon Audit Offert
                 </Link>
               </Button>
             </nav>

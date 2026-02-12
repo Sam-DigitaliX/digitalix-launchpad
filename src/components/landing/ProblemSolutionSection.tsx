@@ -259,7 +259,7 @@ const ProblemSolutionSection = () => {
               Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des <span className="font-bold text-foreground">données fiables</span>.
             </p>
             <Button variant="heroGradient" size="xl" onClick={() => navigate('/contact')}>
-              Je réserve mon audit tracking à 0€
+              Réserver mon Audit Offert
             </Button>
           </div>
         </div>

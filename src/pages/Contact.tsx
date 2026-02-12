@@ -10,8 +10,19 @@ export default function Contact() {
     <div className="min-h-screen bg-background">
       <Header />
       
-      <main className="pt-28 pb-20 px-4">
-        <div className="container max-w-6xl mx-auto">
+      <main className="relative pb-20 px-4">
+        {/* Evervault-style hero gradient */}
+        <div className="absolute inset-x-0 top-0 h-[500px] overflow-hidden pointer-events-none">
+          <div
+            className="absolute inset-0"
+            style={{
+              background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.12) 0%, hsl(262 83% 58% / 0.04) 50%, transparent 100%)',
+            }}
+          />
+          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[400px] bg-primary/8 rounded-full blur-[120px]" />
+        </div>
+
+        <div className="relative pt-28 container max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-10 space-y-4">
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide">
@@ -21,7 +32,7 @@ export default function Contact() {
               Parlons de votre <span className="text-gradient-primary">projet</span>
             </h1>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Répondez à quelques questions pour que nous puissions vous proposer 
+              Répondez à quelques questions pour que nous puissions vous proposer
               l'accompagnement le plus adapté à vos besoins.
             </p>
           </div>
