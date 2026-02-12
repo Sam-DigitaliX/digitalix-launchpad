@@ -62,9 +62,9 @@ const CARD_W_DESKTOP = 400;
 const CARD_H_DESKTOP = 250;
 const CARD_GAP_DESKTOP = 60;
 
-const CARD_W_MOBILE = 280;
-const CARD_H_MOBILE = 175;
-const CARD_GAP_MOBILE = 24;
+const CARD_W_MOBILE = 260;
+const CARD_H_MOBILE = 162;
+const CARD_GAP_MOBILE = 40;
 
 function getCardDimensions(mobile: boolean) {
   const w = mobile ? CARD_W_MOBILE : CARD_W_DESKTOP;
