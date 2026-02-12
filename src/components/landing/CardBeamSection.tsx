@@ -108,24 +108,24 @@ interface CardTheme {
 }
 
 const THEMES: Record<string, CardTheme> = {
-  /* Matte — deep dark stealth, minimal reflection */
+  /* Matte — dark stealth with subtle warmth, minimal reflection */
   matte: {
     base: `linear-gradient(145deg,
-      #1a1a2e 0%, #16213e 20%, #1a1a2e 40%, #0f0f23 60%, #1a1a2e 80%, #16213e 100%)`,
-    brushedOpacity: '0.02',
+      #2e2e42 0%, #333850 20%, #2e2e42 40%, #282840 60%, #2e2e42 80%, #333850 100%)`,
+    brushedOpacity: '0.03',
     shine: `linear-gradient(115deg,
-      transparent 0%, transparent 40%,
-      rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.05) 50%,
-      rgba(255,255,255,0.03) 55%, transparent 60%, transparent 100%)`,
-    shineOpacity: 0.5,
+      transparent 0%, transparent 35%,
+      rgba(255,255,255,0.04) 42%, rgba(255,255,255,0.07) 50%,
+      rgba(255,255,255,0.04) 58%, transparent 65%, transparent 100%)`,
+    shineOpacity: 0.6,
     extraLayer: null,
     extraLayerOpacity: 0,
     edgeShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.08),
-      inset 0 -1px 0 rgba(0,0,0,0.5),
-      inset 1px 0 0 rgba(255,255,255,0.04),
-      inset -1px 0 0 rgba(255,255,255,0.04)`,
-    outerShadow: '0 20px 60px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4)',
+      inset 0 1px 0 rgba(255,255,255,0.1),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      inset 1px 0 0 rgba(255,255,255,0.05),
+      inset -1px 0 0 rgba(255,255,255,0.05)`,
+    outerShadow: '0 16px 48px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.2)',
     iconGrad: ['rgba(120,120,150,0.6)', 'rgba(180,180,210,0.8)', 'rgba(120,120,150,0.5)'],
     titleColor: 'rgba(255,255,255,0.95)',
     titleShadow: '0 -1px 0 rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.08)',
@@ -140,23 +140,23 @@ const THEMES: Record<string, CardTheme> = {
   /* Platinum — rich violet-metal, warm luxury highlights */
   platinum: {
     base: `linear-gradient(135deg,
-      #2a2035 0%, #3d3352 15%, #4a3f60 25%, #2e2440 40%,
-      #1f1830 55%, #3d3352 70%, #4a3f60 85%, #2a2035 100%)`,
-    brushedOpacity: '0.03',
+      #382850 0%, #4a3d65 15%, #574a75 25%, #3e3055 40%,
+      #352848 55%, #4a3d65 70%, #574a75 85%, #382850 100%)`,
+    brushedOpacity: '0.04',
     shine: `linear-gradient(115deg,
-      transparent 0%, transparent 28%,
-      rgba(196,181,253,0.1) 35%, rgba(255,255,255,0.18) 42%,
-      rgba(196,181,253,0.28) 48%, rgba(255,255,255,0.22) 52%,
-      rgba(139,92,246,0.15) 58%, transparent 68%, transparent 100%)`,
-    shineOpacity: 0.6,
+      transparent 0%, transparent 25%,
+      rgba(196,181,253,0.12) 32%, rgba(255,255,255,0.2) 40%,
+      rgba(196,181,253,0.32) 46%, rgba(255,255,255,0.25) 52%,
+      rgba(139,92,246,0.18) 60%, transparent 70%, transparent 100%)`,
+    shineOpacity: 0.7,
     extraLayer: null,
     extraLayerOpacity: 0,
     edgeShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.14),
-      inset 0 -1px 0 rgba(0,0,0,0.4),
-      inset 1px 0 0 rgba(255,255,255,0.08),
-      inset -1px 0 0 rgba(255,255,255,0.08)`,
-    outerShadow: '0 20px 60px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3), 0 0 40px rgba(139,92,246,0.06)',
+      inset 0 1px 0 rgba(255,255,255,0.16),
+      inset 0 -1px 0 rgba(0,0,0,0.35),
+      inset 1px 0 0 rgba(255,255,255,0.09),
+      inset -1px 0 0 rgba(255,255,255,0.09)`,
+    outerShadow: '0 16px 48px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.2), 0 0 35px rgba(139,92,246,0.06)',
     iconGrad: ['rgba(196,181,253,0.6)', 'rgba(139,92,246,0.85)', 'rgba(196,181,253,0.5)'],
     titleColor: 'rgba(255,255,255,0.93)',
     titleShadow: '0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(196,181,253,0.15)',
@@ -171,23 +171,23 @@ const THEMES: Record<string, CardTheme> = {
   /* Silver — cool brushed steel, crisp modern */
   silver: {
     base: `linear-gradient(140deg,
-      #2a2d3e 0%, #3a3f58 15%, #454b68 30%, #3a3f58 45%,
-      #2e3248 60%, #3a3f58 75%, #454b68 90%, #2a2d3e 100%)`,
-    brushedOpacity: '0.06',
+      #353a52 0%, #434a65 15%, #4e5575 30%, #434a65 45%,
+      #3a4058 60%, #434a65 75%, #4e5575 90%, #353a52 100%)`,
+    brushedOpacity: '0.07',
     shine: `linear-gradient(115deg,
-      transparent 0%, transparent 22%,
-      rgba(200,210,235,0.08) 30%, rgba(255,255,255,0.2) 38%,
-      rgba(200,210,235,0.14) 44%, rgba(255,255,255,0.12) 50%,
-      rgba(200,210,235,0.08) 56%, transparent 64%, transparent 100%)`,
-    shineOpacity: 0.55,
+      transparent 0%, transparent 20%,
+      rgba(200,210,235,0.1) 28%, rgba(255,255,255,0.22) 36%,
+      rgba(200,210,235,0.16) 42%, rgba(255,255,255,0.14) 48%,
+      rgba(200,210,235,0.1) 54%, transparent 62%, transparent 100%)`,
+    shineOpacity: 0.65,
     extraLayer: null,
     extraLayerOpacity: 0,
     edgeShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.2),
-      inset 0 -1px 0 rgba(0,0,0,0.35),
-      inset 1px 0 0 rgba(255,255,255,0.1),
-      inset -1px 0 0 rgba(255,255,255,0.1)`,
-    outerShadow: '0 20px 60px rgba(0,0,0,0.45), 0 8px 20px rgba(0,0,0,0.25), 0 0 30px rgba(148,163,184,0.05)',
+      inset 0 1px 0 rgba(255,255,255,0.22),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      inset 1px 0 0 rgba(255,255,255,0.12),
+      inset -1px 0 0 rgba(255,255,255,0.12)`,
+    outerShadow: '0 16px 48px rgba(0,0,0,0.3), 0 6px 16px rgba(0,0,0,0.18), 0 0 25px rgba(148,163,184,0.05)',
     iconGrad: ['rgba(180,195,225,0.6)', 'rgba(220,230,250,0.85)', 'rgba(180,195,225,0.5)'],
     titleColor: 'rgba(255,255,255,0.95)',
     titleShadow: '0 -1px 0 rgba(0,0,0,0.6), 0 1px 0 rgba(200,210,235,0.14)',
@@ -202,30 +202,30 @@ const THEMES: Record<string, CardTheme> = {
   /* Iridescent — holographic rainbow, DigitaliX gradient shimmer */
   iridescent: {
     base: `linear-gradient(135deg,
-      #1a1030 0%, #251845 15%, #1e1540 30%, #15102a 50%,
-      #1a1030 65%, #251845 80%, #1e1540 100%)`,
-    brushedOpacity: '0.02',
+      #2e1e50 0%, #3a2560 15%, #332055 30%, #2a1a48 50%,
+      #2e1e50 65%, #3a2560 80%, #332055 100%)`,
+    brushedOpacity: '0.03',
     shine: `linear-gradient(115deg,
-      transparent 0%, transparent 18%,
-      rgba(14,165,233,0.12) 26%, rgba(139,92,246,0.16) 32%,
-      rgba(196,181,253,0.22) 38%, rgba(255,255,255,0.16) 44%,
-      rgba(14,165,233,0.2) 50%, rgba(6,182,212,0.16) 56%,
-      rgba(139,92,246,0.14) 62%, rgba(255,255,255,0.1) 68%,
-      transparent 78%, transparent 100%)`,
-    shineOpacity: 0.7,
+      transparent 0%, transparent 15%,
+      rgba(14,165,233,0.14) 24%, rgba(139,92,246,0.18) 30%,
+      rgba(196,181,253,0.25) 36%, rgba(255,255,255,0.18) 42%,
+      rgba(14,165,233,0.22) 48%, rgba(6,182,212,0.18) 54%,
+      rgba(139,92,246,0.16) 60%, rgba(255,255,255,0.12) 66%,
+      transparent 76%, transparent 100%)`,
+    shineOpacity: 0.8,
     extraLayer: `linear-gradient(160deg,
-      transparent 12%,
-      rgba(139,92,246,0.5) 22%, rgba(14,165,233,0.45) 32%,
-      rgba(6,182,212,0.5) 42%, rgba(236,72,153,0.3) 52%,
-      rgba(139,92,246,0.4) 62%, rgba(14,165,233,0.25) 72%,
-      transparent 82%)`,
-    extraLayerOpacity: 0.14,
+      transparent 10%,
+      rgba(139,92,246,0.5) 20%, rgba(14,165,233,0.45) 30%,
+      rgba(6,182,212,0.5) 40%, rgba(236,72,153,0.3) 50%,
+      rgba(139,92,246,0.4) 60%, rgba(14,165,233,0.25) 70%,
+      transparent 80%)`,
+    extraLayerOpacity: 0.18,
     edgeShadow: `
-      inset 0 1px 0 rgba(255,255,255,0.16),
-      inset 0 -1px 0 rgba(0,0,0,0.35),
-      inset 1px 0 0 rgba(139,92,246,0.14),
-      inset -1px 0 0 rgba(14,165,233,0.14)`,
-    outerShadow: '0 20px 60px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3), 0 0 50px rgba(139,92,246,0.08), 0 0 30px rgba(14,165,233,0.05)',
+      inset 0 1px 0 rgba(255,255,255,0.18),
+      inset 0 -1px 0 rgba(0,0,0,0.3),
+      inset 1px 0 0 rgba(139,92,246,0.16),
+      inset -1px 0 0 rgba(14,165,233,0.16)`,
+    outerShadow: '0 16px 48px rgba(0,0,0,0.35), 0 6px 16px rgba(0,0,0,0.2), 0 0 40px rgba(139,92,246,0.08), 0 0 25px rgba(14,165,233,0.05)',
     iconGrad: ['rgba(14,165,233,0.6)', 'rgba(139,92,246,0.8)', 'rgba(6,182,212,0.6)'],
     titleColor: 'rgba(255,255,255,0.95)',
     titleShadow: '0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(139,92,246,0.18)',
@@ -295,20 +295,20 @@ function CardBeamSection() {
     function spawnParticle(): typeof particles[0] {
       const cx = w / 2;
       const intensity = beamIntensityRef.current;
-      const goRight = Math.random() < (0.5 + intensity * 0.3);
-      const baseSpeed = Math.random() * 1.0 + 0.3;
-      const activeBoost = intensity * 1.8;
+      const goRight = Math.random() < (0.5 + intensity * 0.25);
+      const baseSpeed = Math.random() * 0.8 + 0.2;
+      const activeBoost = intensity * 1.2;
       return {
-        x: cx + (Math.random() - 0.5) * (6 + intensity * 6),
+        x: cx + (Math.random() - 0.5) * (5 + intensity * 4),
         y: Math.random() * h,
         vx: goRight
-          ? (baseSpeed + activeBoost) * (0.8 + intensity * 0.5)
-          : -(baseSpeed + activeBoost * 0.3),
-        vy: (Math.random() - 0.5) * (0.4 + intensity * 0.6),
-        r: Math.random() * (2 + intensity * 2) + 0.5,
-        alpha: Math.random() * (0.5 + intensity * 0.4) + (0.2 + intensity * 0.1),
+          ? (baseSpeed + activeBoost) * (0.7 + intensity * 0.4)
+          : -(baseSpeed + activeBoost * 0.25),
+        vy: (Math.random() - 0.5) * (0.3 + intensity * 0.4),
+        r: Math.random() * (1.2 + intensity * 0.8) + 0.3,
+        alpha: Math.random() * (0.35 + intensity * 0.2) + (0.12 + intensity * 0.06),
         life: 1,
-        decay: Math.random() * 0.012 + 0.004,
+        decay: Math.random() * 0.014 + 0.005,
       };
     }
 
@@ -330,12 +330,12 @@ function CardBeamSection() {
 
       /* ── Beam core ── */
       ctx.globalCompositeOperation = 'source-over';
-      const coreW = 2 + t * 3;
-      const coreAlpha = 0.5 + t * 0.5;
+      const coreW = 1.5 + t * 1.5;
+      const coreAlpha = 0.4 + t * 0.35;
       const beamGrad = ctx.createLinearGradient(0, 0, 0, h);
       beamGrad.addColorStop(0, 'transparent');
       beamGrad.addColorStop(fadeZone / h, `rgba(139, 92, 246, ${coreAlpha})`);
-      beamGrad.addColorStop(0.5, `rgba(${180 + t * 75}, ${160 + t * 95}, 253, ${coreAlpha})`);
+      beamGrad.addColorStop(0.5, `rgba(${160 + t * 60}, ${140 + t * 70}, 253, ${coreAlpha})`);
       beamGrad.addColorStop(1 - fadeZone / h, `rgba(139, 92, 246, ${coreAlpha})`);
       beamGrad.addColorStop(1, 'transparent');
       ctx.globalAlpha = 1;
@@ -345,64 +345,65 @@ function CardBeamSection() {
       ctx.fill();
 
       /* ── White-hot center flash when active ── */
-      if (t > 0.3) {
-        const flashAlpha = (t - 0.3) * 1.0;
+      if (t > 0.4) {
+        const flashAlpha = (t - 0.4) * 0.7;
         const flashGrad = ctx.createLinearGradient(0, 0, 0, h);
         flashGrad.addColorStop(0, 'transparent');
-        flashGrad.addColorStop(fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.4})`);
-        flashGrad.addColorStop(0.5, `rgba(255, 255, 255, ${flashAlpha * 0.6})`);
-        flashGrad.addColorStop(1 - fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.4})`);
+        flashGrad.addColorStop(fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.2})`);
+        flashGrad.addColorStop(0.5, `rgba(255, 255, 255, ${flashAlpha * 0.35})`);
+        flashGrad.addColorStop(1 - fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.2})`);
         flashGrad.addColorStop(1, 'transparent');
         ctx.fillStyle = flashGrad;
         ctx.fillRect(cx - 1, 0, 2, h);
       }
 
-      /* ── Glow — asymmetric when active ── */
+      /* ── Glow — soft rounded, asymmetric when active ── */
       ctx.globalCompositeOperation = 'lighter';
 
-      // Left glow (intense/concentrated when disintegrating)
-      const leftW = 20 + t * 35;
+      // Left glow (concentrated when disintegrating) — soft falloff
+      const leftW = 16 + t * 25;
       const leftGlow = ctx.createLinearGradient(cx - leftW, 0, cx, 0);
       leftGlow.addColorStop(0, 'transparent');
-      leftGlow.addColorStop(0.4, `rgba(196, 181, 253, ${(0.05 + t * 0.25)})`);
-      leftGlow.addColorStop(1, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
+      leftGlow.addColorStop(0.3, 'transparent');
+      leftGlow.addColorStop(0.6, `rgba(196, 181, 253, ${(0.03 + t * 0.12)})`);
+      leftGlow.addColorStop(0.85, `rgba(196, 181, 253, ${(0.1 + t * 0.2)})`);
+      leftGlow.addColorStop(1, `rgba(196, 181, 253, ${(0.18 + t * 0.25)})`);
       ctx.globalAlpha = 1;
-      ctx.fillStyle = leftGlow;
-      const leftGlowGrad = ctx.createLinearGradient(0, 0, 0, h);
-      leftGlowGrad.addColorStop(0, 'transparent');
-      leftGlowGrad.addColorStop(fadeZone / h, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
-      leftGlowGrad.addColorStop(1 - fadeZone / h, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
-      leftGlowGrad.addColorStop(1, 'transparent');
       ctx.fillStyle = leftGlow;
       ctx.fillRect(cx - leftW, 0, leftW, h);
 
-      // Right glow (wide trailing when disintegrating)
-      const rightW = 20 + t * 80;
+      // Right glow (wide trailing when disintegrating) — gradual falloff
+      const rightW = 16 + t * 55;
       const rightGlow = ctx.createLinearGradient(cx, 0, cx + rightW, 0);
-      rightGlow.addColorStop(0, `rgba(139, 92, 246, ${(0.25 + t * 0.35)})`);
-      rightGlow.addColorStop(0.2, `rgba(139, 92, 246, ${(0.12 + t * 0.2)})`);
-      rightGlow.addColorStop(0.5, `rgba(139, 92, 246, ${(0.04 + t * 0.1)})`);
+      rightGlow.addColorStop(0, `rgba(139, 92, 246, ${(0.15 + t * 0.2)})`);
+      rightGlow.addColorStop(0.15, `rgba(139, 92, 246, ${(0.08 + t * 0.12)})`);
+      rightGlow.addColorStop(0.4, `rgba(139, 92, 246, ${(0.03 + t * 0.06)})`);
+      rightGlow.addColorStop(0.7, `rgba(139, 92, 246, ${(0.01 + t * 0.02)})`);
       rightGlow.addColorStop(1, 'transparent');
       ctx.fillStyle = rightGlow;
       ctx.fillRect(cx, 0, rightW, h);
 
-      // Center tight glow (always present but brighter when active)
-      const g1 = ctx.createLinearGradient(cx - 12, 0, cx + 12, 0);
+      // Center tight glow — softer
+      const g1 = ctx.createLinearGradient(cx - 10, 0, cx + 10, 0);
       g1.addColorStop(0, 'transparent');
-      g1.addColorStop(0.5, `rgba(196, 181, 253, ${0.35 + t * 0.35})`);
+      g1.addColorStop(0.3, `rgba(196, 181, 253, ${(0.08 + t * 0.12)})`);
+      g1.addColorStop(0.5, `rgba(196, 181, 253, ${(0.2 + t * 0.2)})`);
+      g1.addColorStop(0.7, `rgba(196, 181, 253, ${(0.08 + t * 0.12)})`);
       g1.addColorStop(1, 'transparent');
-      ctx.globalAlpha = 0.8 + t * 0.2;
+      ctx.globalAlpha = 0.7 + t * 0.2;
       ctx.fillStyle = g1;
-      ctx.fillRect(cx - 12, 0, 24, h);
+      ctx.fillRect(cx - 10, 0, 20, h);
 
-      // Outer ambient glow
-      const g3 = ctx.createLinearGradient(cx - 100, 0, cx + 100, 0);
+      // Outer ambient glow — very subtle
+      const g3 = ctx.createLinearGradient(cx - 80, 0, cx + 80, 0);
       g3.addColorStop(0, 'transparent');
-      g3.addColorStop(0.5, `rgba(139, 92, 246, ${0.04 + t * 0.06})`);
+      g3.addColorStop(0.3, `rgba(139, 92, 246, ${(0.01 + t * 0.02)})`);
+      g3.addColorStop(0.5, `rgba(139, 92, 246, ${(0.03 + t * 0.04)})`);
+      g3.addColorStop(0.7, `rgba(139, 92, 246, ${(0.01 + t * 0.02)})`);
       g3.addColorStop(1, 'transparent');
       ctx.globalAlpha = 0.5;
       ctx.fillStyle = g3;
-      ctx.fillRect(cx - 100, 0, 200, h);
+      ctx.fillRect(cx - 80, 0, 160, h);
 
       /* ── Particles ── */
       ctx.globalCompositeOperation = 'lighter';
@@ -422,10 +423,9 @@ function CardBeamSection() {
         else if (p.y > h - fadeZone) fadeAlpha = (h - p.y) / fadeZone;
         fadeAlpha = Math.max(0, Math.min(1, fadeAlpha));
 
-        ctx.globalAlpha = p.alpha * p.life * fadeAlpha;
-        // Brighter particles when active
-        const bright = Math.floor(180 + t * 75);
-        ctx.fillStyle = `rgb(${bright}, ${Math.floor(150 + t * 50)}, 253)`;
+        ctx.globalAlpha = p.alpha * p.life * fadeAlpha * 0.7;
+        const bright = Math.floor(170 + t * 50);
+        ctx.fillStyle = `rgb(${bright}, ${Math.floor(140 + t * 40)}, 245)`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
