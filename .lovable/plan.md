@@ -1,51 +1,41 @@
 
 
-## Page Services - Prestations DigitaliX
+## Style "Full-Width Rounded Container" - Inspiration Evervault
 
 ### Concept
 
-Creer une page `/services` listant les prestations sous forme de cards visuelles avec image, et une page dediee par service accessible via `/services/:slug`.
+Appliquer le style de bloc large avec bords arrondis et fond en gradient violet/cyan sur 2 sections test, avant d'harmoniser sur le reste du site si le rendu plait.
 
-### Services proposes
+### Sections cibles pour le test
 
-| # | Titre | Slug | Description courte |
-|---|-------|------|--------------------|
-| 1 | Audit Tracking & Data Quality | `audit-tracking` | Diagnostic complet de votre infrastructure de collecte : tags, events, consent, fuites de donnees. Rapport actionnable sous 48h. |
-| 2 | Migration Server-Side | `migration-server-side` | Passage de votre tracking client-side vers une architecture serveur (Addingwell / Stape). Zero downtime, zero perte de donnees. |
-| 3 | Integration CAPI (Meta, Google, TikTok, LinkedIn) | `integration-capi` | Connexion directe entre votre serveur et les plateformes publicitaires. Match Rate optimise, conversions recuperees. |
-| 4 | Conformite RGPD & Consent Mode v2 | `conformite-rgpd` | Mise en place CMP, Consent Mode v2, anonymisation. Votre tracking respecte la legislation sans sacrifier la performance. |
-| 5 | Monitoring & Maintenance | `monitoring-maintenance` | Surveillance 24/7 de vos flux de donnees. Alertes temps reel, rapports mensuels, garantie de continuite. |
-| 6 | Formation & Transfert de competences | `formation` | Sessions de formation sur mesure pour vos equipes : GTM Server-Side, CAPI, debugging, bonnes pratiques. |
+1. **CTA Section** (`CTASection.tsx`) - C'est la section la plus naturelle pour ce traitement : un bloc visuellement distinct qui attire l'oeil avant le footer. Le gradient violet/cyan en fond avec les coins arrondis (rounded-3xl ou rounded-[2rem]) lui donnera un effet "carte geante" premium.
 
-### Architecture technique
+2. **Section "Ce qui est inclus"** sur la page ServiceDetail (`ServiceDetail.tsx`) - La section features avec fond `bg-card` sera transformee en bloc arrondi avec le gradient, ce qui casse la monotonie de la page detail.
 
-**Fichiers a creer :**
+### Implementation technique
 
-- `src/pages/Services.tsx` - Page listing avec grille de cards
-- `src/pages/ServiceDetail.tsx` - Page template pour le detail d'un service (route dynamique)
-- `src/data/services.ts` - Donnees centralisees (titre, slug, description, image, features, etc.)
+**1. Nouveau composant utilitaire CSS** (`src/index.css`)
+- Ajouter une classe `.rounded-section` qui encapsule le style : `rounded-3xl`, gradient de fond `from-primary/20 via-primary/10 to-secondary/10`, bordure subtile `border border-white/5`, et un padding interne genereux.
 
-**Fichiers a modifier :**
+**2. Modification de `CTASection.tsx`**
+- Wrapper le contenu dans un container qui a des marges laterales (`mx-4 sm:mx-6 lg:mx-8`) pour que le bloc arrondi ne touche pas les bords de la page.
+- Appliquer le fond en gradient violet-to-cyan avec `rounded-3xl`.
+- Conserver les orbes de lueur existantes a l'interieur du bloc arrondi.
 
-- `src/App.tsx` - Ajouter les routes `/services` et `/services/:slug`
-- `src/components/landing/Header.tsx` - Ajouter le lien "Services" dans la navigation
+**3. Modification de `ServiceDetail.tsx`**
+- Transformer la section "Ce qui est inclus" : au lieu d'un fond `bg-card` pleine largeur, utiliser un bloc arrondi centre dans le container avec le gradient en fond.
 
-### Design des cards (page listing)
+### Rendu attendu
 
-Chaque card reprend le style `glass-card` existant et contient :
-- Une image en haut (ratio 16/9, placeholder en attendant les vraies images)
-- Le titre du service
-- Une description courte (2-3 lignes)
-- Un bouton "Decouvrir" (`heroGradientOutline`) qui redirige vers `/services/:slug`
+- Fond de page noir (`background`) visible autour des blocs arrondis
+- Les blocs arrondis ont un degrade subtil violet/cyan en fond
+- Bordure tres fine en `white/5` pour delimiter le conteneur
+- Coins arrondis `rounded-3xl` (24px) pour un rendu large et moderne
+- Transition douce entre le fond noir et le gradient du bloc
 
-### Page detail (`/services/:slug`)
+### Harmonisation future
 
-Structure de chaque page service :
-- Header + Hero avec titre et description longue
-- Section "Ce qui est inclus" (liste de features avec check icons, comme SolutionsSection)
-- CTA "Reserver mon Audit" vers `/contact`
-- Footer
-
-### Navigation
-
-Ajout de "Services" dans les `navLinks` du Header (lien route, pas ancre) pour la Home et les autres pages non-consultants.
+Si le rendu est valide, on pourra etendre ce style a :
+- La section "Pourquoi passer au Server-Side" sur la Home
+- La section SolutionsSection sur la page Consultants
+- La section IntegrationSection
