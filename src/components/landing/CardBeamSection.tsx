@@ -48,13 +48,37 @@ const CARDS: ExpertiseCard[] = [
   },
 ];
 
-/* ─── DigitaliX butterfly watermark (simplified geometric outline) ─── */
+/* ─── DigitaliX butterfly watermark (precise geometric origami) ─── */
 
 const BUTTERFLY_PATH =
-  'M24 38L13 25L3 6L15 8L24 16L33 8L45 6L35 25Z' + // outer silhouette
-  'M24 16V38' +                                       // center body line
-  'M13 25L24 16L35 25' +                              // wing crease
-  'M8 15L24 16M40 15L24 16';                          // inner wing angles
+  // Left upper wing (outer edge)
+  'M50 42 L18 10 L2 4' +
+  // Left upper wing (inner fold)
+  'M50 42 L18 10' +
+  'M18 10 L28 28' +
+  'M2 4 L18 10' +
+  'M2 4 L14 26' +
+  // Left lower wing (outer edge)
+  'M50 42 L14 26 L22 62 L36 56' +
+  'M14 26 L28 28' +
+  'M28 28 L36 56' +
+  'M50 42 L36 56' +
+  // Right upper wing (outer edge - mirrored)
+  'M50 42 L82 10 L98 4' +
+  // Right upper wing (inner fold)
+  'M50 42 L82 10' +
+  'M82 10 L72 28' +
+  'M98 4 L82 10' +
+  'M98 4 L86 26' +
+  // Right lower wing (outer edge - mirrored)
+  'M50 42 L86 26 L78 62 L64 56' +
+  'M86 26 L72 28' +
+  'M72 28 L64 56' +
+  'M50 42 L64 56' +
+  // Center body line
+  'M50 42 L50 58' +
+  // Body to lower wings
+  'M50 58 L36 56 M50 58 L64 56';
 
 /* ─── Dimensions ─── */
 
@@ -736,11 +760,11 @@ function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseC
 
         {/* DigitaliX butterfly watermark — filigrane */}
         <svg
-          viewBox="0 0 48 42"
+          viewBox="0 0 100 66"
           className="absolute pointer-events-none"
           style={{
-            width: 130,
-            height: 110,
+            width: 140,
+            height: 92,
             right: 12,
             top: '50%',
             transform: 'translateY(-50%)',
