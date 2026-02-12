@@ -58,10 +58,21 @@ const BUTTERFLY_PATH =
 
 /* ─── Dimensions ─── */
 
-const CARD_W = 400;
-const CARD_H = 250;
-const CARD_GAP = 60;
-const CARD_TOTAL = CARD_W + CARD_GAP;
+const CARD_W_DESKTOP = 400;
+const CARD_H_DESKTOP = 250;
+const CARD_GAP_DESKTOP = 60;
+
+const CARD_W_MOBILE = 280;
+const CARD_H_MOBILE = 175;
+const CARD_GAP_MOBILE = 24;
+
+function getCardDimensions(mobile: boolean) {
+  const w = mobile ? CARD_W_MOBILE : CARD_W_DESKTOP;
+  const h = mobile ? CARD_H_MOBILE : CARD_H_DESKTOP;
+  const gap = mobile ? CARD_GAP_MOBILE : CARD_GAP_DESKTOP;
+  return { w, h, gap, total: w + gap };
+}
+
 const SPEED = 70;
 
 /* ─── Code generator ─── */
@@ -262,6 +273,9 @@ function CardBeamSection() {
   const dragPosRef = useRef(0);
   const beamIntensityRef = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
+  const dims = getCardDimensions(isMobile);
+  const dimsRef = useRef(dims);
+  dimsRef.current = dims;
 
   const allCards = [...CARDS, ...CARDS, ...CARDS];
 
@@ -473,9 +487,11 @@ function CardBeamSection() {
       const dt = (now - lastTimeRef.current) / 1000;
       lastTimeRef.current = now;
 
+      const d = dimsRef.current;
+
       if (!isDraggingRef.current) {
         posRef.current += SPEED * dt;
-        const singleSetWidth = CARDS.length * CARD_TOTAL;
+        const singleSetWidth = CARDS.length * d.total;
         if (posRef.current > 0) posRef.current -= singleSetWidth;
         if (posRef.current < -singleSetWidth) posRef.current += singleSetWidth;
       }
@@ -489,9 +505,9 @@ function CardBeamSection() {
         const cards = containerRef.current.children;
         for (let i = 0; i < cards.length; i++) {
           const el = cards[i] as HTMLElement;
-          const x = posRef.current + i * CARD_TOTAL;
+          const x = posRef.current + i * d.total;
           el.style.transform = `translateX(${x}px)`;
-          if (x < sR && x + CARD_W > sL) {
+          if (x < sR && x + d.w > sL) {
             cardInBeam = true;
           }
         }
@@ -526,7 +542,7 @@ function CardBeamSection() {
     isDraggingRef.current = false;
   }, []);
 
-  const trackHeight = CARD_H + 80;
+  const trackHeight = dims.h + 80;
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden bg-background">
@@ -558,7 +574,7 @@ function CardBeamSection() {
         <div
           ref={containerRef}
           className="absolute left-0 w-full"
-          style={{ height: CARD_H, top: (trackHeight - CARD_H) / 2, cursor: 'grab' }}
+          style={{ height: dims.h, top: (trackHeight - dims.h) / 2, cursor: 'grab' }}
         >
           {allCards.map((card, i) => (
             <MetalCard
@@ -566,6 +582,8 @@ function CardBeamSection() {
               card={card}
               variant={VARIANT_CYCLE[i % VARIANT_CYCLE.length]}
               isMobile={isMobile}
+              cardW={dims.w}
+              cardH={dims.h}
             />
           ))}
         </div>
@@ -576,7 +594,7 @@ function CardBeamSection() {
 
 /* ─── Metal card with engraved typography ─── */
 
-function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean }) {
+function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean; cardW: number; cardH: number }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
   const normalRef = useRef<HTMLDivElement>(null);
   const asciiRef = useRef<HTMLDivElement>(null);
@@ -586,10 +604,10 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
 
   useEffect(() => {
     if (!codeRef.current) return;
-    const cols = Math.floor(CARD_W / 6.5);
-    const rows = Math.floor(CARD_H / 13);
+    const cols = Math.floor(cardW / 6.5);
+    const rows = Math.floor(cardH / 13);
     codeRef.current.textContent = generateCodeBlock(cols, rows);
-  }, []);
+  }, [cardW, cardH]);
 
   // Clip-path scanner
   useEffect(() => {
@@ -635,18 +653,18 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
     if (isMobile) return;
     const interval = setInterval(() => {
       if (!codeRef.current || Math.random() > 0.2) return;
-      const cols = Math.floor(CARD_W / 6.5);
-      const rows = Math.floor(CARD_H / 13);
+      const cols = Math.floor(cardW / 6.5);
+      const rows = Math.floor(cardH / 13);
       codeRef.current.textContent = generateCodeBlock(cols, rows);
     }, 300);
     return () => clearInterval(interval);
-  }, [isMobile]);
+  }, [isMobile, cardW, cardH]);
 
   return (
     <div
       ref={wrapperRef}
       className="absolute top-0 left-0 will-change-transform"
-      style={{ width: CARD_W, height: CARD_H }}
+      style={{ width: cardW, height: cardH }}
     >
       {/* ASCII layer */}
       <div
