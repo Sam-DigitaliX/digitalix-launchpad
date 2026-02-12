@@ -5,7 +5,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
 interface ExpertiseCard {
   title: string;
   subtitle: string;
-  iconPath: string; // SVG path(s)
+  iconPath: string;
   viewBox: string;
 }
 
@@ -14,37 +14,37 @@ const CARDS: ExpertiseCard[] = [
     title: 'GTM Server-Side',
     subtitle: 'Infrastructure sGTM sur Google Cloud',
     viewBox: '0 0 24 24',
-    iconPath: 'M5 12h14M12 5l7 7-7 7', // arrow-right-style bolt
+    iconPath: 'M5 12h14M12 5l7 7-7 7',
   },
   {
     title: 'Meta CAPI',
     subtitle: 'Conversion API Facebook & Instagram',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2', // signal/clock
+    iconPath: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2',
   },
   {
     title: 'Enhanced Conversions',
     subtitle: 'Google Ads Server-Side',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // layers/stack
+    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
   },
   {
     title: 'Consent Mode v2',
     subtitle: 'Conformité RGPD native',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z', // shield
+    iconPath: 'M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z',
   },
   {
     title: 'Audit Data Layer',
     subtitle: 'Diagnostic & optimisation tracking',
     viewBox: '0 0 24 24',
-    iconPath: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z', // book-open
+    iconPath: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
   },
   {
     title: 'Analytics GA4',
     subtitle: 'Configuration & dashboards',
     viewBox: '0 0 24 24',
-    iconPath: 'M18 20V10M12 20V4M6 20v-6', // bar-chart
+    iconPath: 'M18 20V10M12 20V4M6 20v-6',
   },
 ];
 
@@ -85,6 +85,162 @@ function generateCodeBlock(cols: number, rows: number): string {
   return out;
 }
 
+/* ─── Card variant themes ─── */
+
+interface CardTheme {
+  base: string;
+  brushedOpacity: string;
+  shine: string;
+  shineOpacity: number;
+  extraLayer: string | null;
+  extraLayerOpacity: number;
+  edgeShadow: string;
+  outerShadow: string;
+  iconGrad: [string, string, string];
+  titleColor: string;
+  titleShadow: string;
+  subtitleColor: string;
+  subtitleShadow: string;
+  brandColor: string;
+  brandShadow: string;
+  lineGrad: string;
+  asciiColor: string;
+}
+
+const THEMES: Record<string, CardTheme> = {
+  /* Matte — deep dark stealth, minimal reflection */
+  matte: {
+    base: `linear-gradient(145deg,
+      #1a1a2e 0%, #16213e 20%, #1a1a2e 40%, #0f0f23 60%, #1a1a2e 80%, #16213e 100%)`,
+    brushedOpacity: '0.02',
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 40%,
+      rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.05) 50%,
+      rgba(255,255,255,0.03) 55%, transparent 60%, transparent 100%)`,
+    shineOpacity: 0.5,
+    extraLayer: null,
+    extraLayerOpacity: 0,
+    edgeShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.08),
+      inset 0 -1px 0 rgba(0,0,0,0.5),
+      inset 1px 0 0 rgba(255,255,255,0.04),
+      inset -1px 0 0 rgba(255,255,255,0.04)`,
+    outerShadow: '0 20px 60px rgba(0,0,0,0.6), 0 8px 20px rgba(0,0,0,0.4)',
+    iconGrad: ['rgba(120,120,150,0.6)', 'rgba(180,180,210,0.8)', 'rgba(120,120,150,0.5)'],
+    titleColor: 'rgba(255,255,255,0.95)',
+    titleShadow: '0 -1px 0 rgba(0,0,0,0.8), 0 1px 0 rgba(255,255,255,0.08)',
+    subtitleColor: 'rgba(180,180,210,0.6)',
+    subtitleShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.05)',
+    brandColor: 'rgba(140,140,170,0.4)',
+    brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.05)',
+    lineGrad: 'linear-gradient(90deg, rgba(140,140,170,0.3), rgba(100,100,130,0.15), transparent)',
+    asciiColor: 'rgba(140, 140, 170, 0.5)',
+  },
+
+  /* Platinum — rich violet-metal, warm luxury highlights */
+  platinum: {
+    base: `linear-gradient(135deg,
+      #2a2035 0%, #3d3352 15%, #4a3f60 25%, #2e2440 40%,
+      #1f1830 55%, #3d3352 70%, #4a3f60 85%, #2a2035 100%)`,
+    brushedOpacity: '0.03',
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 28%,
+      rgba(196,181,253,0.1) 35%, rgba(255,255,255,0.18) 42%,
+      rgba(196,181,253,0.28) 48%, rgba(255,255,255,0.22) 52%,
+      rgba(139,92,246,0.15) 58%, transparent 68%, transparent 100%)`,
+    shineOpacity: 0.6,
+    extraLayer: null,
+    extraLayerOpacity: 0,
+    edgeShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.14),
+      inset 0 -1px 0 rgba(0,0,0,0.4),
+      inset 1px 0 0 rgba(255,255,255,0.08),
+      inset -1px 0 0 rgba(255,255,255,0.08)`,
+    outerShadow: '0 20px 60px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3), 0 0 40px rgba(139,92,246,0.06)',
+    iconGrad: ['rgba(196,181,253,0.6)', 'rgba(139,92,246,0.85)', 'rgba(196,181,253,0.5)'],
+    titleColor: 'rgba(255,255,255,0.93)',
+    titleShadow: '0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(196,181,253,0.15)',
+    subtitleColor: 'rgba(196,181,253,0.6)',
+    subtitleShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.06)',
+    brandColor: 'rgba(196,181,253,0.45)',
+    brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.06)',
+    lineGrad: 'linear-gradient(90deg, rgba(139,92,246,0.45), rgba(196,181,253,0.2), transparent)',
+    asciiColor: 'rgba(196, 181, 253, 0.6)',
+  },
+
+  /* Silver — cool brushed steel, crisp modern */
+  silver: {
+    base: `linear-gradient(140deg,
+      #2a2d3e 0%, #3a3f58 15%, #454b68 30%, #3a3f58 45%,
+      #2e3248 60%, #3a3f58 75%, #454b68 90%, #2a2d3e 100%)`,
+    brushedOpacity: '0.06',
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 22%,
+      rgba(200,210,235,0.08) 30%, rgba(255,255,255,0.2) 38%,
+      rgba(200,210,235,0.14) 44%, rgba(255,255,255,0.12) 50%,
+      rgba(200,210,235,0.08) 56%, transparent 64%, transparent 100%)`,
+    shineOpacity: 0.55,
+    extraLayer: null,
+    extraLayerOpacity: 0,
+    edgeShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.2),
+      inset 0 -1px 0 rgba(0,0,0,0.35),
+      inset 1px 0 0 rgba(255,255,255,0.1),
+      inset -1px 0 0 rgba(255,255,255,0.1)`,
+    outerShadow: '0 20px 60px rgba(0,0,0,0.45), 0 8px 20px rgba(0,0,0,0.25), 0 0 30px rgba(148,163,184,0.05)',
+    iconGrad: ['rgba(180,195,225,0.6)', 'rgba(220,230,250,0.85)', 'rgba(180,195,225,0.5)'],
+    titleColor: 'rgba(255,255,255,0.95)',
+    titleShadow: '0 -1px 0 rgba(0,0,0,0.6), 0 1px 0 rgba(200,210,235,0.14)',
+    subtitleColor: 'rgba(180,195,225,0.6)',
+    subtitleShadow: '0 -1px 0 rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.07)',
+    brandColor: 'rgba(180,195,225,0.45)',
+    brandShadow: '0 -1px 0 rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.07)',
+    lineGrad: 'linear-gradient(90deg, rgba(180,195,225,0.4), rgba(148,163,184,0.2), transparent)',
+    asciiColor: 'rgba(180, 195, 225, 0.5)',
+  },
+
+  /* Iridescent — holographic rainbow, DigitaliX gradient shimmer */
+  iridescent: {
+    base: `linear-gradient(135deg,
+      #1a1030 0%, #251845 15%, #1e1540 30%, #15102a 50%,
+      #1a1030 65%, #251845 80%, #1e1540 100%)`,
+    brushedOpacity: '0.02',
+    shine: `linear-gradient(115deg,
+      transparent 0%, transparent 18%,
+      rgba(14,165,233,0.12) 26%, rgba(139,92,246,0.16) 32%,
+      rgba(196,181,253,0.22) 38%, rgba(255,255,255,0.16) 44%,
+      rgba(14,165,233,0.2) 50%, rgba(6,182,212,0.16) 56%,
+      rgba(139,92,246,0.14) 62%, rgba(255,255,255,0.1) 68%,
+      transparent 78%, transparent 100%)`,
+    shineOpacity: 0.7,
+    extraLayer: `linear-gradient(160deg,
+      transparent 12%,
+      rgba(139,92,246,0.5) 22%, rgba(14,165,233,0.45) 32%,
+      rgba(6,182,212,0.5) 42%, rgba(236,72,153,0.3) 52%,
+      rgba(139,92,246,0.4) 62%, rgba(14,165,233,0.25) 72%,
+      transparent 82%)`,
+    extraLayerOpacity: 0.14,
+    edgeShadow: `
+      inset 0 1px 0 rgba(255,255,255,0.16),
+      inset 0 -1px 0 rgba(0,0,0,0.35),
+      inset 1px 0 0 rgba(139,92,246,0.14),
+      inset -1px 0 0 rgba(14,165,233,0.14)`,
+    outerShadow: '0 20px 60px rgba(0,0,0,0.5), 0 8px 20px rgba(0,0,0,0.3), 0 0 50px rgba(139,92,246,0.08), 0 0 30px rgba(14,165,233,0.05)',
+    iconGrad: ['rgba(14,165,233,0.6)', 'rgba(139,92,246,0.8)', 'rgba(6,182,212,0.6)'],
+    titleColor: 'rgba(255,255,255,0.95)',
+    titleShadow: '0 -1px 0 rgba(0,0,0,0.7), 0 1px 0 rgba(139,92,246,0.18)',
+    subtitleColor: 'rgba(196,181,253,0.65)',
+    subtitleShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.07)',
+    brandColor: 'rgba(14,165,233,0.5)',
+    brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.07)',
+    lineGrad: 'linear-gradient(90deg, rgba(14,165,233,0.45), rgba(139,92,246,0.3), rgba(6,182,212,0.15), transparent)',
+    asciiColor: 'rgba(14, 165, 233, 0.55)',
+  },
+};
+
+type CardVariant = keyof typeof THEMES;
+const VARIANT_CYCLE: CardVariant[] = ['matte', 'platinum', 'silver', 'iridescent'];
+
 /* ─── Main section ─── */
 
 function CardBeamSection() {
@@ -96,6 +252,7 @@ function CardBeamSection() {
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragPosRef = useRef(0);
+  const beamIntensityRef = useRef(0);
   const [isMobile, setIsMobile] = useState(false);
 
   const allCards = [...CARDS, ...CARDS, ...CARDS];
@@ -107,7 +264,7 @@ function CardBeamSection() {
     return () => window.removeEventListener('resize', handler);
   }, []);
 
-  /* Scanner beam canvas */
+  /* ── Reactive scanner beam canvas ── */
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -119,7 +276,7 @@ function CardBeamSection() {
       r: number; alpha: number; life: number; decay: number;
     }> = [];
 
-    const maxParticles = isMobile ? 80 : 200;
+    const poolSize = isMobile ? 100 : 300;
     let w = 0;
     let h = 0;
 
@@ -135,21 +292,27 @@ function CardBeamSection() {
     resize();
     window.addEventListener('resize', resize);
 
-    function spawnParticle() {
+    function spawnParticle(): typeof particles[0] {
       const cx = w / 2;
+      const intensity = beamIntensityRef.current;
+      const goRight = Math.random() < (0.5 + intensity * 0.3);
+      const baseSpeed = Math.random() * 1.0 + 0.3;
+      const activeBoost = intensity * 1.8;
       return {
-        x: cx + (Math.random() - 0.5) * 6,
+        x: cx + (Math.random() - 0.5) * (6 + intensity * 6),
         y: Math.random() * h,
-        vx: (Math.random() * 1.0 + 0.3) * (Math.random() > 0.5 ? 1 : -1),
-        vy: (Math.random() - 0.5) * 0.4,
-        r: Math.random() * 2 + 0.5,
-        alpha: Math.random() * 0.7 + 0.3,
+        vx: goRight
+          ? (baseSpeed + activeBoost) * (0.8 + intensity * 0.5)
+          : -(baseSpeed + activeBoost * 0.3),
+        vy: (Math.random() - 0.5) * (0.4 + intensity * 0.6),
+        r: Math.random() * (2 + intensity * 2) + 0.5,
+        alpha: Math.random() * (0.5 + intensity * 0.4) + (0.2 + intensity * 0.1),
         life: 1,
         decay: Math.random() * 0.012 + 0.004,
       };
     }
 
-    for (let i = 0; i < maxParticles; i++) {
+    for (let i = 0; i < poolSize; i++) {
       const p = spawnParticle();
       p.x += (Math.random() - 0.5) * 300;
       p.life = Math.random();
@@ -163,48 +326,86 @@ function CardBeamSection() {
       ctx.clearRect(0, 0, w, h);
       const cx = w / 2;
       const fadeZone = 50;
+      const t = beamIntensityRef.current;
 
-      // Beam core
+      /* ── Beam core ── */
       ctx.globalCompositeOperation = 'source-over';
+      const coreW = 2 + t * 3;
+      const coreAlpha = 0.5 + t * 0.5;
       const beamGrad = ctx.createLinearGradient(0, 0, 0, h);
       beamGrad.addColorStop(0, 'transparent');
-      beamGrad.addColorStop(fadeZone / h, 'rgba(139, 92, 246, 1)');
-      beamGrad.addColorStop(1 - fadeZone / h, 'rgba(139, 92, 246, 1)');
+      beamGrad.addColorStop(fadeZone / h, `rgba(139, 92, 246, ${coreAlpha})`);
+      beamGrad.addColorStop(0.5, `rgba(${180 + t * 75}, ${160 + t * 95}, 253, ${coreAlpha})`);
+      beamGrad.addColorStop(1 - fadeZone / h, `rgba(139, 92, 246, ${coreAlpha})`);
       beamGrad.addColorStop(1, 'transparent');
       ctx.globalAlpha = 1;
       ctx.fillStyle = beamGrad;
       ctx.beginPath();
-      ctx.roundRect(cx - 2, 0, 4, h, 10);
+      ctx.roundRect(cx - coreW / 2, 0, coreW, h, 10);
       ctx.fill();
 
-      // Glow layers
+      /* ── White-hot center flash when active ── */
+      if (t > 0.3) {
+        const flashAlpha = (t - 0.3) * 1.0;
+        const flashGrad = ctx.createLinearGradient(0, 0, 0, h);
+        flashGrad.addColorStop(0, 'transparent');
+        flashGrad.addColorStop(fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.4})`);
+        flashGrad.addColorStop(0.5, `rgba(255, 255, 255, ${flashAlpha * 0.6})`);
+        flashGrad.addColorStop(1 - fadeZone / h, `rgba(255, 255, 255, ${flashAlpha * 0.4})`);
+        flashGrad.addColorStop(1, 'transparent');
+        ctx.fillStyle = flashGrad;
+        ctx.fillRect(cx - 1, 0, 2, h);
+      }
+
+      /* ── Glow — asymmetric when active ── */
       ctx.globalCompositeOperation = 'lighter';
 
-      const glow1 = ctx.createLinearGradient(cx - 16, 0, cx + 16, 0);
-      glow1.addColorStop(0, 'transparent');
-      glow1.addColorStop(0.5, 'rgba(196, 181, 253, 0.5)');
-      glow1.addColorStop(1, 'transparent');
-      ctx.globalAlpha = 0.9;
-      ctx.fillStyle = glow1;
-      ctx.fillRect(cx - 16, 0, 32, h);
+      // Left glow (intense/concentrated when disintegrating)
+      const leftW = 20 + t * 35;
+      const leftGlow = ctx.createLinearGradient(cx - leftW, 0, cx, 0);
+      leftGlow.addColorStop(0, 'transparent');
+      leftGlow.addColorStop(0.4, `rgba(196, 181, 253, ${(0.05 + t * 0.25)})`);
+      leftGlow.addColorStop(1, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
+      ctx.globalAlpha = 1;
+      ctx.fillStyle = leftGlow;
+      const leftGlowGrad = ctx.createLinearGradient(0, 0, 0, h);
+      leftGlowGrad.addColorStop(0, 'transparent');
+      leftGlowGrad.addColorStop(fadeZone / h, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
+      leftGlowGrad.addColorStop(1 - fadeZone / h, `rgba(196, 181, 253, ${(0.3 + t * 0.45)})`);
+      leftGlowGrad.addColorStop(1, 'transparent');
+      ctx.fillStyle = leftGlow;
+      ctx.fillRect(cx - leftW, 0, leftW, h);
 
-      const glow2 = ctx.createLinearGradient(cx - 40, 0, cx + 40, 0);
-      glow2.addColorStop(0, 'transparent');
-      glow2.addColorStop(0.5, 'rgba(139, 92, 246, 0.2)');
-      glow2.addColorStop(1, 'transparent');
-      ctx.globalAlpha = 0.7;
-      ctx.fillStyle = glow2;
-      ctx.fillRect(cx - 40, 0, 80, h);
+      // Right glow (wide trailing when disintegrating)
+      const rightW = 20 + t * 80;
+      const rightGlow = ctx.createLinearGradient(cx, 0, cx + rightW, 0);
+      rightGlow.addColorStop(0, `rgba(139, 92, 246, ${(0.25 + t * 0.35)})`);
+      rightGlow.addColorStop(0.2, `rgba(139, 92, 246, ${(0.12 + t * 0.2)})`);
+      rightGlow.addColorStop(0.5, `rgba(139, 92, 246, ${(0.04 + t * 0.1)})`);
+      rightGlow.addColorStop(1, 'transparent');
+      ctx.fillStyle = rightGlow;
+      ctx.fillRect(cx, 0, rightW, h);
 
-      const glow3 = ctx.createLinearGradient(cx - 80, 0, cx + 80, 0);
-      glow3.addColorStop(0, 'transparent');
-      glow3.addColorStop(0.5, 'rgba(139, 92, 246, 0.08)');
-      glow3.addColorStop(1, 'transparent');
+      // Center tight glow (always present but brighter when active)
+      const g1 = ctx.createLinearGradient(cx - 12, 0, cx + 12, 0);
+      g1.addColorStop(0, 'transparent');
+      g1.addColorStop(0.5, `rgba(196, 181, 253, ${0.35 + t * 0.35})`);
+      g1.addColorStop(1, 'transparent');
+      ctx.globalAlpha = 0.8 + t * 0.2;
+      ctx.fillStyle = g1;
+      ctx.fillRect(cx - 12, 0, 24, h);
+
+      // Outer ambient glow
+      const g3 = ctx.createLinearGradient(cx - 100, 0, cx + 100, 0);
+      g3.addColorStop(0, 'transparent');
+      g3.addColorStop(0.5, `rgba(139, 92, 246, ${0.04 + t * 0.06})`);
+      g3.addColorStop(1, 'transparent');
       ctx.globalAlpha = 0.5;
-      ctx.fillStyle = glow3;
-      ctx.fillRect(cx - 80, 0, 160, h);
+      ctx.fillStyle = g3;
+      ctx.fillRect(cx - 100, 0, 200, h);
 
-      // Particles
+      /* ── Particles ── */
+      ctx.globalCompositeOperation = 'lighter';
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
         p.x += p.vx;
@@ -222,13 +423,15 @@ function CardBeamSection() {
         fadeAlpha = Math.max(0, Math.min(1, fadeAlpha));
 
         ctx.globalAlpha = p.alpha * p.life * fadeAlpha;
-        ctx.fillStyle = '#c4b5fd';
+        // Brighter particles when active
+        const bright = Math.floor(180 + t * 75);
+        ctx.fillStyle = `rgb(${bright}, ${Math.floor(150 + t * 50)}, 253)`;
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Vertical fade mask
+      /* ── Vertical fade mask ── */
       ctx.globalCompositeOperation = 'destination-in';
       ctx.globalAlpha = 1;
       const mask = ctx.createLinearGradient(0, 0, 0, h);
@@ -253,9 +456,10 @@ function CardBeamSection() {
     };
   }, [isMobile]);
 
-  /* Card scroll loop */
+  /* ── Card scroll loop with beam detection ── */
   useEffect(() => {
     lastTimeRef.current = performance.now();
+    const scannerW = 8;
 
     function tick(now: number) {
       const dt = (now - lastTimeRef.current) / 1000;
@@ -268,13 +472,27 @@ function CardBeamSection() {
         if (posRef.current < -singleSetWidth) posRef.current += singleSetWidth;
       }
 
+      const scannerX = window.innerWidth / 2;
+      const sL = scannerX - scannerW / 2;
+      const sR = scannerX + scannerW / 2;
+      let cardInBeam = false;
+
       if (containerRef.current) {
         const cards = containerRef.current.children;
         for (let i = 0; i < cards.length; i++) {
           const el = cards[i] as HTMLElement;
-          el.style.transform = `translateX(${posRef.current + i * CARD_TOTAL}px)`;
+          const x = posRef.current + i * CARD_TOTAL;
+          el.style.transform = `translateX(${x}px)`;
+          if (x < sR && x + CARD_W > sL) {
+            cardInBeam = true;
+          }
         }
       }
+
+      // Smooth intensity with different attack/release
+      const target = cardInBeam ? 1 : 0;
+      const speed = target > beamIntensityRef.current ? 0.12 : 0.06;
+      beamIntensityRef.current += (target - beamIntensityRef.current) * speed;
 
       rafRef.current = requestAnimationFrame(tick);
     }
@@ -283,7 +501,7 @@ function CardBeamSection() {
     return () => cancelAnimationFrame(rafRef.current);
   }, []);
 
-  /* Drag */
+  /* ── Drag ── */
   const onPointerDown = useCallback((e: React.PointerEvent) => {
     isDraggingRef.current = true;
     dragStartXRef.current = e.clientX;
@@ -304,7 +522,6 @@ function CardBeamSection() {
 
   return (
     <section className="relative py-20 md:py-32 overflow-hidden bg-background">
-      {/* Ambient background glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center relative z-10">
@@ -324,21 +541,24 @@ function CardBeamSection() {
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
       >
-        {/* Scanner canvas */}
         <canvas
           ref={canvasRef}
           className="absolute inset-0 w-full pointer-events-none z-10"
           style={{ height: trackHeight }}
         />
 
-        {/* Card track */}
         <div
           ref={containerRef}
           className="absolute left-0 w-full"
           style={{ height: CARD_H, top: (trackHeight - CARD_H) / 2, cursor: 'grab' }}
         >
           {allCards.map((card, i) => (
-            <MetalCard key={i} card={card} variant={i % 2 === 0 ? 'platinum' : 'silver'} isMobile={isMobile} />
+            <MetalCard
+              key={i}
+              card={card}
+              variant={VARIANT_CYCLE[i % VARIANT_CYCLE.length]}
+              isMobile={isMobile}
+            />
           ))}
         </div>
       </div>
@@ -346,50 +566,7 @@ function CardBeamSection() {
   );
 }
 
-/* ─── Card variant themes ─── */
-
-const THEMES = {
-  platinum: {
-    base: `linear-gradient(135deg,
-      #2a2035 0%, #3d3352 15%, #4a3f60 25%, #2e2440 40%,
-      #1f1830 55%, #3d3352 70%, #4a3f60 85%, #2a2035 100%)`,
-    shine: `linear-gradient(115deg,
-      transparent 0%, transparent 30%,
-      rgba(139,92,246,0.15) 40%, rgba(196,181,253,0.25) 45%,
-      rgba(255,255,255,0.12) 50%, rgba(196,181,253,0.15) 55%,
-      rgba(139,92,246,0.08) 60%, transparent 70%, transparent 100%)`,
-    accentGlow: 'rgba(139, 92, 246, 0.08)',
-    iconGrad: ['rgba(196,181,253,0.5)', 'rgba(139,92,246,0.7)', 'rgba(196,181,253,0.4)'],
-    textColor: 'rgba(255,255,255,0.85)',
-    subtextColor: 'rgba(196,181,253,0.45)',
-    brandColor: 'rgba(196,181,253,0.35)',
-    lineGrad: 'linear-gradient(90deg, rgba(139,92,246,0.4), rgba(196,181,253,0.2), transparent)',
-    asciiColor: 'rgba(196, 181, 253, 0.6)',
-  },
-  silver: {
-    base: `linear-gradient(135deg,
-      #1a1d2e 0%, #2a2f45 12%, #353b55 24%, #2e3348 36%,
-      #252a3e 48%, #303650 60%, #3a4060 72%, #2a2f45 84%, #1a1d2e 100%)`,
-    shine: `linear-gradient(115deg,
-      transparent 0%, transparent 25%,
-      rgba(14,165,233,0.1) 32%, rgba(139,92,246,0.12) 38%,
-      rgba(196,181,253,0.18) 42%, rgba(255,255,255,0.14) 46%,
-      rgba(14,165,233,0.16) 50%, rgba(139,92,246,0.12) 54%,
-      rgba(6,182,212,0.1) 58%, rgba(255,255,255,0.08) 62%,
-      transparent 72%, transparent 100%)`,
-    accentGlow: 'rgba(14, 165, 233, 0.08)',
-    iconGrad: ['rgba(14,165,233,0.5)', 'rgba(139,92,246,0.6)', 'rgba(6,182,212,0.5)'],
-    textColor: 'rgba(255,255,255,0.9)',
-    subtextColor: 'rgba(148,163,184,0.55)',
-    brandColor: 'rgba(148,163,184,0.35)',
-    lineGrad: 'linear-gradient(90deg, rgba(14,165,233,0.4), rgba(139,92,246,0.25), transparent)',
-    asciiColor: 'rgba(14, 165, 233, 0.5)',
-  },
-} as const;
-
-type CardVariant = keyof typeof THEMES;
-
-/* ─── Metal card ─── */
+/* ─── Metal card with engraved typography ─── */
 
 function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean }) {
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -397,9 +574,8 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
   const asciiRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLPreElement>(null);
   const theme = THEMES[variant];
-  const gradId = `engrave-${variant}`;
+  const gradId = `engrave-${variant}-${Math.random().toString(36).slice(2, 6)}`;
 
-  // Generate code text
   useEffect(() => {
     if (!codeRef.current) return;
     const cols = Math.floor(CARD_W / 6.5);
@@ -427,17 +603,14 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
       const sR = scannerX + scannerW / 2;
 
       if (rect.left < sR && rect.right > sL) {
-        // Card intersects beam — normal visible on left, code on right
         const normalClipRight = Math.max(0, Math.min(100, ((rect.right - sL) / rect.width) * 100));
         const asciiClipLeft = Math.max(0, Math.min(100, ((sR - rect.left) / rect.width) * 100));
         normal.style.clipPath = `inset(0 ${normalClipRight}% 0 0)`;
         ascii.style.clipPath = `inset(0 0 0 ${asciiClipLeft}%)`;
       } else if (rect.right < sL) {
-        // Card is fully LEFT of scanner — not yet scanned — fully visible
         normal.style.clipPath = 'inset(0 0 0 0)';
         ascii.style.clipPath = 'inset(0 0 0 100%)';
       } else {
-        // Card is fully RIGHT of scanner — already scanned — fully code
         normal.style.clipPath = 'inset(0 100% 0 0)';
         ascii.style.clipPath = 'inset(0 0 0 0)';
       }
@@ -496,8 +669,9 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
 
         {/* Brushed metal texture */}
         <div
-          className="absolute inset-0 opacity-[0.03]"
+          className="absolute inset-0"
           style={{
+            opacity: theme.brushedOpacity,
             backgroundImage: `repeating-linear-gradient(90deg,
               transparent, transparent 1px,
               rgba(255,255,255,0.5) 1px, rgba(255,255,255,0.5) 2px)`,
@@ -505,47 +679,36 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
           }}
         />
 
-        {/* Iridescent shine */}
-        <div className="absolute inset-0 opacity-40" style={{ background: theme.shine }} />
+        {/* Main shine sweep */}
+        <div
+          className="absolute inset-0"
+          style={{ opacity: theme.shineOpacity, background: theme.shine }}
+        />
 
-        {/* Silver variant: extra rainbow shimmer */}
-        {variant === 'silver' && (
+        {/* Extra layer (iridescent rainbow) */}
+        {theme.extraLayer && (
           <div
-            className="absolute inset-0 opacity-[0.07]"
+            className="absolute inset-0"
             style={{
-              background: `linear-gradient(160deg,
-                transparent 20%,
-                rgba(139,92,246,0.6) 30%, rgba(14,165,233,0.5) 40%,
-                rgba(6,182,212,0.5) 50%, rgba(139,92,246,0.4) 60%,
-                transparent 70%)`,
+              opacity: theme.extraLayerOpacity,
+              background: theme.extraLayer,
             }}
           />
         )}
 
-        {/* Edge highlight */}
+        {/* Edge highlight bevel */}
         <div
           className="absolute inset-0 rounded-2xl"
-          style={{
-            boxShadow: `
-              inset 0 1px 0 rgba(255,255,255,${variant === 'silver' ? '0.15' : '0.12'}),
-              inset 0 -1px 0 rgba(0,0,0,0.3),
-              inset 1px 0 0 rgba(255,255,255,0.06),
-              inset -1px 0 0 rgba(255,255,255,0.06)`,
-          }}
+          style={{ boxShadow: theme.edgeShadow }}
         />
 
-        {/* Card shadow */}
+        {/* Card drop shadow */}
         <div
           className="absolute -inset-1 rounded-2xl -z-10"
-          style={{
-            boxShadow: `
-              0 20px 60px rgba(0,0,0,0.5),
-              0 8px 20px rgba(0,0,0,0.3),
-              0 0 40px ${theme.accentGlow}`,
-          }}
+          style={{ boxShadow: theme.outerShadow }}
         />
 
-        {/* Content */}
+        {/* Content with engraved typography */}
         <div className="relative h-full flex flex-col justify-between p-7">
           {/* Top row */}
           <div className="flex items-start justify-between">
@@ -559,7 +722,7 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
               strokeLinecap="round"
               strokeLinejoin="round"
               style={{
-                filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.1)) drop-shadow(0 -1px 0 rgba(0,0,0,0.4))',
+                filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.12)) drop-shadow(0 -1px 0 rgba(0,0,0,0.5))',
               }}
             >
               <defs>
@@ -572,12 +735,12 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
               <path d={card.iconPath} />
             </svg>
 
-            {/* Brand */}
+            {/* Brand — engraved */}
             <span
               className="text-xs font-semibold uppercase tracking-[0.25em]"
               style={{
                 color: theme.brandColor,
-                textShadow: '0 1px 0 rgba(255,255,255,0.05), 0 -1px 0 rgba(0,0,0,0.3)',
+                textShadow: theme.brandShadow,
               }}
             >
               DigitaliX
@@ -587,20 +750,22 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
           {/* Bottom */}
           <div>
             <div className="w-16 h-px mb-4" style={{ background: theme.lineGrad }} />
+            {/* Title — deep engraved */}
             <h3
               className="text-xl font-bold mb-1.5 tracking-wide"
               style={{
-                color: theme.textColor,
-                textShadow: '0 1px 2px rgba(0,0,0,0.5), 0 0 20px ' + theme.accentGlow,
+                color: theme.titleColor,
+                textShadow: theme.titleShadow,
               }}
             >
               {card.title}
             </h3>
+            {/* Subtitle — subtle engraved */}
             <p
               className="text-sm tracking-wide"
               style={{
-                color: theme.subtextColor,
-                textShadow: '0 1px 0 rgba(0,0,0,0.3)',
+                color: theme.subtitleColor,
+                textShadow: theme.subtitleShadow,
               }}
             >
               {card.subtitle}
