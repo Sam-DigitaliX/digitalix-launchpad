@@ -87,7 +87,7 @@ const ressourcesLeft = [
 ];
 
 const ressourcesRight = [
-  { icon: BarChart3, label: "Audit gratuit", description: "Testez votre tracking", href: "/contact" },
+  { icon: BarChart3, label: "Audit offert", description: "Testez votre tracking", href: "/contact" },
   { icon: HelpCircle, label: "FAQ", description: "Questions fréquentes", href: "/#faq" },
   { icon: MessageSquare, label: "Contact", description: "Parlons de votre projet", href: "/contact" },
 ];
@@ -336,7 +336,7 @@ const Header = () => {
                       Populaire
                     </p>
                     <p className="text-sm font-semibold text-foreground mb-1">
-                      Audit Tracking Gratuit
+                      Audit Tracking Offert
                     </p>
                     <p className="text-xs text-muted-foreground mb-3">
                       Identifiez vos fuites de conversions en 15 minutes
