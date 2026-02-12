@@ -170,7 +170,7 @@ const Home = () => {
             {audiences.map((audience) => (
               <div
                 key={audience.title}
-                className={`glass-card p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
+                className={`glass-card p-5 md:p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <audience.icon className="w-6 h-6 text-primary" />
@@ -180,14 +180,14 @@ const Home = () => {
                 <Button
                   variant={audience.available ? "heroGradient" : "heroGradientOutline"}
                   size="lg"
-                  className="w-full"
+                  className="w-full whitespace-normal text-center leading-snug"
                   asChild={audience.available}
                   disabled={!audience.available}
                 >
                   {audience.available ? (
                     <Link to={audience.href}>
                       {audience.cta}
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <ArrowRight className="w-4 h-4 ml-2 shrink-0" />
                     </Link>
                   ) : (
                     <span>{audience.cta}</span>
