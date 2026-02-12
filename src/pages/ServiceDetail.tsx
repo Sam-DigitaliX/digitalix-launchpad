@@ -17,6 +17,7 @@ const ServiceDetail = () => {
       <main>
         {/* Hero */}
         <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 overflow-hidden">
+          <div className="glow-top-bar" />
           <div className="absolute inset-0 bg-[var(--gradient-hero)]" />
           <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-primary/15 rounded-full blur-3xl" />
           <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
@@ -42,8 +43,8 @@ const ServiceDetail = () => {
         </section>
 
         {/* Features */}
-        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8">
-          <div className="rounded-section max-w-4xl mx-auto py-16 md:py-20 px-6 sm:px-10 lg:px-14">
+        <section className="py-20 md:py-28">
+          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-10">
               Ce qui est <span className="text-gradient-primary">inclus</span>
             </h2>
@@ -59,8 +60,8 @@ const ServiceDetail = () => {
         </section>
 
         {/* CTA */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8">
+          <div className="rounded-section-top max-w-7xl mx-auto py-20 md:py-28 text-center px-4 sm:px-6 lg:px-8">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
               Prêt à démarrer ?
             </h2>
