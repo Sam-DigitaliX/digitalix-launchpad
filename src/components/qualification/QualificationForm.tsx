@@ -158,8 +158,8 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
       toast({
         title: scoringResult.isQualified ? "Félicitations !" : "Demande envoyée",
         description: scoringResult.isQualified
-          ? "Vous êtes éligible à un audit tracking gratuit !"
-          : "Consultez nos ressources gratuites.",
+          ? "Vous êtes éligible à un audit tracking offert !"
+          : "Consultez nos ressources offertes.",
         className: scoringResult.isQualified
           ? "bg-gradient-to-r from-primary to-secondary text-white border-0 shadow-lg shadow-primary/25"
           : undefined,
