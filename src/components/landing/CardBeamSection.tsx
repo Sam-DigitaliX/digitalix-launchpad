@@ -58,19 +58,15 @@ const BUTTERFLY_PATH =
 
 /* ─── Dimensions ─── */
 
-const CARD_W_DESKTOP = 400;
-const CARD_H_DESKTOP = 250;
+const CARD_W = 400;
+const CARD_H = 250;
 const CARD_GAP_DESKTOP = 60;
-
-const CARD_W_MOBILE = 260;
-const CARD_H_MOBILE = 162;
-const CARD_GAP_MOBILE = 40;
+const CARD_GAP_MOBILE = 80;
+const MOBILE_SCALE = 0.7;
 
 function getCardDimensions(mobile: boolean) {
-  const w = mobile ? CARD_W_MOBILE : CARD_W_DESKTOP;
-  const h = mobile ? CARD_H_MOBILE : CARD_H_DESKTOP;
   const gap = mobile ? CARD_GAP_MOBILE : CARD_GAP_DESKTOP;
-  return { w, h, gap, total: w + gap };
+  return { w: CARD_W, h: CARD_H, gap, total: CARD_W + gap };
 }
 
 const SPEED = 70;
@@ -558,8 +554,12 @@ function CardBeamSection() {
       </div>
 
       <div
-        className="relative w-full select-none touch-pan-y"
-        style={{ height: trackHeight }}
+        className="relative w-full select-none touch-pan-y origin-center"
+        style={{
+          height: isMobile ? trackHeight * MOBILE_SCALE : trackHeight,
+          transform: isMobile ? `scale(${MOBILE_SCALE})` : undefined,
+          transformOrigin: 'center center',
+        }}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
