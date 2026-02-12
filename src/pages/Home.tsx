@@ -72,7 +72,7 @@ const Home = () => {
                 </span>
               </div>
             </div>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 max-w-4xl mx-auto leading-tight">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.1] text-foreground mb-6 max-w-4xl mx-auto">
               Reprenez le contrôle de{" "}
               <span className="text-gradient-primary">vos données marketing</span>
             </h1>
