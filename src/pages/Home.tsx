@@ -10,6 +10,7 @@ import ProcessSection from "@/components/landing/ProcessSection";
 import FAQSection from "@/components/landing/FAQSection";
 import ClientLogosSection from "@/components/landing/ClientLogosSection";
 import CTASection from "@/components/landing/CTASection";
+import GradientSection from "@/components/landing/GradientSection";
 import Footer from "@/components/landing/Footer";
 
 const audiences = [
@@ -125,69 +126,65 @@ const Home = () => {
         <TrackingDemoSection />
 
         {/* Value Props */}
-        <section className="py-20 md:py-28 bg-card">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-16">
-              Pourquoi passer au <span className="text-gradient-primary">Server-Side ?</span>
-            </h2>
-            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-              {valueProps.map((prop) => (
-                <div key={prop.title} className="glass-card p-8 text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                    <prop.icon className="w-7 h-7 text-primary" />
-                  </div>
-                  <h3 className="text-xl font-bold text-foreground mb-3">{prop.title}</h3>
-                  <p className="text-muted-foreground text-sm">{prop.description}</p>
+        <GradientSection>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-16">
+            Pourquoi passer au <span className="text-gradient-primary">Server-Side ?</span>
+          </h2>
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {valueProps.map((prop) => (
+              <div key={prop.title} className="glass-card p-8 text-center">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
+                  <prop.icon className="w-7 h-7 text-primary" />
                 </div>
-              ))}
-            </div>
+                <h3 className="text-xl font-bold text-foreground mb-3">{prop.title}</h3>
+                <p className="text-muted-foreground text-sm">{prop.description}</p>
+              </div>
+            ))}
           </div>
-        </section>
+        </GradientSection>
 
         {/* Reviews */}
         <ReviewsCarouselSection />
 
         {/* Pour qui ? */}
-        <section className="py-20 md:py-28">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
-              Une solution adaptée à <span className="text-gradient-primary">votre profil</span>
-            </h2>
-            <p className="text-muted-foreground text-center mb-16 max-w-xl mx-auto">
-              Que vous soyez consultant ou annonceur, nous avons une offre pensée pour vous.
-            </p>
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {audiences.map((audience) => (
-                <div
-                  key={audience.title}
-                  className={`glass-card p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
-                >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                    <audience.icon className="w-6 h-6 text-primary" />
-                  </div>
-                  <h3 className="text-2xl font-bold text-foreground mb-3">{audience.title}</h3>
-                  <p className="text-muted-foreground mb-8 flex-grow">{audience.description}</p>
-                  <Button
-                    variant={audience.available ? "heroGradient" : "heroGradientOutline"}
-                    size="lg"
-                    className="w-full"
-                    asChild={audience.available}
-                    disabled={!audience.available}
-                  >
-                    {audience.available ? (
-                      <Link to={audience.href}>
-                        {audience.cta}
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    ) : (
-                      <span>{audience.cta}</span>
-                    )}
-                  </Button>
+        <GradientSection>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
+            Une solution adaptée à <span className="text-gradient-primary">votre profil</span>
+          </h2>
+          <p className="text-muted-foreground text-center mb-16 max-w-xl mx-auto">
+            Que vous soyez consultant ou annonceur, nous avons une offre pensée pour vous.
+          </p>
+          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {audiences.map((audience) => (
+              <div
+                key={audience.title}
+                className={`glass-card p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
+                  <audience.icon className="w-6 h-6 text-primary" />
                 </div>
-              ))}
-            </div>
+                <h3 className="text-2xl font-bold text-foreground mb-3">{audience.title}</h3>
+                <p className="text-muted-foreground mb-8 flex-grow">{audience.description}</p>
+                <Button
+                  variant={audience.available ? "heroGradient" : "heroGradientOutline"}
+                  size="lg"
+                  className="w-full"
+                  asChild={audience.available}
+                  disabled={!audience.available}
+                >
+                  {audience.available ? (
+                    <Link to={audience.href}>
+                      {audience.cta}
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  ) : (
+                    <span>{audience.cta}</span>
+                  )}
+                </Button>
+              </div>
+            ))}
           </div>
-        </section>
+        </GradientSection>
 
         {/* Process */}
         <ProcessSection />
