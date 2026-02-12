@@ -14,19 +14,19 @@ const CARDS: ExpertiseCard[] = [
     title: 'GTM Server-Side',
     subtitle: 'Infrastructure sGTM sur Google Cloud',
     viewBox: '0 0 24 24',
-    iconPath: 'M5 12h14M12 5l7 7-7 7',
+    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // layers/stack
   },
   {
     title: 'Meta CAPI',
     subtitle: 'Conversion API Facebook & Instagram',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2',
+    iconPath: 'M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4 2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4', // Meta infinity logo
   },
   {
     title: 'Enhanced Conversions',
     subtitle: 'Google Ads Server-Side',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+    iconPath: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M9 11l3 3L22 4', // check-circle
   },
   {
     title: 'Consent Mode v2',
