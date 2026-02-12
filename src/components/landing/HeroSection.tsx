@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { Star, BadgeCheck } from "lucide-react";
 import heroImage from "@/assets/hero-data-flow.jpg";
 import LogoCarousel from "./LogoCarousel";
 
@@ -49,12 +50,37 @@ const HeroSection = () => {
           </p>
 
           {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12 animate-fade-in-up animation-delay-300">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-5 animate-fade-in-up animation-delay-300">
             <Button variant="heroGradient" size="xl" asChild>
               <Link to="/contact">
                 Je réserve mon audit tracking à 0€
               </Link>
             </Button>
+          </div>
+
+          {/* Social proof badge */}
+          <div className="flex items-center justify-center gap-3 mb-12 animate-fade-in-up animation-delay-300">
+            <div className="flex items-center gap-1">
+              <span className="text-sm font-semibold text-foreground">4.75/5</span>
+              <div className="flex items-center gap-0.5">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <Star
+                    key={i}
+                    className={`w-3.5 h-3.5 ${
+                      i <= 4
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'fill-amber-400/70 text-amber-400/70'
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+            <span className="text-sm text-muted-foreground">–</span>
+            <span className="text-sm text-muted-foreground">32 avis</span>
+            <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/25">
+              <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="text-xs font-medium text-emerald-400">Avis vérifiés</span>
+            </div>
           </div>
 
           {/* Logo Carousel */}

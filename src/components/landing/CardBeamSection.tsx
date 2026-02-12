@@ -14,19 +14,19 @@ const CARDS: ExpertiseCard[] = [
     title: 'GTM Server-Side',
     subtitle: 'Infrastructure sGTM sur Google Cloud',
     viewBox: '0 0 24 24',
-    iconPath: 'M5 12h14M12 5l7 7-7 7',
+    iconPath: 'M2 2h20v8H2zM2 14h20v8H2zM6 6h.01M6 18h.01', // server rack
   },
   {
     title: 'Meta CAPI',
     subtitle: 'Conversion API Facebook & Instagram',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 4v6l4 2',
+    iconPath: 'M12 12c-2-2.67-4-4-6-4a4 4 0 1 0 0 8c2 0 4-1.33 6-4 2 2.67 4 4 6 4a4 4 0 1 0 0-8c-2 0-4 1.33-6 4', // Meta infinity logo
   },
   {
     title: 'Enhanced Conversions',
     subtitle: 'Google Ads Server-Side',
     viewBox: '0 0 24 24',
-    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5',
+    iconPath: 'M22 11.08V12a10 10 0 1 1-5.93-9.14M9 11l3 3L22 4', // check-circle
   },
   {
     title: 'Consent Mode v2',
@@ -38,7 +38,7 @@ const CARDS: ExpertiseCard[] = [
     title: 'Audit Data Layer',
     subtitle: 'Diagnostic & optimisation tracking',
     viewBox: '0 0 24 24',
-    iconPath: 'M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2zM22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z',
+    iconPath: 'M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5', // layers/stack
   },
   {
     title: 'Analytics GA4',
@@ -47,6 +47,14 @@ const CARDS: ExpertiseCard[] = [
     iconPath: 'M18 20V10M12 20V4M6 20v-6',
   },
 ];
+
+/* ─── DigitaliX butterfly watermark (simplified geometric outline) ─── */
+
+const BUTTERFLY_PATH =
+  'M24 38L13 25L3 6L15 8L24 16L33 8L45 6L35 25Z' + // outer silhouette
+  'M24 16V38' +                                       // center body line
+  'M13 25L24 16L35 25' +                              // wing crease
+  'M8 15L24 16M40 15L24 16';                          // inner wing angles
 
 /* ─── Dimensions ─── */
 
@@ -707,6 +715,28 @@ function MetalCard({ card, variant, isMobile }: { card: ExpertiseCard; variant: 
           className="absolute -inset-1 rounded-2xl -z-10"
           style={{ boxShadow: theme.outerShadow }}
         />
+
+        {/* DigitaliX butterfly watermark — filigrane */}
+        <svg
+          viewBox="0 0 48 42"
+          className="absolute pointer-events-none"
+          style={{
+            width: 130,
+            height: 110,
+            right: 12,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            opacity: 0.045,
+            filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.06)) drop-shadow(0 -1px 0 rgba(0,0,0,0.25))',
+          }}
+          fill="none"
+          stroke={theme.iconGrad[1].replace(/,[^,)]+\)/, ',1)')}
+          strokeWidth="1"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d={BUTTERFLY_PATH} />
+        </svg>
 
         {/* Content with engraved typography */}
         <div className="relative h-full flex flex-col justify-between p-7">
