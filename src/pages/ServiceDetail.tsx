@@ -65,7 +65,7 @@ const ServiceDetail = () => {
               Prêt à démarrer ?
             </h2>
             <p className="text-muted-foreground mb-10 max-w-xl mx-auto">
-              Réservez votre audit gratuit et découvrez comment nous pouvons transformer votre tracking.
+              Réservez votre audit offert et découvrez comment nous pouvons transformer votre tracking.
             </p>
             <Button variant="heroGradient" size="xl" className="group" asChild>
               <Link to="/contact">

@@ -15,7 +15,7 @@ export default function Contact() {
           {/* Header Section */}
           <div className="text-center mb-10 space-y-4">
             <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide">
-              Audit Gratuit
+              Audit Offert
             </span>
             <h1 className="text-4xl md:text-5xl font-bold">
               Parlons de votre <span className="text-gradient-primary">projet</span>

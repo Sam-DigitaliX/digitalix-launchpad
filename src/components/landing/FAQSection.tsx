@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     question: "Combien coûte et combien de temps prend la mise en place ?",
-    answer: "Une migration standard prend généralement entre 1 et 3 semaines. Le coût dépend de la complexité de votre écosystème (nombre de plateformes, volume de trafic). L'hébergement du serveur GTM coûte environ 30€ à 150€/mois selon le trafic. Nous proposons un audit gratuit de 15 minutes pour évaluer vos besoins et vous fournir un devis précis."
+    answer: "Une migration standard prend généralement entre 1 et 3 semaines. Le coût dépend de la complexité de votre écosystème (nombre de plateformes, volume de trafic). L'hébergement du serveur GTM coûte environ 30€ à 150€/mois selon le trafic. Nous proposons un audit offert de 15 minutes pour évaluer vos besoins et vous fournir un devis précis."
   },
   {
     question: "Est-ce compatible avec mon CMS (Shopify, WordPress, PrestaShop...) ?",

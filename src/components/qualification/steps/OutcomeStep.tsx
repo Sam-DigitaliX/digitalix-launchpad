@@ -46,14 +46,14 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
           </h2>
           <p className="text-muted-foreground max-w-md mx-auto">
             Votre profil correspond parfaitement à notre expertise. 
-            Réservez un créneau pour un audit tracking gratuit de 30 minutes.
+            Réservez un créneau pour un audit tracking offert de 30 minutes.
           </p>
         </div>
 
         <div className="glass-card p-8 max-w-lg mx-auto space-y-6">
           <div className="flex items-center justify-center gap-3 text-primary">
             <Calendar className="w-8 h-8" />
-            <span className="text-xl font-semibold">Audit Tracking Gratuit</span>
+            <span className="text-xl font-semibold">Audit Tracking Offert</span>
           </div>
           
           <ul className="text-left space-y-3 text-muted-foreground">
@@ -135,7 +135,7 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
       <div className="glass-card p-8 max-w-lg mx-auto space-y-6">
         <div className="flex items-center justify-center gap-3 text-secondary">
           <Download className="w-8 h-8" />
-          <span className="text-xl font-semibold">Guide Gratuit</span>
+          <span className="text-xl font-semibold">Guide Offert</span>
         </div>
         
         <div className={cn(
@@ -157,7 +157,7 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
           className="w-full gap-2 border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground"
         >
           <Download className="w-5 h-5" />
-          Télécharger le guide gratuit
+          Télécharger le guide offert
         </Button>
       </div>
     </div>

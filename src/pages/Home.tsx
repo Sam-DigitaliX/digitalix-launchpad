@@ -94,7 +94,7 @@ const Home = () => {
             </p>
             <Button variant="heroGradient" size="xl" className="group" asChild>
               <Link to="/contact">
-                Réserver mon Audit Gratuit
+                Réserver mon Audit Offert
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
