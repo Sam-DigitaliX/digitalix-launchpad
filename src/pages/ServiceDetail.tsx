@@ -42,8 +42,8 @@ const ServiceDetail = () => {
         </section>
 
         {/* Features */}
-        <section className="py-20 md:py-28 bg-card">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
+        <section className="py-20 md:py-28 px-4 sm:px-6 lg:px-8">
+          <div className="rounded-section max-w-4xl mx-auto py-16 md:py-20 px-6 sm:px-10 lg:px-14">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-10">
               Ce qui est <span className="text-gradient-primary">inclus</span>
             </h2>
