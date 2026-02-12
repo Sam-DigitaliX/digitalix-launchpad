@@ -209,8 +209,21 @@ const ProcessSection = () => {
             />
           </div>
 
-          {/* Mobile Timeline Line */}
-          <div className="md:hidden absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary via-secondary to-primary opacity-30" />
+          {/* Mobile Timeline Line — animated on scroll */}
+          <div className="md:hidden absolute left-6 top-0 bottom-0 w-0.5">
+            {/* Background line */}
+            <div className="absolute inset-0 bg-border/30 rounded-full" />
+            {/* Animated progress line */}
+            <div
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full transition-all duration-300"
+              style={{ height: `${lineHeight}%` }}
+            />
+            {/* Glow effect */}
+            <div
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full blur-sm opacity-50 transition-all duration-300"
+              style={{ height: `${lineHeight}%` }}
+            />
+          </div>
 
           {/* Steps */}
           <div className="space-y-12 md:space-y-24">
@@ -221,7 +234,9 @@ const ProcessSection = () => {
                 className="relative"
               >
                 {/* Mobile Timeline Node */}
-                <div className="md:hidden absolute left-4 top-8 w-5 h-5 rounded-full bg-primary border-4 border-background z-10" />
+                <div className={`md:hidden absolute left-[15px] top-8 w-5 h-5 rounded-full border-4 border-background z-10 transition-all duration-500 ${
+                  visibleSteps.has(index) ? 'bg-primary scale-100' : 'bg-border scale-75'
+                }`} />
                 
                 {/* Mobile Content with padding for timeline */}
                 <div className="md:hidden pl-14">
