@@ -265,8 +265,8 @@ const Header = () => {
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         (isScrolled || isMobileMenuOpen)
-          ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]"
-          : "bg-transparent border-b border-transparent"
+          ? "backdrop-blur-xl border-b border-white/[0.06]"
+          : "border-b border-transparent"
       }`}
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -288,7 +288,7 @@ const Header = () => {
           </a>
 
           {/* ──── Desktop: Nav Pill ──── */}
-          <nav className="hidden lg:flex items-center rounded-full border border-white/[0.08] bg-white/[0.03] px-1 py-1">
+          <nav className="hidden lg:flex items-center rounded-full border border-white/[0.12] bg-white/[0.07] px-1 py-1">
             {/* Accueil */}
             <Link
               to="/"
@@ -403,9 +403,9 @@ const Header = () => {
           {/* ──── Desktop: CTA ──── */}
           <div className="hidden lg:block shrink-0">
             <Button
-              variant="outline"
+              variant="heroGradient"
               size="default"
-              className="rounded-full border-white/[0.15] bg-white/[0.05] text-foreground hover:bg-white/[0.1] hover:border-white/[0.25] transition-all duration-200"
+              className="rounded-full opacity-85 hover:opacity-100 transition-all duration-200"
               asChild
             >
               <Link to="/contact">Réserver mon Audit</Link>
