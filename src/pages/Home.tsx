@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Server, ShieldCheck, BarChart3, Users } from "lucide-react";
+import { ArrowRight, Server, ShieldCheck, BarChart3, Users, Star, BadgeCheck } from "lucide-react";
 import LogoCarousel from "@/components/landing/LogoCarousel";
 import Header from "@/components/landing/Header";
 import CardBeamSection from "@/components/landing/CardBeamSection";
@@ -85,6 +85,31 @@ const Home = () => {
                 <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </Button>
+
+            {/* Social proof badge */}
+            <div className="flex items-center justify-center gap-3 mt-5 animate-fade-in-up animation-delay-300">
+              <div className="flex items-center gap-1">
+                <span className="text-sm font-semibold text-foreground">4.75/5</span>
+                <div className="flex items-center gap-0.5">
+                  {[1, 2, 3, 4, 5].map((i) => (
+                    <Star
+                      key={i}
+                      className={`w-3.5 h-3.5 ${
+                        i <= 4
+                          ? 'fill-amber-400 text-amber-400'
+                          : 'fill-amber-400/70 text-amber-400/70'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+              <span className="text-sm text-muted-foreground">–</span>
+              <span className="text-sm text-muted-foreground">32 avis</span>
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 border border-emerald-500/25">
+                <BadgeCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span className="text-xs font-medium text-emerald-400">Avis vérifiés</span>
+              </div>
+            </div>
 
             {/* Logo Carousel */}
             <div className="mt-12 animate-fade-in-up animation-delay-400">
