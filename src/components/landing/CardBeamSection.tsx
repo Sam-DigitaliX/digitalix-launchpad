@@ -768,11 +768,11 @@ function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseC
             right: 12,
             top: '50%',
             transform: 'translateY(-50%)',
-            opacity: 0.045,
+            opacity: 0.07,
             filter: 'drop-shadow(0 1px 0 rgba(255,255,255,0.06)) drop-shadow(0 -1px 0 rgba(0,0,0,0.25))',
           }}
           fill="none"
-          stroke={theme.iconGrad[1].replace(/,[^,)]+\)/, ',1)')}
+          stroke="rgba(255,255,255,0.6)"
           strokeWidth="1"
           strokeLinecap="round"
           strokeLinejoin="round"
