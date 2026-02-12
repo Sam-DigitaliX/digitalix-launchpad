@@ -120,57 +120,6 @@
     animation: data-flow 20s linear infinite;
   }
 
-  .rounded-section {
-    @apply relative overflow-hidden rounded-3xl border border-white/5;
-    background: linear-gradient(
-      135deg,
-      hsl(262 83% 58% / 0.12) 0%,
-      hsl(262 83% 58% / 0.06) 40%,
-      hsl(188 94% 43% / 0.06) 100%
-    );
-  }
-
-  .rounded-section-top {
-    @apply relative overflow-hidden border border-white/5 border-b-0;
-    border-radius: 1.5rem 1.5rem 0 0;
-    background: linear-gradient(
-      135deg,
-      hsl(262 83% 58% / 0.12) 0%,
-      hsl(262 83% 58% / 0.06) 40%,
-      hsl(188 94% 43% / 0.06) 100%
-    );
-  }
-
-  .rounded-section-bottom {
-    @apply relative overflow-hidden border border-white/5 border-t-0;
-    border-radius: 0 0 1.5rem 1.5rem;
-    background: linear-gradient(
-      180deg,
-      hsl(262 83% 58% / 0.15) 0%,
-      hsl(262 83% 40% / 0.08) 40%,
-      hsl(0 0% 0% / 0.9) 85%,
-      hsl(0 0% 0%) 100%
-    );
-  }
-
-  .rounded-section-bottom::after {
-    content: '';
-    @apply absolute bottom-0 left-0 right-0 h-24 pointer-events-none;
-    background: linear-gradient(to bottom, transparent, hsl(0 0% 0%));
-  }
-
-  .glow-top-bar {
-    @apply absolute top-0 left-1/2 -translate-x-1/2 w-3/4 h-px;
-    background: linear-gradient(90deg, transparent, hsl(262 83% 58% / 0.6), hsl(188 94% 43% / 0.4), transparent);
-    box-shadow: 0 0 20px hsl(262 83% 58% / 0.4), 0 0 60px hsl(262 83% 58% / 0.2);
-  }
-
-  .glow-top-bar::after {
-    content: '';
-    @apply absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-16;
-    background: radial-gradient(ellipse at top, hsl(262 83% 58% / 0.15), transparent 70%);
-  }
-
   /* Client logos - désaturation en blanc */
   .client-logo {
     filter: grayscale(100%) brightness(0) invert(1);
