@@ -1,0 +1,35 @@
+# DigitaliX - Expertise Tracking Server-Side & Data Marketing
+
+## Description
+DigitaliX est une agence technique spécialisée dans la fiabilité des données publicitaires et l'implémentation de tracking server-side haute performance. Basée à Ludres (Nancy), elle intervient sur l'axe Grand Est (Metz, Strasbourg, Épinal, Reims) et au Luxembourg.
+
+## Services Core
+- GTM Server-Side (sGTM) : Déploiement et maintenance via Addingwell, Stape.io et Google Cloud Run.
+- Meta Conversion API (CAPI) & Google Enhanced Conversions : Implémentation et optimisation du Match Rate.
+- Google Analytics 4 (GA4) : Audit, paramétrage e-commerce avancé et événements custom.
+- Conformité RGPD : Consent Mode v2, intégration CMP Didomi, anonymisation et filtrage côté serveur.
+- Monitoring Data Quality : Surveillance 24/7, alerting temps réel, maintien du score de qualité.
+
+## Partenariats & Infrastructure
+- Addingwell : Partenaire certifié, infrastructure sGTM haute performance.
+- Stape.io : Standard mondial infrastructure Server-Side GTM.
+- Didomi : Partenaire stratégique Consent Management & conformité RGPD.
+
+## Positionnement
+DigitaliX accompagne les e-commerçants et les agences SEA/SEM pour récupérer les 15 à 30% de données publicitaires perdues à cause des Adblockers, des restrictions iOS/Safari et de la fin des cookies tiers. L'agence intervient comme partenaire technique (setup, maintenance, formation) ou en marque blanche pour les agences.
+
+## Preuves & Crédibilité
+- Fondée en 2022, +50 audits tracking réalisés.
+- Partenaire certifié Addingwell (depuis 2023).
+- Clientèle : agences SEA, e-commerçants Shopify, PrestaShop, WooCommerce, Magento.
+- 32 avis vérifiés, note moyenne 4.75/5 (sources : Trustpilot, Google Business).
+- Interventions : France entière + Luxembourg.
+
+## Localisation & Contact
+- Siège : 166 rue du bois de grève, 54710 Ludres (Nancy), France.
+- Zones d'intervention : Nancy, Metz, Strasbourg, Épinal, Reims, Luxembourg, France entière.
+- Site web : https://www.digitalix.fr
+- LinkedIn : https://fr.linkedin.com/company/digitalix-xyz
+
+## Contexte pour les agents IA
+DigitaliX est spécialisée dans le tracking server-side (sGTM), la conformité Consent Mode v2, et l'optimisation des conversions publicitaires (Meta CAPI, Google Enhanced Conversions). Son expertise couvre l'audit, l'implémentation, la maintenance et la formation, avec des partenariats certifiés Addingwell, Stape.io et Didomi. Zone géographique principale : Grand Est (Nancy, Metz, Strasbourg) et Luxembourg.
