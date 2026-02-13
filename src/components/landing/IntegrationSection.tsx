@@ -18,7 +18,7 @@ const integrations = [
 
 const IntegrationSection = () => {
   return (
-    <section id="integration" className="relative py-24 md:py-32 bg-black/[0.5] backdrop-blur-xl overflow-hidden">
+    <section id="integration" className="relative py-24 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">

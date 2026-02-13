@@ -8,15 +8,9 @@ interface GradientSectionProps {
 const GradientSection = ({ children, className = "" }: GradientSectionProps) => {
   return (
     <div className="relative mx-4 md:mx-8 my-16">
-      {/* Glow orb above the section */}
-      <div className="absolute -top-20 left-1/2 -translate-x-1/2 w-[500px] h-[200px] bg-primary/20 rounded-full blur-[100px] pointer-events-none" />
-
-      {/* Main section container */}
+      {/* Main section container — glass panel */}
       <div
-        className={`relative rounded-t-[40px] pt-16 md:pt-24 px-4 md:px-8 lg:px-20 pb-16 md:pb-24 ${className}`}
-        style={{
-          background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.18) 0%, hsl(262 83% 58% / 0.06) 30%, hsl(0 0% 0% / 0) 100%)',
-        }}
+        className={`relative rounded-t-[40px] pt-16 md:pt-24 px-4 md:px-8 lg:px-20 pb-16 md:pb-24 bg-white/[0.02] backdrop-blur-md ${className}`}
       >
         {/* Subtle top border glow */}
         <div

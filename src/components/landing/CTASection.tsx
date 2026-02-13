@@ -6,10 +6,6 @@ import GradientSection from "./GradientSection";
 const CTASection = () => {
   return (
     <GradientSection className="relative text-center">
-      {/* Extra glowing orbs inside CTA */}
-      <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/15 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute top-10 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-3xl pointer-events-none" />
-
       <div className="relative z-10 max-w-3xl mx-auto">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-6">
           Votre tracking actuel vous{" "}
