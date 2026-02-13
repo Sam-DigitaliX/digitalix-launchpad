@@ -88,19 +88,15 @@ const servicesItems = [
   },
 ];
 
-const ressourcesLeft = [
+const ressourcesItems = [
   { icon: BookOpen, label: "Blog", description: "Articles & insights", href: "#" },
   { icon: FileText, label: "Guides", description: "Ressources téléchargeables", href: "#" },
   { icon: Video, label: "Webinaires", description: "Sessions live & replays", href: "#" },
-];
-
-const ressourcesRight = [
-  { icon: Scan, label: "Tracking Checker", description: "Diagnostiquez votre site en 30s", href: "/audit-tracking" },
   { icon: HelpCircle, label: "FAQ", description: "Questions fréquentes", href: "/#faq" },
   { icon: MessageSquare, label: "Contact", description: "Parlons de votre projet", href: "/contact" },
 ];
 
-/* ──────────────────────── Dropdown Link ──────────────────────── */
+/* ──────────────────────── Mega Link ──────────────────────── */
 
 interface DropdownItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -110,7 +106,7 @@ interface DropdownItem {
   comingSoon?: boolean;
 }
 
-const DropdownLink = ({
+const MegaLink = ({
   item,
   onClick,
 }: {
@@ -118,20 +114,34 @@ const DropdownLink = ({
   onClick?: () => void;
 }) => {
   const inner = (
-    <div className={`flex items-center gap-3 p-3 rounded-xl transition-colors duration-200 ${item.comingSoon ? "opacity-50 cursor-default" : "hover:bg-white/[0.06]"}`}>
-      <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
+    <div
+      className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors duration-200 ${
+        item.comingSoon
+          ? "opacity-50 cursor-default"
+          : "hover:bg-white/[0.04]"
+      }`}
+    >
+      <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center shrink-0">
         <item.icon className="w-5 h-5 text-primary" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-foreground">{item.label}</span>
+          <span className="text-sm font-semibold text-foreground whitespace-nowrap">
+            {item.label}
+          </span>
           {item.comingSoon && (
-            <span className="text-[10px] font-medium text-muted-foreground bg-white/[0.06] px-1.5 py-0.5 rounded">Bientôt</span>
+            <span className="text-[10px] font-medium text-muted-foreground bg-white/[0.06] border border-white/[0.06] px-2 py-0.5 rounded-md">
+              Bientôt
+            </span>
           )}
         </div>
-        <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          {item.description}
+        </p>
       </div>
-      {!item.comingSoon && <ChevronRight className="w-4 h-4 text-muted-foreground ml-auto shrink-0" />}
+      {!item.comingSoon && (
+        <ChevronRight className="w-4 h-4 text-muted-foreground/50 shrink-0" />
+      )}
     </div>
   );
 
@@ -143,6 +153,41 @@ const DropdownLink = ({
     </Link>
   );
 };
+
+/* ──────────────────────── Featured Illustration Card ──────────────────────── */
+
+const FeaturedAuditCard = ({ onClick }: { onClick?: () => void }) => (
+  <Link
+    to="/audit-tracking"
+    onClick={onClick}
+    className="block h-full rounded-xl bg-white/[0.03] border border-white/[0.06] p-5 hover:bg-white/[0.05] transition-colors group"
+  >
+    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary/15 border border-primary/20 text-[10px] font-semibold text-primary uppercase tracking-wider">
+      Audit Offert
+    </span>
+
+    {/* Concentric circles — Evervault style illustration */}
+    <div className="relative mx-auto my-6 w-36 h-36">
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+          style={{
+            width: `${100 - i * 22}%`,
+            height: `${100 - i * 22}%`,
+          }}
+        />
+      ))}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white/[0.08] border border-white/[0.1] flex items-center justify-center">
+        <Scan className="w-5 h-5 text-primary" />
+      </div>
+    </div>
+
+    <p className="text-sm font-medium text-foreground leading-snug">
+      Votre diagnostic tracking complet en 30 secondes
+    </p>
+  </Link>
+);
 
 /* ──────────────────────── Mobile Accordion ──────────────────────── */
 
@@ -163,9 +208,15 @@ const MobileAccordion = ({
         onClick={() => setOpen((v) => !v)}
       >
         {label}
-        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
+        <ChevronDown
+          className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
+        />
       </button>
-      <div className={`overflow-hidden transition-all duration-200 ${open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div
+        className={`overflow-hidden transition-all duration-200 ${
+          open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+        }`}
+      >
         <div className="pb-2 pl-2 space-y-1">{children}</div>
       </div>
     </div>
@@ -223,12 +274,14 @@ const Header = () => {
   };
 
   const closeMobile = () => setIsMobileMenuOpen(false);
+  const closeDropdown = () => setOpenDropdown(null);
 
   const isPathActive = (href: string) =>
     href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
 
   const triggerClass = (id: string, activePaths: string[]) => {
-    const isActive = activePaths.some((p) => isPathActive(p)) || openDropdown === id;
+    const isActive =
+      activePaths.some((p) => isPathActive(p)) || openDropdown === id;
     return `flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
       isActive
         ? "bg-white/[0.08] text-foreground"
@@ -236,17 +289,15 @@ const Header = () => {
     }`;
   };
 
-  const closeDropdown = () => setOpenDropdown(null);
-
   return (
     <header
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        (isScrolled || isMobileMenuOpen)
+        isScrolled || isMobileMenuOpen
           ? "backdrop-blur-xl border-b border-white/[0.06]"
           : "border-b border-transparent"
       }`}
     >
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <a
@@ -265,7 +316,7 @@ const Header = () => {
           </a>
 
           {/* ──── Desktop: Nav Pill ──── */}
-          <nav className="relative hidden lg:flex items-center rounded-full border border-white/[0.12] bg-white/[0.07] px-1 py-1">
+          <nav className="hidden lg:flex items-center rounded-full border border-white/[0.12] bg-white/[0.07] px-1 py-1">
             {/* Accueil */}
             <Link
               to="/"
@@ -285,10 +336,18 @@ const Header = () => {
               className={triggerClass("solutions", ["/consultants", "/saas"])}
               onMouseEnter={() => openNav("solutions")}
               onMouseLeave={scheduleClose}
-              onClick={() => (openDropdown === "solutions" ? closeDropdown() : openNav("solutions"))}
+              onClick={() =>
+                openDropdown === "solutions"
+                  ? closeDropdown()
+                  : openNav("solutions")
+              }
             >
               Solutions
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "solutions" ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  openDropdown === "solutions" ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
             {/* Services trigger */}
@@ -297,10 +356,18 @@ const Header = () => {
               className={triggerClass("services", ["/services"])}
               onMouseEnter={() => openNav("services")}
               onMouseLeave={scheduleClose}
-              onClick={() => (openDropdown === "services" ? closeDropdown() : openNav("services"))}
+              onClick={() =>
+                openDropdown === "services"
+                  ? closeDropdown()
+                  : openNav("services")
+              }
             >
               Services
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "services" ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  openDropdown === "services" ? "rotate-180" : ""
+                }`}
+              />
             </button>
 
             {/* Ressources trigger */}
@@ -309,92 +376,19 @@ const Header = () => {
               className={triggerClass("ressources", ["/audit-tracking"])}
               onMouseEnter={() => openNav("ressources")}
               onMouseLeave={scheduleClose}
-              onClick={() => (openDropdown === "ressources" ? closeDropdown() : openNav("ressources"))}
+              onClick={() =>
+                openDropdown === "ressources"
+                  ? closeDropdown()
+                  : openNav("ressources")
+              }
             >
               Ressources
-              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "ressources" ? "rotate-180" : ""}`} />
+              <ChevronDown
+                className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                  openDropdown === "ressources" ? "rotate-180" : ""
+                }`}
+              />
             </button>
-
-            {/* ──── Shared Dropdown Panel ──── */}
-            <div
-              className={`absolute top-full left-0 right-0 pt-2 z-50 transition-all duration-200 ${
-                openDropdown
-                  ? "opacity-100 translate-y-0 pointer-events-auto"
-                  : "opacity-0 -translate-y-2 pointer-events-none"
-              }`}
-              onMouseEnter={cancelClose}
-              onMouseLeave={scheduleClose}
-            >
-              <div className="rounded-2xl border border-white/[0.08] bg-black/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-                {/* Solutions */}
-                {openDropdown === "solutions" && (
-                  <div className="p-3 grid grid-cols-3 gap-1">
-                    {solutionsItems.map((item) => (
-                      <DropdownLink
-                        key={item.label}
-                        item={item}
-                        onClick={closeDropdown}
-                      />
-                    ))}
-                  </div>
-                )}
-
-                {/* Services */}
-                {openDropdown === "services" && (
-                  <div>
-                    <div className="p-3 grid grid-cols-3 gap-1">
-                      {servicesItems.map((item) => (
-                        <DropdownLink
-                          key={item.label}
-                          item={item}
-                          onClick={closeDropdown}
-                        />
-                      ))}
-                    </div>
-                    <div className="border-t border-white/[0.06] px-5 py-3">
-                      <Link
-                        to="/services"
-                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                        onClick={closeDropdown}
-                      >
-                        Voir tous les services
-                        <ChevronRight className="w-3.5 h-3.5" />
-                      </Link>
-                    </div>
-                  </div>
-                )}
-
-                {/* Ressources */}
-                {openDropdown === "ressources" && (
-                  <div className="grid grid-cols-2">
-                    <div className="p-3 border-r border-white/[0.06]">
-                      <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                        Apprendre
-                      </p>
-                      {ressourcesLeft.map((item) => (
-                        <DropdownLink
-                          key={item.label}
-                          item={item}
-                          onClick={closeDropdown}
-                        />
-                      ))}
-                    </div>
-                    <div className="p-3">
-                      <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                        Outils
-                      </p>
-                      {ressourcesRight.map((item) => (
-                        <DropdownLink
-                          key={item.label}
-                          item={item}
-                          onClick={closeDropdown}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
           </nav>
 
           {/* ──── Desktop: CTA ──── */}
@@ -421,6 +415,138 @@ const Header = () => {
           </button>
         </div>
 
+        {/* ──── Mega Dropdown Panel ──── */}
+        <div
+          className={`hidden lg:block absolute left-1/2 -translate-x-1/2 top-20 pt-2 z-50 w-full max-w-[880px] transition-all duration-200 ${
+            openDropdown
+              ? "opacity-100 translate-y-0 pointer-events-auto"
+              : "opacity-0 -translate-y-2 pointer-events-none"
+          }`}
+          onMouseEnter={cancelClose}
+          onMouseLeave={scheduleClose}
+        >
+          <div className="rounded-2xl border border-white/[0.08] bg-[#0c0c18]/95 backdrop-blur-xl shadow-2xl shadow-black/40 overflow-hidden">
+            {/* ── Solutions ── */}
+            {openDropdown === "solutions" && (
+              <div className="p-6">
+                <p className="px-4 pb-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                  Solutions par profil
+                </p>
+                <div className="grid grid-cols-3 gap-3">
+                  {solutionsItems.map((item) => {
+                    const inner = (
+                      <div
+                        className={`rounded-xl border border-white/[0.06] p-5 h-full flex flex-col transition-colors duration-200 ${
+                          item.comingSoon
+                            ? "opacity-50 cursor-default bg-white/[0.02]"
+                            : "bg-white/[0.02] hover:bg-white/[0.05]"
+                        }`}
+                      >
+                        <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mb-4">
+                          <item.icon className="w-5 h-5 text-primary" />
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                          <h4 className="text-sm font-semibold text-foreground">
+                            {item.label}
+                          </h4>
+                          {item.comingSoon && (
+                            <span className="text-[10px] font-medium text-muted-foreground bg-white/[0.06] border border-white/[0.06] px-2 py-0.5 rounded-md">
+                              Bientôt
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed flex-1">
+                          {item.description}
+                        </p>
+                        {!item.comingSoon && (
+                          <div className="flex items-center gap-1 mt-4 text-xs font-medium text-primary">
+                            Découvrir
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </div>
+                        )}
+                      </div>
+                    );
+
+                    if (item.comingSoon) {
+                      return (
+                        <div key={item.label} className="h-full">
+                          {inner}
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <Link
+                        key={item.label}
+                        to={item.href}
+                        onClick={closeDropdown}
+                        className="h-full"
+                      >
+                        {inner}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* ── Services ── */}
+            {openDropdown === "services" && (
+              <div>
+                <div className="p-6">
+                  <p className="px-4 pb-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                    Nos services
+                  </p>
+                  <div className="grid grid-cols-2 gap-x-4">
+                    {servicesItems.map((item) => (
+                      <MegaLink
+                        key={item.label}
+                        item={item}
+                        onClick={closeDropdown}
+                      />
+                    ))}
+                  </div>
+                </div>
+                <div className="border-t border-white/[0.06] px-10 py-4">
+                  <Link
+                    to="/services"
+                    className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    onClick={closeDropdown}
+                  >
+                    Voir tous les services
+                    <ChevronRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+              </div>
+            )}
+
+            {/* ── Ressources ── */}
+            {openDropdown === "ressources" && (
+              <div className="grid grid-cols-[280px_1fr]">
+                {/* Featured illustration card */}
+                <div className="p-5 border-r border-white/[0.06]">
+                  <FeaturedAuditCard onClick={closeDropdown} />
+                </div>
+                {/* Resource links */}
+                <div className="p-6">
+                  <p className="px-4 pb-4 text-[11px] font-semibold text-muted-foreground uppercase tracking-widest">
+                    Ressources
+                  </p>
+                  <div className="space-y-0.5">
+                    {ressourcesItems.map((item) => (
+                      <MegaLink
+                        key={item.label}
+                        item={item}
+                        onClick={closeDropdown}
+                      />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
         {/* ──── Mobile Menu ──── */}
         {isMobileMenuOpen && (
           <div className="lg:hidden py-4 border-t border-white/[0.06]">
@@ -437,18 +563,26 @@ const Header = () => {
               {/* Solutions accordion */}
               <MobileAccordion label="Solutions">
                 {solutionsItems.map((item) => (
-                  <DropdownLink key={item.label} item={item} onClick={closeMobile} />
+                  <MegaLink
+                    key={item.label}
+                    item={item}
+                    onClick={closeMobile}
+                  />
                 ))}
               </MobileAccordion>
 
               {/* Services accordion */}
               <MobileAccordion label="Services">
                 {servicesItems.map((item) => (
-                  <DropdownLink key={item.label} item={item} onClick={closeMobile} />
+                  <MegaLink
+                    key={item.label}
+                    item={item}
+                    onClick={closeMobile}
+                  />
                 ))}
                 <Link
                   to="/services"
-                  className="flex items-center gap-2 p-3 rounded-xl text-sm font-medium text-primary hover:bg-white/[0.06] transition-colors"
+                  className="flex items-center gap-2 px-4 py-3.5 rounded-xl text-sm font-medium text-primary hover:bg-white/[0.04] transition-colors"
                   onClick={closeMobile}
                 >
                   Voir tous les services
@@ -458,13 +592,25 @@ const Header = () => {
 
               {/* Ressources accordion */}
               <MobileAccordion label="Ressources">
-                {[...ressourcesLeft, ...ressourcesRight].map((item) => (
-                  <DropdownLink key={item.label} item={item} onClick={closeMobile} />
+                {[
+                  { icon: Scan, label: "Tracking Checker", description: "Diagnostiquez votre site en 30s", href: "/audit-tracking" },
+                  ...ressourcesItems,
+                ].map((item) => (
+                  <MegaLink
+                    key={item.label}
+                    item={item}
+                    onClick={closeMobile}
+                  />
                 ))}
               </MobileAccordion>
 
               {/* CTA mobile */}
-              <Button variant="heroGradient" size="lg" className="w-full mt-4" asChild>
+              <Button
+                variant="heroGradient"
+                size="lg"
+                className="w-full mt-4"
+                asChild
+              >
                 <Link to="/contact" onClick={closeMobile}>
                   Réserver mon Audit Offert
                 </Link>
