@@ -13,6 +13,8 @@ import {
   Activity,
   Lock,
   Shield,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 
 /* ── Static data ── */
@@ -148,18 +150,21 @@ const AuditTracking = () => {
               {/* URL Form */}
               <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-6">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  <div className="relative flex-1">
-                    <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
-                    <Input
-                      type="text"
-                      placeholder="https://votre-site.com"
-                      value={url}
-                      onChange={(e) => {
-                        setUrl(e.target.value);
-                        setError("");
-                      }}
-                      className="pl-12 h-14 bg-white/[0.04] border-white/[0.08] text-foreground text-lg rounded-xl focus:border-primary/50 focus:ring-primary/20"
-                    />
+                  {/* Gradient border wrapper */}
+                  <div className="relative flex-1 rounded-xl p-px bg-gradient-to-r from-primary/40 via-secondary/30 to-primary/40">
+                    <div className="relative">
+                      <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                      <Input
+                        type="text"
+                        placeholder="https://votre-site.com"
+                        value={url}
+                        onChange={(e) => {
+                          setUrl(e.target.value);
+                          setError("");
+                        }}
+                        className="pl-12 h-14 bg-white/[0.04] border-0 text-foreground text-lg rounded-[11px] focus:ring-1 focus:ring-primary/30"
+                      />
+                    </div>
                   </div>
                   <Button
                     type="submit"
@@ -189,9 +194,25 @@ const AuditTracking = () => {
               </form>
 
               {/* Trust line */}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-muted-foreground mb-8">
                 30+ points de contrôle • Résultat instantané • 100% offert
               </p>
+
+              {/* Trust Badges */}
+              <div className="flex flex-wrap justify-center gap-4 md:gap-6">
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+                  <Shield className="w-4 h-4 icon-gradient" />
+                  <span className="text-sm text-foreground font-medium">Sans engagement</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+                  <Clock className="w-4 h-4 icon-gradient" />
+                  <span className="text-sm text-foreground font-medium">Réponse sous 24h</span>
+                </div>
+                <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+                  <CheckCircle2 className="w-4 h-4 icon-gradient" />
+                  <span className="text-sm text-foreground font-medium">+50 audits réalisés</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>
