@@ -68,7 +68,7 @@ const TrackingDemoSection = () => {
         <div className="flex flex-col lg:grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
           
           {/* Left Column - Explanatory Card */}
-          <div className="bg-muted/60 backdrop-blur-xl rounded-xl border border-border/50 p-4 sm:p-6 md:p-8 shadow-[0_0_60px_hsl(var(--primary)_/_0.15)]">
+          <div className="bg-white/[0.04] backdrop-blur-xl rounded-xl border border-white/[0.08] p-4 sm:p-6 md:p-8 shadow-[0_0_60px_hsl(var(--primary)_/_0.15)]">
             {/* Live Demo Badge */}
             <div className="inline-flex items-center gap-2 mb-6">
               <span className="relative flex h-3 w-3">
@@ -93,7 +93,7 @@ const TrackingDemoSection = () => {
             </p>
 
             {/* Privacy Note */}
-            <div className="flex items-start gap-3 p-3 sm:p-4 bg-background/50 rounded-lg border border-border/30 mb-4 md:mb-6">
+            <div className="flex items-start gap-3 p-3 sm:p-4 bg-white/[0.03] rounded-lg border border-white/[0.06] mb-4 md:mb-6">
               <Activity className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
               <p className="text-sm text-muted-foreground">
                 <strong className="text-foreground">100% local</strong> — Ces données sont stockées uniquement sur votre appareil 
@@ -130,7 +130,7 @@ const TrackingDemoSection = () => {
             {stats.map((stat) => (
               <div 
                 key={stat.id}
-                className="bg-muted/60 backdrop-blur-xl rounded-lg sm:rounded-xl border border-border/50 p-3 sm:p-4 md:p-6 text-center hover:border-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)_/_0.1)] transition-all duration-300"
+                className="bg-white/[0.04] backdrop-blur-xl rounded-lg sm:rounded-xl border border-white/[0.08] p-3 sm:p-4 md:p-6 text-center hover:border-primary/30 hover:shadow-[0_0_30px_hsl(var(--primary)_/_0.1)] transition-all duration-300"
               >
                 <div 
                   id={stat.id}

@@ -28,7 +28,7 @@ const reviewsRow2: Review[] = [
 ];
 
 const ReviewCard = ({ review }: { review: Review }) => (
-  <div className="flex-shrink-0 w-[340px] md:w-[400px] p-5 rounded-2xl border border-primary/15 bg-card/60 backdrop-blur-sm space-y-3 mx-2 shadow-[0_0_40px_-4px_hsl(262_83%_58%/0.3),0_0_15px_-2px_hsl(262_83%_68%/0.2)]">
+  <div className="flex-shrink-0 w-[340px] md:w-[400px] p-5 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl space-y-3 mx-2 shadow-[0_0_40px_-4px_hsl(262_83%_58%/0.15)]">
     <div className="flex items-start justify-between">
       <div className="flex items-center gap-2">
         <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-sm font-bold text-primary">

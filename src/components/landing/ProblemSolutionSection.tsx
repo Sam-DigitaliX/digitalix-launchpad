@@ -132,7 +132,7 @@ const ProblemSolutionSection = () => {
               <div
                 key={problem.title}
                 ref={el => cardRefs.current[index] = el}
-                className={`relative bg-background/50 backdrop-blur-sm border border-border/50 rounded-2xl p-6 md:p-8 transition-all duration-700 group hover:border-primary/30 ${
+                className={`relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 md:p-8 transition-all duration-700 group hover:border-primary/30 ${
                   visibleCards.has(index) 
                     ? 'opacity-100 translate-y-0' 
                     : 'opacity-0 translate-y-8'
@@ -212,7 +212,7 @@ const ProblemSolutionSection = () => {
           {/* Lottie in Glassmorphism Card */}
           <div className="max-w-4xl mx-auto">
             <div 
-              className={`relative rounded-2xl border border-primary/15 bg-card/40 backdrop-blur-xl p-4 md:p-8 shadow-[0_0_60px_-8px_hsl(262_83%_58%/0.25),0_0_20px_-4px_hsl(262_83%_68%/0.15)] transition-all duration-1000 ${
+              className={`relative rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 md:p-8 shadow-[0_0_60px_-8px_hsl(262_83%_58%/0.15)] transition-all duration-1000 ${
                 isLottieVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
@@ -233,7 +233,7 @@ const ProblemSolutionSection = () => {
             {benefits.map((benefit, index) => (
               <div 
                 key={benefit}
-                className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-4 flex items-center gap-3 hover:border-primary/30 transition-colors"
+                className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 flex items-center gap-3 hover:border-primary/30 transition-colors"
                 style={{ transitionDelay: `${600 + index * 100}ms` }}
               >
                 <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
