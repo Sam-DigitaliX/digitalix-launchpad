@@ -18,7 +18,7 @@ import {
   Video,
   HelpCircle,
   MessageSquare,
-  BarChart3,
+  Scan,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import logo from "@/assets/digitalix-logo.png";
@@ -87,7 +87,7 @@ const ressourcesLeft = [
 ];
 
 const ressourcesRight = [
-  { icon: BarChart3, label: "Audit offert", description: "Testez votre tracking", href: "/contact" },
+  { icon: Scan, label: "Tracking Checker", description: "Diagnostiquez votre site en 30s", href: "/audit-tracking" },
   { icon: HelpCircle, label: "FAQ", description: "Questions fréquentes", href: "/#faq" },
   { icon: MessageSquare, label: "Contact", description: "Parlons de votre projet", href: "/contact" },
 ];
