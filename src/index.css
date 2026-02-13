@@ -169,11 +169,12 @@
     stroke: hsl(0 0% 100%);
   }
 
-  /* Concentric orbit rings — gradient border + hover spin */
+  /* Concentric orbit rings — gradient arc sweeps in place on hover */
   .orbit-ring {
     border-radius: 9999px;
+    --orbit-angle: 0deg;
     background: conic-gradient(
-      from 0deg,
+      from var(--orbit-angle),
       hsl(262 83% 58% / 0.5),
       hsl(188 94% 43% / 0.35) 40%,
       transparent 70%
@@ -186,16 +187,16 @@
 
   .group:hover .orbit-ring {
     opacity: 1;
-    animation: orbit-spin 4s linear infinite;
+    animation: orbit-fill 3s linear infinite;
   }
 
   .group:hover .orbit-ring:nth-child(even) {
     animation-direction: reverse;
   }
 
-  .group:hover .orbit-ring:nth-child(2) { animation-delay: -1s; }
-  .group:hover .orbit-ring:nth-child(3) { animation-delay: -2s; }
-  .group:hover .orbit-ring:nth-child(4) { animation-delay: -3s; }
+  .group:hover .orbit-ring:nth-child(2) { animation-delay: -0.75s; }
+  .group:hover .orbit-ring:nth-child(3) { animation-delay: -1.5s; }
+  .group:hover .orbit-ring:nth-child(4) { animation-delay: -2.25s; }
 
   .text-gradient-primary {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
@@ -247,8 +248,15 @@
   }
 }
 
-@keyframes orbit-spin {
-  to { rotate: 360deg; }
+/* @property needed for conic-gradient angle animation */
+@property --orbit-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes orbit-fill {
+  to { --orbit-angle: 360deg; }
 }
 
 @keyframes glow-pulse {
