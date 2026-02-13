@@ -18,10 +18,7 @@ const integrations = [
 
 const IntegrationSection = () => {
   return (
-    <section id="integration" className="relative py-24 md:py-32 bg-card overflow-hidden">
-      {/* Glow orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] bg-primary/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute -bottom-20 -right-20 w-[350px] h-[350px] bg-secondary/6 rounded-full blur-[100px] pointer-events-none" />
+    <section id="integration" className="relative py-24 md:py-32 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16">

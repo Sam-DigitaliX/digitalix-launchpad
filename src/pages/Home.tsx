@@ -64,8 +64,15 @@ const valueProps = [
 const Home = () => {
   return (
     <div className="min-h-screen bg-background">
+      {/* Fixed page-level glow orbs — stay in place while content scrolls over them */}
+      <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <div className="absolute top-[10%] -left-[10%] w-[700px] h-[700px] bg-primary/20 rounded-full blur-[180px]" />
+        <div className="absolute top-[45%] -right-[8%] w-[550px] h-[550px] bg-secondary/15 rounded-full blur-[160px]" />
+        <div className="absolute top-[78%] left-[15%] w-[500px] h-[500px] bg-primary/12 rounded-full blur-[160px]" />
+      </div>
+
       <Header />
-      <main>
+      <main className="relative z-[1]">
         {/* Hero */}
         <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
           {/* Background gradient — Evervault style */}

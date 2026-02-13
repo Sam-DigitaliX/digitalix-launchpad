@@ -45,11 +45,7 @@ const blocks = [
 
 const DeepDiveSection = () => {
   return (
-    <section className="relative py-24 md:py-32 bg-background overflow-hidden">
-      {/* Glow orbs */}
-      <div className="absolute top-[15%] -right-32 w-[500px] h-[500px] bg-primary/6 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-[50%] -left-32 w-[400px] h-[400px] bg-secondary/5 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[10%] right-1/4 w-[350px] h-[350px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative py-24 md:py-32 bg-black/[0.7] backdrop-blur-xl overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-20">
