@@ -154,36 +154,73 @@ const Brand = () => {
           <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             ✍️ Typographie
           </h2>
-          
+
           <div className="space-y-8">
-            <div className="p-6 rounded-xl bg-muted/30 border border-white/[0.08]">
-              <p className="text-sm text-muted-foreground mb-2">Font Family</p>
-              <p className="text-4xl font-bold">Inter</p>
-              <p className="text-muted-foreground mt-2">
-                ABCDEFGHIJKLMNOPQRSTUVWXYZ<br/>
-                abcdefghijklmnopqrstuvwxyz<br/>
-                0123456789
-              </p>
+            {/* Font families */}
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="p-6 rounded-xl bg-muted/30 border border-white/[0.08]">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-widest">Headings — font-display</p>
+                <p className="text-4xl font-bold font-display mt-2">Geist</p>
+                <p className="text-muted-foreground mt-3 font-display">
+                  ABCDEFGHIJKLMNOPQRSTUVWXYZ<br/>
+                  abcdefghijklmnopqrstuvwxyz<br/>
+                  0123456789
+                </p>
+                <p className="text-xs text-muted-foreground mt-3 font-mono">h1, h2, h3 → font-display</p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-muted/30 border border-white/[0.08]">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-widest">Body — font-sans</p>
+                <p className="text-4xl font-bold font-sans mt-2">Inter</p>
+                <p className="text-muted-foreground mt-3 font-sans">
+                  ABCDEFGHIJKLMNOPQRSTUVWXYZ<br/>
+                  abcdefghijklmnopqrstuvwxyz<br/>
+                  0123456789
+                </p>
+                <p className="text-xs text-muted-foreground mt-3 font-mono">body, p, span → font-sans</p>
+              </div>
+
+              <div className="p-6 rounded-xl bg-muted/30 border border-white/[0.08]">
+                <p className="text-xs text-muted-foreground mb-1 uppercase tracking-widest">Code — font-mono</p>
+                <p className="text-4xl font-bold font-mono mt-2">Geist Mono</p>
+                <p className="text-muted-foreground mt-3 font-mono">
+                  ABCDEFGHIJKLMNOPQRSTUVWXYZ<br/>
+                  abcdefghijklmnopqrstuvwxyz<br/>
+                  0123456789
+                </p>
+                <p className="text-xs text-muted-foreground mt-3 font-mono">code, pre, mono → font-mono</p>
+              </div>
             </div>
 
+            {/* Scale */}
             <div className="space-y-6">
               <div>
-                <p className="text-sm text-muted-foreground mb-2">H1 Hero — Bold 700 / 5xl-7xl</p>
-                <p className="text-5xl md:text-7xl font-bold">Sans données fiables</p>
+                <p className="text-sm text-muted-foreground mb-2">H1 Hero — Geist Bold 700 / 5xl-7xl</p>
+                <h1 className="text-5xl md:text-7xl font-bold">Sans données fiables</h1>
               </div>
-              
+
               <div>
-                <p className="text-sm text-muted-foreground mb-2">H2 Section — Bold 700 / 3xl-5xl</p>
-                <p className="text-3xl md:text-5xl font-bold">Titre de Section</p>
+                <p className="text-sm text-muted-foreground mb-2">H2 Section — Geist Bold 700 / 3xl-5xl</p>
+                <h2 className="text-3xl md:text-5xl font-bold !border-0 !pb-0 !mb-0">Titre de Section</h2>
               </div>
-              
+
               <div>
-                <p className="text-sm text-muted-foreground mb-2">Body — Regular 400 / base-lg</p>
+                <p className="text-sm text-muted-foreground mb-2">H3 Card — Geist Semibold 600 / xl-2xl</p>
+                <h3 className="text-xl md:text-2xl font-semibold">Sous-titre ou nom de carte</h3>
+              </div>
+
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">Body — Inter Regular 400 / base-lg</p>
                 <p className="text-lg">La performance publicitaire ne se décrète pas. Elle se construit sur des données réellement maîtrisées.</p>
               </div>
-              
+
               <div>
-                <p className="text-sm text-muted-foreground mb-2">CTA Button — Bold 700 / lg</p>
+                <p className="text-sm text-muted-foreground mb-2">Code — Geist Mono Regular 400 / sm</p>
+                <p className="font-mono text-sm text-muted-foreground bg-white/[0.04] border border-white/[0.08] rounded-lg px-4 py-3 inline-block">const tracker = new ServerSideTracker();</p>
+              </div>
+
+              <div>
+                <p className="text-sm text-muted-foreground mb-2">CTA Button — Inter Bold 700 / lg</p>
                 <Button variant="heroGradient" size="lg">Je réserve mon audit</Button>
               </div>
             </div>
