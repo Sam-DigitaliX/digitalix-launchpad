@@ -81,9 +81,13 @@ export default function Contact() {
 
           {/* Social Proof Section */}
           <div className="mt-16 pt-12 border-t border-white/[0.08]">
-            <p className="text-center text-sm text-muted-foreground mb-6">
-              Ils nous font confiance
-            </p>
+            <div className="flex justify-center mb-8">
+              <span className="glass-badge px-4 py-1.5">
+                <span className="text-gradient-primary text-xs font-semibold uppercase tracking-wider">
+                  Ils nous font confiance
+                </span>
+              </span>
+            </div>
             <LogoCarousel />
           </div>
         </div>
