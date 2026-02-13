@@ -31,7 +31,7 @@ export default function Contact() {
             <h1 className="text-4xl md:text-5xl font-bold">
               Parlons de votre <span className="text-gradient-primary">projet</span>
             </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
               Répondez à quelques questions pour que nous puissions vous proposer
               l'accompagnement le plus adapté à vos besoins.
             </p>

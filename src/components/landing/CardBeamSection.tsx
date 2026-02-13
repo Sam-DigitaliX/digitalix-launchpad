@@ -572,7 +572,7 @@ function CardBeamSection() {
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-5">
           Notre <span className="text-gradient-primary">expertise</span> à votre service
         </h2>
-        <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+        <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
           Chaque domaine que nous maîtrisons pour récupérer vos données perdues et maximiser votre ROI.
         </p>
       </div>

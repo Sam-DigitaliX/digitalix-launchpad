@@ -87,7 +87,7 @@ const TrackingDemoSection = () => {
             </h3>
 
             {/* Description */}
-            <p className="text-muted-foreground mb-4 md:mb-6 text-sm sm:text-base leading-relaxed">
+            <p className="text-foreground/70 mb-4 md:mb-6 text-sm sm:text-base leading-relaxed">
               Depuis votre arrivée sur ce site, nous avons collecté et analysé ces données 
               sur votre navigation. C'est <strong className="text-foreground">exactement ce que nous mettons en place</strong> pour vos clients.
             </p>

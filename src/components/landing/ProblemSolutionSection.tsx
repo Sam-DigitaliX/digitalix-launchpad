@@ -120,7 +120,7 @@ const ProblemSolutionSection = () => {
               <br className="hidden md:block" />
               <span className="text-destructive"> 30% de vos conversions.</span>
             </h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+            <p className="text-lg text-foreground/70 max-w-3xl mx-auto">
               iOS 17, les AdBlockers et le RGPD rendent votre tracking actuel{" "}
               <span className="font-semibold text-foreground">inefficace et coûteux</span>.
             </p>
@@ -255,7 +255,7 @@ const ProblemSolutionSection = () => {
               isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
-            <p className="text-lg text-muted-foreground mb-8">
+            <p className="text-lg text-foreground/70 mb-8">
               Résultat : Des campagnes <span className="font-bold text-secondary">plus rentables</span> et des décisions basées sur des <span className="font-bold text-foreground">données fiables</span>.
             </p>
             <Button variant="heroGradient" size="xl" onClick={() => navigate('/contact')}>

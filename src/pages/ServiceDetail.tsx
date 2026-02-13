@@ -44,7 +44,7 @@ const ServiceDetail = () => {
                 {service.title}
               </h1>
             </div>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl">
+            <p className="text-lg md:text-xl text-foreground/70 max-w-3xl">
               {service.longDescription}
             </p>
           </div>
@@ -73,7 +73,7 @@ const ServiceDetail = () => {
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
               Prêt à démarrer ?
             </h2>
-            <p className="text-muted-foreground mb-10 max-w-xl mx-auto">
+            <p className="text-foreground/60 mb-10 max-w-xl mx-auto">
               Réservez votre audit offert et découvrez comment nous pouvons transformer votre tracking.
             </p>
             <Button variant="heroGradient" size="xl" className="group" asChild>

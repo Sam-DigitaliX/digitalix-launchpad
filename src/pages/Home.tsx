@@ -85,10 +85,10 @@ const Home = () => {
               Le server-side,{" "}
               <span className="text-gradient-primary">sans la complexité.</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-3">
+            <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-3">
               Déployé. Maintenu. Conforme.
             </p>
-            <p className="text-base text-muted-foreground/70 max-w-xl mx-auto mb-10">
+            <p className="text-base text-foreground/50 max-w-xl mx-auto mb-10">
               On migre votre tracking côté serveur pour récupérer les conversions
               que les adblockers et iOS vous font perdre.
             </p>
@@ -163,7 +163,7 @@ const Home = () => {
           <h2 className="text-3xl md:text-4xl font-bold text-foreground text-center mb-4">
             Une solution adaptée à <span className="text-gradient-primary">votre profil</span>
           </h2>
-          <p className="text-muted-foreground text-center mb-16 max-w-xl mx-auto">
+          <p className="text-foreground/60 text-center mb-16 max-w-xl mx-auto">
             Que vous soyez consultant ou annonceur, nous avons une offre pensée pour vous.
           </p>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
