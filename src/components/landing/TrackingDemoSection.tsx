@@ -50,7 +50,7 @@ const TrackingDemoSection = () => {
   }, []);
 
   return (
-    <section className="relative py-16 md:py-24 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
+    <section className="relative py-16 md:py-24 bg-black/[0.5] backdrop-blur-xl overflow-hidden">
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
 
