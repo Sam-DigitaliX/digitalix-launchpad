@@ -75,11 +75,11 @@ const TimelineStep = ({ step, index, isVisible }: { step: typeof steps[0]; index
         <div className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 md:p-8 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500 group">
           {/* Header */}
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <step.icon className="w-7 h-7 text-primary" />
+            <div className="icon-gradient w-14 h-14 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent">
+              <step.icon className="w-7 h-7" />
             </div>
             <div>
-              <span className="text-xs font-medium text-primary uppercase tracking-wider">Étape {step.number}</span>
+              <span className="text-xs font-medium text-gradient-primary uppercase tracking-wider">Étape {step.number}</span>
               <h3 className="text-xl font-bold text-foreground">{step.title}</h3>
             </div>
           </div>
@@ -91,7 +91,7 @@ const TimelineStep = ({ step, index, isVisible }: { step: typeof steps[0]; index
           <ul className="space-y-2 mb-4">
             {step.details.map((detail, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-muted-foreground">
-                <CheckCircle className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                <CheckCircle className="w-4 h-4 icon-gradient mt-0.5 flex-shrink-0" />
                 <span>{detail}</span>
               </li>
             ))}
@@ -248,11 +248,11 @@ const ProcessSection = () => {
                     }`}
                   >
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                        <step.icon className="w-5 h-5 text-primary" />
+                      <div className="icon-gradient w-10 h-10 rounded-lg bg-white/[0.05] border border-white/[0.06] flex items-center justify-center">
+                        <step.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <span className="text-xs font-medium text-primary">Étape {step.number}</span>
+                        <span className="text-xs font-medium text-gradient-primary">Étape {step.number}</span>
                         <h3 className="text-lg font-bold text-foreground">{step.title}</h3>
                       </div>
                     </div>
@@ -260,7 +260,7 @@ const ProcessSection = () => {
                     <ul className="space-y-1.5 mb-3">
                       {step.details.map((detail, i) => (
                         <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                          <CheckCircle className="w-3 h-3 text-primary mt-0.5 flex-shrink-0" />
+                          <CheckCircle className="w-3 h-3 icon-gradient mt-0.5 flex-shrink-0" />
                           <span>{detail}</span>
                         </li>
                       ))}

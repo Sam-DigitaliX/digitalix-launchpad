@@ -185,7 +185,7 @@ const ProblemSolutionSection = () => {
                 Comment rendre vos campagnes <span className="text-gradient-primary">à nouveau rentables</span> ?
               </h3>
               <div className="w-10 h-10 rounded-full border-2 border-primary/50 flex items-center justify-center animate-bounce">
-                <ArrowDown className="w-5 h-5 text-primary" />
+                <ArrowDown className="w-5 h-5 icon-gradient" />
               </div>
             </div>
           </div>
@@ -236,7 +236,7 @@ const ProblemSolutionSection = () => {
                 className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 flex items-center gap-3 hover:border-primary/30 transition-colors"
                 style={{ transitionDelay: `${600 + index * 100}ms` }}
               >
-                <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                <CheckCircle className="w-5 h-5 icon-gradient flex-shrink-0" />
                 <span className="text-sm text-foreground font-medium">{benefit}</span>
               </div>
             ))}
