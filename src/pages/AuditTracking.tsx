@@ -148,10 +148,10 @@ const AuditTracking = () => {
               </p>
 
               {/* URL Form */}
-              <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-6">
+              <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-8">
                 <div className="flex flex-col sm:flex-row gap-3">
                   {/* Gradient border wrapper */}
-                  <div className="relative flex-1 rounded-xl p-px bg-gradient-to-r from-primary/40 via-secondary/30 to-primary/40">
+                  <div className="relative flex-1 rounded-xl p-px bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30">
                     <div className="relative">
                       <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
                       <Input
@@ -193,24 +193,19 @@ const AuditTracking = () => {
                 )}
               </form>
 
-              {/* Trust line */}
-              <p className="text-sm text-muted-foreground mb-8">
-                30+ points de contrôle • Résultat instantané • 100% offert
-              </p>
-
               {/* Trust Badges */}
               <div className="flex flex-wrap justify-center gap-4 md:gap-6">
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
                   <Shield className="w-4 h-4 icon-gradient" />
-                  <span className="text-sm text-foreground font-medium">Sans engagement</span>
+                  <span className="text-sm text-foreground font-medium">30+ points de contrôle</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
-                  <Clock className="w-4 h-4 icon-gradient" />
-                  <span className="text-sm text-foreground font-medium">Réponse sous 24h</span>
+                  <Zap className="w-4 h-4 icon-gradient" />
+                  <span className="text-sm text-foreground font-medium">Résultat instantané</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
                   <CheckCircle2 className="w-4 h-4 icon-gradient" />
-                  <span className="text-sm text-foreground font-medium">+50 audits réalisés</span>
+                  <span className="text-sm text-foreground font-medium">100% offert</span>
                 </div>
               </div>
             </div>
