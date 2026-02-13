@@ -171,7 +171,7 @@ const FeaturedAuditCard = ({ onClick }: { onClick?: () => void }) => (
       {[0, 1, 2, 3].map((i) => (
         <div
           key={i}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-white/[0.06]"
+          className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           style={{
             width: `${100 - i * 22}%`,
             height: `${100 - i * 22}%`,
