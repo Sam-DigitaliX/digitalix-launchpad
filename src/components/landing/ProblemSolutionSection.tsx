@@ -99,8 +99,12 @@ const ProblemSolutionSection = () => {
     <>
       {/* PROBLEM SECTION - Dark */}
       <section className="relative py-24 md:py-32 bg-card overflow-hidden">
+        {/* Glow orbs */}
+        <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-destructive/6 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
+
         {/* Subtle grid pattern */}
-        <div 
+        <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `linear-gradient(hsl(var(--primary)) 1px, transparent 1px),
