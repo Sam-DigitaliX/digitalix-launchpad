@@ -147,6 +147,26 @@
     box-shadow: var(--shadow-glow-secondary);
   }
 
+  .glass-badge {
+    @apply inline-flex items-center rounded-full text-xs font-bold uppercase tracking-widest;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.08), hsl(0 0% 100% / 0.04));
+    border: 1px solid hsl(0 0% 100% / 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    box-shadow:
+      inset 0 1px 0 0 hsl(0 0% 100% / 0.06),
+      0 0 12px hsl(262 83% 58% / 0.08);
+  }
+
+  /* Navigation menu icon gradient */
+  .icon-gradient svg {
+    stroke: url(#icon-gradient);
+  }
+
+  .group:hover .icon-gradient svg {
+    stroke: hsl(0 0% 100%);
+  }
+
   .text-gradient-primary {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary;
   }
