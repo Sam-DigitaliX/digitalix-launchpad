@@ -35,7 +35,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <EvervaultGlow />
       <Header />
-      <main>
+      <main className="relative z-[1]">
         <HeroSection />
         <TrackingDemoSection />
         <ReviewsCarouselSection />
