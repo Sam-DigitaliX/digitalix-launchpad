@@ -98,7 +98,7 @@ const ProblemSolutionSection = () => {
   return (
     <>
       {/* PROBLEM SECTION - Dark */}
-      <section className="relative py-24 md:py-32 bg-black/[0.5] backdrop-blur-xl overflow-hidden">
+      <section className="relative py-24 md:py-32 overflow-hidden">
         {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"
@@ -197,13 +197,6 @@ const ProblemSolutionSection = () => {
         ref={lottieRef}
         className="relative py-16 md:py-20 overflow-hidden"
       >
-        {/* Gradient Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-card via-primary/5 to-background" />
-        
-        {/* Glow effects */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/10 rounded-full blur-3xl opacity-50" />
-        <div className="absolute top-1/4 right-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-3xl opacity-30" />
-        
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Header */}
           <div className="text-center mb-12">
