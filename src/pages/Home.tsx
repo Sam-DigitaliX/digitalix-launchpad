@@ -18,7 +18,7 @@ const audiences = [
     title: "Consultants & Agences",
     description:
       "Vous gérez le tracking de vos clients ? Offrez-leur une infrastructure server-side fiable et conforme. Devenez autonome sur le setup et la maintenance.",
-    cta: "Découvrir l'offre Consultants",
+    cta: "Découvrir l'offre",
     href: "/consultants",
     icon: Users,
     available: true,
@@ -207,7 +207,7 @@ const Home = () => {
                 <Button
                   variant={audience.available ? "heroGradient" : "heroGradientOutline"}
                   size="lg"
-                  className="w-full whitespace-normal text-center leading-snug"
+                  className="w-full"
                   asChild={audience.available}
                   disabled={!audience.available}
                 >

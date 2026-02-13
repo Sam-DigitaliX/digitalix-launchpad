@@ -180,8 +180,8 @@ const ProcessSection = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16 md:mb-24">
-          <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium mb-4">
-            Notre Méthodologie
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest mb-4">
+            <span className="text-gradient-primary">Notre Méthodologie</span>
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             De l'Audit au Monitoring

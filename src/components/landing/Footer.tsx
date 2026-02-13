@@ -3,7 +3,7 @@ import logo from "@/assets/digitalix-logo.png";
 
 const Footer = () => {
   return (
-    <footer className="py-12 border-t border-white/[0.06]">
+    <footer className="py-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6">
           {/* Logo */}
@@ -29,7 +29,7 @@ const Footer = () => {
 
           {/* Copyright */}
           <p className="text-sm text-muted-foreground">
-            © 2025 DigitaliX. Server-Side Tracking Specialists.
+            © {new Date().getFullYear()} DigitaliX. Server-Side Tracking Specialists.
           </p>
         </div>
       </div>
