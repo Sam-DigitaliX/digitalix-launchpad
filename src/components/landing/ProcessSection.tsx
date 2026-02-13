@@ -176,7 +176,7 @@ const ProcessSection = () => {
   }, []);
 
   return (
-    <section id="process" className="relative py-24 md:py-32 bg-black/[0.7] backdrop-blur-xl overflow-hidden">
+    <section id="process" className="relative py-24 md:py-32 bg-black/[0.55] backdrop-blur-xl overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-16 md:mb-24">

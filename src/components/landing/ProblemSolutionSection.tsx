@@ -98,7 +98,7 @@ const ProblemSolutionSection = () => {
   return (
     <>
       {/* PROBLEM SECTION - Dark */}
-      <section className="relative py-24 md:py-32 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
+      <section className="relative py-24 md:py-32 bg-black/[0.5] backdrop-blur-xl overflow-hidden">
         {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"

@@ -45,7 +45,7 @@ const blocks = [
 
 const DeepDiveSection = () => {
   return (
-    <section className="relative py-24 md:py-32 bg-black/[0.7] backdrop-blur-xl overflow-hidden">
+    <section className="relative py-24 md:py-32 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-20">
