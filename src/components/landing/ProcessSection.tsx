@@ -72,7 +72,7 @@ const TimelineStep = ({ step, index, isVisible }: { step: typeof steps[0]; index
         }`}
         style={{ transitionDelay: `${index * 100}ms` }}
       >
-        <div className="bg-card border border-border rounded-2xl p-6 md:p-8 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500 group">
+        <div className="bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 md:p-8 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 transition-all duration-500 group">
           {/* Header */}
           <div className="flex items-center gap-4 mb-4">
             <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -108,7 +108,7 @@ const TimelineStep = ({ step, index, isVisible }: { step: typeof steps[0]; index
       {/* Center Timeline Node */}
       <div className="hidden md:flex w-2/12 justify-center">
         <div 
-          className={`relative z-10 w-16 h-16 rounded-full bg-card border-4 border-primary flex items-center justify-center transition-all duration-500 ${
+          className={`relative z-10 w-16 h-16 rounded-full bg-white/[0.06] backdrop-blur-xl border-4 border-primary flex items-center justify-center transition-all duration-500 ${
             isVisible ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
           }`}
           style={{ transitionDelay: `${index * 100 + 200}ms` }}
@@ -234,14 +234,14 @@ const ProcessSection = () => {
                 className="relative"
               >
                 {/* Mobile Timeline Node */}
-                <div className={`md:hidden absolute left-[15px] top-8 w-5 h-5 rounded-full border-4 border-background z-10 transition-all duration-500 ${
-                  visibleSteps.has(index) ? 'bg-primary scale-100' : 'bg-border scale-75'
+                <div className={`md:hidden absolute left-[15px] top-8 w-5 h-5 rounded-full border-4 border-white/[0.1] z-10 transition-all duration-500 ${
+                  visibleSteps.has(index) ? 'bg-primary scale-100' : 'bg-white/[0.1] scale-75'
                 }`} />
                 
                 {/* Mobile Content with padding for timeline */}
                 <div className="md:hidden pl-14">
                   <div 
-                    className={`bg-card border border-border rounded-2xl p-6 transition-all duration-700 ${
+                    className={`bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 transition-all duration-700 ${
                       visibleSteps.has(index) 
                         ? 'opacity-100 translate-y-0' 
                         : 'opacity-0 translate-y-8'
