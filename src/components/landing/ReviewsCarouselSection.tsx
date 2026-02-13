@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useCallback } from 'react';
 import { Star, CheckCircle2, Quote } from 'lucide-react';
 
 interface Review {
@@ -61,15 +61,37 @@ const ReviewCard = ({ review }: { review: Review }) => (
 
 const ReviewsCarouselSection = () => {
   const sectionRef = useRef<HTMLDivElement>(null);
-  const [scrollOffset, setScrollOffset] = useState(0);
+  const row1Ref = useRef<HTMLDivElement>(null);
+  const row2Ref = useRef<HTMLDivElement>(null);
+  const scrollOffsetRef = useRef(0);
+  const lastYRef = useRef(0);
+  const rafRef = useRef(0);
 
-  // Approximate width of one full set of cards for wrapping
-  const CARD_WIDTH = 404; // ~400px card + 4px margin
+  const CARD_WIDTH = 404;
   const ROW1_SET_WIDTH = reviewsRow1.length * CARD_WIDTH;
   const ROW2_SET_WIDTH = reviewsRow2.length * CARD_WIDTH;
 
+  const wrapOffset = useCallback((offset: number, setWidth: number) => {
+    return ((offset % setWidth) + setWidth) % setWidth;
+  }, []);
+
   useEffect(() => {
-    let lastY = window.scrollY;
+    lastYRef.current = window.scrollY;
+    let ticking = false;
+
+    const updatePositions = () => {
+      const offset = scrollOffsetRef.current;
+      const row1X = -wrapOffset(offset, ROW1_SET_WIDTH);
+      const row2X = -wrapOffset(-offset, ROW2_SET_WIDTH);
+
+      if (row1Ref.current) {
+        row1Ref.current.style.transform = `translate3d(${row1X}px, 0, 0)`;
+      }
+      if (row2Ref.current) {
+        row2Ref.current.style.transform = `translate3d(${row2X}px, 0, 0)`;
+      }
+      ticking = false;
+    };
 
     const handleScroll = () => {
       const section = sectionRef.current;
@@ -78,36 +100,36 @@ const ReviewsCarouselSection = () => {
       const rect = section.getBoundingClientRect();
       const windowH = window.innerHeight;
 
-      // Only animate when section is in viewport
       if (rect.bottom < 0 || rect.top > windowH) {
-        lastY = window.scrollY;
+        lastYRef.current = window.scrollY;
         return;
       }
 
-      const delta = window.scrollY - lastY;
-      lastY = window.scrollY;
+      const delta = window.scrollY - lastYRef.current;
+      lastYRef.current = window.scrollY;
+      scrollOffsetRef.current += delta * 0.3;
 
-      setScrollOffset(prev => prev + delta * 0.3);
+      if (!ticking) {
+        ticking = true;
+        rafRef.current = requestAnimationFrame(updatePositions);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Modulo wrapping to prevent gaps regardless of scroll amount
-  const wrapOffset = (offset: number, setWidth: number) => {
-    return ((offset % setWidth) + setWidth) % setWidth;
-  };
-
-  const row1X = -wrapOffset(scrollOffset, ROW1_SET_WIDTH);
-  const row2X = -wrapOffset(-scrollOffset, ROW2_SET_WIDTH);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [ROW1_SET_WIDTH, ROW2_SET_WIDTH, wrapOffset]);
 
   return (
     <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 md:mb-14">
-        <p className="text-center text-sm uppercase tracking-widest text-muted-foreground mb-3">
-          <span className="text-gradient-primary">Avis clients</span>
-        </p>
+        <div className="flex justify-center mb-3">
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+            <span className="text-gradient-primary">Avis Clients</span>
+          </span>
+        </div>
         <h2 className="text-2xl md:text-4xl font-bold text-center text-foreground">
           Ce que nos clients disent de nous
         </h2>
@@ -116,8 +138,9 @@ const ReviewsCarouselSection = () => {
       {/* Row 1 — moves left on scroll down */}
       <div className="mb-4">
         <div
+          ref={row1Ref}
           className="flex"
-          style={{ transform: `translate3d(${row1X}px, 0, 0)`, willChange: 'transform' }}
+          style={{ transform: 'translate3d(0, 0, 0)', willChange: 'transform' }}
         >
           {[...reviewsRow1, ...reviewsRow1, ...reviewsRow1].map((review, i) => (
             <ReviewCard key={`r1-${i}`} review={review} />
@@ -128,8 +151,9 @@ const ReviewsCarouselSection = () => {
       {/* Row 2 — moves right on scroll down (opposite direction) */}
       <div>
         <div
+          ref={row2Ref}
           className="flex"
-          style={{ transform: `translate3d(${row2X}px, 0, 0)`, willChange: 'transform' }}
+          style={{ transform: 'translate3d(0, 0, 0)', willChange: 'transform' }}
         >
           {[...reviewsRow2, ...reviewsRow2, ...reviewsRow2].map((review, i) => (
             <ReviewCard key={`r2-${i}`} review={review} />

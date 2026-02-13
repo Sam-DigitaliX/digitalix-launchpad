@@ -25,8 +25,8 @@ export default function Contact() {
         <div className="relative pt-28 container max-w-6xl mx-auto">
           {/* Header Section */}
           <div className="text-center mb-10 space-y-4">
-            <span className="inline-block px-4 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-medium tracking-wide">
-              Audit Offert
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+              <span className="text-gradient-primary">Audit Offert</span>
             </span>
             <h1 className="text-4xl md:text-5xl font-bold">
               Parlons de votre <span className="text-gradient-primary">projet</span>

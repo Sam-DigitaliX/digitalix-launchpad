@@ -49,9 +49,11 @@ const DeepDiveSection = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center mb-20">
-          <p className="text-xs font-bold tracking-ultra-wide text-primary mb-4">
-            DEEP DIVE
-          </p>
+          <div className="flex justify-center mb-4">
+            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+              <span className="text-gradient-primary">Deep Dive</span>
+            </span>
+          </div>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
             Comment ça marche en détail
           </h2>
@@ -68,9 +70,9 @@ const DeepDiveSection = () => {
             >
               {/* Text Content */}
               <div className="flex-1 space-y-6">
-                <div className="inline-block px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold tracking-ultra-wide">
-                  {index === 0 ? "SETUP" : index === 1 ? "ASSURANCE" : "PARTNER"}
-                </div>
+                <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+                  <span className="text-gradient-primary">{index === 0 ? "SETUP" : index === 1 ? "ASSURANCE" : "PARTNER"}</span>
+                </span>
                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">
                   {block.title}
                 </h3>

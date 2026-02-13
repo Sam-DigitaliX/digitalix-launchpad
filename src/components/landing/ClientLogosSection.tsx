@@ -37,11 +37,11 @@ const ClientLogosSection = () => {
   return (
     <section className="relative py-16 md:py-24 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <p className="text-center text-sm uppercase tracking-widest mb-12 text-muted-foreground">
-          <span className="text-gradient-primary">
-            Ils nous font confiance
+        <div className="flex justify-center mb-12">
+          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+            <span className="text-gradient-primary">Ils nous font confiance</span>
           </span>
-        </p>
+        </div>
         
         <div className="flex flex-wrap justify-center items-center gap-8 md:gap-12 lg:gap-14">
           {clientLogos.map((logo, index) => (
