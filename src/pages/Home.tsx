@@ -80,8 +80,9 @@ const Home = () => {
 
       <Header />
       <main className="relative z-[1]">
-        {/* Hero — Glass panel with rounded bottom */}
-        <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border-b border-white/[0.06]">
+        {/* Hero — Glass panel with rounded bottom + side margins */}
+        <div className="mx-3 md:mx-6">
+        <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] border-t-0">
           {/* Background gradient — Evervault style */}
           <div
             className="absolute inset-0 rounded-b-[40px]"
@@ -155,6 +156,7 @@ const Home = () => {
             </div>
           </div>
         </section>
+        </div>
 
         {/* Expertise Beam */}
         <CardBeamSection />
