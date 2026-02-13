@@ -162,8 +162,8 @@ const FeaturedAuditCard = ({ onClick }: { onClick?: () => void }) => (
     onClick={onClick}
     className="block h-full rounded-xl bg-white/[0.03] border border-white/[0.06] p-5 hover:bg-white/[0.05] transition-colors group"
   >
-    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary/15 border border-primary/20 text-[10px] font-semibold text-primary uppercase tracking-wider">
-      Audit Offert
+    <span className="inline-flex items-center px-2.5 py-1 rounded-md bg-primary/15 border border-primary/20 text-[10px] font-semibold uppercase tracking-wider">
+      <span className="text-gradient-primary">Audit Offert</span>
     </span>
 
     {/* Concentric circles — Evervault style illustration */}
@@ -469,9 +469,9 @@ const Header = () => {
                           {item.description}
                         </p>
                         {!item.comingSoon && (
-                          <div className="flex items-center gap-1 mt-4 text-xs font-medium text-primary group-hover:text-foreground transition-colors duration-300">
-                            Découvrir
-                            <ChevronRight className="w-3.5 h-3.5" />
+                          <div className="flex items-center gap-1 mt-4 text-xs font-medium transition-all duration-300">
+                            <span className="text-gradient-primary group-hover:bg-none group-hover:text-foreground transition-all duration-300">Découvrir</span>
+                            <ChevronRight className="w-3.5 h-3.5 text-secondary group-hover:text-foreground transition-colors duration-300" />
                           </div>
                         )}
                       </div>
@@ -520,11 +520,11 @@ const Header = () => {
                 <div className="border-t border-white/[0.06] px-10 py-4">
                   <Link
                     to="/services"
-                    className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                    className="group inline-flex items-center gap-1.5 text-sm font-medium transition-colors"
                     onClick={closeDropdown}
                   >
-                    Voir tous les services
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <span className="text-gradient-primary group-hover:bg-none group-hover:text-foreground transition-all duration-300">Voir tous les services</span>
+                    <ChevronRight className="w-3.5 h-3.5 text-secondary group-hover:text-foreground transition-colors duration-300" />
                   </Link>
                 </div>
               </div>
