@@ -66,16 +66,16 @@ const Home = () => {
     <div className="min-h-screen bg-background">
       {/* Fixed page-level glow orbs — stay in place while content scrolls over them */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        {/* Violet — haut gauche */}
-        <div className="absolute top-[5%] -left-[8%] w-[900px] h-[900px] rounded-full blur-[200px]" style={{ background: 'hsl(262 83% 58% / 0.35)' }} />
-        {/* Cyan — milieu droit */}
-        <div className="absolute top-[30%] -right-[6%] w-[800px] h-[800px] rounded-full blur-[180px]" style={{ background: 'hsl(188 94% 43% / 0.28)' }} />
-        {/* Violet — centre gauche (timeline zone) */}
-        <div className="absolute top-[55%] -left-[3%] w-[750px] h-[750px] rounded-full blur-[190px]" style={{ background: 'hsl(262 83% 58% / 0.25)' }} />
-        {/* Cyan — bas droit (FAQ zone) */}
-        <div className="absolute top-[75%] -right-[3%] w-[700px] h-[700px] rounded-full blur-[180px]" style={{ background: 'hsl(188 94% 43% / 0.22)' }} />
-        {/* Violet — bas centre */}
-        <div className="absolute top-[90%] left-[15%] w-[600px] h-[600px] rounded-full blur-[170px]" style={{ background: 'hsl(262 83% 58% / 0.18)' }} />
+        {/* Violet — top left, bleeding from edge */}
+        <div className="absolute -top-[10%] -left-[15%] w-[500px] h-[500px] rounded-full blur-[120px]" style={{ background: 'hsl(262 83% 58% / 0.20)' }} />
+        {/* Cyan — upper right */}
+        <div className="absolute top-[25%] -right-[18%] w-[450px] h-[450px] rounded-full blur-[120px]" style={{ background: 'hsl(188 94% 43% / 0.15)' }} />
+        {/* Violet — mid left (timeline zone) */}
+        <div className="absolute top-[55%] -left-[18%] w-[400px] h-[400px] rounded-full blur-[120px]" style={{ background: 'hsl(262 83% 58% / 0.15)' }} />
+        {/* Cyan — lower right (FAQ zone) */}
+        <div className="absolute top-[78%] -right-[15%] w-[450px] h-[450px] rounded-full blur-[120px]" style={{ background: 'hsl(188 94% 43% / 0.15)' }} />
+        {/* Violet — bottom left */}
+        <div className="absolute top-[92%] -left-[12%] w-[350px] h-[350px] rounded-full blur-[100px]" style={{ background: 'hsl(262 83% 58% / 0.12)' }} />
       </div>
 
       <Header />
