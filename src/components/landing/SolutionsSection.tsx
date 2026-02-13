@@ -105,7 +105,7 @@ const SolutionsSection = () => {
               <ul className="space-y-3 mb-8">
                 {solution.features.map((feature) => (
                   <li key={feature} className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    <Check className="w-5 h-5 icon-gradient flex-shrink-0 mt-0.5" />
                     <span className="text-sm text-foreground/80">{feature}</span>
                   </li>
                 ))}

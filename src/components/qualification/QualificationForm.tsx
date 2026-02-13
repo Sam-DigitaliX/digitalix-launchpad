@@ -205,8 +205,8 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         {/* Hot Prospect Badge */}
         {isHotProspect && !isResultStep && (
           <div className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full w-fit border border-primary/30">
-            <Flame className="w-4 h-4 text-primary" />
-            <span className="text-sm font-medium text-primary">Prospect prioritaire</span>
+            <Flame className="w-4 h-4 icon-gradient" />
+            <span className="text-sm font-medium text-gradient-primary">Prospect prioritaire</span>
           </div>
         )}
 

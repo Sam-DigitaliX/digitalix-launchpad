@@ -53,7 +53,7 @@ const ScoreCircle = ({
           cx="60"
           cy="60"
           r="54"
-          className="stroke-border/30"
+          className="stroke-white/[0.08]"
           strokeWidth="8"
           fill="none"
         />
@@ -247,7 +247,7 @@ const AuditResults = () => {
       <Header />
       <main className="min-h-screen">
         {/* ── URL Bar ── */}
-        <section className="pt-24 pb-4 border-b border-border/30">
+        <section className="pt-24 pb-4 border-b border-white/[0.08]">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3 text-sm">
               <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
@@ -273,10 +273,10 @@ const AuditResults = () => {
               <div className="max-w-lg mx-auto text-center">
                 {/* Animated spinner */}
                 <div className="relative w-24 h-24 mx-auto mb-10">
-                  <div className="absolute inset-0 rounded-full border-4 border-border/30" />
-                  <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-primary animate-spin" />
+                  <div className="absolute inset-0 rounded-full border-4 border-white/[0.08]" />
+                  <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-secondary animate-spin" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Scan className="w-8 h-8 text-primary" />
+                    <Scan className="w-8 h-8 icon-gradient" />
                   </div>
                 </div>
 
@@ -302,7 +302,7 @@ const AuditResults = () => {
                       ) : i === currentStep ? (
                         <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
                       ) : (
-                        <div className="w-5 h-5 rounded-full border-2 border-border/50 shrink-0" />
+                        <div className="w-5 h-5 rounded-full border-2 border-white/[0.12] shrink-0" />
                       )}
                       <span
                         className={`text-sm ${
@@ -402,8 +402,8 @@ const AuditResults = () => {
                       {/* Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-background/40 via-background/90 to-background rounded-xl">
                         <div className="text-center max-w-md px-6">
-                          <div className="w-14 h-14 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
-                            <Lock className="w-7 h-7 text-primary" />
+                          <div className="icon-gradient w-14 h-14 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                            <Lock className="w-7 h-7" />
                           </div>
                           <h3 className="text-xl font-bold text-foreground mb-2">
                             Débloquez votre rapport complet
@@ -460,7 +460,7 @@ const AuditResults = () => {
                 </div>
 
                 {/* ── CTA ── */}
-                <div className="mt-12 p-8 rounded-2xl border border-primary/20 bg-primary/5 text-center">
+                <div className="mt-12 p-8 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm text-center">
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
                     Un expert analyse vos résultats
                   </h3>

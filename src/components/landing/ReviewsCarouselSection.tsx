@@ -45,7 +45,7 @@ const ReviewCard = ({ review }: { review: Review }) => (
           <span className="text-xs text-muted-foreground">{review.company}</span>
         </div>
       </div>
-      <Quote className="w-5 h-5 text-primary/30" />
+      <Quote className="w-5 h-5 icon-gradient opacity-30" />
     </div>
 
     <div className="flex gap-0.5">

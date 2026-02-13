@@ -172,8 +172,8 @@ const Home = () => {
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {valueProps.map((prop) => (
               <div key={prop.title} className="glass-card-interactive p-8 text-center">
-                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
-                  <prop.icon className="w-7 h-7 text-primary" />
+                <div className="icon-gradient w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-5">
+                  <prop.icon className="w-7 h-7" />
                 </div>
                 <h3 className="text-xl font-bold text-foreground mb-3">{prop.title}</h3>
                 <p className="text-muted-foreground text-sm">{prop.description}</p>
@@ -199,8 +199,8 @@ const Home = () => {
                 key={audience.title}
                 className={`glass-card-interactive p-5 md:p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
-                  <audience.icon className="w-6 h-6 text-primary" />
+                <div className="icon-gradient w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mb-5">
+                  <audience.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-2xl font-bold text-foreground mb-3">{audience.title}</h3>
                 <p className="text-muted-foreground mb-8 flex-grow">{audience.description}</p>

@@ -42,8 +42,8 @@ const BenefitsSection = () => {
               className="text-center group"
               style={{ animationDelay: `${index * 100}ms` }}
             >
-              <div className="w-16 h-16 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6 group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                <benefit.icon className="w-8 h-8 text-primary" />
+              <div className="icon-gradient w-16 h-16 rounded-2xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-6 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent group-hover:scale-110">
+                <benefit.icon className="w-8 h-8" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 {benefit.title}

@@ -44,8 +44,8 @@ const Services = () => {
                   className="glass-card-interactive group flex flex-col p-6 md:p-8"
                 >
                   {/* Icon */}
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:border-primary/30 transition-colors duration-300">
-                    <service.icon className="w-6 h-6 text-primary" />
+                  <div className="icon-gradient w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mb-5 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent">
+                    <service.icon className="w-6 h-6" />
                   </div>
 
                   {/* Content */}

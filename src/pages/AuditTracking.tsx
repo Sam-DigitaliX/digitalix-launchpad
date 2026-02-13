@@ -117,7 +117,7 @@ const AuditTracking = () => {
               <div className="relative inline-flex mb-8">
                 <div className="absolute inset-0 bg-gradient-to-r from-primary/30 to-secondary/30 rounded-full blur-md" />
                 <div className="relative inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black/60 border border-primary/30 backdrop-blur-sm">
-                  <Scan className="w-4 h-4 text-primary" />
+                  <Scan className="w-4 h-4 icon-gradient" />
                   <span className="text-sm font-medium text-gradient-primary">
                     Diagnostic Tracking
                   </span>
@@ -151,7 +151,7 @@ const AuditTracking = () => {
                         setUrl(e.target.value);
                         setError("");
                       }}
-                      className="pl-12 h-14 bg-card/80 border-border/50 text-foreground text-lg rounded-xl focus:border-primary/50 focus:ring-primary/20"
+                      className="pl-12 h-14 bg-white/[0.04] border-white/[0.08] text-foreground text-lg rounded-xl focus:border-primary/50 focus:ring-primary/20"
                     />
                   </div>
                   <Button
@@ -235,8 +235,8 @@ const AuditTracking = () => {
                   key={cat.title}
                   className="glass-card-interactive p-6 text-center"
                 >
-                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
-                    <cat.icon className="w-6 h-6 text-primary" />
+                  <div className="icon-gradient w-12 h-12 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
+                    <cat.icon className="w-6 h-6" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground mb-2">
                     {cat.title}

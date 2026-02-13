@@ -36,8 +36,8 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
   if (result.isQualified) {
     return (
       <div className="space-y-8 animate-fade-in-up text-center">
-        <div className="inline-flex p-4 rounded-full bg-primary/20 mb-4">
-          <CheckCircle2 className="w-16 h-16 text-primary" />
+        <div className="icon-gradient inline-flex p-4 rounded-full bg-white/[0.05] border border-white/[0.06] mb-4">
+          <CheckCircle2 className="w-16 h-16" />
         </div>
         
         <div className="space-y-3">
@@ -51,22 +51,22 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
         </div>
 
         <div className="glass-card p-8 max-w-lg mx-auto space-y-6">
-          <div className="flex items-center justify-center gap-3 text-primary">
-            <Calendar className="w-8 h-8" />
-            <span className="text-xl font-semibold">Audit Tracking Offert</span>
+          <div className="flex items-center justify-center gap-3">
+            <Calendar className="w-8 h-8 icon-gradient" />
+            <span className="text-xl font-semibold text-gradient-primary">Audit Tracking Offert</span>
           </div>
           
           <ul className="text-left space-y-3 text-muted-foreground">
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+              <CheckCircle2 className="w-5 h-5 icon-gradient mt-0.5 shrink-0" />
               <span>Analyse de votre setup tracking actuel</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+              <CheckCircle2 className="w-5 h-5 icon-gradient mt-0.5 shrink-0" />
               <span>Identification des opportunités d'amélioration</span>
             </li>
             <li className="flex items-start gap-3">
-              <CheckCircle2 className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+              <CheckCircle2 className="w-5 h-5 icon-gradient mt-0.5 shrink-0" />
               <span>Recommandations personnalisées</span>
             </li>
           </ul>

@@ -82,8 +82,8 @@ const DeepDiveSection = () => {
                 <ul className="space-y-4 pt-4">
                   {block.bullets.map((bullet) => (
                     <li key={bullet} className="flex items-start gap-3">
-                      <div className="flex-shrink-0 w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center mt-0.5">
-                        <Check className="w-4 h-4 text-primary" />
+                      <div className="icon-gradient flex-shrink-0 w-6 h-6 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mt-0.5">
+                        <Check className="w-4 h-4" />
                       </div>
                       <span className="text-foreground/80">{bullet}</span>
                     </li>

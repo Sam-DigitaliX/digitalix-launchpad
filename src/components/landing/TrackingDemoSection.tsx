@@ -94,7 +94,7 @@ const TrackingDemoSection = () => {
 
             {/* Privacy Note */}
             <div className="flex items-start gap-3 p-3 sm:p-4 bg-white/[0.03] rounded-lg border border-white/[0.06] mb-4 md:mb-6">
-              <Activity className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+              <Activity className="w-5 h-5 icon-gradient flex-shrink-0 mt-0.5" />
               <p className="text-sm text-muted-foreground">
                 <strong className="text-foreground">100% local</strong> — Ces données sont stockées uniquement sur votre appareil 
                 et ne sont jamais envoyées à un serveur.

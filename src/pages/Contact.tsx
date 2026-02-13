@@ -39,16 +39,16 @@ export default function Contact() {
 
           {/* Trust Badges */}
           <div className="flex flex-wrap justify-center gap-4 md:gap-8 mb-12">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border/50">
-              <Shield className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+              <Shield className="w-4 h-4 icon-gradient" />
               <span className="text-sm text-foreground font-medium">Sans engagement</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border/50">
-              <Clock className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+              <Clock className="w-4 h-4 icon-gradient" />
               <span className="text-sm text-foreground font-medium">Réponse sous 24h</span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/50 border border-border/50">
-              <CheckCircle2 className="w-4 h-4 text-primary" />
+            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
+              <CheckCircle2 className="w-4 h-4 icon-gradient" />
               <span className="text-sm text-foreground font-medium">+50 audits réalisés</span>
             </div>
           </div>
