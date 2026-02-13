@@ -65,7 +65,7 @@ const SolutionsSection = () => {
           {solutions.map((solution) => (
             <div
               key={solution.tier}
-              className={`relative glass-card p-8 flex flex-col overflow-visible ${
+              className={`relative glass-card-interactive p-8 flex flex-col overflow-visible ${
                 solution.featured
                   ? "lg:scale-105 border-primary/50 shadow-2xl z-10"
                   : "border-border/50"

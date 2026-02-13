@@ -144,7 +144,7 @@ const Home = () => {
           </h2>
           <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             {valueProps.map((prop) => (
-              <div key={prop.title} className="glass-card p-8 text-center">
+              <div key={prop.title} className="glass-card-interactive p-8 text-center">
                 <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-5">
                   <prop.icon className="w-7 h-7 text-primary" />
                 </div>
@@ -170,7 +170,7 @@ const Home = () => {
             {audiences.map((audience) => (
               <div
                 key={audience.title}
-                className={`glass-card p-5 md:p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
+                className={`glass-card-interactive p-5 md:p-8 flex flex-col ${!audience.available ? "opacity-60" : ""}`}
               >
                 <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-5">
                   <audience.icon className="w-6 h-6 text-primary" />
