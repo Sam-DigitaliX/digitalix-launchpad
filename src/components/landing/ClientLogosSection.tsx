@@ -35,7 +35,9 @@ const ClientLogosSection = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-background border-t border-border/20">
+    <section className="relative py-16 md:py-24 bg-background border-t border-border/20 overflow-hidden">
+      {/* Glow orb */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <p className="text-center text-sm uppercase tracking-widest mb-12 text-muted-foreground">
           <span className="text-gradient-primary">
