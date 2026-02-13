@@ -12,7 +12,7 @@ const ServiceDetail = () => {
   if (!service) return <Navigate to="/services" replace />;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       <Header />
       <main>
         {/* Hero */}
@@ -51,7 +51,7 @@ const ServiceDetail = () => {
         </section>
 
         {/* Features */}
-        <section className="py-20 md:py-28 bg-card">
+        <section className="py-20 md:py-28">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl">
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-10">
               Ce qui est <span className="text-gradient-primary">inclus</span>

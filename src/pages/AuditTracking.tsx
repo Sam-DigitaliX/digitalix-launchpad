@@ -98,7 +98,7 @@ const AuditTracking = () => {
   return (
     <>
       <Header />
-      <main className="bg-background min-h-screen">
+      <main className="min-h-screen">
         {/* ── Hero + Form ── */}
         <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
           {/* Evervault gradient */}
@@ -218,7 +218,7 @@ const AuditTracking = () => {
         </section>
 
         {/* ── What We Analyze ── */}
-        <section className="py-20 md:py-28 bg-card">
+        <section className="py-20 md:py-28">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-16">
               <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">

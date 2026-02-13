@@ -80,13 +80,20 @@ const Home = () => {
 
       <Header />
       <main className="relative z-[1]">
-        {/* Hero */}
-        <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden">
+        {/* Hero — Glass panel with rounded bottom */}
+        <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border-b border-white/[0.06]">
           {/* Background gradient — Evervault style */}
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-b-[40px]"
             style={{
-              background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.15) 0%, hsl(262 83% 58% / 0.06) 40%, transparent 70%)',
+              background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.12) 0%, hsl(262 83% 58% / 0.05) 40%, transparent 70%)',
+            }}
+          />
+          {/* Subtle bottom border glow */}
+          <div
+            className="absolute inset-x-0 bottom-0 h-px"
+            style={{
+              background: 'linear-gradient(90deg, transparent, hsl(262 83% 58% / 0.3) 30%, hsl(188 94% 43% / 0.3) 70%, transparent)',
             }}
           />
           <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">

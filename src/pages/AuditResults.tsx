@@ -245,7 +245,7 @@ const AuditResults = () => {
   return (
     <>
       <Header />
-      <main className="bg-background min-h-screen">
+      <main className="min-h-screen">
         {/* ── URL Bar ── */}
         <section className="pt-24 pb-4 border-b border-border/30">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -426,7 +426,7 @@ const AuditResults = () => {
                                   setEmail(e.target.value);
                                   setEmailError("");
                                 }}
-                                className="pl-10 bg-card border-border/50"
+                                className="pl-10 bg-white/[0.04] border-white/[0.08]"
                               />
                             </div>
                             <Button
