@@ -16,41 +16,44 @@ const ServiceDetail = () => {
     <div className="min-h-screen">
       <EvervaultGlow />
       <Header />
-      <main>
+      <main className="relative z-[1]">
         {/* Hero */}
-        <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 overflow-hidden">
-          {/* Evervault-style gradient */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.15) 0%, hsl(262 83% 58% / 0.06) 40%, transparent 70%)',
-            }}
-          />
-          {/* Centered glow orb */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
-          {/* Bottom glow */}
-          <div className="absolute -bottom-20 left-1/2 -translate-x-1/2 w-[600px] h-[200px] bg-primary/10 rounded-full blur-[100px] pointer-events-none" />
-          <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
-            <Link
-              to="/services"
-              className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Toutes les prestations
-            </Link>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center">
-                <service.icon className="w-7 h-7 text-primary" />
+        <div className="mx-3 md:mx-6">
+          <section className="relative pt-32 pb-16 md:pt-44 md:pb-24 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] border-t-0">
+            <div
+              className="absolute inset-0 rounded-b-[40px]"
+              style={{
+                background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.12) 0%, hsl(262 83% 58% / 0.05) 40%, transparent 70%)',
+              }}
+            />
+            <div
+              className="absolute inset-x-0 bottom-0 h-px"
+              style={{
+                background: 'linear-gradient(90deg, transparent, hsl(262 83% 58% / 0.3) 30%, hsl(188 94% 43% / 0.3) 70%, transparent)',
+              }}
+            />
+            <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+              <Link
+                to="/services"
+                className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Toutes les prestations
+              </Link>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="icon-gradient w-14 h-14 rounded-2xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center">
+                  <service.icon className="w-7 h-7" />
+                </div>
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
+                  {service.title}
+                </h1>
               </div>
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground">
-                {service.title}
-              </h1>
+              <p className="text-lg md:text-xl text-foreground/70 max-w-3xl">
+                {service.longDescription}
+              </p>
             </div>
-            <p className="text-lg md:text-xl text-foreground/70 max-w-3xl">
-              {service.longDescription}
-            </p>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {/* Features */}
         <section className="py-20 md:py-28">
@@ -61,7 +64,7 @@ const ServiceDetail = () => {
             <ul className="space-y-4">
               {service.features.map((feature) => (
                 <li key={feature} className="flex items-start gap-4 glass-card p-5">
-                  <Check className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <Check className="w-5 h-5 icon-gradient flex-shrink-0 mt-0.5" />
                   <span className="text-foreground">{feature}</span>
                 </li>
               ))}

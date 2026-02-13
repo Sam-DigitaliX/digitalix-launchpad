@@ -247,26 +247,40 @@ const AuditResults = () => {
     <>
       <EvervaultGlow />
       <Header />
-      <main className="min-h-screen">
-        {/* ── URL Bar ── */}
-        <section className="pt-24 pb-4 border-b border-white/[0.08]">
-          <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 text-sm">
-              <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
-              <span className="text-foreground font-medium truncate">
-                {auditUrl}
-              </span>
-              <a
-                href={auditUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:text-primary/80 shrink-0"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-              </a>
+      <main className="min-h-screen relative z-[1]">
+        {/* ── URL Bar — glass strip ── */}
+        <div className="mx-3 md:mx-6">
+          <section className="relative pt-24 pb-4 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] border-t-0">
+            <div
+              className="absolute inset-0 rounded-b-[40px]"
+              style={{
+                background: 'linear-gradient(180deg, hsl(262 83% 58% / 0.08) 0%, transparent 100%)',
+              }}
+            />
+            <div
+              className="absolute inset-x-0 bottom-0 h-px"
+              style={{
+                background: 'linear-gradient(90deg, transparent, hsl(262 83% 58% / 0.3) 30%, hsl(188 94% 43% / 0.3) 70%, transparent)',
+              }}
+            />
+            <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="flex items-center gap-3 text-sm">
+                <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
+                <span className="text-foreground font-medium truncate">
+                  {auditUrl}
+                </span>
+                <a
+                  href={auditUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:text-primary/80 shrink-0"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </div>
 
         {phase === "scanning" ? (
           /* ══════════════════════ Scanning Phase ══════════════════════ */

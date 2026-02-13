@@ -100,18 +100,23 @@ const AuditTracking = () => {
     <>
       <EvervaultGlow />
       <Header />
-      <main className="min-h-screen">
+      <main className="min-h-screen relative z-[1]">
         {/* ── Hero + Form ── */}
-        <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden">
-          {/* Evervault gradient */}
+        <div className="mx-3 md:mx-6">
+        <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] border-t-0">
           <div
-            className="absolute inset-0"
+            className="absolute inset-0 rounded-b-[40px]"
             style={{
               background:
                 "linear-gradient(180deg, hsl(262 83% 58% / 0.12) 0%, hsl(262 83% 58% / 0.05) 40%, transparent 70%)",
             }}
           />
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[700px] h-[500px] bg-primary/10 rounded-full blur-[120px] pointer-events-none" />
+          <div
+            className="absolute inset-x-0 bottom-0 h-px"
+            style={{
+              background: 'linear-gradient(90deg, transparent, hsl(262 83% 58% / 0.3) 30%, hsl(188 94% 43% / 0.3) 70%, transparent)',
+            }}
+          />
 
           <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="max-w-3xl mx-auto">
@@ -190,6 +195,7 @@ const AuditTracking = () => {
             </div>
           </div>
         </section>
+        </div>
 
         {/* ── How It Works ── */}
         <section className="py-20 md:py-28">
