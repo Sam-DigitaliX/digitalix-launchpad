@@ -7,7 +7,7 @@ const Brand = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen text-foreground">
       {/* Print Button - Hidden on print */}
       <div className="fixed top-6 right-6 z-50 print:hidden">
         <Button onClick={handlePrint} variant="heroGradient" size="lg">
@@ -29,7 +29,7 @@ const Brand = () => {
 
         {/* Colors Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             🎨 Palette de Couleurs
           </h2>
           
@@ -76,7 +76,7 @@ const Brand = () => {
 
             {/* Background */}
             <div className="space-y-3">
-              <div className="w-full aspect-square rounded-xl bg-background border border-border shadow-lg" />
+              <div className="w-full aspect-square rounded-xl border border-white/[0.08] shadow-lg" />
               <div>
                 <p className="font-semibold">Background</p>
                 <p className="text-sm text-muted-foreground">HSL: 0 0% 0%</p>
@@ -106,7 +106,7 @@ const Brand = () => {
 
             {/* Muted Foreground */}
             <div className="space-y-3">
-              <div className="w-full aspect-square rounded-xl border border-border shadow-lg flex items-center justify-center">
+              <div className="w-full aspect-square rounded-xl border border-white/[0.08] shadow-lg flex items-center justify-center">
                 <span className="text-muted-foreground text-4xl font-bold">Aa</span>
               </div>
               <div>
@@ -120,7 +120,7 @@ const Brand = () => {
 
         {/* Gradients Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             🌈 Gradients
           </h2>
           
@@ -151,12 +151,12 @@ const Brand = () => {
 
         {/* Typography Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             ✍️ Typographie
           </h2>
           
           <div className="space-y-8">
-            <div className="p-6 rounded-xl bg-muted/30 border border-border">
+            <div className="p-6 rounded-xl bg-muted/30 border border-white/[0.08]">
               <p className="text-sm text-muted-foreground mb-2">Font Family</p>
               <p className="text-4xl font-bold">Inter</p>
               <p className="text-muted-foreground mt-2">
@@ -192,26 +192,26 @@ const Brand = () => {
 
         {/* Effects Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             ✨ Effets & Shadows
           </h2>
           
           <div className="grid md:grid-cols-3 gap-6">
-            <div className="p-8 rounded-xl bg-muted/30 border border-border glow-primary text-center">
+            <div className="p-8 rounded-xl bg-muted/30 border border-white/[0.08] glow-primary text-center">
               <p className="font-semibold mb-2">Glow Primary</p>
               <p className="text-xs text-muted-foreground font-mono">
                 0 0 60px hsl(262 83% 58% / 0.4)
               </p>
             </div>
             
-            <div className="p-8 rounded-xl bg-muted/30 border border-border glow-secondary text-center">
+            <div className="p-8 rounded-xl bg-muted/30 border border-white/[0.08] glow-secondary text-center">
               <p className="font-semibold mb-2">Glow Secondary</p>
               <p className="text-xs text-muted-foreground font-mono">
                 0 0 40px hsl(188 94% 43% / 0.3)
               </p>
             </div>
             
-            <div className="p-8 rounded-xl bg-card border border-border shadow-[0_25px_50px_-12px_hsl(0_0%_0%_/_0.8)] text-center">
+            <div className="p-8 rounded-xl bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] shadow-[0_25px_50px_-12px_hsl(0_0%_0%_/_0.8)] text-center">
               <p className="font-semibold mb-2">Card Shadow</p>
               <p className="text-xs text-muted-foreground font-mono">
                 0 25px 50px -12px
@@ -222,7 +222,7 @@ const Brand = () => {
 
         {/* Spacing Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             📐 Spacing & Layout
           </h2>
           
@@ -243,7 +243,7 @@ const Brand = () => {
             
             <div className="space-y-4">
               <h3 className="font-semibold text-xl">Container</h3>
-              <div className="p-4 bg-muted/30 rounded-lg border border-border">
+              <div className="p-4 bg-muted/30 rounded-lg border border-white/[0.08]">
                 <p><strong>Max Width:</strong> 1400px</p>
                 <p><strong>Padding Mobile:</strong> 1rem (16px)</p>
                 <p><strong>Padding Desktop:</strong> 2rem (32px)</p>
@@ -254,7 +254,7 @@ const Brand = () => {
 
         {/* Buttons Section */}
         <section className="mb-16">
-          <h2 className="text-3xl font-bold mb-8 border-b border-border pb-4">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
             🔘 Boutons
           </h2>
           
@@ -270,7 +270,7 @@ const Brand = () => {
         </section>
 
         {/* Footer */}
-        <footer className="text-center text-muted-foreground pt-8 border-t border-border">
+        <footer className="text-center text-muted-foreground pt-8 border-t border-white/[0.08]">
           <p>© 2025 DigitaliX — Server-Side Tracking Specialists</p>
           <p className="text-sm mt-2">Brand Kit v1.0</p>
         </footer>
