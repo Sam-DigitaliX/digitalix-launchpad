@@ -186,7 +186,7 @@ const ProcessSection = () => {
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
             De l'Audit au Monitoring
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
             Une approche structurée et transparente pour transformer votre infrastructure data en un avantage compétitif.
           </p>
         </div>

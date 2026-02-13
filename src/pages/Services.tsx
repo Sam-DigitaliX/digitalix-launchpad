@@ -27,7 +27,7 @@ const Services = () => {
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6 max-w-4xl mx-auto leading-tight">
               Nos <span className="text-gradient-primary">Prestations</span>
             </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto">
               Du diagnostic à la formation, nous couvrons l'ensemble de vos besoins en tracking server-side.
             </p>
           </div>

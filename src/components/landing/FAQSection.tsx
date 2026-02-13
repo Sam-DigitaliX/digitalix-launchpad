@@ -50,7 +50,7 @@ const FAQSection = () => {
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-4">
               Questions Fréquentes
             </h2>
-            <p className="text-lg text-muted-foreground">
+            <p className="text-lg text-foreground/70">
               Expertise Tracking & Web Analytics – DigitaliX
             </p>
           </div>

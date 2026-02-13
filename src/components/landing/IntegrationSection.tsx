@@ -43,7 +43,7 @@ const IntegrationSection = () => {
               <h3 className="text-2xl font-bold text-foreground mt-4 mb-3">
                 {item.title}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-foreground/70 leading-relaxed">
                 {item.description}
               </p>
             </div>

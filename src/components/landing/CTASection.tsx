@@ -15,7 +15,7 @@ const CTASection = () => {
           Votre tracking actuel vous{" "}
           <span className="text-gradient-primary">coûte de l'argent.</span>
         </h2>
-        <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-xl mx-auto">
+        <p className="text-lg md:text-xl text-foreground/70 mb-10 max-w-xl mx-auto">
           Identifions vos fuites de conversions en 15 minutes. Audit offert, sans engagement.
         </p>
         <Button variant="heroGradient" size="xl" className="group" asChild>

@@ -56,7 +56,7 @@ const HeroSection = () => {
             <span className="block mt-2 text-gradient-primary font-semibold">
               Elle se construit sur des données réellement maîtrisées.
             </span>
-            <span className="block mt-6 text-muted-foreground font-thin">
+            <span className="block mt-6 text-foreground/60 font-thin">
               Commencez par auditer la fiabilité de votre tracking.
             </span>
           </p>
