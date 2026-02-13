@@ -1,7 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, lazy, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
-import Lottie from "lottie-react";
-import serverSideAnimation from "@/assets/server-side-schema.json";
+
+const Lottie = lazy(() => import("lottie-react"));
 import AdblockIcon from "@/assets/icon-adblock.png";
 import PrivacyIcon from "@/assets/icon-privacy.png";
 import AlgoIcon from "@/assets/icon-algorythm.png";
@@ -51,18 +51,22 @@ const benefits = [
 const ProblemSolutionSection = () => {
   const navigate = useNavigate();
   const [isLottieVisible, setIsLottieVisible] = useState(false);
+  const [isLottieInView, setIsLottieInView] = useState(false);
+  const [animationData, setAnimationData] = useState<unknown>(null);
   const lottieRef = useRef<HTMLDivElement>(null);
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Track visibility — both for initial reveal and for pause/resume
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
+        setIsLottieInView(entry.isIntersecting);
         if (entry.isIntersecting) {
           setIsLottieVisible(true);
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.1, rootMargin: '100px' }
     );
 
     if (lottieRef.current) {
@@ -71,6 +75,14 @@ const ProblemSolutionSection = () => {
 
     return () => observer.disconnect();
   }, []);
+
+  // Lazy-load the Lottie JSON only when section is first visible
+  useEffect(() => {
+    if (!isLottieVisible || animationData) return;
+    import("@/assets/server-side-schema.json").then((mod) => {
+      setAnimationData(mod.default);
+    });
+  }, [isLottieVisible, animationData]);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
@@ -211,16 +223,21 @@ const ProblemSolutionSection = () => {
 
           {/* Lottie in Glassmorphism Card */}
           <div className="max-w-4xl mx-auto">
-            <div 
+            <div
               className={`relative rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 md:p-8 shadow-[0_0_60px_-8px_hsl(262_83%_58%/0.15)] transition-all duration-1000 ${
                 isLottieVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
-              <Lottie
-                animationData={serverSideAnimation}
-                loop={true}
-                className="w-full h-auto"
-              />
+              {animationData && (
+                <Suspense fallback={<div className="w-full aspect-video" />}>
+                  <Lottie
+                    animationData={animationData}
+                    loop={true}
+                    isPaused={!isLottieInView}
+                    className="w-full h-auto"
+                  />
+                </Suspense>
+              )}
             </div>
           </div>
 

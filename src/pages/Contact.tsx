@@ -1,5 +1,6 @@
 import { QualificationForm } from '@/components/qualification';
 import Header from '@/components/landing/Header';
+import EvervaultGlow from '@/components/landing/EvervaultGlow';
 import Footer from '@/components/landing/Footer';
 import LogoCarousel from '@/components/landing/LogoCarousel';
 import TestimonialsSection from '@/components/landing/TestimonialsSection';
@@ -8,6 +9,7 @@ import { Shield, Clock, CheckCircle2 } from 'lucide-react';
 export default function Contact() {
   return (
     <div className="min-h-screen bg-background">
+      <EvervaultGlow />
       <Header />
       
       <main className="relative pb-20 px-4">

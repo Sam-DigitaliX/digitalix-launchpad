@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import Header from "@/components/landing/Header";
+import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import HeroSection from "@/components/landing/HeroSection";
 import TrackingDemoSection from "@/components/landing/TrackingDemoSection";
 import ReviewsCarouselSection from "@/components/landing/ReviewsCarouselSection";
@@ -32,6 +33,7 @@ const Index = () => {
   }, [location.hash]);
   return (
     <div className="min-h-screen bg-background">
+      <EvervaultGlow />
       <Header />
       <main>
         <HeroSection />
