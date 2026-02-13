@@ -109,11 +109,34 @@
 @layer components {
   .glass-card {
     @apply relative overflow-hidden rounded-2xl border border-glass-border bg-glass backdrop-blur-xl;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
   }
 
   .glass-card::before {
     content: '';
     @apply absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none;
+  }
+
+  /* Interactive glass cards — hover lift + border glow */
+  .glass-card-interactive {
+    @apply relative overflow-hidden rounded-2xl border border-glass-border bg-glass backdrop-blur-xl;
+    transition: border-color 0.4s ease, box-shadow 0.4s ease, transform 0.4s ease;
+  }
+
+  .glass-card-interactive::before {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-br from-white/5 to-transparent pointer-events-none;
+    transition: opacity 0.4s ease;
+  }
+
+  .glass-card-interactive:hover {
+    border-color: hsl(262 83% 58% / 0.3);
+    box-shadow: 0 8px 32px hsl(262 83% 58% / 0.08), 0 0 0 1px hsl(262 83% 58% / 0.1);
+    transform: translateY(-4px);
+  }
+
+  .glass-card-interactive:hover::before {
+    opacity: 1.5;
   }
 
   .glow-primary {

@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import Header from "@/components/landing/Header";
 import Footer from "@/components/landing/Footer";
 import CTASection from "@/components/landing/CTASection";
@@ -37,29 +36,32 @@ const Services = () => {
         {/* Services Grid */}
         <section className="py-20 md:py-28">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
               {services.map((service) => (
-                <div key={service.slug} className="glass-card overflow-hidden flex flex-col">
-                  {/* Icon header */}
-                  <div className="h-48 bg-gradient-to-br from-primary/10 to-secondary/10 flex items-center justify-center">
-                    <service.icon className="w-16 h-16 text-primary/60" />
+                <Link
+                  key={service.slug}
+                  to={`/services/${service.slug}`}
+                  className="glass-card-interactive group flex flex-col p-6 md:p-8"
+                >
+                  {/* Icon */}
+                  <div className="w-12 h-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 group-hover:bg-primary/20 group-hover:border-primary/30 transition-colors duration-300">
+                    <service.icon className="w-6 h-6 text-primary" />
                   </div>
 
-                  <div className="p-6 flex flex-col flex-grow">
-                    <h3 className="text-xl font-bold text-foreground mb-3">
-                      {service.title}
-                    </h3>
-                    <p className="text-muted-foreground text-sm mb-6 flex-grow">
-                      {service.shortDescription}
-                    </p>
-                    <Button variant="heroGradientOutline" size="lg" className="w-full" asChild>
-                      <Link to={`/services/${service.slug}`}>
-                        Découvrir
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Link>
-                    </Button>
+                  {/* Content */}
+                  <h3 className="text-xl font-bold text-foreground mb-3 group-hover:text-white transition-colors">
+                    {service.title}
+                  </h3>
+                  <p className="text-muted-foreground text-sm mb-8 flex-grow leading-relaxed">
+                    {service.shortDescription}
+                  </p>
+
+                  {/* CTA line */}
+                  <div className="flex items-center gap-2 text-sm font-semibold text-primary group-hover:text-secondary transition-colors duration-300">
+                    Découvrir
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300" />
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </div>
