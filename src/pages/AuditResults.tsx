@@ -155,7 +155,7 @@ const scanSteps = [
    ══════════════════════════════════════════════════════════════════ */
 
 const CheckRow = ({ check }: { check: AuditCheck }) => (
-  <div className="flex items-start gap-4 p-4 rounded-xl border border-border/50 bg-card/30">
+  <div className="flex items-start gap-4 p-4 rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm">
     <StatusIcon status={check.status} />
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -356,7 +356,7 @@ const AuditResults = () => {
                     return (
                       <div
                         key={cat.id}
-                        className="rounded-xl border border-border/50 bg-card/50 p-4 text-center"
+                        className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4 text-center"
                       >
                         <div className="flex items-center justify-center mb-2">
                           <Icon className={`w-5 h-5 ${cat.color}`} />

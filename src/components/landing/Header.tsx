@@ -118,11 +118,11 @@ const MegaLink = ({
       className={`flex items-center gap-4 px-4 py-3.5 rounded-xl transition-colors duration-200 ${
         item.comingSoon
           ? "opacity-50 cursor-default"
-          : "hover:bg-white/[0.04]"
+          : "group hover:bg-white/[0.04]"
       }`}
     >
-      <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center shrink-0">
-        <item.icon className="w-5 h-5 text-primary" />
+      <div className="icon-gradient w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center shrink-0 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent">
+        <item.icon className="w-5 h-5" />
       </div>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
@@ -178,8 +178,8 @@ const FeaturedAuditCard = ({ onClick }: { onClick?: () => void }) => (
           }}
         />
       ))}
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white/[0.08] border border-white/[0.1] flex items-center justify-center">
-        <Scan className="w-5 h-5 text-primary" />
+      <div className="icon-gradient absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-11 h-11 rounded-xl bg-white/[0.08] border border-white/[0.1] flex items-center justify-center transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent">
+        <Scan className="w-5 h-5" />
       </div>
     </div>
 
@@ -297,6 +297,16 @@ const Header = () => {
           : "border-b border-transparent"
       }`}
     >
+      {/* SVG gradient defs for icon coloring */}
+      <svg width="0" height="0" className="absolute" aria-hidden="true">
+        <defs>
+          <linearGradient id="icon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="hsl(262 83% 58%)" />
+            <stop offset="100%" stopColor="hsl(188 94% 43%)" />
+          </linearGradient>
+        </defs>
+      </svg>
+
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
@@ -439,11 +449,11 @@ const Header = () => {
                         className={`rounded-xl border border-white/[0.06] p-5 h-full flex flex-col transition-colors duration-200 ${
                           item.comingSoon
                             ? "opacity-50 cursor-default bg-white/[0.02]"
-                            : "bg-white/[0.02] hover:bg-white/[0.05]"
+                            : "group bg-white/[0.02] hover:bg-white/[0.05]"
                         }`}
                       >
-                        <div className="w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mb-4">
-                          <item.icon className="w-5 h-5 text-primary" />
+                        <div className="icon-gradient w-11 h-11 rounded-xl bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mb-4 transition-all duration-300 group-hover:bg-gradient-to-br group-hover:from-primary group-hover:to-secondary group-hover:border-transparent">
+                          <item.icon className="w-5 h-5" />
                         </div>
                         <div className="flex items-center gap-2 mb-2">
                           <h4 className="text-sm font-semibold text-foreground">
@@ -459,7 +469,7 @@ const Header = () => {
                           {item.description}
                         </p>
                         {!item.comingSoon && (
-                          <div className="flex items-center gap-1 mt-4 text-xs font-medium text-primary">
+                          <div className="flex items-center gap-1 mt-4 text-xs font-medium text-primary group-hover:text-foreground transition-colors duration-300">
                             Découvrir
                             <ChevronRight className="w-3.5 h-3.5" />
                           </div>

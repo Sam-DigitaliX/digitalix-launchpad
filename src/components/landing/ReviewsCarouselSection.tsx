@@ -126,7 +126,7 @@ const ReviewsCarouselSection = () => {
     <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 md:mb-14">
         <div className="flex justify-center mb-3">
-          <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+          <span className="glass-badge px-4 py-1.5">
             <span className="text-gradient-primary">Avis Clients</span>
           </span>
         </div>

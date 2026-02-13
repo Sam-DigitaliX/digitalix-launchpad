@@ -50,7 +50,7 @@ const DeepDiveSection = () => {
         {/* Section Header */}
         <div className="text-center mb-20">
           <div className="flex justify-center mb-4">
-            <span className="inline-flex items-center px-4 py-1.5 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+            <span className="glass-badge px-4 py-1.5">
               <span className="text-gradient-primary">Deep Dive</span>
             </span>
           </div>
@@ -70,7 +70,7 @@ const DeepDiveSection = () => {
             >
               {/* Text Content */}
               <div className="flex-1 space-y-6">
-                <span className="inline-flex items-center px-3 py-1 rounded-full bg-white/[0.04] backdrop-blur-sm border border-white/[0.08] text-xs font-bold uppercase tracking-widest">
+                <span className="glass-badge px-3 py-1">
                   <span className="text-gradient-primary">{index === 0 ? "SETUP" : index === 1 ? "ASSURANCE" : "PARTNER"}</span>
                 </span>
                 <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold text-foreground">

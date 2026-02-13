@@ -142,7 +142,7 @@ const Brand = () => {
               <div>
                 <p className="font-semibold">Glass Card</p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  hsl(0 0% 8% / 0.6) + backdrop-blur-xl
+                  hsl(0 0% 100% / 0.04) + backdrop-blur-xl
                 </p>
               </div>
             </div>
@@ -196,7 +196,17 @@ const Brand = () => {
             ✨ Effets & Shadows
           </h2>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-4 gap-6">
+            <div className="p-8 rounded-xl bg-muted/30 border border-white/[0.08] flex flex-col items-center justify-center text-center gap-4">
+              <span className="glass-badge px-4 py-1.5">
+                <span className="text-gradient-primary">Glass Badge</span>
+              </span>
+              <p className="font-semibold mb-1">Glass Badge</p>
+              <p className="text-xs text-muted-foreground font-mono">
+                gradient bg + border 0.15 + inset highlight
+              </p>
+            </div>
+
             <div className="p-8 rounded-xl bg-muted/30 border border-white/[0.08] glow-primary text-center">
               <p className="font-semibold mb-2">Glow Primary</p>
               <p className="text-xs text-muted-foreground font-mono">
@@ -271,7 +281,7 @@ const Brand = () => {
 
         {/* Footer */}
         <footer className="text-center text-muted-foreground pt-8 border-t border-white/[0.08]">
-          <p>© 2025 DigitaliX — Server-Side Tracking Specialists</p>
+          <p>© {new Date().getFullYear()} DigitaliX — Server-Side Tracking Specialists</p>
           <p className="text-sm mt-2">Brand Kit v1.0</p>
         </footer>
       </div>
