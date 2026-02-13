@@ -42,10 +42,7 @@ const faqs = [
 
 const FAQSection = () => {
   return (
-    <section id="faq" className="relative py-24 md:py-32 bg-background overflow-hidden">
-      {/* Glow orbs */}
-      <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/6 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute -bottom-20 -left-20 w-[350px] h-[350px] bg-secondary/5 rounded-full blur-[120px] pointer-events-none" />
+    <section id="faq" className="relative py-24 md:py-32 bg-black/[0.7] backdrop-blur-xl overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-3xl mx-auto">
           {/* Section Header */}

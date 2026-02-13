@@ -50,13 +50,9 @@ const TrackingDemoSection = () => {
   }, []);
 
   return (
-    <section className="relative py-16 md:py-24 bg-card overflow-hidden">
+    <section className="relative py-16 md:py-24 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
       {/* Gradient overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10 pointer-events-none" />
-
-      {/* Glow orbs */}
-      <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute -bottom-32 -right-20 w-[400px] h-[400px] bg-secondary/8 rounded-full blur-[120px] pointer-events-none" />
 
       {/* Subtle grid pattern */}
       <div

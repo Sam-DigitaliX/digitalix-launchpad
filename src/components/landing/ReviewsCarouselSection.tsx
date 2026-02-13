@@ -103,10 +103,7 @@ const ReviewsCarouselSection = () => {
   const row2X = -wrapOffset(-scrollOffset, ROW2_SET_WIDTH);
 
   return (
-    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden bg-background">
-      {/* Glow orbs */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] bg-primary/8 rounded-full blur-[140px] pointer-events-none" />
-      <div className="absolute top-1/4 -right-32 w-[400px] h-[400px] bg-secondary/6 rounded-full blur-[120px] pointer-events-none" />
+    <section ref={sectionRef} className="relative py-16 md:py-24 overflow-hidden bg-black/[0.7] backdrop-blur-xl">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-10 md:mb-14">
         <p className="text-center text-sm uppercase tracking-widest text-muted-foreground mb-3">
           <span className="text-gradient-primary">Avis clients</span>

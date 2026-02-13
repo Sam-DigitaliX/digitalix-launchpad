@@ -98,11 +98,7 @@ const ProblemSolutionSection = () => {
   return (
     <>
       {/* PROBLEM SECTION - Dark */}
-      <section className="relative py-24 md:py-32 bg-card overflow-hidden">
-        {/* Glow orbs */}
-        <div className="absolute -top-20 -left-20 w-[500px] h-[500px] bg-destructive/6 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-1/4 -right-32 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px] pointer-events-none" />
-
+      <section className="relative py-24 md:py-32 bg-black/[0.6] backdrop-blur-xl overflow-hidden">
         {/* Subtle grid pattern */}
         <div
           className="absolute inset-0 opacity-[0.03]"
