@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Server, ShieldCheck, BarChart3, Users, Star, BadgeCheck } from "lucide-react";
+import { ArrowRight, Server, ShieldCheck, BarChart3, Users, Cloud, Star, BadgeCheck } from "lucide-react";
 import LogoCarousel from "@/components/landing/LogoCarousel";
 import Header from "@/components/landing/Header";
 import CardBeamSection from "@/components/landing/CardBeamSection";
@@ -30,6 +30,15 @@ const audiences = [
     cta: "Bientôt disponible",
     href: "#",
     icon: BarChart3,
+    available: false,
+  },
+  {
+    title: "SaaS",
+    description:
+      "Trackez chaque étape du funnel — du signup au MRR — même quand vos utilisateurs bloquent tout.",
+    cta: "Bientôt disponible",
+    href: "#",
+    icon: Cloud,
     available: false,
   },
 ];
@@ -164,9 +173,9 @@ const Home = () => {
             Une solution adaptée à <span className="text-gradient-primary">votre profil</span>
           </h2>
           <p className="text-foreground/60 text-center mb-16 max-w-xl mx-auto">
-            Que vous soyez consultant ou annonceur, nous avons une offre pensée pour vous.
+            Consultant, e-commerce ou SaaS — nous avons une offre pensée pour vous.
           </p>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
             {audiences.map((audience) => (
               <div
                 key={audience.title}

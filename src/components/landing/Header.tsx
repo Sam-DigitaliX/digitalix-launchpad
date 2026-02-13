@@ -7,6 +7,7 @@ import {
   ChevronRight,
   Users,
   ShoppingCart,
+  Cloud,
   Search,
   Server,
   Share2,
@@ -36,6 +37,13 @@ const solutionsItems = [
     icon: ShoppingCart,
     label: "E-commerce & Annonceurs",
     description: "Récupérez vos conversions perdues et boostez votre ROAS",
+    href: "#",
+    comingSoon: true,
+  },
+  {
+    icon: Cloud,
+    label: "SaaS",
+    description: "Trackez du signup au MRR, sans adblockers",
     href: "#",
     comingSoon: true,
   },
@@ -92,7 +100,7 @@ const ressourcesRight = [
   { icon: MessageSquare, label: "Contact", description: "Parlons de votre projet", href: "/contact" },
 ];
 
-/* ──────────────────────── Dropdown Component ──────────────────────── */
+/* ──────────────────────── Dropdown Link ──────────────────────── */
 
 interface DropdownItem {
   icon: React.ComponentType<{ className?: string }>;
@@ -114,7 +122,7 @@ const DropdownLink = ({
       <div className="w-10 h-10 rounded-lg bg-white/[0.05] flex items-center justify-center shrink-0">
         <item.icon className="w-5 h-5 text-primary" />
       </div>
-      <div className="min-w-0">
+      <div className="min-w-0 flex-1">
         <div className="flex items-center gap-2">
           <span className="text-sm font-medium text-foreground">{item.label}</span>
           {item.comingSoon && (
@@ -133,67 +141,6 @@ const DropdownLink = ({
     <Link to={item.href} onClick={onClick}>
       {inner}
     </Link>
-  );
-};
-
-/* ──────────────────────── Nav Dropdown Wrapper ──────────────────────── */
-
-const NavDropdown = ({
-  label,
-  isActive,
-  children,
-  onOpen,
-  onClose,
-  isOpen,
-}: {
-  label: string;
-  isActive: boolean;
-  children: React.ReactNode;
-  onOpen: () => void;
-  onClose: () => void;
-  isOpen: boolean;
-}) => {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
-
-  const handleEnter = () => {
-    clearTimeout(timeoutRef.current);
-    onOpen();
-  };
-
-  const handleLeave = () => {
-    timeoutRef.current = setTimeout(onClose, 150);
-  };
-
-  useEffect(() => {
-    return () => clearTimeout(timeoutRef.current);
-  }, []);
-
-  return (
-    <div className="relative" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
-      <button
-        type="button"
-        className={`flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-          isActive || isOpen
-            ? "bg-white/[0.08] text-foreground"
-            : "text-muted-foreground hover:text-foreground"
-        }`}
-        onClick={() => (isOpen ? onClose() : onOpen())}
-      >
-        {label}
-        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} />
-      </button>
-
-      {/* Dropdown panel */}
-      <div
-        className={`absolute top-full left-1/2 -translate-x-1/2 pt-3 transition-all duration-200 ${
-          isOpen ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
-        }`}
-      >
-        <div className="rounded-2xl border border-white/[0.08] bg-black/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-          {children}
-        </div>
-      </div>
-    </div>
   );
 };
 
@@ -218,7 +165,7 @@ const MobileAccordion = ({
         {label}
         <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`} />
       </button>
-      <div className={`overflow-hidden transition-all duration-200 ${open ? "max-h-[500px] opacity-100" : "max-h-0 opacity-0"}`}>
+      <div className={`overflow-hidden transition-all duration-200 ${open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"}`}>
         <div className="pb-2 pl-2 space-y-1">{children}</div>
       </div>
     </div>
@@ -231,6 +178,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -241,11 +189,29 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Close dropdowns on route change
+  // Close everything on route change
   useEffect(() => {
     setOpenDropdown(null);
     setIsMobileMenuOpen(false);
   }, [location.pathname]);
+
+  // Cleanup timeout
+  useEffect(() => {
+    return () => clearTimeout(closeTimeoutRef.current);
+  }, []);
+
+  const openNav = (id: string) => {
+    clearTimeout(closeTimeoutRef.current);
+    setOpenDropdown(id);
+  };
+
+  const scheduleClose = () => {
+    closeTimeoutRef.current = setTimeout(() => setOpenDropdown(null), 250);
+  };
+
+  const cancelClose = () => {
+    clearTimeout(closeTimeoutRef.current);
+  };
 
   const goHome = () => {
     if (location.pathname !== "/") {
@@ -260,6 +226,17 @@ const Header = () => {
 
   const isPathActive = (href: string) =>
     href === "/" ? location.pathname === "/" : location.pathname.startsWith(href);
+
+  const triggerClass = (id: string, activePaths: string[]) => {
+    const isActive = activePaths.some((p) => isPathActive(p)) || openDropdown === id;
+    return `flex items-center gap-1 px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+      isActive
+        ? "bg-white/[0.08] text-foreground"
+        : "text-muted-foreground hover:text-foreground"
+    }`;
+  };
+
+  const closeDropdown = () => setOpenDropdown(null);
 
   return (
     <header
@@ -288,7 +265,7 @@ const Header = () => {
           </a>
 
           {/* ──── Desktop: Nav Pill ──── */}
-          <nav className="hidden lg:flex items-center rounded-full border border-white/[0.12] bg-white/[0.07] px-1 py-1">
+          <nav className="relative hidden lg:flex items-center rounded-full border border-white/[0.12] bg-white/[0.07] px-1 py-1">
             {/* Accueil */}
             <Link
               to="/"
@@ -297,107 +274,127 @@ const Header = () => {
                   ? "bg-white/[0.08] text-foreground"
                   : "text-muted-foreground hover:text-foreground"
               }`}
+              onMouseEnter={() => setOpenDropdown(null)}
             >
               Accueil
             </Link>
 
-            {/* Solutions */}
-            <NavDropdown
-              label="Solutions"
-              isActive={isPathActive("/consultants")}
-              isOpen={openDropdown === "solutions"}
-              onOpen={() => setOpenDropdown("solutions")}
-              onClose={() => setOpenDropdown(null)}
+            {/* Solutions trigger */}
+            <button
+              type="button"
+              className={triggerClass("solutions", ["/consultants", "/saas"])}
+              onMouseEnter={() => openNav("solutions")}
+              onMouseLeave={scheduleClose}
+              onClick={() => (openDropdown === "solutions" ? closeDropdown() : openNav("solutions"))}
             >
-              <div className="w-[340px] p-2">
-                {solutionsItems.map((item) => (
-                  <DropdownLink
-                    key={item.label}
-                    item={item}
-                    onClick={() => setOpenDropdown(null)}
-                  />
-                ))}
-              </div>
-            </NavDropdown>
+              Solutions
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "solutions" ? "rotate-180" : ""}`} />
+            </button>
 
-            {/* Services */}
-            <NavDropdown
-              label="Services"
-              isActive={isPathActive("/services")}
-              isOpen={openDropdown === "services"}
-              onOpen={() => setOpenDropdown("services")}
-              onClose={() => setOpenDropdown(null)}
+            {/* Services trigger */}
+            <button
+              type="button"
+              className={triggerClass("services", ["/services"])}
+              onMouseEnter={() => openNav("services")}
+              onMouseLeave={scheduleClose}
+              onClick={() => (openDropdown === "services" ? closeDropdown() : openNav("services"))}
             >
-              <div className="flex w-[620px]">
-                {/* Featured image */}
-                <div className="w-[220px] p-4 border-r border-white/[0.06]">
-                  <div className="h-full rounded-xl bg-gradient-to-br from-primary/20 via-primary/5 to-transparent p-5 flex flex-col justify-end">
-                    <p className="text-xs font-medium text-primary uppercase tracking-wider mb-2">
-                      Populaire
-                    </p>
-                    <p className="text-sm font-semibold text-foreground mb-1">
-                      Audit Tracking Offert
-                    </p>
-                    <p className="text-xs text-muted-foreground mb-3">
-                      Identifiez vos fuites de conversions en 15 minutes
-                    </p>
-                    <Link
-                      to="/contact"
-                      className="inline-flex items-center gap-1 text-xs font-medium text-primary hover:underline"
-                      onClick={() => setOpenDropdown(null)}
-                    >
-                      Réserver <ChevronRight className="w-3 h-3" />
-                    </Link>
+              Services
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "services" ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* Ressources trigger */}
+            <button
+              type="button"
+              className={triggerClass("ressources", ["/audit-tracking"])}
+              onMouseEnter={() => openNav("ressources")}
+              onMouseLeave={scheduleClose}
+              onClick={() => (openDropdown === "ressources" ? closeDropdown() : openNav("ressources"))}
+            >
+              Ressources
+              <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${openDropdown === "ressources" ? "rotate-180" : ""}`} />
+            </button>
+
+            {/* ──── Shared Dropdown Panel ──── */}
+            <div
+              className={`absolute top-full left-0 right-0 pt-2 z-50 transition-all duration-200 ${
+                openDropdown
+                  ? "opacity-100 translate-y-0 pointer-events-auto"
+                  : "opacity-0 -translate-y-2 pointer-events-none"
+              }`}
+              onMouseEnter={cancelClose}
+              onMouseLeave={scheduleClose}
+            >
+              <div className="rounded-2xl border border-white/[0.08] bg-black/90 backdrop-blur-xl shadow-2xl overflow-hidden">
+                {/* Solutions */}
+                {openDropdown === "solutions" && (
+                  <div className="p-3 grid grid-cols-3 gap-1">
+                    {solutionsItems.map((item) => (
+                      <DropdownLink
+                        key={item.label}
+                        item={item}
+                        onClick={closeDropdown}
+                      />
+                    ))}
                   </div>
-                </div>
-                {/* Services list */}
-                <div className="flex-1 p-2 grid grid-cols-2 gap-0">
-                  {servicesItems.map((item) => (
-                    <DropdownLink
-                      key={item.label}
-                      item={item}
-                      onClick={() => setOpenDropdown(null)}
-                    />
-                  ))}
-                </div>
-              </div>
-            </NavDropdown>
+                )}
 
-            {/* Ressources */}
-            <NavDropdown
-              label="Ressources"
-              isActive={false}
-              isOpen={openDropdown === "ressources"}
-              onOpen={() => setOpenDropdown("ressources")}
-              onClose={() => setOpenDropdown(null)}
-            >
-              <div className="flex w-[480px]">
-                <div className="flex-1 p-2 border-r border-white/[0.06]">
-                  <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Apprendre
-                  </p>
-                  {ressourcesLeft.map((item) => (
-                    <DropdownLink
-                      key={item.label}
-                      item={item}
-                      onClick={() => setOpenDropdown(null)}
-                    />
-                  ))}
-                </div>
-                <div className="flex-1 p-2">
-                  <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
-                    Outils
-                  </p>
-                  {ressourcesRight.map((item) => (
-                    <DropdownLink
-                      key={item.label}
-                      item={item}
-                      onClick={() => setOpenDropdown(null)}
-                    />
-                  ))}
-                </div>
+                {/* Services */}
+                {openDropdown === "services" && (
+                  <div>
+                    <div className="p-3 grid grid-cols-3 gap-1">
+                      {servicesItems.map((item) => (
+                        <DropdownLink
+                          key={item.label}
+                          item={item}
+                          onClick={closeDropdown}
+                        />
+                      ))}
+                    </div>
+                    <div className="border-t border-white/[0.06] px-5 py-3">
+                      <Link
+                        to="/services"
+                        className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                        onClick={closeDropdown}
+                      >
+                        Voir tous les services
+                        <ChevronRight className="w-3.5 h-3.5" />
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
+                {/* Ressources */}
+                {openDropdown === "ressources" && (
+                  <div className="grid grid-cols-2">
+                    <div className="p-3 border-r border-white/[0.06]">
+                      <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Apprendre
+                      </p>
+                      {ressourcesLeft.map((item) => (
+                        <DropdownLink
+                          key={item.label}
+                          item={item}
+                          onClick={closeDropdown}
+                        />
+                      ))}
+                    </div>
+                    <div className="p-3">
+                      <p className="px-3 py-2 text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
+                        Outils
+                      </p>
+                      {ressourcesRight.map((item) => (
+                        <DropdownLink
+                          key={item.label}
+                          item={item}
+                          onClick={closeDropdown}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </NavDropdown>
+            </div>
           </nav>
 
           {/* ──── Desktop: CTA ──── */}
@@ -449,6 +446,14 @@ const Header = () => {
                 {servicesItems.map((item) => (
                   <DropdownLink key={item.label} item={item} onClick={closeMobile} />
                 ))}
+                <Link
+                  to="/services"
+                  className="flex items-center gap-2 p-3 rounded-xl text-sm font-medium text-primary hover:bg-white/[0.06] transition-colors"
+                  onClick={closeMobile}
+                >
+                  Voir tous les services
+                  <ChevronRight className="w-3.5 h-3.5" />
+                </Link>
               </MobileAccordion>
 
               {/* Ressources accordion */}
