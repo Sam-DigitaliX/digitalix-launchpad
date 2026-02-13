@@ -2,6 +2,7 @@ import { useParams, Link, Navigate } from "react-router-dom";
 import { ArrowLeft, ArrowRight, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Header from "@/components/landing/Header";
+import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
 import { services } from "@/data/services";
 
@@ -13,6 +14,7 @@ const ServiceDetail = () => {
 
   return (
     <div className="min-h-screen">
+      <EvervaultGlow />
       <Header />
       <main>
         {/* Hero */}

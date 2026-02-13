@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/landing/Header";
+import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -244,6 +245,7 @@ const AuditResults = () => {
 
   return (
     <>
+      <EvervaultGlow />
       <Header />
       <main className="min-h-screen">
         {/* ── URL Bar ── */}

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import Header from "@/components/landing/Header";
+import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
 import CTASection from "@/components/landing/CTASection";
 import { services } from "@/data/services";
@@ -8,6 +9,7 @@ import { services } from "@/data/services";
 const Services = () => {
   return (
     <div className="min-h-screen bg-background">
+      <EvervaultGlow />
       <Header />
       <main>
         {/* Hero */}

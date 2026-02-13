@@ -283,6 +283,7 @@ const VARIANT_CYCLE: CardVariant[] = ['matte', 'platinum', 'silver', 'iridescent
 /* ─── Main section ─── */
 
 function CardBeamSection() {
+  const sectionRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const posRef = useRef(0);
@@ -292,12 +293,25 @@ function CardBeamSection() {
   const dragStartXRef = useRef(0);
   const dragPosRef = useRef(0);
   const beamIntensityRef = useRef(0);
+  const isVisibleRef = useRef(true);
   const [isMobile, setIsMobile] = useState(false);
   const dims = getCardDimensions(isMobile);
   const dimsRef = useRef(dims);
   dimsRef.current = dims;
 
   const allCards = [...CARDS, ...CARDS, ...CARDS];
+
+  // Pause all animation when section is off-screen
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     setIsMobile(window.innerWidth < 768);
@@ -365,6 +379,10 @@ function CardBeamSection() {
 
     function draw() {
       if (!ctx) return;
+      if (!isVisibleRef.current) {
+        animId = requestAnimationFrame(draw);
+        return;
+      }
       ctx.clearRect(0, 0, w, h);
       const cx = w / 2;
       const fadeZone = 50;
@@ -498,12 +516,18 @@ function CardBeamSection() {
     };
   }, [isMobile]);
 
-  /* ── Card scroll loop with beam detection ── */
+  /* ── Card scroll loop with beam detection + clip-path (consolidated) ── */
   useEffect(() => {
     lastTimeRef.current = performance.now();
     const scannerW = 8;
 
     function tick(now: number) {
+      if (!isVisibleRef.current) {
+        lastTimeRef.current = now;
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+
       const dt = (now - lastTimeRef.current) / 1000;
       lastTimeRef.current = now;
 
@@ -527,6 +551,25 @@ function CardBeamSection() {
           const el = cards[i] as HTMLElement;
           const x = posRef.current + i * d.total;
           el.style.transform = `translateX(${x}px)`;
+
+          // Clip-path scanner — computed from known position, no getBoundingClientRect
+          const asciiDiv = el.children[0] as HTMLElement | undefined;
+          const normalDiv = el.children[1] as HTMLElement | undefined;
+          if (asciiDiv && normalDiv) {
+            if (x < sR && x + d.w > sL) {
+              const normalClipRight = Math.max(0, Math.min(100, ((x + d.w - sL) / d.w) * 100));
+              const asciiClipLeft = Math.max(0, Math.min(100, ((sR - x) / d.w) * 100));
+              normalDiv.style.clipPath = `inset(0 ${normalClipRight}% 0 0)`;
+              asciiDiv.style.clipPath = `inset(0 0 0 ${asciiClipLeft}%)`;
+            } else if (x + d.w < sL) {
+              normalDiv.style.clipPath = 'inset(0 0 0 0)';
+              asciiDiv.style.clipPath = 'inset(0 0 0 100%)';
+            } else {
+              normalDiv.style.clipPath = 'inset(0 100% 0 0)';
+              asciiDiv.style.clipPath = 'inset(0 0 0 0)';
+            }
+          }
+
           if (x < sR && x + d.w > sL) {
             cardInBeam = true;
           }
@@ -565,7 +608,7 @@ function CardBeamSection() {
   const trackHeight = dims.h + 80;
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
+    <section ref={sectionRef} className="relative py-20 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center relative z-10">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-5">
           Notre <span className="text-gradient-primary">expertise</span> à votre service
@@ -606,6 +649,7 @@ function CardBeamSection() {
               isMobile={isMobile}
               cardW={dims.w}
               cardH={dims.h}
+              isVisibleRef={isVisibleRef}
             />
           ))}
         </div>
@@ -616,10 +660,7 @@ function CardBeamSection() {
 
 /* ─── Metal card with engraved typography ─── */
 
-function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean; cardW: number; cardH: number }) {
-  const wrapperRef = useRef<HTMLDivElement>(null);
-  const normalRef = useRef<HTMLDivElement>(null);
-  const asciiRef = useRef<HTMLDivElement>(null);
+function MetalCard({ card, variant, isMobile, cardW, cardH, isVisibleRef }: { card: ExpertiseCard; variant: CardVariant; isMobile: boolean; cardW: number; cardH: number; isVisibleRef: React.RefObject<boolean> }) {
   const codeRef = useRef<HTMLPreElement>(null);
   const theme = THEMES[variant];
   const gradId = `engrave-${variant}-${Math.random().toString(36).slice(2, 6)}`;
@@ -631,66 +672,27 @@ function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseC
     codeRef.current.textContent = generateCodeBlock(cols, rows);
   }, [cardW, cardH]);
 
-  // Clip-path scanner
-  useEffect(() => {
-    let animId = 0;
+  // Clip-path is now managed by the parent tick loop — no per-card RAF needed
 
-    function update() {
-      const wrapper = wrapperRef.current;
-      const normal = normalRef.current;
-      const ascii = asciiRef.current;
-      if (!wrapper || !normal || !ascii) {
-        animId = requestAnimationFrame(update);
-        return;
-      }
-
-      const rect = wrapper.getBoundingClientRect();
-      const scannerX = window.innerWidth / 2;
-      const scannerW = 8;
-      const sL = scannerX - scannerW / 2;
-      const sR = scannerX + scannerW / 2;
-
-      if (rect.left < sR && rect.right > sL) {
-        const normalClipRight = Math.max(0, Math.min(100, ((rect.right - sL) / rect.width) * 100));
-        const asciiClipLeft = Math.max(0, Math.min(100, ((sR - rect.left) / rect.width) * 100));
-        normal.style.clipPath = `inset(0 ${normalClipRight}% 0 0)`;
-        ascii.style.clipPath = `inset(0 0 0 ${asciiClipLeft}%)`;
-      } else if (rect.right < sL) {
-        normal.style.clipPath = 'inset(0 0 0 0)';
-        ascii.style.clipPath = 'inset(0 0 0 100%)';
-      } else {
-        normal.style.clipPath = 'inset(0 100% 0 0)';
-        ascii.style.clipPath = 'inset(0 0 0 0)';
-      }
-
-      animId = requestAnimationFrame(update);
-    }
-
-    update();
-    return () => cancelAnimationFrame(animId);
-  }, []);
-
-  // Glitch ASCII
+  // Glitch ASCII — gated by section visibility
   useEffect(() => {
     if (isMobile) return;
     const interval = setInterval(() => {
-      if (!codeRef.current || Math.random() > 0.2) return;
+      if (!isVisibleRef.current || !codeRef.current || Math.random() > 0.2) return;
       const cols = Math.floor(cardW / 6.5);
       const rows = Math.floor(cardH / 13);
       codeRef.current.textContent = generateCodeBlock(cols, rows);
     }, 300);
     return () => clearInterval(interval);
-  }, [isMobile, cardW, cardH]);
+  }, [isMobile, cardW, cardH, isVisibleRef]);
 
   return (
     <div
-      ref={wrapperRef}
       className="absolute top-0 left-0 will-change-transform"
       style={{ width: cardW, height: cardH }}
     >
-      {/* ASCII layer */}
+      {/* ASCII layer — clip-path managed by parent tick loop */}
       <div
-        ref={asciiRef}
         className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{ clipPath: 'inset(0 0 0 100%)' }}
       >
@@ -706,9 +708,8 @@ function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseC
         />
       </div>
 
-      {/* Metal card face */}
+      {/* Metal card face — clip-path managed by parent tick loop */}
       <div
-        ref={normalRef}
         className="absolute inset-0 rounded-2xl overflow-hidden"
         style={{ clipPath: 'inset(0 0 0 0)' }}
       >

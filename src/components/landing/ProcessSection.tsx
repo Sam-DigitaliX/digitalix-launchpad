@@ -1,5 +1,5 @@
 import { CheckCircle, Activity, FileSearch, Cog, Shield, TrendingUp } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 const steps = [
   {
@@ -127,11 +127,14 @@ const ProcessSection = () => {
   const [visibleSteps, setVisibleSteps] = useState<Set<number>>(new Set());
   const stepRefs = useRef<(HTMLDivElement | null)[]>([]);
   const timelineRef = useRef<HTMLDivElement>(null);
-  const [lineHeight, setLineHeight] = useState(0);
+  const lineDesktopRef = useRef<HTMLDivElement>(null);
+  const lineDesktopGlowRef = useRef<HTMLDivElement>(null);
+  const lineMobileRef = useRef<HTMLDivElement>(null);
+  const lineMobileGlowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    
+
     stepRefs.current.forEach((ref, index) => {
       if (ref) {
         const observer = new IntersectionObserver(
@@ -152,28 +155,37 @@ const ProcessSection = () => {
     };
   }, []);
 
-  // Animate the timeline line based on scroll
+  // Animate the timeline line based on scroll — direct DOM, no setState
+  const updateLineHeight = useCallback(() => {
+    if (!timelineRef.current) return;
+    const rect = timelineRef.current.getBoundingClientRect();
+    const windowHeight = window.innerHeight;
+    const visibleTop = Math.max(0, windowHeight - rect.top);
+    const progress = Math.min(1, Math.max(0, visibleTop / (rect.height + windowHeight * 0.5)));
+    const pct = `${progress * 100}%`;
+    if (lineDesktopRef.current) lineDesktopRef.current.style.height = pct;
+    if (lineDesktopGlowRef.current) lineDesktopGlowRef.current.style.height = pct;
+    if (lineMobileRef.current) lineMobileRef.current.style.height = pct;
+    if (lineMobileGlowRef.current) lineMobileGlowRef.current.style.height = pct;
+  }, []);
+
   useEffect(() => {
+    let ticking = false;
     const handleScroll = () => {
-      if (timelineRef.current) {
-        const rect = timelineRef.current.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
-        const elementTop = rect.top;
-        const elementHeight = rect.height;
-        
-        // Calculate how much of the element is visible
-        const visibleTop = Math.max(0, windowHeight - elementTop);
-        const progress = Math.min(1, Math.max(0, visibleTop / (elementHeight + windowHeight * 0.5)));
-        
-        setLineHeight(progress * 100);
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          updateLineHeight();
+          ticking = false;
+        });
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial call
-    
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    updateLineHeight(); // Initial call
+
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [updateLineHeight]);
 
   return (
     <section id="process" className="relative py-24 md:py-32 overflow-hidden">
@@ -195,33 +207,31 @@ const ProcessSection = () => {
         <div ref={timelineRef} className="relative max-w-5xl mx-auto">
           {/* Animated Connecting Line - Desktop */}
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-1 -translate-x-1/2">
-            {/* Background line */}
             <div className="absolute inset-0 bg-border/50 rounded-full" />
-            {/* Animated progress line */}
-            <div 
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full transition-all duration-300"
-              style={{ height: `${lineHeight}%` }}
+            <div
+              ref={lineDesktopRef}
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full transition-[height] duration-300"
+              style={{ height: '0%' }}
             />
-            {/* Glow effect */}
-            <div 
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full blur-md opacity-50 transition-all duration-300"
-              style={{ height: `${lineHeight}%` }}
+            <div
+              ref={lineDesktopGlowRef}
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full blur-md opacity-50 transition-[height] duration-300"
+              style={{ height: '0%' }}
             />
           </div>
 
-          {/* Mobile Timeline Line — animated on scroll */}
+          {/* Mobile Timeline Line */}
           <div className="md:hidden absolute left-6 top-0 bottom-0 w-0.5">
-            {/* Background line */}
             <div className="absolute inset-0 bg-border/30 rounded-full" />
-            {/* Animated progress line */}
             <div
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full transition-all duration-300"
-              style={{ height: `${lineHeight}%` }}
+              ref={lineMobileRef}
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full transition-[height] duration-300"
+              style={{ height: '0%' }}
             />
-            {/* Glow effect */}
             <div
-              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full blur-sm opacity-50 transition-all duration-300"
-              style={{ height: `${lineHeight}%` }}
+              ref={lineMobileGlowRef}
+              className="absolute top-0 left-0 right-0 bg-gradient-to-b from-primary via-secondary to-primary rounded-full blur-sm opacity-50 transition-[height] duration-300"
+              style={{ height: '0%' }}
             />
           </div>
 
