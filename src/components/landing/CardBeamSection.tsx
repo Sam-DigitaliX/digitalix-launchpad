@@ -565,9 +565,7 @@ function CardBeamSection() {
   const trackHeight = dims.h + 80;
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden bg-background">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
+    <section className="relative py-20 md:py-32 overflow-hidden">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mb-16 text-center relative z-10">
         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-foreground mb-5">
           Notre <span className="text-gradient-primary">expertise</span> à votre service
@@ -702,8 +700,8 @@ function MetalCard({ card, variant, isMobile, cardW, cardH }: { card: ExpertiseC
           style={{
             color: theme.asciiColor,
             fontFamily: '"Courier New", monospace',
-            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
-            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.6) 50%, rgba(0,0,0,0.15) 100%)',
+            maskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 50%, rgba(0,0,0,0.35) 100%)',
+            WebkitMaskImage: 'linear-gradient(to right, rgba(0,0,0,1) 0%, rgba(0,0,0,0.75) 50%, rgba(0,0,0,0.35) 100%)',
           }}
         />
       </div>
