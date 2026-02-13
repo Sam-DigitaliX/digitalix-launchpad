@@ -173,7 +173,7 @@ const THEMES: Record<string, CardTheme> = {
     brandColor: 'rgba(140,140,170,0.4)',
     brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.05)',
     lineGrad: 'linear-gradient(90deg, rgba(140,140,170,0.3), rgba(100,100,130,0.15), transparent)',
-    asciiColor: 'rgba(140, 140, 170, 0.5)',
+    asciiColor: 'rgba(200, 200, 220, 0.7)',
   },
 
   /* Platinum — rich violet-metal, warm luxury highlights */
@@ -204,7 +204,7 @@ const THEMES: Record<string, CardTheme> = {
     brandColor: 'rgba(196,181,253,0.45)',
     brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.06)',
     lineGrad: 'linear-gradient(90deg, rgba(139,92,246,0.45), rgba(196,181,253,0.2), transparent)',
-    asciiColor: 'rgba(196, 181, 253, 0.6)',
+    asciiColor: 'rgba(220, 210, 255, 0.75)',
   },
 
   /* Silver — cool brushed steel, crisp modern */
@@ -235,7 +235,7 @@ const THEMES: Record<string, CardTheme> = {
     brandColor: 'rgba(180,195,225,0.45)',
     brandShadow: '0 -1px 0 rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.07)',
     lineGrad: 'linear-gradient(90deg, rgba(180,195,225,0.4), rgba(148,163,184,0.2), transparent)',
-    asciiColor: 'rgba(180, 195, 225, 0.5)',
+    asciiColor: 'rgba(210, 220, 240, 0.7)',
   },
 
   /* Iridescent — holographic rainbow, DigitaliX gradient shimmer */
@@ -273,7 +273,7 @@ const THEMES: Record<string, CardTheme> = {
     brandColor: 'rgba(14,165,233,0.5)',
     brandShadow: '0 -1px 0 rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.07)',
     lineGrad: 'linear-gradient(90deg, rgba(14,165,233,0.45), rgba(139,92,246,0.3), rgba(6,182,212,0.15), transparent)',
-    asciiColor: 'rgba(14, 165, 233, 0.55)',
+    asciiColor: 'rgba(120, 200, 240, 0.7)',
   },
 };
 

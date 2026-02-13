@@ -56,12 +56,12 @@ const FAQSection = () => {
           </div>
 
           {/* FAQ Accordion */}
-          <Accordion type="single" collapsible className="w-full space-y-4">
+          <Accordion type="single" collapsible className="w-full space-y-6">
             {faqs.map((faq, index) => (
               <AccordionItem
                 key={index}
                 value={`item-${index}`}
-                className="glass-card border-white/[0.08] px-6 rounded-xl"
+                className="rounded-xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-lg px-6 [&[data-state=open]]:border-primary/20"
               >
                 <AccordionTrigger className="text-left text-foreground hover:no-underline hover:text-primary transition-colors py-6">
                   <span className="pr-4 font-semibold">{faq.question}</span>
