@@ -276,16 +276,23 @@ const Brand = () => {
           <div className="grid md:grid-cols-2 gap-8 mb-8">
             {/* ev-card */}
             <div className="space-y-3">
-              <div className="ev-card h-40 flex items-center justify-center">
-                <div className="relative z-10 text-center">
-                  <p className="font-bold text-foreground">ev-card</p>
-                  <p className="text-sm text-muted-foreground mt-1">Bordure gradient animée</p>
+              {/* Gradient behind to showcase glassmorphism blur */}
+              <div className="relative h-40">
+                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div className="absolute top-4 left-8 w-28 h-28 bg-primary/40 rounded-full blur-2xl" />
+                  <div className="absolute bottom-4 right-8 w-24 h-24 bg-secondary/30 rounded-full blur-2xl" />
+                </div>
+                <div className="ev-card h-full flex items-center justify-center">
+                  <div className="relative z-10 text-center">
+                    <p className="font-bold text-foreground">ev-card</p>
+                    <p className="text-sm text-muted-foreground mt-1">Glass + bordure gradient animée</p>
+                  </div>
                 </div>
               </div>
               <div>
                 <p className="font-semibold">Animated Border Card</p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  conic-gradient rotating border + glass bg + backdrop-blur
+                  glass-bg + backdrop-blur(24px) + conic-gradient rotating border
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 font-mono">
                   class="ev-card" — contenu avec relative z-10
@@ -295,16 +302,23 @@ const Brand = () => {
 
             {/* ev-card-static */}
             <div className="space-y-3">
-              <div className="ev-card-static h-40 flex items-center justify-center">
-                <div className="relative z-10 text-center">
-                  <p className="font-bold text-foreground">ev-card-static</p>
-                  <p className="text-sm text-muted-foreground mt-1">Hover glow, pas d'animation</p>
+              {/* Gradient behind to showcase glassmorphism blur */}
+              <div className="relative h-40">
+                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div className="absolute top-6 right-10 w-24 h-24 bg-primary/30 rounded-full blur-2xl" />
+                  <div className="absolute bottom-6 left-10 w-20 h-20 bg-secondary/25 rounded-full blur-2xl" />
+                </div>
+                <div className="ev-card-static h-full flex items-center justify-center">
+                  <div className="relative z-10 text-center">
+                    <p className="font-bold text-foreground">ev-card-static</p>
+                    <p className="text-sm text-muted-foreground mt-1">Glass + hover glow</p>
+                  </div>
                 </div>
               </div>
               <div>
                 <p className="font-semibold">Static Glass Card</p>
                 <p className="text-sm text-muted-foreground font-mono">
-                  glass-border + hover border-primary/25 + box-shadow glow
+                  glass-bg + backdrop-blur(24px) + hover border-primary glow
                 </p>
                 <p className="text-xs text-muted-foreground mt-1 font-mono">
                   class="ev-card-static"
