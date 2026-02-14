@@ -150,10 +150,10 @@ const AuditTracking = () => {
               {/* URL Form */}
               <form onSubmit={handleSubmit} className="max-w-2xl mx-auto mb-8">
                 <div className="flex flex-col sm:flex-row gap-3">
-                  {/* Gradient border wrapper */}
-                  <div className="relative flex-1 rounded-xl p-px bg-gradient-to-r from-primary/30 via-secondary/20 to-primary/30">
-                    <div className="relative">
-                      <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none" />
+                  {/* Evervault animated border wrapper */}
+                  <div className="ev-card flex-1 !rounded-xl">
+                    <div className="relative z-10">
+                      <Globe className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground pointer-events-none z-10" />
                       <Input
                         type="text"
                         placeholder="https://votre-site.com"
@@ -162,7 +162,7 @@ const AuditTracking = () => {
                           setUrl(e.target.value);
                           setError("");
                         }}
-                        className="pl-12 h-14 bg-white/[0.04] border-0 text-foreground text-lg rounded-[11px] focus:ring-1 focus:ring-primary/30"
+                        className="pl-12 h-14 bg-transparent border-0 text-foreground text-lg rounded-[11px] focus:ring-0 focus-visible:ring-0"
                       />
                     </div>
                   </div>
