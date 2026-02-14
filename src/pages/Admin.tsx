@@ -73,7 +73,7 @@ function formatDate(iso: string | null) {
 }
 
 function ScoreBadge({ score, qualified }: { score: number | null; qualified: boolean | null }) {
-  if (score == null) return <span className="text-[hsl(0_0%_40%)] text-xs">—</span>;
+  if (score == null) return <span className="text-muted-foreground text-xs">—</span>;
   const color = qualified
     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
     : "bg-orange-500/10 text-orange-400 border-orange-500/20";
@@ -93,7 +93,7 @@ function TypeBadge({ type }: { type: string }) {
     resource_download: "bg-sky-500/10 text-sky-400 border-sky-500/20",
   };
   return (
-    <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium border ${colors[type] ?? "bg-[hsl(0_0%_100%/0.04)] text-[hsl(0_0%_55%)] border-[hsl(0_0%_100%/0.08)]"}`}>
+    <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-medium border ${colors[type] ?? "bg-glass text-muted-foreground border-glass-border"}`}>
       {label}
     </span>
   );
@@ -105,13 +105,13 @@ function TypeBadge({ type }: { type: string }) {
 
 function MetadataGrid({ data }: { data: Record<string, unknown> }) {
   const entries = Object.entries(data).filter(([, v]) => v != null && v !== "");
-  if (entries.length === 0) return <span className="text-[hsl(0_0%_35%)] text-xs">Aucune donnée</span>;
+  if (entries.length === 0) return <span className="text-muted-foreground text-xs">Aucune donnée</span>;
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5 text-xs">
       {entries.map(([key, value]) => (
         <div key={key}>
-          <span className="text-[hsl(0_0%_40%)]">{key.replace(/_/g, " ")}:</span>{" "}
-          <span className="text-[hsl(0_0%_85%)] font-medium">{String(value)}</span>
+          <span className="text-muted-foreground">{key.replace(/_/g, " ")}:</span>{" "}
+          <span className="text-foreground font-medium">{String(value)}</span>
         </div>
       ))}
     </div>
@@ -148,27 +148,27 @@ function ContactRow({ contact, adminKey }: { contact: Contact; adminKey: string 
   return (
     <>
       <tr
-        className="ev-table-row border-b border-[hsl(0_0%_100%/0.04)] cursor-pointer group"
+        className="ev-table-row border-b border-glass-border/40 cursor-pointer group"
         onClick={loadTimeline}
       >
         <td className="px-5 py-4">
-          <div className="font-medium text-[hsl(0_0%_93%)]">{contact.full_name ?? "—"}</div>
-          <div className="text-xs text-[hsl(0_0%_45%)] mt-0.5 font-mono">{contact.email}</div>
+          <div className="font-medium text-foreground">{contact.full_name ?? "—"}</div>
+          <div className="text-xs text-muted-foreground mt-0.5 font-mono">{contact.email}</div>
         </td>
-        <td className="px-5 py-4 text-sm text-[hsl(0_0%_70%)]">{contact.company_name ?? "—"}</td>
-        <td className="px-5 py-4 text-sm text-[hsl(0_0%_70%)]">{contact.profile_type ?? "—"}</td>
+        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.company_name ?? "—"}</td>
+        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.profile_type ?? "—"}</td>
         <td className="px-5 py-4">
           <ScoreBadge score={contact.qualification_score} qualified={contact.is_qualified} />
         </td>
-        <td className="px-5 py-4 text-sm text-center text-[hsl(0_0%_70%)] font-mono">{contact.interaction_count}</td>
-        <td className="px-5 py-4 text-sm text-[hsl(0_0%_45%)]">{formatDate(contact.last_seen_at)}</td>
+        <td className="px-5 py-4 text-sm text-center text-muted-foreground font-mono">{contact.interaction_count}</td>
+        <td className="px-5 py-4 text-sm text-muted-foreground">{formatDate(contact.last_seen_at)}</td>
         <td className="px-5 py-4 text-center">
           {loading ? (
-            <span className="inline-block w-4 h-4 border-2 border-purple-500/50 border-t-transparent rounded-full animate-spin" />
+            <span className="inline-block w-4 h-4 border-2 border-primary/50 border-t-transparent rounded-full animate-spin" />
           ) : expanded ? (
-            <ChevronUp className="w-4 h-4 text-[hsl(0_0%_40%)] group-hover:text-purple-400 transition-colors" />
+            <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-[hsl(0_0%_40%)] group-hover:text-purple-400 transition-colors" />
+            <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
           )}
         </td>
       </tr>
@@ -176,19 +176,19 @@ function ContactRow({ contact, adminKey }: { contact: Contact; adminKey: string 
         <tr>
           <td colSpan={7} className="px-5 py-5 bg-glass">
             <div className="space-y-4 pl-2">
-              <h4 className="text-xs font-semibold text-[hsl(0_0%_60%)] uppercase tracking-wider">
+              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display">
                 Timeline · {timeline.length} interaction{timeline.length > 1 ? "s" : ""}
               </h4>
               {timeline.map((interaction) => (
                 <div
                   key={interaction.id}
-                  className="flex items-start gap-4 pl-4 border-l border-purple-500/20"
+                  className="flex items-start gap-4 pl-4 border-l border-primary/20"
                 >
                   <div className="flex-shrink-0 mt-0.5">
                     <TypeBadge type={interaction.type} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs text-[hsl(0_0%_40%)] mb-1.5 font-mono">
+                    <div className="text-xs text-muted-foreground mb-1.5 font-mono">
                       {formatDate(interaction.created_at)}
                     </div>
                     <MetadataGrid data={interaction.metadata} />
@@ -226,9 +226,9 @@ function StatCard({
         <div className={`p-2 rounded-lg ${color}`}>
           <Icon className="w-4 h-4" />
         </div>
-        <span className="text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">{label}</span>
+        <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-widest">{label}</span>
       </div>
-      <div className="text-3xl font-bold text-[hsl(0_0%_95%)] font-display ev-count-in">{value}</div>
+      <div className="text-3xl font-bold text-foreground font-display ev-count-in">{value}</div>
     </div>
   );
 }
@@ -298,14 +298,14 @@ export default function Admin() {
             <div className="relative z-10">
               {/* Brand */}
               <div className="text-center space-y-4">
-                <div className="inline-flex p-3.5 rounded-2xl bg-purple-500/10 border border-purple-500/20 ev-icon-pulse">
-                  <Lock className="w-6 h-6 text-purple-400" />
+                <div className="inline-flex p-3.5 rounded-2xl bg-primary/10 border border-primary/20 ev-icon-pulse">
+                  <Lock className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <h1 className="text-xl font-semibold text-[hsl(0_0%_95%)] font-display tracking-tight">
+                  <h1 className="text-xl font-bold text-foreground font-display tracking-tight">
                     Admin Dashboard
                   </h1>
-                  <p className="text-sm text-[hsl(0_0%_40%)] mt-1.5">
+                  <p className="text-sm text-muted-foreground mt-1.5">
                     Entrez votre clé d'accès pour continuer
                   </p>
                 </div>
@@ -313,7 +313,7 @@ export default function Admin() {
 
               {/* Input */}
               <div className="mt-7 space-y-2">
-                <label className="text-[11px] font-medium text-[hsl(0_0%_50%)] uppercase tracking-wider">
+                <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
                   Clé d'accès
                 </label>
                 <input
@@ -338,7 +338,7 @@ export default function Admin() {
               <button
                 type="submit"
                 disabled={authLoading || !adminKey.trim()}
-                className="w-full mt-6 py-3 ev-btn-primary text-sm font-medium"
+                className="w-full mt-6 py-3 ev-btn-primary text-sm font-bold"
               >
                 {authLoading ? (
                   <span className="inline-flex items-center gap-2">
@@ -351,7 +351,7 @@ export default function Admin() {
               </button>
 
               {/* Footer hint */}
-              <p className="text-center text-[11px] text-[hsl(0_0%_28%)] mt-5">
+              <p className="text-center text-[11px] text-muted-foreground/50 mt-5">
                 Accès restreint · DigitaliX Admin
               </p>
             </div>
@@ -371,19 +371,19 @@ export default function Admin() {
       <div className="sticky top-0 z-20 border-b border-glass-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20">
-              <Zap className="w-4 h-4 text-purple-400" />
+            <div className="p-1.5 rounded-lg bg-primary/10 border border-primary/20">
+              <Zap className="w-4 h-4 text-primary" />
             </div>
             <div>
-              <h1 className="text-sm font-semibold text-[hsl(0_0%_93%)] font-display tracking-tight">
+              <h1 className="text-sm font-bold text-foreground font-display tracking-tight">
                 DigitaliX Admin
               </h1>
-              <p className="text-[11px] text-[hsl(0_0%_35%)]">Dashboard</p>
+              <p className="text-[11px] text-muted-foreground">Dashboard</p>
             </div>
           </div>
           <button
             onClick={logout}
-            className="flex items-center gap-2 text-xs text-[hsl(0_0%_40%)] hover:text-[hsl(0_0%_70%)] transition-colors px-3 py-2 rounded-lg hover:bg-[hsl(0_0%_100%/0.03)]"
+            className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-glass"
           >
             <LogOut className="w-3.5 h-3.5" />
             Déconnexion
@@ -399,7 +399,7 @@ export default function Admin() {
               icon={Users}
               label="Contacts"
               value={stats.total_contacts}
-              color="bg-purple-500/10 text-purple-400"
+              color="bg-primary/10 text-primary"
               delay="ev-fade-in-delay-1"
             />
             <StatCard
@@ -413,7 +413,7 @@ export default function Admin() {
               icon={Activity}
               label="Interactions"
               value={stats.total_interactions}
-              color="bg-sky-500/10 text-sky-400"
+              color="bg-secondary/10 text-secondary"
               delay="ev-fade-in-delay-3"
             />
             <StatCard
@@ -429,17 +429,17 @@ export default function Admin() {
         {/* Contacts table */}
         <div className="ev-card ev-fade-in overflow-hidden">
           <div className="relative z-10">
-            <div className="px-6 py-5 border-b border-[hsl(0_0%_100%/0.06)]">
+            <div className="px-6 py-5 border-b border-glass-border">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="font-semibold text-[hsl(0_0%_93%)] font-display text-sm">
+                  <h2 className="font-bold text-foreground font-display text-sm">
                     Contacts
                   </h2>
-                  <p className="text-[11px] text-[hsl(0_0%_35%)] mt-0.5">
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
                     Cliquez sur une ligne pour voir la timeline
                   </p>
                 </div>
-                <span className="text-xs font-mono text-[hsl(0_0%_40%)] bg-[hsl(0_0%_100%/0.03)] px-3 py-1.5 rounded-lg border border-[hsl(0_0%_100%/0.06)]">
+                <span className="text-xs font-mono text-muted-foreground bg-glass px-3 py-1.5 rounded-lg border border-glass-border">
                   {contacts.length}
                 </span>
               </div>
@@ -447,25 +447,25 @@ export default function Admin() {
 
             {dataLoading ? (
               <div className="flex flex-col items-center justify-center py-20 gap-3">
-                <span className="inline-block w-6 h-6 border-2 border-purple-500/40 border-t-purple-400 rounded-full animate-spin" />
-                <span className="text-xs text-[hsl(0_0%_35%)]">Chargement des contacts...</span>
+                <span className="inline-block w-6 h-6 border-2 border-primary/40 border-t-primary rounded-full animate-spin" />
+                <span className="text-xs text-muted-foreground">Chargement des contacts...</span>
               </div>
             ) : contacts.length === 0 ? (
               <div className="text-center py-20">
-                <Users className="w-8 h-8 text-[hsl(0_0%_20%)] mx-auto mb-3" />
-                <p className="text-sm text-[hsl(0_0%_35%)]">Aucun contact pour l'instant.</p>
+                <Users className="w-8 h-8 text-muted mx-auto mb-3" />
+                <p className="text-sm text-muted-foreground">Aucun contact pour l'instant.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left">
                   <thead>
-                    <tr className="border-b border-[hsl(0_0%_100%/0.06)]">
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">Contact</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">Entreprise</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">Profil</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">Score</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest text-center">Actions</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-[hsl(0_0%_35%)] uppercase tracking-widest">Dernière visite</th>
+                    <tr className="border-b border-glass-border">
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Contact</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Entreprise</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Profil</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Score</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest text-center">Actions</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Dernière visite</th>
                       <th className="px-5 py-3.5 w-10"></th>
                     </tr>
                   </thead>
