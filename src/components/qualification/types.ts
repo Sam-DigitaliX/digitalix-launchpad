@@ -53,7 +53,8 @@ export const PROFILE_GROUPS = [
 ] as const;
 
 // Flat list for scoring lookup
-export const PROFILE_OPTIONS = PROFILE_GROUPS.flatMap(g => g.options);
+export const PROFILE_OPTIONS: ReadonlyArray<{ readonly value: string; readonly label: string; readonly score: number }> =
+  PROFILE_GROUPS.flatMap(g => [...g.options]);
 
 // Pain points — checkboxes (multi-select)
 export const PAIN_POINTS_OPTIONS = [
