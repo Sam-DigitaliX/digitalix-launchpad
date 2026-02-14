@@ -2,8 +2,24 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScoringResult } from '../types';
-import { Calendar, Download, CheckCircle2, ArrowRight, Loader2 } from 'lucide-react';
+import { Calendar, Download, CheckCircle2, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+
+/** Small inline orbit animation reusing the .orbit-loader CSS */
+function OrbitIcon({ className = '' }: { className?: string }) {
+  return (
+    <div className={cn('orbit-loader relative shrink-0', className)}>
+      {[0, 1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ width: `${100 - i * 22}%`, height: `${100 - i * 22}%` }}
+        />
+      ))}
+      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-gradient-to-br from-primary to-secondary" />
+    </div>
+  );
+}
 
 const CALENDAR_URL = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ0g1W0t1KcMGk_wBbT28y5PEnG5bhavF3_YMB3P8H-H2SbVDoAv9ZoC2yyLmLTvXgLoIfYbSgCx?gv=true';
 
@@ -52,7 +68,7 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
 
         <div className="glass-card p-8 max-w-lg mx-auto space-y-6">
           <div className="flex items-center justify-center gap-3">
-            <Calendar className="w-8 h-8 icon-gradient" />
+            <OrbitIcon className="w-8 h-8" />
             <span className="text-xl font-semibold text-gradient-primary">Audit Tracking Offert</span>
           </div>
           
@@ -71,23 +87,34 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
             </li>
           </ul>
 
-          <Button 
-            variant="heroGradient" 
+          <Button
+            variant="heroGradient"
             size="xl"
             onClick={() => handleCalendarOpen(true)}
             className="w-full gap-2"
           >
             <Calendar className="w-5 h-5" />
             Réserver mon créneau
-            <ArrowRight className="w-5 h-5" />
           </Button>
         </div>
 
         {/* Calendar Modal */}
         <Dialog open={isCalendarOpen} onOpenChange={handleCalendarOpen}>
-          <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden border-0 bg-white [&>button]:hidden">
+          <DialogContent className="max-w-4xl w-[95vw] h-[90vh] p-0 overflow-hidden border-0 bg-white flex flex-col [&>button]:hidden">
             <DialogTitle className="sr-only">Réserver un créneau</DialogTitle>
-            
+
+            {/* Sticky close bar */}
+            <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-2 bg-white border-b border-gray-200">
+              <span className="text-sm font-medium text-gray-700">Réserver un créneau</span>
+              <button
+                onClick={() => handleCalendarOpen(false)}
+                className="p-1.5 rounded-full hover:bg-gray-100 transition-colors"
+                aria-label="Fermer"
+              >
+                <X className="w-5 h-5 text-gray-600" />
+              </button>
+            </div>
+
             {/* Loading Spinner */}
             {isCalendarLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center bg-white z-0">
@@ -95,13 +122,13 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
                 <p className="text-gray-600 text-sm">Chargement du calendrier...</p>
               </div>
             )}
-            
+
             <iframe
               src={CALENDAR_URL}
               sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
               referrerPolicy="no-referrer-when-downgrade"
               className={cn(
-                "w-full h-full border-0 relative z-[1]",
+                "w-full flex-1 border-0 relative z-[1]",
                 isCalendarLoading && "opacity-0"
               )}
               title="Réserver un rendez-vous"
