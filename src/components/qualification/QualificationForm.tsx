@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { supabase } from '@/integrations/supabase';
 import { toast } from '@/hooks/use-toast';
 import { LeadFormData, leadSchema, calculateScore, ScoringResult } from './types';
@@ -24,12 +24,18 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [behavioralData, setBehavioralData] = useState<BehavioralData | null>(null);
+  const formRef = useRef<HTMLDivElement>(null);
 
   // Load behavioral data on mount
   useEffect(() => {
     const data = getBehavioralData();
     setBehavioralData(data);
   }, []);
+
+  // Scroll to form top on step change (fixes mobile scroll issue)
+  useEffect(() => {
+    formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [currentStep]);
 
   const isHotProspect = behavioralData?.isHotProspect ?? false;
 
@@ -203,7 +209,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   const isResultStep = currentStep === TOTAL_STEPS;
 
   return (
-    <div className="relative w-full max-w-3xl mx-auto">
+    <div ref={formRef} className="relative w-full max-w-3xl mx-auto scroll-mt-4">
       {/* Close button */}
       {onClose && (
         <button
