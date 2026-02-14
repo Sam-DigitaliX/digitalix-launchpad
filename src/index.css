@@ -342,3 +342,45 @@
 .animation-delay-400 { animation-delay: 400ms; }
 .animation-delay-500 { animation-delay: 500ms; }
 .animation-delay-600 { animation-delay: 600ms; }
+
+/* ── Server-Side Schema ────────────────────────────────── */
+
+@property --schema-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes schema-border-rotate {
+  to { --schema-angle: 360deg; }
+}
+
+.schema-server-border {
+  background: conic-gradient(
+    from var(--schema-angle),
+    hsl(262 83% 58% / 0.6),
+    hsl(188 94% 43% / 0.4),
+    hsl(262 83% 58% / 0.08),
+    hsl(262 83% 58% / 0.6)
+  );
+  animation: schema-border-rotate 4s linear infinite;
+}
+
+@keyframes schema-flow-h {
+  0%   { left: -6px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+
+@keyframes schema-flow-v {
+  0%   { top: -6px; opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+
+@keyframes schema-glow {
+  0%, 100% { box-shadow: 0 0 30px hsl(262 83% 58% / 0.15), 0 0 60px hsl(188 94% 43% / 0.08); }
+  50%      { box-shadow: 0 0 40px hsl(262 83% 58% / 0.25), 0 0 80px hsl(188 94% 43% / 0.12); }
+}

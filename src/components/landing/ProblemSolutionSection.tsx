@@ -1,12 +1,12 @@
-import { useEffect, useRef, useState, lazy, Suspense } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const Lottie = lazy(() => import("lottie-react"));
 import AdblockIcon from "@/assets/icon-adblock.png";
 import PrivacyIcon from "@/assets/icon-privacy.png";
 import AlgoIcon from "@/assets/icon-algorythm.png";
 import { CheckCircle, ArrowDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { ServerSideSchema } from "./ServerSideSchema";
 
 const problems = [
   {
@@ -50,43 +50,32 @@ const benefits = [
 
 const ProblemSolutionSection = () => {
   const navigate = useNavigate();
-  const [isLottieVisible, setIsLottieVisible] = useState(false);
-  const [isLottieInView, setIsLottieInView] = useState(false);
-  const [animationData, setAnimationData] = useState<unknown>(null);
-  const lottieRef = useRef<HTMLDivElement>(null);
+  const [isSolutionVisible, setIsSolutionVisible] = useState(false);
+  const solutionRef = useRef<HTMLDivElement>(null);
   const [visibleCards, setVisibleCards] = useState<Set<number>>(new Set());
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Track visibility — both for initial reveal and for pause/resume
+  // Track solution section visibility for entrance animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsLottieInView(entry.isIntersecting);
         if (entry.isIntersecting) {
-          setIsLottieVisible(true);
+          setIsSolutionVisible(true);
         }
       },
       { threshold: 0.1, rootMargin: '100px' }
     );
 
-    if (lottieRef.current) {
-      observer.observe(lottieRef.current);
+    if (solutionRef.current) {
+      observer.observe(solutionRef.current);
     }
 
     return () => observer.disconnect();
   }, []);
 
-  // Lazy-load the Lottie JSON only when section is first visible
-  useEffect(() => {
-    if (!isLottieVisible || animationData) return;
-    import("@/assets/server-side-schema.json").then((mod) => {
-      setAnimationData(mod.default);
-    });
-  }, [isLottieVisible, animationData]);
-
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-    
+
     cardRefs.current.forEach((ref, index) => {
       if (ref) {
         const observer = new IntersectionObserver(
@@ -120,7 +109,7 @@ const ProblemSolutionSection = () => {
             backgroundSize: '60px 60px',
           }}
         />
-        
+
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           {/* Section Header */}
           <div className="text-center mb-16 md:mb-20">
@@ -145,8 +134,8 @@ const ProblemSolutionSection = () => {
                 key={problem.title}
                 ref={el => cardRefs.current[index] = el}
                 className={`relative bg-white/[0.04] backdrop-blur-xl border border-white/[0.08] rounded-2xl p-6 md:p-8 transition-all duration-700 group hover:border-primary/30 ${
-                  visibleCards.has(index) 
-                    ? 'opacity-100 translate-y-0' 
+                  visibleCards.has(index)
+                    ? 'opacity-100 translate-y-0'
                     : 'opacity-0 translate-y-8'
                 }`}
                 style={{ transitionDelay: `${index * 150}ms` }}
@@ -176,7 +165,7 @@ const ProblemSolutionSection = () => {
                 {/* Stat Bar */}
                 <div className="space-y-2">
                   <div className={`h-2 ${problem.barBg} rounded-full overflow-hidden`}>
-                    <div 
+                    <div
                       className={`h-full ${problem.barColor} rounded-full transition-all duration-1000 delay-300`}
                       style={{ width: visibleCards.has(index) ? problem.barWidth : '0%' }}
                     />
@@ -204,9 +193,9 @@ const ProblemSolutionSection = () => {
         </div>
       </section>
 
-      {/* SOLUTION SECTION - Bright with Lottie */}
-      <section 
-        ref={lottieRef}
+      {/* SOLUTION SECTION - Server-Side Schema */}
+      <section
+        ref={solutionRef}
         className="relative py-16 md:py-20 overflow-hidden"
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -221,34 +210,25 @@ const ProblemSolutionSection = () => {
             </h2>
           </div>
 
-          {/* Lottie in Glassmorphism Card */}
+          {/* Schema in Glassmorphism Card */}
           <div className="max-w-4xl mx-auto">
             <div
               className={`relative rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 md:p-8 shadow-[0_0_60px_-8px_hsl(262_83%_58%/0.15)] transition-all duration-1000 ${
-                isLottieVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+                isSolutionVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
               }`}
             >
-              {animationData && (
-                <Suspense fallback={<div className="w-full aspect-video" />}>
-                  <Lottie
-                    animationData={animationData}
-                    loop={true}
-                    isPaused={!isLottieInView}
-                    className="w-full h-auto"
-                  />
-                </Suspense>
-              )}
+              <ServerSideSchema />
             </div>
           </div>
 
           {/* Benefits Mini-Cards */}
-          <div 
+          <div
             className={`grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 max-w-4xl mx-auto mt-10 md:mt-14 transition-all duration-700 delay-500 ${
-              isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              isSolutionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
             {benefits.map((benefit, index) => (
-              <div 
+              <div
                 key={benefit}
                 className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-4 flex items-center gap-3 hover:border-primary/30 transition-colors"
                 style={{ transitionDelay: `${600 + index * 100}ms` }}
@@ -260,9 +240,9 @@ const ProblemSolutionSection = () => {
           </div>
 
           {/* Result + CTA */}
-          <div 
+          <div
             className={`text-center mt-10 md:mt-14 max-w-3xl mx-auto transition-all duration-700 delay-700 ${
-              isLottieVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
+              isSolutionVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'
             }`}
           >
             <p className="text-lg text-foreground/70 mb-8">
