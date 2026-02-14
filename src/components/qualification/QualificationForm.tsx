@@ -187,7 +187,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         console.warn('[QualificationForm] Confirmation email failed:', emailErr);
       }
 
-    } catch (err) {
+    } catch {
       toast({
         title: "Erreur réseau",
         description: "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.",

@@ -25,25 +25,6 @@ export function useVisitorTracking() {
   const [displayData, setDisplayData] = useState<TrackingDisplayData | null>(null);
   const location = useLocation();
 
-  // Initialize tracking on mount
-  useEffect(() => {
-    const data = initializeVisitorTracking();
-    setVisitorData(data);
-    updateDisplayData(data);
-  }, []);
-
-  // Track page views on route change
-  useEffect(() => {
-    // Skip the first render (already handled in initialization)
-    if (!visitorData) return;
-    
-    const data = incrementPageViews();
-    if (data) {
-      setVisitorData(data);
-      updateDisplayData(data);
-    }
-  }, [location.pathname]);
-
   // Update display data from visitor data
   const updateDisplayData = useCallback((data: VisitorData | null) => {
     if (!data || data.visits.length === 0) {
@@ -63,6 +44,26 @@ export function useVisitorTracking() {
       sessionCount: data.sessions,
     });
   }, []);
+
+  // Initialize tracking on mount
+  useEffect(() => {
+    const data = initializeVisitorTracking();
+    setVisitorData(data);
+    updateDisplayData(data);
+  }, [updateDisplayData]);
+
+  // Track page views on route change
+  useEffect(() => {
+    // Skip the first render (already handled in initialization)
+    if (!visitorData) return;
+
+    const data = incrementPageViews();
+    if (data) {
+      setVisitorData(data);
+      updateDisplayData(data);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- visitorData intentionally omitted to avoid infinite loop
+  }, [location.pathname, updateDisplayData]);
 
   // Delete all data and reload
   const deleteData = useCallback(() => {
