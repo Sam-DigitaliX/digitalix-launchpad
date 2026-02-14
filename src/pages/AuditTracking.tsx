@@ -11,9 +11,7 @@ import {
   Globe,
   ArrowRight,
   Activity,
-  Lock,
   Shield,
-  Clock,
   CheckCircle2,
 } from "lucide-react";
 
