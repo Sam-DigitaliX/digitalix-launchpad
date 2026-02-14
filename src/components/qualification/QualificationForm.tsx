@@ -100,7 +100,8 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
       }
 
       // Save to Supabase with behavioral data + consent
-      const { data: insertedData, error } = await supabase.from('leads').insert({
+      // Note: no .select() — only INSERT RLS policy is needed for anon role
+      const { error } = await supabase.from('leads').insert({
         profile_type: validData.profile_type,
         current_situation: validData.current_situation,
         pain_points: validData.pain_points,
@@ -124,24 +125,16 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         first_visit_source: behavioralData?.firstVisitSource,
         current_visit_source: behavioralData?.currentSource,
         behavioral_bonus: behavioralBonus,
-      }).select();
+      });
 
       if (error) {
+        console.error('[QualificationForm] Supabase insert error:', error.message, error.details, error.hint);
         const isNetworkError = error.message?.includes('fetch') || error.message?.includes('network');
         toast({
           title: "Erreur",
           description: isNetworkError
             ? "Problème de connexion. Vérifiez votre réseau et réessayez."
             : "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      if (!insertedData || insertedData.length === 0) {
-        toast({
-          title: "Erreur",
-          description: "L'envoi n'a pas pu être confirmé. Veuillez réessayer.",
           variant: "destructive",
         });
         return;
