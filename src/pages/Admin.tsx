@@ -174,7 +174,7 @@ function ContactRow({ contact, adminKey }: { contact: Contact; adminKey: string 
       </tr>
       {expanded && timeline && (
         <tr>
-          <td colSpan={7} className="px-5 py-5 bg-[hsl(0_0%_100%/0.01)]">
+          <td colSpan={7} className="px-5 py-5 bg-glass">
             <div className="space-y-4 pl-2">
               <h4 className="text-xs font-semibold text-[hsl(0_0%_60%)] uppercase tracking-wider">
                 Timeline · {timeline.length} interaction{timeline.length > 1 ? "s" : ""}
@@ -288,7 +288,7 @@ export default function Admin() {
   /* ---- Login gate ---- */
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen bg-[hsl(0_0%_2%)] ev-mesh-bg ev-noise flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background ev-mesh-bg ev-noise flex items-center justify-center p-4">
         {/* Dot grid overlay */}
         <div className="fixed inset-0 ev-dot-grid opacity-40 pointer-events-none z-0" />
 
@@ -363,12 +363,12 @@ export default function Admin() {
 
   /* ---- Dashboard ---- */
   return (
-    <div className="min-h-screen bg-[hsl(0_0%_2%)] ev-mesh-bg ev-noise">
+    <div className="min-h-screen bg-background ev-mesh-bg ev-noise">
       {/* Dot grid */}
       <div className="fixed inset-0 ev-dot-grid opacity-30 pointer-events-none z-0" />
 
       {/* Header */}
-      <div className="sticky top-0 z-20 border-b border-[hsl(0_0%_100%/0.06)] bg-[hsl(0_0%_2%/0.8)] backdrop-blur-xl">
+      <div className="sticky top-0 z-20 border-b border-glass-border bg-background/80 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-1.5 rounded-lg bg-purple-500/10 border border-purple-500/20">
