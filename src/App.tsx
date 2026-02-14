@@ -16,6 +16,7 @@ const Services = lazy(() => import("./pages/Services"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const AuditTracking = lazy(() => import("./pages/AuditTracking"));
 const AuditResults = lazy(() => import("./pages/AuditResults"));
+const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -37,6 +38,7 @@ const App = () => (
             <Route path="/audit-tracking" element={<AuditTracking />} />
             <Route path="/audit-tracking/resultats/:id" element={<AuditResults />} />
             <Route path="/brand" element={<Brand />} />
+            <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
