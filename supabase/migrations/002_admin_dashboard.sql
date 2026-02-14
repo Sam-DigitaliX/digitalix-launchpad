@@ -3,9 +3,17 @@
 -- Run this in Supabase SQL Editor AFTER 001_contacts_interactions.sql
 --
 -- IMPORTANT: After running this, set your admin key:
---   ALTER DATABASE postgres SET app.settings.admin_key = 'CHANGE-ME-to-a-strong-secret';
---   Then reconnect (or run: SELECT pg_reload_conf();)
+--   INSERT INTO admin_config (key) VALUES ('TON-MOT-DE-PASSE-ICI');
 -- ============================================================
+
+-- 0. Config table to store the admin key (no RLS — only accessible via SECURITY DEFINER functions)
+CREATE TABLE IF NOT EXISTS public.admin_config (
+  id int PRIMARY KEY DEFAULT 1 CHECK (id = 1),  -- only one row allowed
+  key text NOT NULL
+);
+
+ALTER TABLE public.admin_config ENABLE ROW LEVEL SECURITY;
+-- No RLS policies = nobody can read/write via the API, only SECURITY DEFINER functions can access it
 
 -- 1. Materialized-style view for quick Supabase dashboard queries
 CREATE OR REPLACE VIEW public.admin_contacts_overview AS
@@ -30,6 +38,23 @@ FROM contacts c
 LEFT JOIN interactions i ON i.contact_id = c.id
 GROUP BY c.id
 ORDER BY c.last_seen_at DESC;
+
+-- Helper: verify admin key against admin_config table
+CREATE OR REPLACE FUNCTION public._verify_admin_key(p_key text)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+DECLARE
+  stored_key text;
+BEGIN
+  SELECT ac.key INTO stored_key FROM admin_config ac WHERE ac.id = 1;
+  IF stored_key IS NULL OR p_key IS NULL OR p_key != stored_key THEN
+    RAISE EXCEPTION 'Unauthorized';
+  END IF;
+END;
+$$;
 
 -- 2. RPC: list all contacts with interaction summary (protected by admin key)
 CREATE OR REPLACE FUNCTION public.admin_get_contacts(p_key text)
@@ -56,9 +81,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF p_key IS NULL OR p_key != COALESCE(current_setting('app.settings.admin_key', true), '') THEN
-    RAISE EXCEPTION 'Unauthorized';
-  END IF;
+  PERFORM _verify_admin_key(p_key);
 
   RETURN QUERY
   SELECT * FROM admin_contacts_overview;
@@ -78,9 +101,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF p_key IS NULL OR p_key != COALESCE(current_setting('app.settings.admin_key', true), '') THEN
-    RAISE EXCEPTION 'Unauthorized';
-  END IF;
+  PERFORM _verify_admin_key(p_key);
 
   RETURN QUERY
   SELECT i.id, i.type, i.metadata, i.created_at
@@ -104,9 +125,7 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  IF p_key IS NULL OR p_key != COALESCE(current_setting('app.settings.admin_key', true), '') THEN
-    RAISE EXCEPTION 'Unauthorized';
-  END IF;
+  PERFORM _verify_admin_key(p_key);
 
   RETURN QUERY
   SELECT
@@ -119,6 +138,7 @@ END;
 $$;
 
 -- 5. Grant execute to anon + authenticated
+GRANT EXECUTE ON FUNCTION public._verify_admin_key TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_get_contacts TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_get_contact_timeline TO anon, authenticated;
 GRANT EXECUTE ON FUNCTION public.admin_get_stats TO anon, authenticated;
