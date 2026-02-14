@@ -193,35 +193,35 @@ const FeaturedAuditCard = ({ onClick }: { onClick?: () => void }) => (
 
 const MobileAccordion = ({
   label,
+  isOpen,
+  onToggle,
   children,
 }: {
   label: string;
+  isOpen: boolean;
+  onToggle: () => void;
   children: React.ReactNode;
-}) => {
-  const [open, setOpen] = useState(false);
-
-  return (
-    <div>
-      <button
-        type="button"
-        className="flex items-center justify-between w-full py-3 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
-        onClick={() => setOpen((v) => !v)}
-      >
-        {label}
-        <ChevronDown
-          className={`w-4 h-4 transition-transform duration-200 ${open ? "rotate-180" : ""}`}
-        />
-      </button>
-      <div
-        className={`overflow-hidden transition-all duration-200 ${
-          open ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="pb-2 pl-2 space-y-1">{children}</div>
-      </div>
+}) => (
+  <div>
+    <button
+      type="button"
+      className="flex items-center justify-between w-full py-3 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+      onClick={onToggle}
+    >
+      {label}
+      <ChevronDown
+        className={`w-4 h-4 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+      />
+    </button>
+    <div
+      className={`overflow-hidden transition-all duration-200 ${
+        isOpen ? "max-h-[600px] opacity-100" : "max-h-0 opacity-0"
+      }`}
+    >
+      <div className="pb-2 pl-2 space-y-1">{children}</div>
     </div>
-  );
-};
+  </div>
+);
 
 /* ──────────────────────── Header ──────────────────────── */
 
@@ -229,6 +229,7 @@ const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileAccordion, setMobileAccordion] = useState<string | null>(null);
   const closeTimeoutRef = useRef<ReturnType<typeof setTimeout>>();
   const navigate = useNavigate();
   const location = useLocation();
@@ -244,6 +245,7 @@ const Header = () => {
   useEffect(() => {
     setOpenDropdown(null);
     setIsMobileMenuOpen(false);
+    setMobileAccordion(null);
   }, [location.pathname]);
 
   // Cleanup timeout
@@ -273,7 +275,10 @@ const Header = () => {
     }
   };
 
-  const closeMobile = () => setIsMobileMenuOpen(false);
+  const closeMobile = () => {
+    setIsMobileMenuOpen(false);
+    setMobileAccordion(null);
+  };
   const closeDropdown = () => setOpenDropdown(null);
 
   const isPathActive = (href: string) =>
@@ -584,7 +589,11 @@ const Header = () => {
               </Link>
 
               {/* Solutions accordion */}
-              <MobileAccordion label="Solutions">
+              <MobileAccordion
+                label="Solutions"
+                isOpen={mobileAccordion === "solutions"}
+                onToggle={() => setMobileAccordion(prev => prev === "solutions" ? null : "solutions")}
+              >
                 {solutionsItems.map((item) => (
                   <MegaLink
                     key={item.label}
@@ -595,7 +604,11 @@ const Header = () => {
               </MobileAccordion>
 
               {/* Services accordion */}
-              <MobileAccordion label="Services">
+              <MobileAccordion
+                label="Services"
+                isOpen={mobileAccordion === "services"}
+                onToggle={() => setMobileAccordion(prev => prev === "services" ? null : "services")}
+              >
                 {servicesItems.map((item) => (
                   <MegaLink
                     key={item.label}
@@ -614,7 +627,11 @@ const Header = () => {
               </MobileAccordion>
 
               {/* Ressources accordion */}
-              <MobileAccordion label="Ressources">
+              <MobileAccordion
+                label="Ressources"
+                isOpen={mobileAccordion === "ressources"}
+                onToggle={() => setMobileAccordion(prev => prev === "ressources" ? null : "ressources")}
+              >
                 {[
                   { icon: Scan, label: "Tracking Checker", description: "Diagnostiquez votre site en 30s", href: "/audit-tracking" },
                   ...ressourcesItems,
