@@ -12,9 +12,7 @@ import { X, Flame } from 'lucide-react';
 import { getBehavioralData, BehavioralData } from '@/lib/trackingUtils';
 
 const STEP_LABELS = ['Profil', 'Situation', 'Besoin', 'Contact', 'Résultat'];
-const STEP_LABELS_SHORT = ['Profil', 'Besoin', 'Contact', 'Résultat']; // For hot prospects
 const TOTAL_STEPS = 5;
-const TOTAL_STEPS_SHORT = 4; // For hot prospects (skip Situation)
 
 interface QualificationFormProps {
   onClose?: () => void;
@@ -26,36 +24,21 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [behavioralData, setBehavioralData] = useState<BehavioralData | null>(null);
-  
+
   // Load behavioral data on mount
   useEffect(() => {
     const data = getBehavioralData();
     setBehavioralData(data);
   }, []);
-  
-  // Determine if we should use shortened flow
-  const isHotProspect = behavioralData?.isHotProspect ?? false;
-  const stepLabels = isHotProspect ? STEP_LABELS_SHORT : STEP_LABELS;
-  const totalSteps = isHotProspect ? TOTAL_STEPS_SHORT : TOTAL_STEPS;
 
-  // Map logical step to actual step (for hot prospects who skip Situation)
-  const getActualStep = (logicalStep: number): number => {
-    if (!isHotProspect) return logicalStep;
-    // Hot prospects: 1=Profile, 2=Need, 3=Contact, 4=Result
-    // Normal flow: 1=Profile, 2=Situation, 3=Need, 4=Contact, 5=Result
-    if (logicalStep === 1) return 1;
-    if (logicalStep === 2) return 3; // Skip situation, go to Need
-    if (logicalStep === 3) return 4; // Contact
-    if (logicalStep === 4) return 5; // Result
-    return logicalStep;
-  };
+  const isHotProspect = behavioralData?.isHotProspect ?? false;
 
   const updateData = (updates: Partial<LeadFormData>) => {
     setFormData(prev => ({ ...prev, ...updates }));
   };
 
   const nextStep = () => {
-    if (currentStep < totalSteps) {
+    if (currentStep < TOTAL_STEPS) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -68,10 +51,19 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
 
   const handleSubmit = async () => {
     // Validate required fields before submission
-    if (!formData.profile_type || !formData.full_name || !formData.email) {
+    if (!formData.profile_type || !formData.full_name || !formData.email || !formData.company_name) {
       toast({
         title: "Champs manquants",
         description: "Veuillez remplir tous les champs obligatoires.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (!formData.gdpr_consent) {
+      toast({
+        title: "Consentement requis",
+        description: "Vous devez accepter le traitement de vos données pour continuer.",
         variant: "destructive",
       });
       return;
@@ -107,7 +99,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         return;
       }
 
-      // Save to Supabase with behavioral data
+      // Save to Supabase with behavioral data + consent
       const { data: insertedData, error } = await supabase.from('leads').insert({
         profile_type: validData.profile_type,
         current_situation: validData.current_situation,
@@ -121,6 +113,10 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         phone: validData.phone,
         qualification_score: scoringResult.score,
         is_qualified: scoringResult.isQualified,
+        // Consent
+        gdpr_consent: validData.gdpr_consent,
+        gdpr_consent_at: new Date().toISOString(),
+        newsletter_optin: validData.newsletter_optin ?? false,
         // Behavioral enrichment data
         behavioral_profile: behavioralData?.profileLabel,
         behavioral_pageviews: behavioralData?.pageviews,
@@ -153,7 +149,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
 
       // Show result
       setResult(scoringResult);
-      setCurrentStep(totalSteps);
+      setCurrentStep(TOTAL_STEPS);
 
       toast({
         title: scoringResult.isQualified ? "Félicitations !" : "Demande envoyée",
@@ -176,7 +172,6 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
     }
   };
 
-
   const handleDownloadResource = () => {
     // TODO: Link to actual resource
     toast({
@@ -185,14 +180,13 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
     });
   };
 
-  const actualStep = getActualStep(currentStep);
-  const isResultStep = currentStep === totalSteps;
+  const isResultStep = currentStep === TOTAL_STEPS;
 
   return (
     <div className="relative w-full max-w-3xl mx-auto">
       {/* Close button */}
       {onClose && (
-        <button 
+        <button
           onClick={onClose}
           className="absolute -top-2 -right-2 p-2 rounded-full bg-muted hover:bg-muted/80 transition-colors z-10"
           aria-label="Fermer"
@@ -212,54 +206,54 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
 
         {/* Progress */}
         {!isResultStep && (
-          <StepProgress 
-            currentStep={currentStep} 
-            totalSteps={totalSteps - 1} 
-            stepLabels={stepLabels.slice(0, -1)} 
+          <StepProgress
+            currentStep={currentStep}
+            totalSteps={TOTAL_STEPS - 1}
+            stepLabels={STEP_LABELS.slice(0, -1)}
           />
         )}
 
-        {/* Steps - using actualStep for hot prospect flow */}
-        {actualStep === 1 && (
-          <ProfileStep 
-            data={formData} 
-            updateData={updateData} 
+        {/* Steps */}
+        {currentStep === 1 && (
+          <ProfileStep
+            data={formData}
+            updateData={updateData}
             onNext={nextStep}
             isHotProspect={isHotProspect}
           />
         )}
-        
-        {actualStep === 2 && (
-          <SituationStep 
-            data={formData} 
-            updateData={updateData} 
+
+        {currentStep === 2 && (
+          <SituationStep
+            data={formData}
+            updateData={updateData}
             onNext={nextStep}
             onPrev={prevStep}
           />
         )}
-        
-        {actualStep === 3 && (
-          <NeedStep 
-            data={formData} 
-            updateData={updateData} 
+
+        {currentStep === 3 && (
+          <NeedStep
+            data={formData}
+            updateData={updateData}
             onNext={nextStep}
             onPrev={prevStep}
           />
         )}
-        
-        {actualStep === 4 && (
-          <ContactStep 
-            data={formData} 
-            updateData={updateData} 
+
+        {currentStep === 4 && (
+          <ContactStep
+            data={formData}
+            updateData={updateData}
             onNext={nextStep}
             onPrev={prevStep}
             isSubmitting={isSubmitting}
             onSubmit={handleSubmit}
           />
         )}
-        
+
         {isResultStep && result && (
-          <OutcomeStep 
+          <OutcomeStep
             result={result}
             onDownloadResource={handleDownloadResource}
           />
