@@ -99,32 +99,36 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         return;
       }
 
-      // Save to Supabase with behavioral data + consent
-      // Note: no .select() — only INSERT RLS policy is needed for anon role
-      const { error } = await supabase.from('leads').insert({
-        profile_type: validData.profile_type,
-        current_situation: validData.current_situation,
-        pain_points: validData.pain_points,
-        budget_range: validData.budget_range,
-        timeline: validData.timeline,
-        priority: validData.priority,
-        company_name: validData.company_name,
-        full_name: validData.full_name,
-        email: validData.email,
-        phone: validData.phone,
-        qualification_score: scoringResult.score,
-        is_qualified: scoringResult.isQualified,
-        // Consent
-        gdpr_consent: validData.gdpr_consent,
-        gdpr_consent_at: new Date().toISOString(),
-        newsletter_optin: validData.newsletter_optin ?? false,
-        // Behavioral enrichment data
-        behavioral_profile: behavioralData?.profileLabel,
-        behavioral_pageviews: behavioralData?.pageviews,
-        behavioral_sessions: behavioralData?.sessions,
-        first_visit_source: behavioralData?.firstVisitSource,
-        current_visit_source: behavioralData?.currentSource,
-        behavioral_bonus: behavioralBonus,
+      // Upsert contact + log interaction via RPC (atomic, bypasses RLS)
+      const { error } = await supabase.rpc('upsert_contact_with_interaction', {
+        p_email: validData.email,
+        p_full_name: validData.full_name,
+        p_company_name: validData.company_name,
+        p_phone: validData.phone,
+        p_profile_type: validData.profile_type,
+        p_qualification_score: scoringResult.score,
+        p_is_qualified: scoringResult.isQualified,
+        p_gdpr_consent: validData.gdpr_consent,
+        p_gdpr_consent_at: new Date().toISOString(),
+        p_newsletter_optin: validData.newsletter_optin ?? false,
+        p_behavioral_profile: behavioralData?.profileLabel ?? null,
+        p_interaction_type: 'qualification_form',
+        p_interaction_metadata: {
+          current_situation: validData.current_situation,
+          pain_points: validData.pain_points,
+          budget_range: validData.budget_range,
+          timeline: validData.timeline,
+          priority: validData.priority,
+          behavioral_pageviews: behavioralData?.pageviews,
+          behavioral_sessions: behavioralData?.sessions,
+          first_visit_source: behavioralData?.firstVisitSource,
+          current_visit_source: behavioralData?.currentSource,
+          behavioral_bonus: behavioralBonus,
+          score: scoringResult.score,
+          base_score: scoringResult.baseScore,
+          is_qualified: scoringResult.isQualified,
+          disqualify_reason: scoringResult.disqualifyReason,
+        },
       });
 
       if (error) {

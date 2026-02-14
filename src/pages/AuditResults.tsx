@@ -3,6 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
+import { supabase } from "@/integrations/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -218,7 +219,7 @@ const AuditResults = () => {
   }, [phase]);
 
   /* ── Email gate submit ── */
-  const handleEmailSubmit = (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setEmailError("");
 
@@ -229,13 +230,24 @@ const AuditResults = () => {
 
     setEmailSubmitting(true);
 
-    // TODO: Save to Supabase
-    // await supabase.from('audit_leads').insert({ email, url: auditUrl, score: MOCK_SCORE });
+    try {
+      if (supabase) {
+        const { error } = await supabase.rpc('upsert_contact_with_interaction', {
+          p_email: email.trim(),
+          p_interaction_type: 'audit_unlock',
+          p_interaction_metadata: { url: auditUrl, score: MOCK_SCORE },
+        });
 
-    setTimeout(() => {
-      setIsUnlocked(true);
-      setEmailSubmitting(false);
-    }, 800);
+        if (error) {
+          console.error('[AuditResults] Supabase RPC error:', error.message, error.details, error.hint);
+        }
+      }
+    } catch (err) {
+      console.error('[AuditResults] Network error:', err);
+    }
+
+    setIsUnlocked(true);
+    setEmailSubmitting(false);
   };
 
   const visibleChecks = mockChecks.filter((c) => !c.gated);
