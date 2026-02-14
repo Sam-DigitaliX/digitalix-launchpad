@@ -267,6 +267,114 @@ const Brand = () => {
           </div>
         </section>
 
+        {/* Evervault Effects Section */}
+        <section className="mb-16">
+          <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
+            💎 Evervault Effects
+          </h2>
+
+          <div className="grid md:grid-cols-2 gap-8 mb-8">
+            {/* ev-card */}
+            <div className="space-y-3">
+              {/* Gradient behind to showcase glassmorphism blur */}
+              <div className="relative h-40">
+                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div className="absolute top-4 left-8 w-28 h-28 bg-primary/40 rounded-full blur-2xl" />
+                  <div className="absolute bottom-4 right-8 w-24 h-24 bg-secondary/30 rounded-full blur-2xl" />
+                </div>
+                <div className="ev-card h-full flex items-center justify-center">
+                  <div className="relative z-10 text-center">
+                    <p className="font-bold text-foreground">ev-card</p>
+                    <p className="text-sm text-muted-foreground mt-1">Glass + bordure gradient animée</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="font-semibold">Animated Border Card</p>
+                <p className="text-sm text-muted-foreground font-mono">
+                  glass-bg + backdrop-blur(24px) + conic-gradient rotating border
+                </p>
+                <p className="text-xs text-muted-foreground mt-1 font-mono">
+                  class="ev-card" — contenu avec relative z-10
+                </p>
+              </div>
+            </div>
+
+            {/* ev-card-static */}
+            <div className="space-y-3">
+              {/* Gradient behind to showcase glassmorphism blur */}
+              <div className="relative h-40">
+                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                  <div className="absolute top-6 right-10 w-24 h-24 bg-primary/30 rounded-full blur-2xl" />
+                  <div className="absolute bottom-6 left-10 w-20 h-20 bg-secondary/25 rounded-full blur-2xl" />
+                </div>
+                <div className="ev-card-static h-full flex items-center justify-center">
+                  <div className="relative z-10 text-center">
+                    <p className="font-bold text-foreground">ev-card-static</p>
+                    <p className="text-sm text-muted-foreground mt-1">Glass + hover glow</p>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p className="font-semibold">Static Glass Card</p>
+                <p className="text-sm text-muted-foreground font-mono">
+                  glass-bg + backdrop-blur(24px) + hover border-primary glow
+                </p>
+                <p className="text-xs text-muted-foreground mt-1 font-mono">
+                  class="ev-card-static"
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {/* ev-input */}
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Placeholder text..."
+                className="w-full px-4 py-3 ev-input text-sm"
+                readOnly
+              />
+              <div>
+                <p className="font-semibold">ev-input</p>
+                <p className="text-sm text-muted-foreground font-mono">
+                  glass bg + focus: primary glow ring
+                </p>
+              </div>
+            </div>
+
+            {/* ev-btn-primary */}
+            <div className="space-y-3">
+              <button className="w-full py-3 ev-btn-primary text-sm font-bold">
+                Bouton Evervault
+              </button>
+              <div>
+                <p className="font-semibold">ev-btn-primary</p>
+                <p className="text-sm text-muted-foreground font-mono">
+                  gradient bg + hover lift + glow shadow
+                </p>
+              </div>
+            </div>
+
+            {/* ev-dot-grid + ev-mesh-bg */}
+            <div className="space-y-3">
+              <div className="relative h-[46px] rounded-xl overflow-hidden border border-white/[0.08]">
+                <div className="absolute inset-0 ev-dot-grid opacity-60" />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <p className="text-xs text-muted-foreground font-mono">ev-dot-grid</p>
+                </div>
+              </div>
+              <div>
+                <p className="font-semibold">Background Patterns</p>
+                <p className="text-sm text-muted-foreground font-mono">
+                  ev-dot-grid · ev-mesh-bg · ev-noise
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Spacing Section */}
         <section className="mb-16">
           <h2 className="text-3xl font-bold mb-8 border-b border-white/[0.08] pb-4">
