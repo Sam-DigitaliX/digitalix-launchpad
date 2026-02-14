@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
+import { DataLayerPageView } from "./components/DataLayerPageView";
 import OrbitLoader from "./components/OrbitLoader";
 
 // Route-level code splitting — each page is loaded on demand
@@ -28,6 +29,7 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <ScrollToTop />
+        <DataLayerPageView />
         <Suspense fallback={<OrbitLoader />}>
           <Routes>
             <Route path="/" element={<Home />} />
