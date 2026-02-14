@@ -64,7 +64,7 @@ export default function Contact() {
         {/* Form + Testimonials */}
         <div className="container max-w-6xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
-            <div className="flex-1 lg:max-w-3xl">
+            <div className="flex-1 lg:max-w-3xl min-h-[80dvh] lg:min-h-0">
               <QualificationForm />
             </div>
             <aside className="hidden lg:block w-80 shrink-0">
