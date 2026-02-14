@@ -1,24 +1,16 @@
-import { StepProps, PROFILE_OPTIONS } from '../types';
+import { StepProps, PROFILE_GROUPS } from '../types';
 import { Button } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
-import { User, Briefcase, LineChart, Code, GraduationCap, HelpCircle, Building, UserCheck } from 'lucide-react';
-
-const ICONS: Record<string, React.ReactNode> = {
-  agency_seo_sea: <Building className="w-6 h-6" />,
-  ecommerce_manager: <Briefcase className="w-6 h-6" />,
-  marketing_director: <UserCheck className="w-6 h-6" />,
-  data_analyst: <LineChart className="w-6 h-6" />,
-  freelance: <User className="w-6 h-6" />,
-  developer: <Code className="w-6 h-6" />,
-  student: <GraduationCap className="w-6 h-6" />,
-  other: <HelpCircle className="w-6 h-6" />,
-};
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export function ProfileStep({ data, updateData, onNext, isHotProspect }: StepProps) {
-  const handleSelect = (value: string) => {
-    updateData({ profile_type: value });
-  };
-
   return (
     <div className="space-y-8 animate-fade-in-up">
       <div className="text-center space-y-3">
@@ -30,47 +22,46 @@ export function ProfileStep({ data, updateData, onNext, isHotProspect }: StepPro
           )}
         </h2>
         <p className="text-muted-foreground max-w-md mx-auto">
-          {isHotProspect 
-            ? "Formulaire express : quelques infos et on vous rappelle rapidement"
+          {isHotProspect
+            ? "Quelques infos et on vous rappelle rapidement"
             : "Pour vous proposer l'accompagnement le plus adapté"
           }
         </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {PROFILE_OPTIONS.map((option) => {
-          const isSelected = data.profile_type === option.value;
-          
-          return (
-            <button
-              key={option.value}
-              onClick={() => handleSelect(option.value)}
-              className={cn(
-                "glass-card p-6 flex flex-col items-center gap-3 transition-all duration-300 cursor-pointer group",
-                isSelected && "border-primary glow-primary",
-                !isSelected && "hover:border-primary/50"
-              )}
-            >
-              <div className={cn(
-                "p-3 rounded-xl transition-colors duration-300",
-                isSelected ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground group-hover:text-primary"
-              )}>
-                {ICONS[option.value]}
-              </div>
-              <span className={cn(
-                "text-sm font-medium text-center transition-colors duration-300",
-                isSelected ? "text-foreground" : "text-muted-foreground group-hover:text-foreground"
-              )}>
-                {option.label}
-              </span>
-            </button>
-          );
-        })}
+      <div className="max-w-sm mx-auto">
+        <label className="text-sm font-medium text-foreground mb-2 block">Vous êtes</label>
+        <Select
+          value={data.profile_type || ''}
+          onValueChange={(value) => updateData({ profile_type: value })}
+        >
+          <SelectTrigger className="w-full h-12 bg-white/[0.04] border-white/[0.08] focus:border-primary text-base">
+            <SelectValue placeholder="Sélectionnez votre profil" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border-white/[0.08]">
+            {PROFILE_GROUPS.map((group) => (
+              <SelectGroup key={group.label}>
+                <SelectLabel className="text-xs uppercase tracking-wider text-muted-foreground font-semibold px-2 py-1.5">
+                  {group.label}
+                </SelectLabel>
+                {group.options.map((option) => (
+                  <SelectItem
+                    key={option.value}
+                    value={option.value}
+                    className="cursor-pointer text-base"
+                  >
+                    {option.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="flex justify-center pt-4 px-4 sm:px-0">
-        <Button 
-          variant="heroGradient" 
+        <Button
+          variant="heroGradient"
           size="lg"
           onClick={onNext}
           disabled={!data.profile_type}

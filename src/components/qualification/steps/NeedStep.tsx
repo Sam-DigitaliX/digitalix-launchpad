@@ -1,7 +1,14 @@
 import { StepProps, BUDGET_OPTIONS, TIMELINE_OPTIONS, PRIORITY_OPTIONS } from '../types';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import { ArrowLeft, Wallet, Clock, Target } from 'lucide-react';
+import { ArrowLeft, Wallet, Clock, Target, Check } from 'lucide-react';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 export function NeedStep({ data, updateData, onNext, onPrev }: StepProps) {
   return (
@@ -15,72 +22,54 @@ export function NeedStep({ data, updateData, onNext, onPrev }: StepProps) {
         </p>
       </div>
 
-      {/* Budget */}
-      <div className="space-y-4">
+      {/* Budget — dropdown */}
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Wallet className="w-5 h-5 text-primary" />
           <label className="text-sm font-medium text-foreground">Budget envisagé</label>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {BUDGET_OPTIONS.map((option) => {
-            const isSelected = data.budget_range === option.value;
-            
-            return (
-              <button
-                key={option.value}
-                onClick={() => updateData({ budget_range: option.value })}
-                className={cn(
-                  "glass-card p-4 text-center transition-all duration-300",
-                  isSelected && "border-primary glow-primary",
-                  !isSelected && "hover:border-primary/50"
-                )}
-              >
-                <span className={cn(
-                  "text-sm font-medium",
-                  isSelected ? "text-foreground" : "text-muted-foreground"
-                )}>
-                  {option.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <Select
+          value={data.budget_range || ''}
+          onValueChange={(value) => updateData({ budget_range: value })}
+        >
+          <SelectTrigger className="w-full h-12 bg-white/[0.04] border-white/[0.08] focus:border-primary text-base">
+            <SelectValue placeholder="Sélectionnez un budget" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border-white/[0.08]">
+            {BUDGET_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value} className="cursor-pointer text-base">
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Timeline */}
-      <div className="space-y-4">
+      {/* Timeline — dropdown */}
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Clock className="w-5 h-5 text-secondary" />
           <label className="text-sm font-medium text-foreground">Délai souhaité</label>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {TIMELINE_OPTIONS.map((option) => {
-            const isSelected = data.timeline === option.value;
-            
-            return (
-              <button
-                key={option.value}
-                onClick={() => updateData({ timeline: option.value })}
-                className={cn(
-                  "glass-card p-4 text-center transition-all duration-300",
-                  isSelected && "border-secondary",
-                  !isSelected && "hover:border-secondary/50"
-                )}
-              >
-                <span className={cn(
-                  "text-sm font-medium",
-                  isSelected ? "text-foreground" : "text-muted-foreground"
-                )}>
-                  {option.label}
-                </span>
-              </button>
-            );
-          })}
-        </div>
+        <Select
+          value={data.timeline || ''}
+          onValueChange={(value) => updateData({ timeline: value })}
+        >
+          <SelectTrigger className="w-full h-12 bg-white/[0.04] border-white/[0.08] focus:border-secondary text-base">
+            <SelectValue placeholder="Sélectionnez un délai" />
+          </SelectTrigger>
+          <SelectContent className="bg-background border-white/[0.08]">
+            {TIMELINE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value} className="cursor-pointer text-base">
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Priority */}
-      <div className="space-y-4">
+      {/* Priority — radio */}
+      <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Target className="w-5 h-5 text-primary" />
           <label className="text-sm font-medium text-foreground">Niveau de priorité</label>
@@ -88,17 +77,19 @@ export function NeedStep({ data, updateData, onNext, onPrev }: StepProps) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {PRIORITY_OPTIONS.map((option) => {
             const isSelected = data.priority === option.value;
-            
+
             return (
               <button
                 key={option.value}
+                type="button"
                 onClick={() => updateData({ priority: option.value })}
                 className={cn(
-                  "glass-card p-4 text-center transition-all duration-300",
+                  "glass-card p-4 text-center transition-all duration-300 flex items-center justify-center gap-2",
                   isSelected && "border-primary glow-primary",
                   !isSelected && "hover:border-primary/50"
                 )}
               >
+                {isSelected && <Check className="w-4 h-4 text-primary shrink-0" />}
                 <span className={cn(
                   "text-sm font-medium",
                   isSelected ? "text-foreground" : "text-muted-foreground"
@@ -112,16 +103,16 @@ export function NeedStep({ data, updateData, onNext, onPrev }: StepProps) {
       </div>
 
       <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={onPrev}
           className="gap-2 w-full sm:w-auto"
         >
           <ArrowLeft className="w-4 h-4" />
           Retour
         </Button>
-        <Button 
-          variant="heroGradient" 
+        <Button
+          variant="heroGradient"
           size="lg"
           onClick={onNext}
           className="w-full sm:w-auto sm:min-w-[200px]"

@@ -3,6 +3,7 @@ import { StepProps } from '../types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import { ArrowLeft, Building2, User, Mail, Phone } from 'lucide-react';
 import {
   Select,
@@ -58,8 +59,6 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
     return COUNTRY_CODES.find(c => c.code === countryCode)?.dialCode || '+33';
   };
 
-
-
   // Build E.164 format
   const buildE164 = (nationalNumber: string, countryCode: string): string => {
     const dialCode = getDialCode(countryCode);
@@ -70,17 +69,17 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
   const handlePhoneChange = (value: string) => {
     // Only allow digits (strip everything else immediately)
     let digitsOnly = value.replace(/[^\d]/g, '');
-    
+
     // Auto-remove leading zero
     if (digitsOnly.startsWith('0')) {
       digitsOnly = digitsOnly.slice(1);
     }
-    
+
     // Limit to reasonable length (max 15 digits for national number)
     digitsOnly = digitsOnly.slice(0, 15);
-    
+
     setPhoneNumber(digitsOnly);
-    
+
     // Update form data with E.164 format (debounced)
     const e164 = buildE164(digitsOnly, selectedCountry);
     if (/^\+\d{8,15}$/.test(e164)) {
@@ -103,9 +102,11 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
   const e164Phone = phoneNumber ? buildE164(phoneNumber, selectedCountry) : '';
   const isPhoneValid = /^\+\d{8,15}$/.test(e164Phone);
 
-  const isValid = data.full_name && data.full_name.length >= 2 &&
+  const isValid = data.company_name && data.company_name.length >= 1 &&
+                  data.full_name && data.full_name.length >= 2 &&
                   data.email && /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(data.email) &&
-                  isPhoneValid;
+                  isPhoneValid &&
+                  data.gdpr_consent === true;
 
   const selectedCountryData = COUNTRY_CODES.find(c => c.code === selectedCountry);
 
@@ -121,11 +122,11 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
       </div>
 
       <div className="max-w-md mx-auto space-y-6">
-        {/* Company name */}
+        {/* Company name — required */}
         <div className="space-y-2">
           <Label htmlFor="company" className="flex items-center gap-2">
             <Building2 className="w-4 h-4 text-muted-foreground" />
-            Entreprise <span className="text-muted-foreground text-xs">(optionnel)</span>
+            Entreprise *
           </Label>
           <Input
             id="company"
@@ -133,6 +134,7 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
             value={data.company_name || ''}
             onChange={(e) => updateData({ company_name: e.target.value })}
             className="bg-muted/50 border-glass-border focus:border-primary"
+            required
           />
         </div>
 
@@ -190,8 +192,8 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
               </SelectTrigger>
               <SelectContent className="max-h-[280px] bg-background border-glass-border">
                 {COUNTRY_CODES.map((country) => (
-                  <SelectItem 
-                    key={country.code} 
+                  <SelectItem
+                    key={country.code}
                     value={country.code}
                     className="cursor-pointer"
                   >
@@ -222,15 +224,45 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
           )}
           {phoneNumber && isPhoneValid && (
             <p className="text-xs text-primary font-mono">
-              → {data.phone}
+              &rarr; {data.phone}
             </p>
           )}
+        </div>
+
+        {/* RGPD & Newsletter checkboxes */}
+        <div className="space-y-4 pt-2 border-t border-white/[0.06]">
+          {/* RGPD consent — mandatory */}
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="gdpr_consent"
+              checked={data.gdpr_consent === true}
+              onCheckedChange={(checked) => updateData({ gdpr_consent: checked === true ? true : undefined as unknown as true })}
+              className="mt-0.5"
+            />
+            <Label htmlFor="gdpr_consent" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+              J'accepte que mes données personnelles soient traitées par DigitaliX dans le cadre de ma demande, conformément à la{' '}
+              <span className="text-foreground underline">politique de confidentialité</span>. *
+            </Label>
+          </div>
+
+          {/* Newsletter opt-in — optional */}
+          <div className="flex items-start gap-3">
+            <Checkbox
+              id="newsletter_optin"
+              checked={data.newsletter_optin === true}
+              onCheckedChange={(checked) => updateData({ newsletter_optin: checked === true })}
+              className="mt-0.5"
+            />
+            <Label htmlFor="newsletter_optin" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+              J'accepte de recevoir la newsletter et les actualités de DigitaliX
+            </Label>
+          </div>
         </div>
       </div>
 
       <div className="flex flex-col-reverse sm:flex-row justify-between gap-3 pt-4">
-        <Button 
-          variant="ghost" 
+        <Button
+          variant="ghost"
           onClick={onPrev}
           className="gap-2 w-full sm:w-auto"
           disabled={isSubmitting}
@@ -238,8 +270,8 @@ export function ContactStep({ data, updateData, onPrev, isSubmitting, onSubmit }
           <ArrowLeft className="w-4 h-4" />
           Retour
         </Button>
-        <Button 
-          variant="heroGradient" 
+        <Button
+          variant="heroGradient"
           size="lg"
           onClick={onSubmit}
           disabled={!isValid || isSubmitting}
