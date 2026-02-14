@@ -12,8 +12,7 @@ const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY")!;
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 
-// Switch to your verified domain sender when ready
-const FROM_EMAIL = "DigitaliX <onboarding@resend.dev>";
+const FROM_EMAIL = "DigitaliX <noreply@digitalix.xyz>";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
