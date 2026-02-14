@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ScrollToTop } from "./components/ScrollToTop";
 import { DataLayerPageView } from "./components/DataLayerPageView";
+import { SpeedInsights } from "@vercel/speed-insights/react";
 import OrbitLoader from "./components/OrbitLoader";
 
 // Route-level code splitting — each page is loaded on demand
@@ -46,6 +47,7 @@ const App = () => (
           </Routes>
         </Suspense>
       </BrowserRouter>
+      <SpeedInsights />
     </TooltipProvider>
   </QueryClientProvider>
 );
