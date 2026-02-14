@@ -246,6 +246,24 @@ const AuditResults = () => {
       console.error('[AuditResults] Network error:', err);
     }
 
+    // Send audit unlock email via Edge Function (non-blocking)
+    try {
+      if (supabase) {
+        await supabase.functions.invoke('send-confirmation', {
+          body: {
+            type: 'audit_unlock',
+            data: {
+              email: email.trim(),
+              url: auditUrl,
+              score: MOCK_SCORE,
+            },
+          },
+        });
+      }
+    } catch (emailErr) {
+      console.warn('[AuditResults] Confirmation email failed:', emailErr);
+    }
+
     setIsUnlocked(true);
     setEmailSubmitting(false);
   };

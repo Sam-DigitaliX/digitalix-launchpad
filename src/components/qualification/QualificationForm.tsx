@@ -158,6 +158,29 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
           : undefined,
       });
 
+      // Send confirmation email via Edge Function (non-blocking)
+      try {
+        await supabase.functions.invoke('send-confirmation', {
+          body: {
+            type: 'confirmation',
+            data: {
+              email: validData.email,
+              full_name: validData.full_name,
+              company_name: validData.company_name,
+              profile_type: validData.profile_type,
+              current_situation: validData.current_situation,
+              pain_points: validData.pain_points,
+              budget_range: validData.budget_range,
+              timeline: validData.timeline,
+              score: scoringResult.score,
+              is_qualified: scoringResult.isQualified,
+            },
+          },
+        });
+      } catch (emailErr) {
+        console.warn('[QualificationForm] Confirmation email failed:', emailErr);
+      }
+
     } catch (err) {
       toast({
         title: "Erreur réseau",
