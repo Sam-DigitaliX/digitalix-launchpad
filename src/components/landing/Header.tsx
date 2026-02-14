@@ -399,6 +399,19 @@ const Header = () => {
                 }`}
               />
             </button>
+
+            {/* Contact link */}
+            <Link
+              to="/contact"
+              className={`flex items-center px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+                isPathActive("/contact")
+                  ? "bg-white/[0.08] text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}
+              onClick={closeDropdown}
+            >
+              Contact
+            </Link>
           </nav>
 
           {/* ──── Desktop: CTA ──── */}
@@ -613,6 +626,15 @@ const Header = () => {
                   />
                 ))}
               </MobileAccordion>
+
+              {/* Contact link */}
+              <Link
+                to="/contact"
+                className="py-3 text-base font-medium text-muted-foreground hover:text-foreground transition-colors"
+                onClick={closeMobile}
+              >
+                Contact
+              </Link>
 
               {/* CTA mobile */}
               <Button
