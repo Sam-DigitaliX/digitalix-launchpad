@@ -19,6 +19,8 @@ const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const AuditTracking = lazy(() => import("./pages/AuditTracking"));
 const AuditResults = lazy(() => import("./pages/AuditResults"));
 const About = lazy(() => import("./pages/About"));
+const CaseStudies = lazy(() => import("./pages/CaseStudies"));
+const CaseStudyDetail = lazy(() => import("./pages/CaseStudyDetail"));
 const Admin = lazy(() => import("./pages/Admin"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -43,6 +45,8 @@ const App = () => (
             <Route path="/audit-tracking/resultats/:id" element={<AuditResults />} />
             <Route path="/brand" element={<Brand />} />
             <Route path="/a-propos" element={<About />} />
+            <Route path="/cas-clients" element={<CaseStudies />} />
+            <Route path="/cas-clients/:slug" element={<CaseStudyDetail />} />
             <Route path="/admin" element={<Admin />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
