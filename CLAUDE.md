@@ -5,11 +5,11 @@ Marketing site + lead qualification platform for DigitaliX (server-side tracking
 Live at: https://digitalix.fr (deployed via Vercel)
 
 ## Tech Stack
-- React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui
-- Supabase (PostgreSQL + Edge Functions + RLS) — **migration to direct PostgreSQL planned**
-- Resend for transactional emails (domain: digitalix.xyz, from: noreply@digitalix.xyz)
-- GTM (GTM-PD3X686F) with virtual_page_view for SPA tracking
-- Vercel Speed Insights
+- **Frontend**: React 18 + TypeScript + Vite + Tailwind CSS + shadcn/ui (Vercel)
+- **Backend**: Hono API (`api/`) + PostgreSQL on Coolify — replaces Supabase
+- **Email**: Resend (domain: digitalix.xyz, from: noreply@digitalix.xyz)
+- **Tracking**: GTM (GTM-PD3X686F) with virtual_page_view for SPA tracking
+- **Analytics**: Vercel Speed Insights
 
 ## Architecture
 
@@ -29,17 +29,29 @@ Live at: https://digitalix.fr (deployed via Vercel)
 | `/brand` | Brand Guide | Design system reference |
 | `/admin` | Admin Dashboard | Key-based auth via sessionStorage |
 
-### Database (Supabase)
-- `contacts` — leads with progressive enrichment (email as unique key)
-- `interactions` — timeline of all contact touchpoints
-- `email_logs` — every email sent via Resend
-- `admin_config` — admin key storage (workaround for Supabase Cloud permission limits)
-- Key RPCs: `upsert_contact_with_interaction`, `log_email`, `admin_get_stats`, `admin_get_contacts`
-- Migrations: `001_contacts_interactions.sql`, `002_admin_dashboard.sql`, `003_email_system.sql`
+### Backend API (`api/`)
+- **Base URL**: `https://api.digitalix.fr` (env: `VITE_API_URL`)
+- **Framework**: Hono (TypeScript, Node.js)
+- **Database**: PostgreSQL (postgres.js driver)
+- **Migration**: `api/migrations/001_schema.sql`
+- **Dockerfile**: `api/Dockerfile`
+- Tables: `contacts`, `interactions`, `email_logs`, `admin_config`
+- API routes:
+  - `POST /contacts/upsert` — upsert contact + log interaction
+  - `POST /email/send` — send confirmation/audit emails via Resend
+  - `GET /admin/stats` — dashboard stats (x-admin-key header)
+  - `GET /admin/contacts` — list all contacts
+  - `GET /admin/contacts/:id/timeline` — contact interaction history
+  - `GET /admin/email-stats` — email analytics
+  - `GET /admin/contacts/:id/emails` — contact email history
+
+### Frontend API Client
+- `src/lib/api.ts` — typed fetch wrapper, replaces Supabase client
+- Env var: `VITE_API_URL` (defaults to `https://api.digitalix.fr`)
 
 ### Email System
-- Edge Function: `supabase/functions/send-confirmation/index.ts`
-- Templates: `confirmation_qualified`, `confirmation_unqualified`, `audit_unlock`
+- Templates in `api/src/lib/email-templates.ts`
+- Types: `confirmation_qualified`, `confirmation_unqualified`, `audit_unlock`
 - All emails logged to `email_logs` + `interactions` tables
 
 ### Lead Scoring
@@ -54,16 +66,26 @@ Live at: https://digitalix.fr (deployed via Vercel)
 - Always use tokens: `text-foreground`, `text-muted-foreground`, `border-glass-border`, `bg-glass`, `font-display`, `font-mono`
 
 ## Known TODOs
-- [ ] **Supabase → PostgreSQL migration** (main priority)
+- [x] **Supabase → PostgreSQL migration** — code done, needs deployment on Coolify
+- [ ] Deploy API on Coolify + configure DNS (api.digitalix.fr)
+- [ ] Run `api/migrations/001_schema.sql` on PostgreSQL + insert admin key
+- [ ] Set env vars on Vercel: `VITE_API_URL=https://api.digitalix.fr`
 - [ ] Audit Tracking: replace mock data with real site scanning
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
 
 ## Commands
 ```bash
+# Frontend
 npm run dev        # Dev server on :8080
 npm run build      # Production build
 npm run test       # Vitest
 npm run lint       # ESLint
 npm run format     # Prettier
+
+# API (from api/ directory)
+npm run dev        # Dev server on :3000 (tsx watch)
+npm run build      # Compile TypeScript
+npm run start      # Production (node dist/index.js)
+npm run migrate    # Run database migrations
 ```
