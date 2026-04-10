@@ -108,11 +108,11 @@ function baseLayout(content: string): string {
     <div style="text-align: center; margin-top: 32px;">
       <p style="color: #9ca3af; font-size: 12px; line-height: 1.5; margin: 0;">
         DigitaliX — Server-Side Tracking Experts<br />
-        Cet email a été envoyé à la suite de votre interaction sur digitalix.fr
+        Cet email a été envoyé à la suite de votre interaction sur digitalix.xyz
       </p>
       <p style="margin: 12px 0 0 0;">
-        <a href="https://digitalix.fr" style="color: #7c3aed; font-size: 12px; text-decoration: none;">
-          digitalix.fr
+        <a href="https://digitalix.xyz" style="color: #7c3aed; font-size: 12px; text-decoration: none;">
+          digitalix.xyz
         </a>
       </p>
     </div>
@@ -168,7 +168,7 @@ export function buildConfirmationEmail(d: ConfirmationData): {
         <p style="color: rgba(255,255,255,0.85); font-size: 14px; margin: 0 0 16px 0;">
           Un expert DigitaliX va analyser votre setup en détail et vous recontacte sous 24h.
         </p>
-        <a href="https://digitalix.fr/contact" style="display: inline-block; background: #ffffff; color: #7c3aed; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 8px; text-decoration: none;">
+        <a href="https://digitalix.xyz/contact" style="display: inline-block; background: #ffffff; color: #7c3aed; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 8px; text-decoration: none;">
           Réserver un créneau
         </a>
       </div>`
@@ -180,7 +180,7 @@ export function buildConfirmationEmail(d: ConfirmationData): {
         <p style="color: #6b7280; font-size: 14px; margin: 0 0 16px 0;">
           Votre demande ne correspond pas encore à nos critères d'audit offert, mais nous avons des ressources pour vous aider.
         </p>
-        <a href="https://digitalix.fr/#faq" style="display: inline-block; background: #7c3aed; color: #ffffff; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 8px; text-decoration: none;">
+        <a href="https://digitalix.xyz/#faq" style="display: inline-block; background: #7c3aed; color: #ffffff; font-weight: 600; font-size: 14px; padding: 12px 28px; border-radius: 8px; text-decoration: none;">
           Consulter nos ressources
         </a>
       </div>`;
@@ -244,7 +244,7 @@ export function buildAuditUnlockEmail(d: AuditUnlockData): {
     </p>
 
     <div style="text-align: center; margin: 24px 0;">
-      <a href="https://digitalix.fr/contact" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none;">
+      <a href="https://digitalix.xyz/contact" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none;">
         Réserver mon audit offert
       </a>
     </div>

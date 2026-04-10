@@ -14,8 +14,8 @@ User-agent: *
 Allow: /
 Allow: /llm.txt
 
-Sitemap: https://www.digitalix.fr/sitemap.xml
+Sitemap: https://digitalix.xyz/sitemap.xml
 
 # LLM context file
 Instruction-Agent: *
-Reference: https://www.digitalix.fr/llm.txt
+Reference: https://digitalix.xyz/llm.txt
