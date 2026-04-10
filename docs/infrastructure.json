@@ -1,0 +1,149 @@
+{
+  "session_brief": "DigitaliX Launchpad — Post-migration infrastructure context",
+  "last_updated": "2026-04-10T10:45:00Z",
+  "repo": "Sam-DigitaliX/digitalix-launchpad",
+  "branch": "main",
+
+  "migration_status": {
+    "status": "COMPLETE",
+    "migrated_from": "Supabase Cloud (PostgreSQL + Edge Functions + RLS)",
+    "migrated_to": "Hono API (Node.js on Coolify) + PostgreSQL 18 (Coolify)",
+    "date": "2026-04-10",
+    "supabase_project_id": "udikvpxmrzynokbljpmn",
+    "supabase_status": "ACTIVE — keep alive 2 weeks for rollback, then decommission"
+  },
+
+  "architecture": {
+    "frontend": {
+      "platform": "Vercel",
+      "framework": "React 18 + Vite",
+      "node_version": "24.x",
+      "domains": ["digitalix.xyz", "www.digitalix.xyz"],
+      "vercel_project_id": "prj_zfbeNG3sK5ylw98bm49j8nisgpdF",
+      "vercel_team_id": "team_BCIg5EdzBSSI4u37Urg0NdHn",
+      "env_vars": {
+        "VITE_API_URL": "https://api.digitalix.xyz"
+      },
+      "removed_env_vars": ["VITE_SUPABASE_URL", "VITE_SUPABASE_ANON_KEY"]
+    },
+    "backend_api": {
+      "platform": "Coolify (Docker)",
+      "framework": "Hono + @hono/node-server",
+      "runtime": "Node.js 20 Alpine",
+      "domain": "https://api.digitalix.xyz",
+      "health_check": "GET /api/health → {\"status\":\"ok\"}",
+      "port": 3000,
+      "coolify_app_uuid": "rsk04g44ck8c4g0g8og40go0",
+      "coolify_project_uuid": "t4c840400wg08gccooc4g08w",
+      "git_source": "Sam-DigitaliX/digitalix-launchpad (branch: main, base_dir: /api)",
+      "build_pack": "Dockerfile",
+      "dockerfile_location": "/api/Dockerfile",
+      "auto_deploy": true,
+      "env_vars": {
+        "DATABASE_URL": "postgresql://digitalix:<password>@nkococ8sg8sowwgwks4cwoss:5432/digitalix",
+        "RESEND_API_KEY": "<redacted>",
+        "ADMIN_CORS_ORIGINS": "https://digitalix.xyz,http://localhost:8080",
+        "PORT": "3000"
+      }
+    },
+    "database": {
+      "platform": "Coolify (Docker)",
+      "engine": "PostgreSQL 18 Alpine",
+      "name": "digitalix-db",
+      "database_name": "digitalix",
+      "user": "digitalix",
+      "internal_host": "nkococ8sg8sowwgwks4cwoss",
+      "port": 5432,
+      "public": false,
+      "coolify_project": "Digitalix.xyz",
+      "tables": {
+        "contacts": {"rows": 4, "description": "Leads with progressive enrichment, email = unique key"},
+        "interactions": {"rows": 11, "description": "Timeline of all contact touchpoints"},
+        "email_logs": {"rows": 4, "description": "Every email sent via Resend"},
+        "admin_config": {"rows": 1, "description": "Admin password storage (single row)"}
+      },
+      "views": ["admin_contacts_overview"],
+      "indexes": [
+        "idx_interactions_contact_id",
+        "idx_interactions_type",
+        "idx_email_logs_contact_id",
+        "idx_email_logs_template_key",
+        "idx_email_logs_status"
+      ]
+    },
+    "email": {
+      "provider": "Resend",
+      "called_from": "Hono API (POST /api/email/send-confirmation)",
+      "templates": ["confirmation_qualified", "confirmation_unqualified", "audit_unlock"]
+    }
+  },
+
+  "api_routes": {
+    "public": [
+      {"method": "GET", "path": "/api/health", "description": "Health check"},
+      {"method": "POST", "path": "/api/contacts", "description": "Upsert contact + log interaction"},
+      {"method": "POST", "path": "/api/email/send-confirmation", "description": "Send email via Resend + log"}
+    ],
+    "admin_protected": [
+      {"method": "GET", "path": "/api/admin/stats", "auth": "Authorization: Bearer <admin-key>", "description": "Dashboard stats"},
+      {"method": "GET", "path": "/api/admin/contacts", "auth": "Authorization: Bearer <admin-key>", "description": "All contacts with interaction summary"},
+      {"method": "GET", "path": "/api/admin/contacts/:id/timeline", "auth": "Authorization: Bearer <admin-key>", "description": "Interaction timeline for one contact"},
+      {"method": "GET", "path": "/api/admin/email-stats", "auth": "Authorization: Bearer <admin-key>", "description": "Email delivery stats"},
+      {"method": "GET", "path": "/api/admin/contacts/:id/emails", "auth": "Authorization: Bearer <admin-key>", "description": "Email logs for one contact"}
+    ]
+  },
+
+  "infrastructure": {
+    "vps": {
+      "provider": "Hostinger",
+      "plan": "KVM 1",
+      "vm_id": 943762,
+      "ip": "148.230.108.196",
+      "os": "Ubuntu 24.04.4 LTS",
+      "cpu": "1 vCPU",
+      "ram": "3.8 GB",
+      "disk": "47.39 GB"
+    },
+    "firewall": {
+      "id": 263269,
+      "name": "digitalix-firewall",
+      "rules": [
+        {"port": "22", "protocol": "SSH", "source": "any"},
+        {"port": "80", "protocol": "HTTP", "source": "any"},
+        {"port": "443", "protocol": "HTTPS", "source": "any"},
+        {"port": "443", "protocol": "UDP", "source": "any", "note": "HTTP/3"},
+        {"port": "6001:6002", "protocol": "TCP", "source": "any", "note": "Coolify realtime (soketi)"},
+        {"port": "8000", "protocol": "TCP", "source": "any", "note": "Coolify panel + API"}
+      ]
+    },
+    "coolify": {
+      "version": "4.0.0-beta.463",
+      "proxy": "Traefik v3.6.9",
+      "ssl": "Let's Encrypt auto via Traefik",
+      "github_app": "coolify-digitalix (connected to Sam-DigitaliX personal account)",
+      "server_uuid": "q0skgc8c4gc4o4ww8c84c400"
+    },
+    "dns": {
+      "provider": "Cloudflare",
+      "records": [
+        {"type": "A", "name": "api", "value": "148.230.108.196", "proxy": false, "domain": "digitalix.xyz"}
+      ]
+    },
+    "other_services_on_vps": [
+      {"name": "Probr.io backend", "status": "running:healthy", "coolify_uuid": "u4skg44k888so8kogs0wks08"},
+      {"name": "BookStack (docs.probr.io)", "status": "running:healthy", "coolify_uuid": "xgwsow0w0ow4kwcg04kcog8w"},
+      {"name": "PostgreSQL 18 (Probr DB)", "status": "running:healthy", "project": "trackguard (ex-Probr)"}
+    ]
+  },
+
+  "instructions_for_claude_code": [
+    "The Supabase migration is COMPLETE. Do NOT use Supabase SDK or import from src/integrations/supabase/.",
+    "All data access goes through the Hono API at https://api.digitalix.xyz.",
+    "Frontend uses src/lib/api.ts for all API calls (fetch-based, no SDK).",
+    "Admin routes require Authorization: Bearer <key> header.",
+    "The API backend code lives in /api/ folder of this repo.",
+    "Auto-deploy is enabled: pushing to main triggers Coolify build+deploy via GitHub webhooks.",
+    "The Dockerfile is in /api/Dockerfile and uses Node.js 20 Alpine (NOT Bun).",
+    "For infra changes (Coolify, VPS, firewall, DNS), ask the user to go to their claude.ai chat session which has MCP access to Coolify, Hostinger, and Vercel."
+  ]
+}
