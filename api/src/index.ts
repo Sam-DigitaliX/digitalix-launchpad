@@ -1,3 +1,4 @@
+import { serve } from '@hono/node-server';
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { logger } from 'hono/logger';
@@ -7,12 +8,14 @@ import admin from './routes/admin.js';
 
 const app = new Hono();
 
-const CORS_ORIGIN = process.env.ADMIN_CORS_ORIGIN ?? 'https://digitalix.fr';
+const corsOrigins = (process.env.ADMIN_CORS_ORIGINS ?? 'https://digitalix.xyz')
+  .split(',')
+  .map((o) => o.trim());
 
 app.use(
   '/*',
   cors({
-    origin: [CORS_ORIGIN, 'http://localhost:8080', 'http://localhost:5173'],
+    origin: [...corsOrigins, 'http://localhost:8080', 'http://localhost:5173'],
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
   }),
@@ -27,8 +30,6 @@ app.get('/api/health', (c) => c.json({ status: 'ok' }));
 app.route('/api/contacts', contacts);
 app.route('/api/email', email);
 app.route('/api/admin', admin);
-
-import { serve } from '@hono/node-server';
 
 const port = Number(process.env.PORT ?? 3000);
 
