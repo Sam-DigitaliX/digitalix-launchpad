@@ -9,6 +9,7 @@
     "migrate": "tsx src/lib/migrate.ts"
   },
   "dependencies": {
+    "@hono/node-server": "^1.13.0",
     "hono": "^4.7.0",
     "postgres": "^3.4.5"
   },

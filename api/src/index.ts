@@ -28,11 +28,10 @@ app.route('/api/contacts', contacts);
 app.route('/api/email', email);
 app.route('/api/admin', admin);
 
+import { serve } from '@hono/node-server';
+
 const port = Number(process.env.PORT ?? 3000);
 
-console.log(`[digitalix-api] Listening on :${port}`);
-
-export default {
-  port,
-  fetch: app.fetch,
-};
+serve({ fetch: app.fetch, port }, (info) => {
+  console.log(`[digitalix-api] Listening on :${info.port}`);
+});
