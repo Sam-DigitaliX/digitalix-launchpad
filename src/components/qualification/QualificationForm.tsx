@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { supabase } from '@/integrations/supabase';
+import { upsertContact, sendEmail, ApiError } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
 import { LeadFormData, leadSchema, calculateScore, ScoringResult } from './types';
 import { StepProgress } from './StepProgress';
@@ -96,30 +96,21 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
 
       const validData = validation.data;
 
-      if (!supabase) {
-        toast({
-          title: "Configuration manquante",
-          description: "Le service de base de données n'est pas configuré.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Upsert contact + log interaction via RPC (atomic, bypasses RLS)
-      const { error } = await supabase.rpc('upsert_contact_with_interaction', {
-        p_email: validData.email,
-        p_full_name: validData.full_name,
-        p_company_name: validData.company_name,
-        p_phone: validData.phone,
-        p_profile_type: validData.profile_type,
-        p_qualification_score: scoringResult.score,
-        p_is_qualified: scoringResult.isQualified,
-        p_gdpr_consent: validData.gdpr_consent,
-        p_gdpr_consent_at: new Date().toISOString(),
-        p_newsletter_optin: validData.newsletter_optin ?? false,
-        p_behavioral_profile: behavioralData?.profileLabel ?? null,
-        p_interaction_type: 'qualification_form',
-        p_interaction_metadata: {
+      // Upsert contact + log interaction via API
+      await upsertContact({
+        email: validData.email,
+        full_name: validData.full_name,
+        company_name: validData.company_name,
+        phone: validData.phone,
+        profile_type: validData.profile_type,
+        qualification_score: scoringResult.score,
+        is_qualified: scoringResult.isQualified,
+        gdpr_consent: validData.gdpr_consent,
+        gdpr_consent_at: new Date().toISOString(),
+        newsletter_optin: validData.newsletter_optin ?? false,
+        behavioral_profile: behavioralData?.profileLabel ?? null,
+        interaction_type: 'qualification_form',
+        interaction_metadata: {
           current_situation: validData.current_situation,
           pain_points: validData.pain_points,
           budget_range: validData.budget_range,
@@ -137,19 +128,6 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         },
       });
 
-      if (error) {
-        console.error('[QualificationForm] Supabase insert error:', error.message, error.details, error.hint);
-        const isNetworkError = error.message?.includes('fetch') || error.message?.includes('network');
-        toast({
-          title: "Erreur",
-          description: isNetworkError
-            ? "Problème de connexion. Vérifiez votre réseau et réessayez."
-            : "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
-          variant: "destructive",
-        });
-        return;
-      }
-
       // Show result
       setResult(scoringResult);
       setCurrentStep(TOTAL_STEPS);
@@ -164,33 +142,34 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
           : undefined,
       });
 
-      // Send confirmation email via Edge Function (non-blocking)
+      // Send confirmation email via API (non-blocking)
       try {
-        await supabase.functions.invoke('send-confirmation', {
-          body: {
-            type: 'confirmation',
-            data: {
-              email: validData.email,
-              full_name: validData.full_name,
-              company_name: validData.company_name,
-              profile_type: validData.profile_type,
-              current_situation: validData.current_situation,
-              pain_points: validData.pain_points,
-              budget_range: validData.budget_range,
-              timeline: validData.timeline,
-              score: scoringResult.score,
-              is_qualified: scoringResult.isQualified,
-            },
+        await sendEmail({
+          type: 'confirmation',
+          data: {
+            email: validData.email,
+            full_name: validData.full_name,
+            company_name: validData.company_name,
+            profile_type: validData.profile_type,
+            current_situation: validData.current_situation,
+            pain_points: validData.pain_points,
+            budget_range: validData.budget_range,
+            timeline: validData.timeline,
+            score: scoringResult.score,
+            is_qualified: scoringResult.isQualified,
           },
         });
       } catch (emailErr) {
         console.warn('[QualificationForm] Confirmation email failed:', emailErr);
       }
 
-    } catch {
+    } catch (err) {
+      const isNetwork = !(err instanceof ApiError);
       toast({
-        title: "Erreur réseau",
-        description: "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez.",
+        title: "Erreur",
+        description: isNetwork
+          ? "Impossible de contacter le serveur. Vérifiez votre connexion et réessayez."
+          : "Une erreur est survenue lors de l'envoi. Veuillez réessayer.",
         variant: "destructive",
       });
     } finally {

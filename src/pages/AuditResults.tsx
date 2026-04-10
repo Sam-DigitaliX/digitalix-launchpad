@@ -3,7 +3,7 @@ import { useLocation, Link } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
-import { supabase } from "@/integrations/supabase";
+import { upsertContact, sendEmail } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -231,35 +231,25 @@ const AuditResults = () => {
     setEmailSubmitting(true);
 
     try {
-      if (supabase) {
-        const { error } = await supabase.rpc('upsert_contact_with_interaction', {
-          p_email: email.trim(),
-          p_interaction_type: 'audit_unlock',
-          p_interaction_metadata: { url: auditUrl, score: MOCK_SCORE },
-        });
-
-        if (error) {
-          console.error('[AuditResults] Supabase RPC error:', error.message, error.details, error.hint);
-        }
-      }
+      await upsertContact({
+        email: email.trim(),
+        interaction_type: 'audit_unlock',
+        interaction_metadata: { url: auditUrl, score: MOCK_SCORE },
+      });
     } catch (err) {
-      console.error('[AuditResults] Network error:', err);
+      console.error('[AuditResults] API error:', err);
     }
 
-    // Send audit unlock email via Edge Function (non-blocking)
+    // Send audit unlock email via API (non-blocking)
     try {
-      if (supabase) {
-        await supabase.functions.invoke('send-confirmation', {
-          body: {
-            type: 'audit_unlock',
-            data: {
-              email: email.trim(),
-              url: auditUrl,
-              score: MOCK_SCORE,
-            },
-          },
-        });
-      }
+      await sendEmail({
+        type: 'audit_unlock',
+        data: {
+          email: email.trim(),
+          url: auditUrl,
+          score: MOCK_SCORE,
+        },
+      });
     } catch (emailErr) {
       console.warn('[AuditResults] Confirmation email failed:', emailErr);
     }

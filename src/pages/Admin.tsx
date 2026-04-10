@@ -1,5 +1,13 @@
 import { useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase";
+import {
+  getAdminStats,
+  getAdminContacts,
+  getAdminContactTimeline,
+  type AdminContact,
+  type AdminInteraction,
+  type AdminStats,
+  ApiError,
+} from "@/lib/api";
 import {
   Lock,
   Users,
@@ -13,43 +21,8 @@ import {
   Eye,
 } from "lucide-react";
 
-/* ------------------------------------------------------------------ */
-/*  Types                                                              */
-/* ------------------------------------------------------------------ */
-
-interface Contact {
-  id: string;
-  email: string;
-  full_name: string | null;
-  company_name: string | null;
-  phone: string | null;
-  profile_type: string | null;
-  qualification_score: number | null;
-  is_qualified: boolean | null;
-  behavioral_profile: string | null;
-  gdpr_consent: boolean | null;
-  newsletter_optin: boolean | null;
-  first_seen_at: string;
-  last_seen_at: string;
-  interaction_count: number;
-  interaction_types: string[] | null;
-  last_interaction_at: string | null;
-}
-
-interface Interaction {
-  id: string;
-  type: string;
-  metadata: Record<string, unknown>;
-  created_at: string;
-}
-
-interface Stats {
-  total_contacts: number;
-  qualified_count: number;
-  total_interactions: number;
-  interactions_today: number;
-  top_interaction_type: string | null;
-}
+// Types imported from @/lib/api:
+// AdminContact, AdminInteraction, AdminStats
 
 /* ------------------------------------------------------------------ */
 /*  Helpers                                                            */
@@ -122,9 +95,9 @@ function MetadataGrid({ data }: { data: Record<string, unknown> }) {
 /*  Contact row with expandable timeline                               */
 /* ------------------------------------------------------------------ */
 
-function ContactRow({ contact, adminKey }: { contact: Contact; adminKey: string }) {
+function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: string }) {
   const [expanded, setExpanded] = useState(false);
-  const [timeline, setTimeline] = useState<Interaction[] | null>(null);
+  const [timeline, setTimeline] = useState<AdminInteraction[] | null>(null);
   const [loading, setLoading] = useState(false);
 
   const loadTimeline = useCallback(async () => {
@@ -132,15 +105,13 @@ function ContactRow({ contact, adminKey }: { contact: Contact; adminKey: string 
       setExpanded((e) => !e);
       return;
     }
-    if (!supabase) return;
     setLoading(true);
-    const { data, error } = await supabase.rpc("admin_get_contact_timeline", {
-      p_key: adminKey,
-      p_contact_id: contact.id,
-    });
-    if (!error && data) {
-      setTimeline(data as Interaction[]);
+    try {
+      const data = await getAdminContactTimeline(adminKey, contact.id);
+      setTimeline(data);
       setExpanded(true);
+    } catch (err) {
+      console.error('[Admin] Timeline load error:', err);
     }
     setLoading(false);
   }, [adminKey, contact.id, timeline]);
@@ -243,36 +214,34 @@ export default function Admin() {
   const [authError, setAuthError] = useState("");
   const [authLoading, setAuthLoading] = useState(false);
 
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [stats, setStats] = useState<Stats | null>(null);
+  const [contacts, setContacts] = useState<AdminContact[]>([]);
+  const [stats, setStats] = useState<AdminStats | null>(null);
   const [dataLoading, setDataLoading] = useState(false);
 
   const authenticate = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!supabase || !adminKey.trim()) return;
+    if (!adminKey.trim()) return;
 
     setAuthLoading(true);
     setAuthError("");
 
     try {
-      const { data, error } = await supabase.rpc("admin_get_stats", { p_key: adminKey.trim() });
-      if (error) {
-        setAuthError("Clé invalide ou fonctions admin non configurées.");
-        setAuthLoading(false);
-        return;
-      }
-      const statsRow = Array.isArray(data) ? data[0] : data;
-      setStats(statsRow as Stats);
+      const statsData = await getAdminStats(adminKey.trim());
+      setStats(statsData);
       sessionStorage.setItem("dx_admin_key", adminKey.trim());
       setIsAuthenticated(true);
 
       // Load contacts
       setDataLoading(true);
-      const { data: contactsData } = await supabase.rpc("admin_get_contacts", { p_key: adminKey.trim() });
-      if (contactsData) setContacts(contactsData as Contact[]);
+      const contactsData = await getAdminContacts(adminKey.trim());
+      setContacts(contactsData);
       setDataLoading(false);
-    } catch {
-      setAuthError("Erreur réseau.");
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setAuthError("Clé invalide.");
+      } else {
+        setAuthError("Erreur réseau.");
+      }
     }
     setAuthLoading(false);
   };

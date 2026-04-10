@@ -36,7 +36,6 @@ export default defineConfig(({ mode }) => ({
             '@radix-ui/react-popover',
             '@radix-ui/react-tooltip',
           ],
-          'vendor-supabase': ['@supabase/supabase-js'],
         },
       },
     },
