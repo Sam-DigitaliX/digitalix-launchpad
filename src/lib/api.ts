@@ -47,7 +47,7 @@ export interface UpsertContactParams {
 }
 
 export function upsertContact(params: UpsertContactParams) {
-  return request<{ success: boolean; contact_id: string }>('/contacts/upsert', {
+  return request<{ success: boolean; contact_id: string }>('/api/contacts', {
     method: 'POST',
     body: JSON.stringify(params),
   });
@@ -81,7 +81,7 @@ export interface SendAuditUnlockParams {
 }
 
 export function sendEmail(params: SendConfirmationParams | SendAuditUnlockParams) {
-  return request<{ success: boolean; message_id: string }>('/email/send', {
+  return request<{ success: boolean; message_id: string }>('/api/email/send-confirmation', {
     method: 'POST',
     body: JSON.stringify(params),
   });
@@ -90,7 +90,7 @@ export function sendEmail(params: SendConfirmationParams | SendAuditUnlockParams
 /* ──────────────────── Admin ──────────────────── */
 
 function adminHeaders(adminKey: string): HeadersInit {
-  return { 'x-admin-key': adminKey };
+  return { Authorization: `Bearer ${adminKey}` };
 }
 
 export interface AdminStats {
@@ -102,7 +102,7 @@ export interface AdminStats {
 }
 
 export function getAdminStats(adminKey: string) {
-  return request<AdminStats>('/admin/stats', {
+  return request<AdminStats>('/api/admin/stats', {
     headers: adminHeaders(adminKey),
   });
 }
@@ -127,7 +127,7 @@ export interface AdminContact {
 }
 
 export function getAdminContacts(adminKey: string) {
-  return request<AdminContact[]>('/admin/contacts', {
+  return request<AdminContact[]>('/api/admin/contacts', {
     headers: adminHeaders(adminKey),
   });
 }
@@ -140,7 +140,7 @@ export interface AdminInteraction {
 }
 
 export function getAdminContactTimeline(adminKey: string, contactId: string) {
-  return request<AdminInteraction[]>(`/admin/contacts/${contactId}/timeline`, {
+  return request<AdminInteraction[]>(`/api/admin/contacts/${contactId}/timeline`, {
     headers: adminHeaders(adminKey),
   });
 }

@@ -4,10 +4,10 @@ import { sql } from '../db.js';
 const app = new Hono();
 
 /**
- * POST /contacts/upsert
+ * POST /api/contacts
  * Replaces: supabase.rpc('upsert_contact_with_interaction')
  */
-app.post('/upsert', async (c) => {
+app.post('/', async (c) => {
   const body = await c.req.json();
   const {
     email,

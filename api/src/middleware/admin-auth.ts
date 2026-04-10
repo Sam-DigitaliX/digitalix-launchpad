@@ -2,14 +2,16 @@ import type { Context, Next } from 'hono';
 import { sql } from '../db.js';
 
 /**
- * Middleware: verifies admin key from x-admin-key header against admin_config table.
- * Sets c.set('adminKey', key) on success.
+ * Middleware: verifies admin key from Authorization: Bearer <key> header
+ * against admin_config table. Sets c.set('adminKey', key) on success.
  */
 export async function adminAuth(c: Context, next: Next) {
-  const key = c.req.header('x-admin-key');
-  if (!key) {
-    return c.json({ error: 'Missing x-admin-key header' }, 401);
+  const authHeader = c.req.header('Authorization');
+  if (!authHeader?.startsWith('Bearer ')) {
+    return c.json({ error: 'Missing or invalid Authorization header' }, 401);
   }
+
+  const key = authHeader.slice(7);
 
   const rows = await sql`SELECT key FROM admin_config WHERE id = 1`;
   if (rows.length === 0 || rows[0].key !== key) {

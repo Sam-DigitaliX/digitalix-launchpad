@@ -1,0 +1,139 @@
+{
+  "session_brief": "Supabase → PostgreSQL + Hono API migration for DigitaliX Launchpad",
+  "repo": "Sam-DigitaliX/digitalix-launchpad",
+  "branch": "claude/supabase-to-pg-plan-7Sq3Y",
+  "plan_file": "docs/MIGRATION_PLAN.md",
+
+  "context": {
+    "current_stack": "React 18 + Vite + Supabase Cloud (PG + Edge Functions + RLS)",
+    "target_stack": "React 18 + Vite + Hono API (Node.js on Coolify) + PostgreSQL (Coolify)",
+    "site": "https://digitalix.fr",
+    "deployed_on": "Vercel"
+  },
+
+  "supabase_project": {
+    "note": "Use the Supabase MCP to inspect and export data from the current project",
+    "tables": ["contacts", "interactions", "email_logs", "admin_config"],
+    "views": ["admin_contacts_overview"],
+    "rpc_functions": [
+      "upsert_contact_with_interaction",
+      "_verify_admin_key",
+      "admin_get_stats",
+      "admin_get_contacts",
+      "admin_get_contact_timeline",
+      "admin_get_email_stats",
+      "admin_get_contact_emails",
+      "log_email"
+    ],
+    "edge_functions": ["send-confirmation"],
+    "secrets_needed": ["RESEND_API_KEY"]
+  },
+
+  "coolify_setup": {
+    "note": "Use the Coolify MCP to provision these services",
+    "services_to_create": [
+      {
+        "type": "postgresql",
+        "name": "digitalix-db",
+        "config": {
+          "version": "15 or 16",
+          "database": "digitalix",
+          "expose": false
+        }
+      },
+      {
+        "type": "nodejs_app",
+        "name": "digitalix-api",
+        "config": {
+          "source": "Dockerfile in api/ folder of the repo",
+          "port": 3000,
+          "domain": "api.digitalix.fr",
+          "env_vars": [
+            "DATABASE_URL=postgresql://user:pass@digitalix-db:5432/digitalix",
+            "RESEND_API_KEY=re_xxxxx",
+            "ADMIN_CORS_ORIGINS=https://digitalix.fr,http://localhost:8080",
+            "PORT=3000"
+          ]
+        }
+      }
+    ]
+  },
+
+  "migration_phases": [
+    {
+      "phase": 1,
+      "name": "PostgreSQL Schema",
+      "status": "ready",
+      "actions": [
+        "Use Supabase MCP: list tables and verify schema matches docs/MIGRATION_PLAN.md",
+        "Run api/migrations/001_schema.sql on the new Coolify PostgreSQL"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Hono API Backend",
+      "status": "to_implement",
+      "actions": [
+        "Create api/ folder with Hono app (see MIGRATION_PLAN.md Phase 2)",
+        "7 routes replacing all Supabase RPCs and Edge Function",
+        "Port email templates from supabase/functions/send-confirmation/index.ts",
+        "Dockerfile for Coolify deployment"
+      ],
+      "route_mapping": {
+        "POST /api/contacts": "replaces rpc('upsert_contact_with_interaction')",
+        "POST /api/email/send-confirmation": "replaces Edge Function send-confirmation",
+        "GET /api/admin/stats": "replaces rpc('admin_get_stats')",
+        "GET /api/admin/contacts": "replaces rpc('admin_get_contacts')",
+        "GET /api/admin/contacts/:id/timeline": "replaces rpc('admin_get_contact_timeline')",
+        "GET /api/admin/email-stats": "replaces rpc('admin_get_email_stats')",
+        "GET /api/admin/contacts/:id/emails": "replaces rpc('admin_get_contact_emails')"
+      }
+    },
+    {
+      "phase": 3,
+      "name": "Frontend Migration",
+      "status": "to_implement",
+      "actions": [
+        "Replace supabase client with fetch-based api client in src/lib/api.ts",
+        "Update src/components/qualification/QualificationForm.tsx (2 calls)",
+        "Update src/pages/AuditResults.tsx (2 calls)",
+        "Update src/pages/Admin.tsx (3 calls)",
+        "Delete src/integrations/supabase/",
+        "npm uninstall @supabase/supabase-js",
+        "Change env: VITE_SUPABASE_URL + VITE_SUPABASE_ANON_KEY → VITE_API_URL"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Data Migration",
+      "status": "to_do",
+      "actions": [
+        "Use Supabase MCP: export data from contacts, interactions, email_logs, admin_config",
+        "Import into Coolify PostgreSQL",
+        "Verify row counts and FK integrity"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Cutover",
+      "status": "to_do",
+      "actions": [
+        "Deploy API on Coolify, verify /api/health",
+        "Update Vercel env vars: VITE_API_URL=https://api.digitalix.fr",
+        "Deploy frontend on Vercel",
+        "Test all flows end-to-end",
+        "Monitor 48h then decommission Supabase"
+      ]
+    }
+  ],
+
+  "instructions_for_session": [
+    "1. Clone the repo and checkout branch claude/supabase-to-pg-plan-7Sq3Y",
+    "2. Read docs/MIGRATION_PLAN.md for the full plan",
+    "3. Use Supabase MCP to verify current schema and export data",
+    "4. Use Coolify MCP to provision PostgreSQL + Node.js app",
+    "5. Implement Phase 2 (Hono API) and Phase 3 (Frontend migration)",
+    "6. Run Phase 4 (data migration) using both MCPs",
+    "7. Execute Phase 5 (cutover)"
+  ]
+}

@@ -13,7 +13,7 @@ app.use(
   '/*',
   cors({
     origin: [CORS_ORIGIN, 'http://localhost:8080', 'http://localhost:5173'],
-    allowHeaders: ['Content-Type', 'x-admin-key'],
+    allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
   }),
 );
@@ -21,12 +21,12 @@ app.use(
 app.use('/*', logger());
 
 // Health check
-app.get('/health', (c) => c.json({ status: 'ok' }));
+app.get('/api/health', (c) => c.json({ status: 'ok' }));
 
 // Routes
-app.route('/contacts', contacts);
-app.route('/email', email);
-app.route('/admin', admin);
+app.route('/api/contacts', contacts);
+app.route('/api/email', email);
+app.route('/api/admin', admin);
 
 const port = Number(process.env.PORT ?? 3000);
 
