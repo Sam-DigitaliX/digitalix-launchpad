@@ -12,6 +12,18 @@ const corsOrigins = (process.env.ADMIN_CORS_ORIGINS ?? 'https://digitalix.xyz')
   .split(',')
   .map((o) => o.trim());
 
+// Auto-include www variant for every origin (and vice-versa) to avoid CORS mismatches
+for (const origin of [...corsOrigins]) {
+  const url = new URL(origin);
+  if (url.hostname.startsWith('www.')) {
+    const bare = `${url.protocol}//${url.hostname.slice(4)}`;
+    if (!corsOrigins.includes(bare)) corsOrigins.push(bare);
+  } else if (!url.hostname.startsWith('localhost')) {
+    const www = `${url.protocol}//www.${url.hostname}`;
+    if (!corsOrigins.includes(www)) corsOrigins.push(www);
+  }
+}
+
 app.use(
   '/*',
   cors({

@@ -103,7 +103,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 **API Backend (Coolify)**:
 - `DATABASE_URL=postgresql://...`
 - `RESEND_API_KEY=re_...`
-- `ADMIN_CORS_ORIGINS=https://digitalix.xyz,http://localhost:8080`
+- `ADMIN_CORS_ORIGINS=https://digitalix.xyz,http://localhost:8080` (www variants auto-added by backend)
 - `PORT=3000`
 
 ## Design System
