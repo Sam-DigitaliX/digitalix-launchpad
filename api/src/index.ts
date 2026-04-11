@@ -18,6 +18,7 @@ app.use(
     origin: [...corsOrigins, 'http://localhost:8080', 'http://localhost:5173'],
     allowHeaders: ['Content-Type', 'Authorization'],
     allowMethods: ['GET', 'POST', 'OPTIONS'],
+    maxAge: 86400,
   }),
 );
 
