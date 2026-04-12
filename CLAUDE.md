@@ -136,32 +136,44 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 | Email system | — | Resend: confirmation_qualified, confirmation_unqualified, audit_unlock |
 | GTM tracking | — | GTM-PD3X686F with virtual_page_view for SPA |
 
-### Mock / In Progress
+### Pending
 | Feature | Route | Status |
 |---------|-------|--------|
-| Audit Tracking | `/audit-tracking` | UI complete, scan engine not implemented (mock score 38/100) |
-| Audit Results | `/audit-tracking/resultats/:id` | Email gate works, results are hardcoded mock data |
+| Audit Tracking | `/audit-tracking` | Complete — real scan engine, 21 checks, not yet deployed |
+| Audit Results | `/audit-tracking/resultats/:id` | Complete — email gate, error/rate-limit states, email click tracking |
 | Resource download | `/consultants` | QualificationForm.tsx:202 — waiting for resource file |
 
-## Audit Tracking — Architecture Decision
+## Audit Tracking — Architecture
 
-**Decision**: integrate the scan engine into the existing Hono API (`api/`) rather than a separate service.
+**Approach**: scan engine integrated into the Hono API (`api/`), lightweight HTTP fetch + cheerio parsing + PageSpeed Insights API, no headless browser.
 
-**Rationale**: the scan is lightweight (HTTP fetch + HTML parsing via cheerio, no headless browser), runs synchronously in <5s, and the VPS (1 vCPU, 4 GB RAM) can handle it. No need for a separate service given the low expected volume.
+**Scanner** (`api/src/lib/scanner/`):
+- `fetcher.ts` — HTTP fetch with redirect following, cookie parsing, script extraction
+- `checks/` — 18 sync CheckModule files + `pagespeed.ts` (3 async Core Web Vitals via Google PageSpeed API)
+- `index.ts` — orchestrator: parallel fetch (HTML + PageSpeed), runs all checks, computes scores
+- Total: **21 checks** across 4 categories
 
-**Planned structure**:
-- `api/src/lib/scanner/` — fetcher, check modules (18 checks), orchestrator, score computation
-- `api/src/routes/audit.ts` — `POST /api/audit`, `GET /api/audit/:id`, `POST /api/audit/:id/unlock`
-- `api/migrations/002_audit.sql` — `audits` + `audit_checks` tables
-- Rate limit: 3 audits/IP/hour (in-memory)
-- 4 categories: Tracking Setup (30%), Server-Side (25%), Privacy & Consent (30%), Performance (15%)
+**Categories & weights**: Tracking Setup (30%), Server-Side (25%), Privacy & Consent (30%), Performance (15%)
+
+**API routes** (`api/src/routes/audit.ts`):
+| Method | Path | Description |
+|--------|------|-------------|
+| `POST` | `/api/audit` | Submit URL → scan → store → return masked results |
+| `GET` | `/api/audit/:id` | Retrieve audit (respects unlock state) |
+| `POST` | `/api/audit/:id/unlock` | Email → upsert contact → send email → return all checks |
+| `POST` | `/api/audit/:id/track-click` | Log `audit_email_click` interaction (from email link with `?cid=`) |
+
+**DB**: `api/migrations/002_audit.sql` — tables `audits` + `audit_checks`
+**Rate limit**: 3 audits/IP/hour (in-memory)
+**Email**: `audit_unlock` template includes "Revoir mon rapport" link with `?cid={contactId}` for click tracking
+**Dependencies**: cheerio (HTML parsing)
 
 ## Known TODOs
 - [x] Supabase → PostgreSQL migration — **COMPLETE** (2026-04-10)
 - [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)
 - [x] Run schema migration on PostgreSQL + insert admin key
 - [x] Set env vars on Vercel: `VITE_API_URL`
-- [ ] Audit Tracking: implement scan engine (18 checks) + API routes + frontend integration
+- [ ] Audit Tracking: deploy (push to main, run migration 002_audit.sql, test end-to-end)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
 - [ ] Decommission Supabase project after 2-week monitoring period
