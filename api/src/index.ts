@@ -5,6 +5,7 @@ import { logger } from 'hono/logger';
 import contacts from './routes/contacts.js';
 import email from './routes/email.js';
 import admin from './routes/admin.js';
+import audit from './routes/audit.js';
 
 const app = new Hono();
 
@@ -43,6 +44,7 @@ app.get('/api/health', (c) => c.json({ status: 'ok' }));
 app.route('/api/contacts', contacts);
 app.route('/api/email', email);
 app.route('/api/admin', admin);
+app.route('/api/audit', audit);
 
 const port = Number(process.env.PORT ?? 3000);
 
