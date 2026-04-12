@@ -246,13 +246,13 @@ export function buildAuditUnlockEmail(d: AuditUnlockData): {
     </p>
 
     <div style="text-align: center; margin: 24px 0;">
-      <a href="https://digitalix.xyz/audit-tracking/resultats/${esc(d.auditId)}?cid=${esc(d.contactId)}" style="display: inline-block; background: #111827; color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none; margin-bottom: 12px;">
+      <a href="https://digitalix.xyz/audit-tracking/resultats/${esc(d.auditId)}?cid=${esc(d.contactId)}&utm_source=email&utm_medium=transactional&utm_campaign=audit_unlock&utm_content=cta_rapport" style="display: inline-block; background: #111827; color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none; margin-bottom: 12px;">
         Revoir mon rapport
       </a>
     </div>
 
     <div style="text-align: center; margin: 24px 0;">
-      <a href="https://digitalix.xyz/contact" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none;">
+      <a href="https://digitalix.xyz/contact?utm_source=email&utm_medium=transactional&utm_campaign=audit_unlock&utm_content=cta_audit" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none;">
         Réserver mon audit offert
       </a>
     </div>

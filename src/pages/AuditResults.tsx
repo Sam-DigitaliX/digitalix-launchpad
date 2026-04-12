@@ -3,7 +3,8 @@ import { useLocation, useParams, useSearchParams, Link } from "react-router-dom"
 import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
-import { startAudit, getAudit, unlockAudit, trackAuditEmailClick, ApiError } from "@/lib/api";
+import { startAudit, streamAuditProgress, getAudit, unlockAudit, trackAuditEmailClick, ApiError } from "@/lib/api";
+import type { AuditProgressEvent } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -84,7 +85,7 @@ const ScoreCircle = ({
 };
 
 /* ══════════════════════════════════════════════════════════════════
-   Status & Category Icons
+   Status & Category helpers
    ══════════════════════════════════════════════════════════════════ */
 
 const StatusIcon = ({ status }: { status: string }) => {
@@ -114,19 +115,7 @@ function getCategoryColor(score: number): string {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   Scan Steps
-   ══════════════════════════════════════════════════════════════════ */
-
-const scanSteps = [
-  "Connexion au site...",
-  "Analyse du tracking setup...",
-  "Détection server-side...",
-  "Vérification conformité RGPD...",
-  "Calcul du score final...",
-];
-
-/* ══════════════════════════════════════════════════════════════════
-   Check Row Component
+   Check Row
    ══════════════════════════════════════════════════════════════════ */
 
 const CheckRow = ({ check }: { check: AuditCheck }) => (
@@ -155,6 +144,51 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
 );
 
 /* ══════════════════════════════════════════════════════════════════
+   Progress Step
+   ══════════════════════════════════════════════════════════════════ */
+
+interface ProgressStep {
+  label: string;
+  type: AuditProgressEvent["type"];
+  isSessionHeader: boolean;
+}
+
+const ProgressStepRow = ({ step, isLatest }: { step: ProgressStep; isLatest: boolean }) => {
+  const isIssue = step.type === "issues_count";
+
+  return (
+    <div
+      className={`flex items-center gap-3 transition-all duration-500 animate-fade-in-up ${
+        step.isSessionHeader ? "mt-6 first:mt-0" : "ml-6"
+      }`}
+    >
+      {step.isSessionHeader ? (
+        isLatest ? (
+          <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
+        ) : (
+          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+        )
+      ) : isIssue ? (
+        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+      ) : (
+        <CheckCircle className="w-4 h-4 text-emerald-400/70 shrink-0" />
+      )}
+      <span
+        className={`text-sm ${
+          step.isSessionHeader
+            ? "font-semibold text-foreground"
+            : isIssue
+            ? "text-amber-400"
+            : "text-muted-foreground"
+        }`}
+      >
+        {step.label}
+      </span>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════════
    Main Page
    ══════════════════════════════════════════════════════════════════ */
 
@@ -166,14 +200,12 @@ const AuditResults = () => {
   const isNewScan = routeId === "new";
   const isReturningFromEmail = !isNewScan && !!cid;
 
-  const auditUrl =
-    (location.state as { url?: string })?.url || "";
+  const auditUrl = (location.state as { url?: string })?.url || "";
 
-  const [phase, setPhase] = useState<"scanning" | "results" | "error">(
-    isNewScan ? "scanning" : "scanning"
-  );
-  const [currentStep, setCurrentStep] = useState(0);
+  const [phase, setPhase] = useState<"scanning" | "results" | "error">("scanning");
   const [scoreAnimated, setScoreAnimated] = useState(false);
+
+  const [progressSteps, setProgressSteps] = useState<ProgressStep[]>([]);
 
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [checks, setChecks] = useState<AuditCheck[]>([]);
@@ -186,6 +218,7 @@ const AuditResults = () => {
   const [emailSubmitting, setEmailSubmitting] = useState(false);
 
   const scanStarted = useRef(false);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
   /* ── Track email click (returning user) ── */
   useEffect(() => {
@@ -194,38 +227,78 @@ const AuditResults = () => {
     }
   }, [isReturningFromEmail, routeId, cid]);
 
+  /* ── Cleanup SSE on unmount ── */
+  useEffect(() => {
+    return () => {
+      eventSourceRef.current?.close();
+    };
+  }, []);
+
   /* ── Load existing audit or launch new scan ── */
   useEffect(() => {
     if (scanStarted.current) return;
     scanStarted.current = true;
 
     if (isNewScan && auditUrl) {
-      // New scan: run animation + API call in parallel
-      const animationDone = new Promise<void>((resolve) => {
-        const timers = scanSteps.map((_, i) =>
-          setTimeout(() => setCurrentStep(i + 1), (i + 1) * 900)
-        );
-        const finishTimer = setTimeout(() => {
-          timers.forEach(clearTimeout);
-          resolve();
-        }, scanSteps.length * 900 + 500);
-        // Cleanup stored in ref not needed since we resolve
-        void finishTimer;
-      });
+      // New scan: POST to create audit, then stream progress via SSE
+      startAudit(auditUrl)
+        .then(({ id }) => {
+          // Update URL to real audit ID (without losing state)
+          window.history.replaceState(
+            { url: auditUrl },
+            "",
+            `/audit-tracking/resultats/${id}`
+          );
 
-      const apiCall = startAudit(auditUrl);
+          const source = streamAuditProgress(
+            id,
+            (event) => {
+              if (event.type === "result" && event.result) {
+                // Scan complete — show results
+                setAuditResult({ ...event.result, id, createdAt: "" });
+                setChecks(event.result.checks ?? []);
+                setPhase("results");
+                setTimeout(() => setScoreAnimated(true), 300);
+                source.close();
+                return;
+              }
 
-      Promise.all([apiCall, animationDone])
-        .then(([result]) => {
-          if (result.status === "failed") {
-            setErrorMessage(result.errorMessage || "Impossible d'analyser ce site.");
-            setPhase("error");
-            return;
-          }
-          setAuditResult(result);
-          setChecks(result.checks);
-          setPhase("results");
-          setTimeout(() => setScoreAnimated(true), 300);
+              if (event.type === "error") {
+                setErrorMessage(event.label);
+                setPhase("error");
+                source.close();
+                return;
+              }
+
+              // Add progress step
+              const isSessionHeader = event.type === "session_start";
+              setProgressSteps((prev) => [
+                ...prev,
+                { label: event.label, type: event.type, isSessionHeader },
+              ]);
+            },
+            () => {
+              // SSE error — check if audit completed in DB
+              getAudit(id)
+                .then((result) => {
+                  if (result.status === "completed") {
+                    setAuditResult(result);
+                    setChecks(result.checks);
+                    setPhase("results");
+                    setTimeout(() => setScoreAnimated(true), 300);
+                  } else if (result.status === "failed") {
+                    setErrorMessage(result.errorMessage || "Analyse echouee.");
+                    setPhase("error");
+                  }
+                })
+                .catch(() => {
+                  setErrorMessage("Connexion perdue. Veuillez reessayer.");
+                  setPhase("error");
+                });
+            }
+          );
+
+          eventSourceRef.current = source;
         })
         .catch((err) => {
           if (err instanceof ApiError && err.status === 429) {
@@ -235,18 +308,17 @@ const AuditResults = () => {
             setErrorMessage(
               err instanceof ApiError
                 ? err.message
-                : "Une erreur est survenue. Veuillez réessayer."
+                : "Une erreur est survenue. Veuillez reessayer."
             );
           }
           setPhase("error");
         });
     } else if (!isNewScan && routeId) {
-      // Returning user: load existing audit
+      // Returning user: load existing audit from DB
       getAudit(routeId)
         .then((result) => {
           setAuditResult(result);
           setChecks(result.checks);
-          // If already unlocked (came from email), show all checks
           const hasRealDescriptions = result.checks.some(
             (c) => c.gated && !c.description.startsWith("Debloquez")
           );
@@ -284,7 +356,7 @@ const AuditResults = () => {
       setIsUnlocked(true);
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);
-      setEmailError("Erreur lors du déblocage. Veuillez réessayer.");
+      setEmailError("Erreur lors du deblocage. Veuillez reessayer.");
     }
 
     setEmailSubmitting(false);
@@ -303,7 +375,7 @@ const AuditResults = () => {
       <EvervaultGlow />
       <Header />
       <main className="min-h-screen relative z-[1]">
-        {/* ── URL Bar — glass strip ── */}
+        {/* ── URL Bar ── */}
         <div className="mx-3 md:mx-6">
           <section className="relative pt-24 pb-4 overflow-hidden rounded-b-[40px] bg-white/[0.03] backdrop-blur-xl border border-white/[0.06] border-t-0">
             <div
@@ -340,7 +412,7 @@ const AuditResults = () => {
         </div>
 
         {phase === "scanning" ? (
-          /* ══════════════════════ Scanning Phase ══════════════════════ */
+          /* ══════════════════════ Scanning Phase (SSE live) ══════════════════════ */
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
@@ -357,36 +429,22 @@ const AuditResults = () => {
                   Analyse en cours...
                 </h2>
 
-                {/* Step list */}
-                <div className="space-y-4 text-left">
-                  {scanSteps.map((step, i) => (
-                    <div
-                      key={step}
-                      className={`flex items-center gap-3 transition-all duration-500 ${
-                        i < currentStep
-                          ? "opacity-100"
-                          : i === currentStep
-                          ? "opacity-60"
-                          : "opacity-20"
-                      }`}
-                    >
-                      {i < currentStep ? (
-                        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                      ) : i === currentStep ? (
-                        <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
-                      ) : (
-                        <div className="w-5 h-5 rounded-full border-2 border-white/[0.12] shrink-0" />
-                      )}
-                      <span
-                        className={`text-sm ${
-                          i < currentStep
-                            ? "text-foreground"
-                            : "text-muted-foreground"
-                        }`}
-                      >
-                        {step}
+                {/* Live progress steps */}
+                <div className="space-y-3 text-left">
+                  {progressSteps.length === 0 && (
+                    <div className="flex items-center gap-3">
+                      <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
+                      <span className="text-sm text-muted-foreground">
+                        Connexion au scanner...
                       </span>
                     </div>
+                  )}
+                  {progressSteps.map((step, i) => (
+                    <ProgressStepRow
+                      key={i}
+                      step={step}
+                      isLatest={i === progressSteps.length - 1 && step.isSessionHeader}
+                    />
                   ))}
                 </div>
               </div>
@@ -417,7 +475,7 @@ const AuditResults = () => {
                     <Button variant="heroGradient" size="lg" asChild>
                       <Link to="/audit-tracking">
                         <RefreshCw className="w-4 h-4 mr-2" />
-                        Réessayer
+                        Reessayer
                       </Link>
                     </Button>
                   )}
@@ -444,13 +502,13 @@ const AuditResults = () => {
                       Score de votre tracking
                     </h1>
                     <p className="text-foreground/70 mb-4 max-w-md">
-                      Nous avons détecté{" "}
+                      Nous avons detecte{" "}
                       <span className="font-bold text-destructive">
-                        {failCount} problèmes critiques
+                        {failCount} problemes critiques
                       </span>{" "}
                       et{" "}
                       <span className="font-bold text-amber-400">
-                        {warnCount} points d'amélioration
+                        {warnCount} points d'amelioration
                       </span>{" "}
                       sur votre site.
                     </p>
@@ -493,18 +551,15 @@ const AuditResults = () => {
                 {/* ── Checks List ── */}
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-foreground mb-4">
-                    Détail des vérifications
+                    Detail des verifications
                   </h2>
 
-                  {/* Visible checks (teaser — no email needed) */}
                   {visibleChecks.map((check) => (
                     <CheckRow key={check.id} check={check} />
                   ))}
 
-                  {/* Email Gate OR unlocked checks */}
                   {!isUnlocked ? (
                     <div className="relative mt-2">
-                      {/* Blurred preview */}
                       <div
                         className="space-y-3 blur-sm pointer-events-none select-none"
                         aria-hidden
@@ -514,18 +569,17 @@ const AuditResults = () => {
                         ))}
                       </div>
 
-                      {/* Overlay */}
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-background/40 via-background/90 to-background rounded-xl">
                         <div className="text-center max-w-md px-6">
                           <div className="icon-gradient w-14 h-14 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-7 h-7" />
                           </div>
                           <h3 className="text-xl font-bold text-foreground mb-2">
-                            Débloquez votre rapport complet
+                            Debloquez votre rapport complet
                           </h3>
                           <p className="text-sm text-muted-foreground mb-6">
-                            {gatedChecks.length} vérifications supplémentaires
-                            avec recommandations détaillées.
+                            {gatedChecks.length} verifications supplementaires
+                            avec recommandations detaillees.
                           </p>
                           <form
                             onSubmit={handleEmailSubmit}
@@ -565,7 +619,6 @@ const AuditResults = () => {
                       </div>
                     </div>
                   ) : (
-                    /* Unlocked gated checks */
                     gatedChecks.map((check) => (
                       <div key={check.id} className="animate-fade-in-up">
                         <CheckRow check={check} />
@@ -577,16 +630,16 @@ const AuditResults = () => {
                 {/* ── CTA ── */}
                 <div className="mt-12 p-8 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm text-center">
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
-                    Un expert analyse vos résultats
+                    Un expert analyse vos resultats
                   </h3>
                   <p className="text-foreground/70 mb-6 max-w-lg mx-auto">
-                    Ce diagnostic automatique est un premier aperçu. Réservez un
+                    Ce diagnostic automatique est un premier apercu. Reservez un
                     audit approfondi avec un expert DigitaliX pour un plan
-                    d'action personnalisé.
+                    d'action personnalise.
                   </p>
                   <Button variant="heroGradient" size="xl" asChild>
                     <Link to="/contact">
-                      Réserver mon Audit Offert
+                      Reserver mon Audit Offert
                       <ArrowRight className="w-5 h-5 ml-2" />
                     </Link>
                   </Button>
