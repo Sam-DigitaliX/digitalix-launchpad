@@ -1,9 +1,9 @@
-import { useState, useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { useLocation, useParams, useSearchParams, Link } from "react-router-dom";
 import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
-import { upsertContact, sendEmail } from "@/lib/api";
+import { startAudit, getAudit, unlockAudit, trackAuditEmailClick, ApiError } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -21,8 +21,9 @@ import {
   Zap,
   Loader2,
   Scan,
+  RefreshCw,
 } from "lucide-react";
-import type { AuditCheck } from "@/types/audit";
+import type { AuditCheck, AuditResult, AuditCategorySummary } from "@/types/audit";
 
 /* ══════════════════════════════════════════════════════════════════
    Score Circle (SVG)
@@ -106,43 +107,15 @@ const categoryIconMap: Record<string, React.ComponentType<{ className?: string }
   performance: Zap,
 };
 
+function getCategoryColor(score: number): string {
+  if (score >= 70) return "text-emerald-400";
+  if (score >= 50) return "text-amber-400";
+  return "text-destructive";
+}
+
 /* ══════════════════════════════════════════════════════════════════
-   Mock Data — will be replaced by Playwright backend
+   Scan Steps
    ══════════════════════════════════════════════════════════════════ */
-
-const MOCK_SCORE = 38;
-
-const mockCategories = [
-  { id: "tracking", name: "Tracking Setup", score: 55, color: "text-amber-400" },
-  { id: "serverside", name: "Server-Side", score: 0, color: "text-destructive" },
-  { id: "privacy", name: "Privacy & Consent", score: 40, color: "text-destructive" },
-  { id: "performance", name: "Performance", score: 45, color: "text-amber-400" },
-];
-
-const mockChecks: AuditCheck[] = [
-  // ── Tracking Setup
-  { id: "gtm", category: "tracking", name: "Google Tag Manager", status: "pass", description: "Conteneur GTM détecté (GTM-XXXXXX)", impact: "critical", gated: false },
-  { id: "ga4", category: "tracking", name: "Google Analytics 4", status: "pass", description: "Flux de données GA4 configuré", impact: "high", gated: false },
-  { id: "meta-pixel", category: "tracking", name: "Meta Pixel", status: "pass", description: "Pixel Meta installé", impact: "high", gated: false },
-  { id: "datalayer", category: "tracking", name: "Data Layer", status: "warning", description: "Data Layer détecté mais incomplet — événements e-commerce manquants", impact: "high", gated: true },
-  { id: "enhanced-conv", category: "tracking", name: "Enhanced Conversions", status: "fail", description: "Enhanced Conversions Google non configuré — perte de données attribuées", impact: "critical", gated: true },
-  { id: "tiktok", category: "tracking", name: "TikTok Pixel", status: "info", description: "Aucun pixel TikTok détecté", impact: "low", gated: true },
-  // ── Server-Side
-  { id: "sgtm", category: "serverside", name: "GTM Server-Side", status: "fail", description: "Aucun conteneur server-side détecté — données vulnérables aux adblockers", impact: "critical", gated: false },
-  { id: "first-party", category: "serverside", name: "Cookies First-Party", status: "fail", description: "Cookies tiers détectés — durée de vie limitée par ITP Safari", impact: "critical", gated: true },
-  { id: "capi-meta", category: "serverside", name: "CAPI Meta (Facebook)", status: "fail", description: "Conversion API Meta non implémentée — perte de 20-30% des conversions", impact: "critical", gated: true },
-  { id: "capi-google", category: "serverside", name: "CAPI Google Ads", status: "fail", description: "Enhanced Conversions API non détecté côté serveur", impact: "high", gated: true },
-  // ── Privacy & Consent
-  { id: "cmp", category: "privacy", name: "Bannière de consentement", status: "pass", description: "CMP détectée (Cookiebot)", impact: "critical", gated: false },
-  { id: "consent-mode", category: "privacy", name: "Consent Mode v2", status: "fail", description: "Google Consent Mode v2 non implémenté — requis depuis mars 2024", impact: "critical", gated: true },
-  { id: "third-party-cookies", category: "privacy", name: "Cookies tiers", status: "warning", description: "14 cookies tiers détectés — risque de non-conformité RGPD", impact: "high", gated: true },
-  { id: "privacy-page", category: "privacy", name: "Politique de confidentialité", status: "pass", description: "Page accessible depuis toutes les pages du site", impact: "medium", gated: true },
-  // ── Performance
-  { id: "lcp", category: "performance", name: "LCP (Largest Contentful Paint)", status: "warning", description: "3.2s — Amélioration nécessaire (objectif : < 2.5s)", impact: "high", gated: false },
-  { id: "cls", category: "performance", name: "CLS (Cumulative Layout Shift)", status: "pass", description: "0.05 — Bon (objectif : < 0.1)", impact: "medium", gated: true },
-  { id: "scripts-count", category: "performance", name: "Scripts tiers", status: "fail", description: "23 scripts tiers détectés — impact majeur sur le temps de chargement", impact: "high", gated: true },
-  { id: "tbt", category: "performance", name: "TBT (Total Blocking Time)", status: "warning", description: "450ms — Amélioration nécessaire (objectif : < 200ms)", impact: "medium", gated: true },
-];
 
 const scanSteps = [
   "Connexion au site...",
@@ -187,36 +160,109 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
 
 const AuditResults = () => {
   const location = useLocation();
-  const auditUrl =
-    (location.state as { url?: string })?.url || "https://exemple.com";
+  const { id: routeId } = useParams();
+  const [searchParams] = useSearchParams();
+  const cid = searchParams.get("cid");
+  const isNewScan = routeId === "new";
+  const isReturningFromEmail = !isNewScan && !!cid;
 
-  const [phase, setPhase] = useState<"scanning" | "results">("scanning");
+  const auditUrl =
+    (location.state as { url?: string })?.url || "";
+
+  const [phase, setPhase] = useState<"scanning" | "results" | "error">(
+    isNewScan ? "scanning" : "scanning"
+  );
   const [currentStep, setCurrentStep] = useState(0);
   const [scoreAnimated, setScoreAnimated] = useState(false);
+
+  const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
+  const [checks, setChecks] = useState<AuditCheck[]>([]);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isRateLimited, setIsRateLimited] = useState(false);
 
   const [email, setEmail] = useState("");
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
 
-  /* ── Scanning simulation ── */
+  const scanStarted = useRef(false);
+
+  /* ── Track email click (returning user) ── */
   useEffect(() => {
-    if (phase !== "scanning") return;
+    if (isReturningFromEmail && routeId && cid) {
+      trackAuditEmailClick(routeId, cid).catch(() => {});
+    }
+  }, [isReturningFromEmail, routeId, cid]);
 
-    const timers = scanSteps.map((_, i) =>
-      setTimeout(() => setCurrentStep(i + 1), (i + 1) * 900)
-    );
+  /* ── Load existing audit or launch new scan ── */
+  useEffect(() => {
+    if (scanStarted.current) return;
+    scanStarted.current = true;
 
-    const finishTimer = setTimeout(() => {
-      setPhase("results");
-      setTimeout(() => setScoreAnimated(true), 300);
-    }, scanSteps.length * 900 + 500);
+    if (isNewScan && auditUrl) {
+      // New scan: run animation + API call in parallel
+      const animationDone = new Promise<void>((resolve) => {
+        const timers = scanSteps.map((_, i) =>
+          setTimeout(() => setCurrentStep(i + 1), (i + 1) * 900)
+        );
+        const finishTimer = setTimeout(() => {
+          timers.forEach(clearTimeout);
+          resolve();
+        }, scanSteps.length * 900 + 500);
+        // Cleanup stored in ref not needed since we resolve
+        void finishTimer;
+      });
 
-    return () => {
-      timers.forEach(clearTimeout);
-      clearTimeout(finishTimer);
-    };
-  }, [phase]);
+      const apiCall = startAudit(auditUrl);
+
+      Promise.all([apiCall, animationDone])
+        .then(([result]) => {
+          if (result.status === "failed") {
+            setErrorMessage(result.errorMessage || "Impossible d'analyser ce site.");
+            setPhase("error");
+            return;
+          }
+          setAuditResult(result);
+          setChecks(result.checks);
+          setPhase("results");
+          setTimeout(() => setScoreAnimated(true), 300);
+        })
+        .catch((err) => {
+          if (err instanceof ApiError && err.status === 429) {
+            setIsRateLimited(true);
+            setErrorMessage("Limite atteinte. Maximum 3 audits par heure.");
+          } else {
+            setErrorMessage(
+              err instanceof ApiError
+                ? err.message
+                : "Une erreur est survenue. Veuillez réessayer."
+            );
+          }
+          setPhase("error");
+        });
+    } else if (!isNewScan && routeId) {
+      // Returning user: load existing audit
+      getAudit(routeId)
+        .then((result) => {
+          setAuditResult(result);
+          setChecks(result.checks);
+          // If already unlocked (came from email), show all checks
+          const hasRealDescriptions = result.checks.some(
+            (c) => c.gated && !c.description.startsWith("Debloquez")
+          );
+          setIsUnlocked(hasRealDescriptions);
+          setPhase("results");
+          setTimeout(() => setScoreAnimated(true), 300);
+        })
+        .catch(() => {
+          setErrorMessage("Audit introuvable.");
+          setPhase("error");
+        });
+    } else {
+      setErrorMessage("Aucune URL fournie.");
+      setPhase("error");
+    }
+  }, [isNewScan, routeId, auditUrl]);
 
   /* ── Email gate submit ── */
   const handleEmailSubmit = async (e: React.FormEvent) => {
@@ -228,40 +274,29 @@ const AuditResults = () => {
       return;
     }
 
+    if (!auditResult) return;
+
     setEmailSubmitting(true);
 
     try {
-      await upsertContact({
-        email: email.trim(),
-        interaction_type: 'audit_unlock',
-        interaction_metadata: { url: auditUrl, score: MOCK_SCORE },
-      });
+      const result = await unlockAudit(auditResult.id, email.trim());
+      setChecks(result.checks);
+      setIsUnlocked(true);
     } catch (err) {
-      console.error('[AuditResults] API error:', err);
+      console.error("[AuditResults] Unlock error:", err);
+      setEmailError("Erreur lors du déblocage. Veuillez réessayer.");
     }
 
-    // Send audit unlock email via API (non-blocking)
-    try {
-      await sendEmail({
-        type: 'audit_unlock',
-        data: {
-          email: email.trim(),
-          url: auditUrl,
-          score: MOCK_SCORE,
-        },
-      });
-    } catch (emailErr) {
-      console.warn('[AuditResults] Confirmation email failed:', emailErr);
-    }
-
-    setIsUnlocked(true);
     setEmailSubmitting(false);
   };
 
-  const visibleChecks = mockChecks.filter((c) => !c.gated);
-  const gatedChecks = mockChecks.filter((c) => c.gated);
-  const failCount = mockChecks.filter((c) => c.status === "fail").length;
-  const warnCount = mockChecks.filter((c) => c.status === "warning").length;
+  /* ── Derived data ── */
+  const visibleChecks = checks.filter((c) => !c.gated);
+  const gatedChecks = checks.filter((c) => c.gated);
+  const failCount = checks.filter((c) => c.status === "fail").length;
+  const warnCount = checks.filter((c) => c.status === "warning").length;
+  const displayUrl = auditResult?.url || auditUrl || "—";
+  const categories: AuditCategorySummary[] = auditResult?.categories || [];
 
   return (
     <>
@@ -287,16 +322,18 @@ const AuditResults = () => {
               <div className="flex items-center gap-3 text-sm">
                 <Globe className="w-4 h-4 text-muted-foreground shrink-0" />
                 <span className="text-foreground font-medium truncate">
-                  {auditUrl}
+                  {displayUrl}
                 </span>
-                <a
-                  href={auditUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:text-primary/80 shrink-0"
-                >
-                  <ExternalLink className="w-3.5 h-3.5" />
-                </a>
+                {displayUrl !== "—" && (
+                  <a
+                    href={displayUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:text-primary/80 shrink-0"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" />
+                  </a>
+                )}
               </div>
             </div>
           </section>
@@ -355,6 +392,45 @@ const AuditResults = () => {
               </div>
             </div>
           </section>
+        ) : phase === "error" ? (
+          /* ══════════════════════ Error Phase ══════════════════════ */
+          <section className="py-24 md:py-32">
+            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="max-w-lg mx-auto text-center">
+                <div className="w-20 h-20 rounded-full bg-destructive/10 border border-destructive/20 flex items-center justify-center mx-auto mb-8">
+                  {isRateLimited ? (
+                    <Shield className="w-10 h-10 text-amber-400" />
+                  ) : (
+                    <XCircle className="w-10 h-10 text-destructive" />
+                  )}
+                </div>
+
+                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+                  {isRateLimited ? "Limite atteinte" : "Analyse impossible"}
+                </h2>
+                <p className="text-foreground/70 mb-8 max-w-md mx-auto">
+                  {errorMessage}
+                </p>
+
+                <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                  {!isRateLimited && (
+                    <Button variant="heroGradient" size="lg" asChild>
+                      <Link to="/audit-tracking">
+                        <RefreshCw className="w-4 h-4 mr-2" />
+                        Réessayer
+                      </Link>
+                    </Button>
+                  )}
+                  <Button variant="outline" size="lg" asChild>
+                    <Link to="/contact">
+                      Demander un audit expert
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Link>
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </section>
         ) : (
           /* ══════════════════════ Results Phase ══════════════════════ */
           <section className="py-12 md:py-16">
@@ -362,7 +438,7 @@ const AuditResults = () => {
               <div className="max-w-4xl mx-auto">
                 {/* ── Score + Summary ── */}
                 <div className="flex flex-col md:flex-row items-center gap-8 md:gap-12 mb-12">
-                  <ScoreCircle score={MOCK_SCORE} animate={scoreAnimated} />
+                  <ScoreCircle score={auditResult?.overallScore ?? 0} animate={scoreAnimated} />
                   <div className="text-center md:text-left">
                     <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
                       Score de votre tracking
@@ -378,26 +454,29 @@ const AuditResults = () => {
                       </span>{" "}
                       sur votre site.
                     </p>
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 text-destructive text-sm font-medium">
-                      <AlertTriangle className="w-4 h-4" />
-                      Action requise — Vous perdez des conversions
-                    </div>
+                    {(auditResult?.overallScore ?? 0) < 70 && (
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-destructive/15 text-destructive text-sm font-medium">
+                        <AlertTriangle className="w-4 h-4" />
+                        Action requise — Vous perdez des conversions
+                      </div>
+                    )}
                   </div>
                 </div>
 
                 {/* ── Category Breakdown ── */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
-                  {mockCategories.map((cat) => {
+                  {categories.map((cat) => {
                     const Icon = categoryIconMap[cat.id] || Activity;
+                    const color = getCategoryColor(cat.score);
                     return (
                       <div
                         key={cat.id}
                         className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4 text-center"
                       >
                         <div className="flex items-center justify-center mb-2">
-                          <Icon className={`w-5 h-5 ${cat.color}`} />
+                          <Icon className={`w-5 h-5 ${color}`} />
                         </div>
-                        <span className={`text-2xl font-bold ${cat.color}`}>
+                        <span className={`text-2xl font-bold ${color}`}>
                           {cat.score}
                         </span>
                         <span className="text-xs text-muted-foreground">

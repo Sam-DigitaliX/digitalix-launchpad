@@ -91,6 +91,35 @@ export function sendEmail(params: SendConfirmationParams | SendAuditUnlockParams
   });
 }
 
+/* ──────────────────── Audit ──────────────────── */
+
+import type { AuditResult, AuditCheck } from '@/types/audit';
+
+export function startAudit(url: string) {
+  return request<AuditResult>('/api/audit', {
+    method: 'POST',
+    body: JSON.stringify({ url }),
+  });
+}
+
+export function getAudit(id: string) {
+  return request<AuditResult>('/api/audit/' + id);
+}
+
+export function unlockAudit(id: string, email: string) {
+  return request<{ success: boolean; checks: AuditCheck[]; contactId: string }>('/api/audit/' + id + '/unlock', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function trackAuditEmailClick(id: string, contactId: string) {
+  return request<{ success: boolean }>('/api/audit/' + id + '/track-click', {
+    method: 'POST',
+    body: JSON.stringify({ contactId }),
+  });
+}
+
 /* ──────────────────── Admin ──────────────────── */
 
 function adminHeaders(adminKey: string): HeadersInit {

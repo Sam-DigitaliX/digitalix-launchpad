@@ -13,8 +13,7 @@ function analyzeDataLayer(ctx: ScanContext) {
       hasDataLayer = true;
     }
 
-    let m: RegExpExecArray | null;
-    while ((m = DATALAYER_PUSH_PATTERN.exec(script)) !== null) {
+    while (DATALAYER_PUSH_PATTERN.exec(script) !== null) {
       pushCount++;
     }
     DATALAYER_PUSH_PATTERN.lastIndex = 0;

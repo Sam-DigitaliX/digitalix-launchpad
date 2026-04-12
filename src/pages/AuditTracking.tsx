@@ -87,13 +87,11 @@ const AuditTracking = () => {
     }
 
     setIsLoading(true);
-    const auditId = crypto.randomUUID();
 
-    setTimeout(() => {
-      navigate(`/audit-tracking/resultats/${auditId}`, {
-        state: { url: normalizedUrl },
-      });
-    }, 600);
+    // Navigate to results page — scan will be launched from there
+    navigate('/audit-tracking/resultats/new', {
+      state: { url: normalizedUrl },
+    });
   };
 
   return (

@@ -29,4 +29,5 @@ export interface AuditResult {
   categories: AuditCategorySummary[];
   checks: AuditCheck[];
   createdAt: string;
+  errorMessage?: string;
 }

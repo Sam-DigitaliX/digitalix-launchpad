@@ -203,6 +203,8 @@ app.post('/:id/unlock', async (c) => {
       email,
       url: audit.url,
       score: audit.overall_score,
+      auditId: id,
+      contactId,
     });
 
     const resendResult = await sendEmail({
@@ -242,7 +244,40 @@ app.post('/:id/unlock', async (c) => {
     gated: row.gated,
   }));
 
-  return c.json({ success: true, checks });
+  return c.json({ success: true, checks, contactId });
+});
+
+/**
+ * POST /api/audit/:id/track-click
+ * Log that a contact clicked the email link to revisit their audit.
+ */
+app.post('/:id/track-click', async (c) => {
+  const id = c.req.param('id');
+  const body = await c.req.json();
+  const contactId = body.contactId;
+
+  if (!contactId || typeof contactId !== 'string') {
+    return c.json({ error: 'contactId is required' }, 400);
+  }
+
+  // Verify audit and contact exist
+  const auditRows = await sql`SELECT id FROM audits WHERE id = ${id} LIMIT 1`;
+  const contactRows = await sql`SELECT id FROM contacts WHERE id = ${contactId} LIMIT 1`;
+
+  if (auditRows.length === 0 || contactRows.length === 0) {
+    return c.json({ error: 'Not found' }, 404);
+  }
+
+  // Log the click interaction
+  await sql`
+    INSERT INTO interactions (contact_id, type, metadata)
+    VALUES (${contactId}, 'audit_email_click', ${JSON.stringify({ audit_id: id })})
+  `;
+
+  // Update last_seen_at on contact
+  await sql`UPDATE contacts SET last_seen_at = now() WHERE id = ${contactId}`;
+
+  return c.json({ success: true });
 });
 
 export default app;

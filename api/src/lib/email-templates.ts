@@ -62,6 +62,8 @@ export interface AuditUnlockData {
   email: string;
   url: string;
   score: number;
+  auditId: string;
+  contactId: string;
 }
 
 /* ──────────────────── HTML Helpers ──────────────────── */
@@ -242,6 +244,12 @@ export function buildAuditUnlockEmail(d: AuditUnlockData): {
       Ce diagnostic automatique révèle des axes d'amélioration. Pour un plan d'action personnalisé,
       réservez un audit approfondi avec un expert DigitaliX.
     </p>
+
+    <div style="text-align: center; margin: 24px 0;">
+      <a href="https://digitalix.xyz/audit-tracking/resultats/${esc(d.auditId)}?cid=${esc(d.contactId)}" style="display: inline-block; background: #111827; color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none; margin-bottom: 12px;">
+        Revoir mon rapport
+      </a>
+    </div>
 
     <div style="text-align: center; margin: 24px 0;">
       <a href="https://digitalix.xyz/contact" style="display: inline-block; background: linear-gradient(135deg, #7c3aed 0%, #06b6d4 100%); color: #ffffff; font-weight: 600; font-size: 14px; padding: 14px 32px; border-radius: 8px; text-decoration: none;">
