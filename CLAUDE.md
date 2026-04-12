@@ -88,13 +88,21 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 ### VPS (Hostinger KVM1)
 - IP: `148.230.108.196`
-- OS: Ubuntu 24.04 LTS
+- OS: Ubuntu 24.04 LTS (template n8n queue mode)
 - Resources: 1 vCPU, 4 GB RAM, 50 GB disk
-- Coolify v4 (Traefik proxy, Let's Encrypt SSL)
+- Coolify v4 (Traefik 3.6.9, Let's Encrypt SSL)
+
+### Coolify — Applications & Services
+| Name | Type | Status | URL | Source |
+|------|------|--------|-----|--------|
+| `digitalix-api` | Application (Dockerfile) | running | `https://api.digitalix.xyz` | `Sam-DigitaliX/digitalix-launchpad` (base_dir `/api`) |
+| `Probr.io` | Application (docker-compose) | running:healthy | — | `Sam-DigitaliX/Probr.io` |
+| `bookstack-probr.io` | Service (BookStack + MariaDB) | running:healthy | `https://docs.probr.io` | — |
 
 ### DNS (Cloudflare)
 - `digitalix.xyz` / `www.digitalix.xyz` → Vercel
 - `api.digitalix.xyz` → `148.230.108.196` (DNS only, no proxy)
+- `docs.probr.io` → `148.230.108.196` (BookStack via Coolify)
 
 ### Environment Variables
 **Frontend (Vercel)**:
@@ -112,12 +120,48 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - Design tokens in `src/index.css` and `tailwind.config.ts`
 - Always use tokens: `text-foreground`, `text-muted-foreground`, `border-glass-border`, `bg-glass`, `font-display`, `font-mono`
 
+## Feature Status
+
+### Live
+| Feature | Route | Notes |
+|---------|-------|-------|
+| Landing page | `/` | Hero, services, case studies carousel, CTA |
+| Services hub + detail | `/services`, `/services/:slug` | All service pages |
+| Qualification form | `/consultants` | Multi-step with lead scoring (threshold ≥30) |
+| Contact | `/contact` | Direct contact form |
+| About | `/a-propos` | 6-section (not in nav) |
+| Case studies | `/cas-clients`, `/cas-clients/:slug` | 3 fake case studies (not in nav) |
+| Brand guide | `/brand` | Design system reference |
+| Admin dashboard | `/admin` | Key-based auth, stats, contacts, timeline, emails |
+| Email system | — | Resend: confirmation_qualified, confirmation_unqualified, audit_unlock |
+| GTM tracking | — | GTM-PD3X686F with virtual_page_view for SPA |
+
+### Mock / In Progress
+| Feature | Route | Status |
+|---------|-------|--------|
+| Audit Tracking | `/audit-tracking` | UI complete, scan engine not implemented (mock score 38/100) |
+| Audit Results | `/audit-tracking/resultats/:id` | Email gate works, results are hardcoded mock data |
+| Resource download | `/consultants` | QualificationForm.tsx:202 — waiting for resource file |
+
+## Audit Tracking — Architecture Decision
+
+**Decision**: integrate the scan engine into the existing Hono API (`api/`) rather than a separate service.
+
+**Rationale**: the scan is lightweight (HTTP fetch + HTML parsing via cheerio, no headless browser), runs synchronously in <5s, and the VPS (1 vCPU, 4 GB RAM) can handle it. No need for a separate service given the low expected volume.
+
+**Planned structure**:
+- `api/src/lib/scanner/` — fetcher, check modules (18 checks), orchestrator, score computation
+- `api/src/routes/audit.ts` — `POST /api/audit`, `GET /api/audit/:id`, `POST /api/audit/:id/unlock`
+- `api/migrations/002_audit.sql` — `audits` + `audit_checks` tables
+- Rate limit: 3 audits/IP/hour (in-memory)
+- 4 categories: Tracking Setup (30%), Server-Side (25%), Privacy & Consent (30%), Performance (15%)
+
 ## Known TODOs
 - [x] Supabase → PostgreSQL migration — **COMPLETE** (2026-04-10)
 - [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)
 - [x] Run schema migration on PostgreSQL + insert admin key
 - [x] Set env vars on Vercel: `VITE_API_URL`
-- [ ] Audit Tracking: replace mock data with real site scanning
+- [ ] Audit Tracking: implement scan engine (18 checks) + API routes + frontend integration
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
 - [ ] Decommission Supabase project after 2-week monitoring period
