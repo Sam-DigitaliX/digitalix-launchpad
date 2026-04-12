@@ -1,28 +1,72 @@
 import { Hono } from 'hono';
+import { streamSSE } from 'hono/streaming';
 import { sql } from '../db.js';
 import { scanUrl } from '../lib/scanner/index.js';
 import { checkRateLimit } from '../lib/rate-limit.js';
 import { sendEmail } from '../lib/resend.js';
 import { buildAuditUnlockEmail } from '../lib/email-templates.js';
+import type { ScanProgressEvent } from '../lib/scanner/types.js';
+import type { ScanResult } from '../lib/scanner/index.js';
 
 const app = new Hono();
 
 const GATED_PLACEHOLDER = 'Debloquez les resultats complets en renseignant votre email.';
+
+/* ──────────────────── In-memory scan state ──────────────────── */
+
+interface ScanState {
+  events: ScanProgressEvent[];
+  result: ScanResult | null;
+  done: boolean;
+  listeners: Set<(event: ScanProgressEvent) => void>;
+}
+
+const scanStates = new Map<string, ScanState>();
+
+// Cleanup old scan states after 10 minutes
+setInterval(() => {
+  const cutoff = Date.now() - 10 * 60 * 1000;
+  for (const [id, state] of scanStates) {
+    if (state.done && state.events.length > 0) {
+      const lastEvent = state.events[state.events.length - 1];
+      if (lastEvent && ('_ts' in lastEvent) && (lastEvent as unknown as { _ts: number })._ts < cutoff) {
+        scanStates.delete(id);
+      }
+    }
+  }
+}, 60_000);
+
+function pushEvent(auditId: string, event: ScanProgressEvent) {
+  const state = scanStates.get(auditId);
+  if (!state) return;
+  (event as unknown as { _ts: number })._ts = Date.now();
+  state.events.push(event);
+  for (const listener of state.listeners) {
+    listener(event);
+  }
+}
+
+/* ──────────────────── Helpers ──────────────────── */
 
 function normalizeUrl(raw: string): string {
   let url = raw.trim();
   if (!url.startsWith('http://') && !url.startsWith('https://')) {
     url = `https://${url}`;
   }
-  // Validate URL format
   new URL(url);
   return url;
 }
 
-/**
- * POST /api/audit
- * Submit a URL for scanning. Returns the full AuditResult.
- */
+function extractDomain(url: string): string {
+  try {
+    return new URL(url).hostname.replace(/^www\./, '');
+  } catch {
+    return url;
+  }
+}
+
+/* ──────────────────── POST /api/audit ──────────────────── */
+
 app.post('/', async (c) => {
   const body = await c.req.json();
   const rawUrl = body.url;
@@ -38,7 +82,6 @@ app.post('/', async (c) => {
     return c.json({ error: 'Invalid URL format' }, 400);
   }
 
-  // Rate limiting by IP
   const ip = c.req.header('x-forwarded-for')?.split(',')[0]?.trim()
     ?? c.req.header('x-real-ip')
     ?? 'unknown';
@@ -47,64 +90,175 @@ app.post('/', async (c) => {
     return c.json({ error: 'Rate limit exceeded. Maximum 3 audits per hour.' }, 429);
   }
 
-  // Run the scan
-  const result = await scanUrl(url);
-
-  // Insert audit row
+  // Create audit row with status 'scanning'
   const auditRows = await sql`
-    INSERT INTO audits (url, domain, status, overall_score, categories, error_message)
-    VALUES (
-      ${result.url},
-      ${result.domain},
-      ${result.status},
-      ${result.overallScore},
-      ${JSON.stringify(result.categories)},
-      ${result.errorMessage ?? null}
-    )
+    INSERT INTO audits (url, domain, status, overall_score)
+    VALUES (${url}, ${extractDomain(url)}, 'scanning', 0)
     RETURNING id, created_at
   `;
 
   const auditId = auditRows[0].id as string;
-  const createdAt = auditRows[0].created_at as string;
 
-  // Insert check rows
-  if (result.checks.length > 0) {
-    await sql`
-      INSERT INTO audit_checks ${sql(
-        result.checks.map((check) => ({
-          audit_id: auditId,
-          check_id: check.id,
-          category: check.category,
-          name: check.name,
-          status: check.status,
-          description: check.description,
-          impact: check.impact,
-          gated: check.gated,
-          raw_data: JSON.stringify({}),
-        }))
-      )}
-    `;
+  // Initialize scan state
+  const state: ScanState = { events: [], result: null, done: false, listeners: new Set() };
+  scanStates.set(auditId, state);
+
+  // Launch scan in background (non-blocking)
+  void (async () => {
+    try {
+      const result = await scanUrl(url, (event) => pushEvent(auditId, event));
+
+      // Update audit in DB
+      await sql`
+        UPDATE audits SET
+          status = ${result.status},
+          overall_score = ${result.overallScore},
+          categories = ${JSON.stringify(result.categories)},
+          error_message = ${result.errorMessage ?? null}
+        WHERE id = ${auditId}
+      `;
+
+      // Insert checks
+      if (result.checks.length > 0) {
+        await sql`
+          INSERT INTO audit_checks ${sql(
+            result.checks.map((check) => ({
+              audit_id: auditId,
+              check_id: check.id,
+              category: check.category,
+              name: check.name,
+              status: check.status,
+              description: check.description,
+              impact: check.impact,
+              gated: check.gated,
+              raw_data: JSON.stringify({}),
+            }))
+          )}
+        `;
+      }
+
+      state.result = result;
+      state.done = true;
+    } catch (err) {
+      console.error('[audit] Scan failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Scan failed';
+
+      await sql`
+        UPDATE audits SET status = 'failed', error_message = ${errorMessage}
+        WHERE id = ${auditId}
+      `;
+
+      pushEvent(auditId, { type: 'error', label: errorMessage });
+      state.done = true;
+    }
+  })();
+
+  return c.json({ id: auditId });
+});
+
+/* ──────────────────── GET /api/audit/:id/progress (SSE) ──────────────────── */
+
+app.get('/:id/progress', async (c) => {
+  const id = c.req.param('id');
+  const state = scanStates.get(id);
+
+  if (!state) {
+    // Scan might already be done — check DB
+    const auditRows = await sql`SELECT status FROM audits WHERE id = ${id} LIMIT 1`;
+    if (auditRows.length === 0) {
+      return c.json({ error: 'Audit not found' }, 404);
+    }
+    if (auditRows[0].status === 'completed' || auditRows[0].status === 'failed') {
+      // Already done, send a single complete event
+      return streamSSE(c, async (stream) => {
+        await stream.writeSSE({ data: JSON.stringify({ type: 'scan_complete', label: 'Audit termine' }), event: 'progress' });
+      });
+    }
+    return c.json({ error: 'Scan state not found' }, 404);
   }
 
-  // Return result with gated descriptions masked
-  return c.json({
-    id: auditId,
-    url: result.url,
-    status: result.status,
-    overallScore: result.overallScore,
-    categories: result.categories,
-    checks: result.checks.map((check) => ({
-      ...check,
-      description: check.gated ? GATED_PLACEHOLDER : check.description,
-    })),
-    createdAt,
+  return streamSSE(c, async (stream) => {
+    // Send all past events first (replay)
+    for (const event of state.events) {
+      await stream.writeSSE({ data: JSON.stringify(event), event: 'progress' });
+    }
+
+    // If already done, close
+    if (state.done) {
+      if (state.result) {
+        await stream.writeSSE({
+          data: JSON.stringify({
+            type: 'result',
+            result: {
+              id,
+              url: state.result.url,
+              status: state.result.status,
+              overallScore: state.result.overallScore,
+              categories: state.result.categories,
+              checks: state.result.checks.map((check) => ({
+                ...check,
+                description: check.gated ? GATED_PLACEHOLDER : check.description,
+              })),
+            },
+          }),
+          event: 'progress',
+        });
+      }
+      return;
+    }
+
+    // Stream live events
+    await new Promise<void>((resolve) => {
+      const listener = async (event: ScanProgressEvent) => {
+        try {
+          await stream.writeSSE({ data: JSON.stringify(event), event: 'progress' });
+        } catch {
+          // Client disconnected
+          state.listeners.delete(listener);
+          resolve();
+        }
+
+        // If scan is done, send result and close
+        if (state.done && state.result) {
+          try {
+            await stream.writeSSE({
+              data: JSON.stringify({
+                type: 'result',
+                result: {
+                  id,
+                  url: state.result.url,
+                  status: state.result.status,
+                  overallScore: state.result.overallScore,
+                  categories: state.result.categories,
+                  checks: state.result.checks.map((check) => ({
+                    ...check,
+                    description: check.gated ? GATED_PLACEHOLDER : check.description,
+                  })),
+                },
+              }),
+              event: 'progress',
+            });
+          } catch {
+            // ignore
+          }
+          state.listeners.delete(listener);
+          resolve();
+        }
+      };
+
+      state.listeners.add(listener);
+
+      // Safety timeout — close after 60s max
+      setTimeout(() => {
+        state.listeners.delete(listener);
+        resolve();
+      }, 60_000);
+    });
   });
 });
 
-/**
- * GET /api/audit/:id
- * Retrieve an existing audit result.
- */
+/* ──────────────────── GET /api/audit/:id ──────────────────── */
+
 app.get('/:id', async (c) => {
   const id = c.req.param('id');
 
@@ -143,14 +297,13 @@ app.get('/:id', async (c) => {
     overallScore: audit.overall_score,
     categories: audit.categories,
     checks,
+    errorMessage: audit.error_message,
     createdAt: audit.created_at,
   });
 });
 
-/**
- * POST /api/audit/:id/unlock
- * Submit email to unlock gated checks.
- */
+/* ──────────────────── POST /api/audit/:id/unlock ──────────────────── */
+
 app.post('/:id/unlock', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json();
@@ -160,7 +313,6 @@ app.post('/:id/unlock', async (c) => {
     return c.json({ error: 'Valid email is required' }, 400);
   }
 
-  // Check audit exists
   const auditRows = await sql`
     SELECT id, url, overall_score FROM audits WHERE id = ${id} LIMIT 1
   `;
@@ -171,7 +323,6 @@ app.post('/:id/unlock', async (c) => {
 
   const audit = auditRows[0];
 
-  // Upsert contact
   const contactRows = await sql`
     INSERT INTO contacts (email, first_seen_at, last_seen_at)
     VALUES (${email}, now(), now())
@@ -181,13 +332,11 @@ app.post('/:id/unlock', async (c) => {
 
   const contactId = contactRows[0].id as string;
 
-  // Link contact to audit and mark as unlocked
   await sql`
     UPDATE audits SET contact_id = ${contactId}, unlocked_at = now()
     WHERE id = ${id}
   `;
 
-  // Log interaction
   await sql`
     INSERT INTO interactions (contact_id, type, metadata)
     VALUES (${contactId}, 'audit_unlock', ${JSON.stringify({
@@ -197,7 +346,6 @@ app.post('/:id/unlock', async (c) => {
     })})
   `;
 
-  // Send audit_unlock email
   try {
     const emailResult = buildAuditUnlockEmail({
       email,
@@ -213,7 +361,6 @@ app.post('/:id/unlock', async (c) => {
       html: emailResult.html,
     });
 
-    // Log email
     await sql`
       INSERT INTO email_logs (contact_id, to_email, template_key, subject, resend_message_id, status, metadata)
       VALUES (${contactId}, ${email}, ${emailResult.template_key}, ${emailResult.subject}, ${resendResult.id}, 'sent', ${JSON.stringify({
@@ -224,10 +371,8 @@ app.post('/:id/unlock', async (c) => {
     `;
   } catch (err) {
     console.error('[audit/unlock] Email send failed:', err);
-    // Don't block the unlock — email is best-effort
   }
 
-  // Return all checks with descriptions visible
   const checkRows = await sql`
     SELECT check_id, category, name, status, description, impact, gated
     FROM audit_checks WHERE audit_id = ${id}
@@ -247,10 +392,8 @@ app.post('/:id/unlock', async (c) => {
   return c.json({ success: true, checks, contactId });
 });
 
-/**
- * POST /api/audit/:id/track-click
- * Log that a contact clicked the email link to revisit their audit.
- */
+/* ──────────────────── POST /api/audit/:id/track-click ──────────────────── */
+
 app.post('/:id/track-click', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json();
@@ -260,7 +403,6 @@ app.post('/:id/track-click', async (c) => {
     return c.json({ error: 'contactId is required' }, 400);
   }
 
-  // Verify audit and contact exist
   const auditRows = await sql`SELECT id FROM audits WHERE id = ${id} LIMIT 1`;
   const contactRows = await sql`SELECT id FROM contacts WHERE id = ${contactId} LIMIT 1`;
 
@@ -268,13 +410,11 @@ app.post('/:id/track-click', async (c) => {
     return c.json({ error: 'Not found' }, 404);
   }
 
-  // Log the click interaction
   await sql`
     INSERT INTO interactions (contact_id, type, metadata)
     VALUES (${contactId}, 'audit_email_click', ${JSON.stringify({ audit_id: id })})
   `;
 
-  // Update last_seen_at on contact
   await sql`UPDATE contacts SET last_seen_at = now() WHERE id = ${contactId}`;
 
   return c.json({ success: true });

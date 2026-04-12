@@ -1,6 +1,6 @@
 import { fetchPage } from './fetcher.js';
 import { allChecks, fetchPageSpeedMetrics, checkLcp, checkCls, checkInp } from './checks/index.js';
-import type { CheckResult, CheckModule } from './types.js';
+import type { CheckResult, CheckModule, OnProgress } from './types.js';
 
 interface AuditCheck {
   id: string;
@@ -73,7 +73,6 @@ function computeCategoryScores(checks: AuditCheck[]): AuditCategorySummary[] {
     for (const check of catChecks) {
       const weight = IMPACT_WEIGHTS[check.impact] ?? 1;
 
-      // Info checks are neutral — excluded from scoring
       if (check.status === 'info') continue;
 
       totalWeight += weight;
@@ -83,7 +82,6 @@ function computeCategoryScores(checks: AuditCheck[]): AuditCategorySummary[] {
       } else if (check.status === 'warning') {
         earnedWeight += weight * 0.5;
       }
-      // fail = 0
     }
 
     const score = totalWeight > 0 ? Math.round((earnedWeight / totalWeight) * 100) : 100;
@@ -109,10 +107,12 @@ function computeOverallScore(categories: AuditCategorySummary[]): number {
   return totalWeight > 0 ? Math.round(weighted / totalWeight) : 0;
 }
 
-export async function scanUrl(url: string): Promise<ScanResult> {
-  // Launch HTML fetch and PageSpeed fetch in parallel
+const noopProgress: OnProgress = () => {};
+
+export async function scanUrl(url: string, onProgress: OnProgress = noopProgress): Promise<ScanResult> {
+  // Launch Playwright scan and PageSpeed in parallel
   const [ctxResult, pageSpeedResult] = await Promise.allSettled([
-    fetchPage(url),
+    fetchPage(url, onProgress),
     fetchPageSpeedMetrics(url),
   ]);
 
@@ -120,6 +120,8 @@ export async function scanUrl(url: string): Promise<ScanResult> {
     const errorMessage = ctxResult.reason instanceof Error
       ? ctxResult.reason.message
       : 'Impossible de charger la page.';
+
+    onProgress({ type: 'error', label: errorMessage });
 
     return {
       url,
@@ -137,13 +139,15 @@ export async function scanUrl(url: string): Promise<ScanResult> {
     ? pageSpeedResult.value
     : { lcp: null, cls: null, inp: null };
 
+  onProgress({ type: 'step_done', label: 'Execution des verifications...' });
+
   // Run all synchronous checks against the ScanContext
   const checks: AuditCheck[] = allChecks.map((module) => {
     const result = module.run(ctx);
     return toAuditCheck(module, result);
   });
 
-  // Add PageSpeed checks (async results)
+  // Add PageSpeed checks
   const lcpResult = checkLcp(pageSpeed.lcp);
   checks.push({
     id: 'lcp',
@@ -180,6 +184,8 @@ export async function scanUrl(url: string): Promise<ScanResult> {
   // Compute scores
   const categories = computeCategoryScores(checks);
   const overallScore = computeOverallScore(categories);
+
+  onProgress({ type: 'scan_complete', label: `Score final : ${overallScore}/100` });
 
   return {
     url,

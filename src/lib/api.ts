@@ -95,11 +95,46 @@ export function sendEmail(params: SendConfirmationParams | SendAuditUnlockParams
 
 import type { AuditResult, AuditCheck } from '@/types/audit';
 
+export interface AuditProgressEvent {
+  type: 'session_start' | 'step_done' | 'issues_count' | 'session_complete' | 'scan_complete' | 'error' | 'result';
+  session?: number;
+  totalSessions?: number;
+  label: string;
+  issuesCount?: number;
+  result?: AuditResult;
+}
+
+/** Create an audit and get the ID back (scan runs in background) */
 export function startAudit(url: string) {
-  return request<AuditResult>('/api/audit', {
+  return request<{ id: string }>('/api/audit', {
     method: 'POST',
     body: JSON.stringify({ url }),
   });
+}
+
+/** Open SSE stream to receive scan progress events */
+export function streamAuditProgress(
+  id: string,
+  onEvent: (event: AuditProgressEvent) => void,
+  onError?: (error: Event) => void,
+): EventSource {
+  const source = new EventSource(`${API_BASE}/api/audit/${id}/progress`);
+
+  source.addEventListener('progress', (e) => {
+    try {
+      const data = JSON.parse((e as MessageEvent).data) as AuditProgressEvent;
+      onEvent(data);
+    } catch {
+      // malformed event
+    }
+  });
+
+  source.onerror = (e) => {
+    source.close();
+    onError?.(e);
+  };
+
+  return source;
 }
 
 export function getAudit(id: string) {
