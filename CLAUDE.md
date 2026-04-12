@@ -145,38 +145,77 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 ## Audit Tracking — Architecture
 
-**Approach**: scan engine integrated into the Hono API (`api/`), lightweight HTTP fetch + cheerio parsing + PageSpeed Insights API, no headless browser.
+**Approach**: Playwright headless (Chromium) on the VPS, 3-session consent protocol, integrated into the Hono API.
 
 **Scanner** (`api/src/lib/scanner/`):
-- `fetcher.ts` — HTTP fetch with redirect following, cookie parsing, script extraction
-- `checks/` — 18 sync CheckModule files + `pagespeed.ts` (3 async Core Web Vitals via Google PageSpeed API)
-- `index.ts` — orchestrator: parallel fetch (HTML + PageSpeed), runs all checks, computes scores
-- Total: **21 checks** across 4 categories
+- `fetcher.ts` — Playwright-based: launches headless Chromium, captures HTML, cookies, network requests, console
+- `checks/` — check modules analyzing real browser data (network requests, cookies, dataLayer, consent state)
+- `index.ts` — orchestrator: runs 3 sessions sequentially, executes checks, computes scores
+- `pagespeed.ts` — Core Web Vitals from real browser metrics (LCP, CLS, INP)
+
+**3-session consent protocol**:
+1. **Pre-consent** — navigate, no CMP interaction. Capture cookies/requests that fire without consent (violations)
+2. **Accept all** — click CMP accept button, wait for tags to fire. Capture full tracking stack
+3. **Reject all** — click CMP reject button. Verify no analytics/ad cookies, check Consent Mode v2 Advanced (anonymized pings)
+
+**CMP button detection** — cascade approach:
+1. Known selectors (Didomi, Cookiebot, Axeptio, OneTrust, etc. — 15+ CMP)
+2. ARIA roles fallback (`button[aria-label*="accept"]`)
+3. Multi-language text fallback ("Accepter", "Accept", "Akzeptieren", etc.)
+4. If no CMP after 5s → single session degraded mode
 
 **Categories & weights**: Tracking Setup (30%), Server-Side (25%), Privacy & Consent (30%), Performance (15%)
 
 **API routes** (`api/src/routes/audit.ts`):
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/audit` | Submit URL → scan → store → return masked results |
+| `POST` | `/api/audit` | Submit URL → scan (SSE progress events) → store → return results |
 | `GET` | `/api/audit/:id` | Retrieve audit (respects unlock state) |
 | `POST` | `/api/audit/:id/unlock` | Email → upsert contact → send email → return all checks |
 | `POST` | `/api/audit/:id/track-click` | Log `audit_email_click` interaction (from email link with `?cid=`) |
 
-**DB**: `api/migrations/002_audit.sql` — tables `audits` + `audit_checks`
-**Rate limit**: 3 audits/IP/hour (in-memory)
-**Email**: `audit_unlock` template includes "Revoir mon rapport" link with `?cid={contactId}` for click tracking
-**Dependencies**: cheerio (HTML parsing)
+**Frontend scan UX**: real-time progress via SSE — each session step displayed live (30s total)
 
-## Known TODOs
-- [x] Supabase → PostgreSQL migration — **COMPLETE** (2026-04-10)
-- [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)
-- [x] Run schema migration on PostgreSQL + insert admin key
-- [x] Set env vars on Vercel: `VITE_API_URL`
-- [ ] Audit Tracking: deploy (push to main, run migration 002_audit.sql, test end-to-end)
+**DB**: `api/migrations/002_audit.sql` — tables `audits` + `audit_checks`
+**Rate limit**: 3 audits/IP/hour (in-memory, single concurrent scan)
+**Email**: `audit_unlock` template includes "Revoir mon rapport" link with `?cid={contactId}` for click tracking
+**Dependencies**: playwright (Chromium headless), cheerio (HTML parsing fallback)
+
+**Server resources**: ~400MB RAM per scan, sequential execution, KVM1 (4GB) viable for 1 scan at a time
+
+## Roadmap
+
+### Chantier A — Playwright scanner (in progress)
+- [ ] Install playwright + Chromium in Docker
+- [ ] Rewrite fetcher.ts with Playwright (3-session consent protocol)
+- [ ] CMP button detection (selectors → ARIA → text cascade)
+- [ ] SSE progress events (real-time scan feedback to frontend)
+- [ ] Adapt frontend loader (live session steps, ~30s)
+- [ ] Enrich checks with real network/cookie data
+- [ ] New checks: e-commerce detection, dataLayer inspect, GA4 collect analysis, tag firing order
+
+### Chantier B — Dashboard leads (planned)
+- [ ] Admin endpoints: contacts/:id/audits, enriched contacts list
+- [ ] Lead temperature scoring (audit + form + resource = hot)
+- [ ] Timeline: show audits (site, score, link to results) per contact
+- [ ] Multi-audit view: number of sites audited, links to results
+- [ ] Date filter on dashboard
+- [ ] Filter contacts by source (audit / form / both)
+
+### Chantier C — Backlog
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
 - [ ] Decommission Supabase project after 2-week monitoring period
+- [ ] Cross-domain tracking detection
+- [ ] Security headers analysis
+- [ ] Redirect chain analysis
+
+### Done
+- [x] Supabase → PostgreSQL migration (2026-04-10)
+- [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)
+- [x] Run schema migration on PostgreSQL + insert admin key
+- [x] Set env vars on Vercel: VITE_API_URL
+- [x] Audit Tracking V1: static fetch scanner, 21 checks, deployed (2026-04-13)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
