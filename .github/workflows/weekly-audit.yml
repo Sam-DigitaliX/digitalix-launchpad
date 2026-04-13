@@ -107,6 +107,37 @@ jobs:
           fi
           echo "" >> "$REPORT_FILE"
 
+          # --- Infra: Coolify ---
+          echo "🖥 *Infrastructure*" >> "$REPORT_FILE"
+          COOLIFY_CURRENT=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/version 2>/dev/null || echo "?")
+          COOLIFY_LATEST=$(curl -s --max-time 5 https://cdn.coollabs.io/coolify/versions.json 2>/dev/null | jq -r '.coolify.v4.version // "?"')
+          TRAEFIK_LATEST=$(curl -s --max-time 5 https://cdn.coollabs.io/coolify/versions.json 2>/dev/null | jq -r '.traefik."v3.6" // "?"')
+
+          if [ "$COOLIFY_CURRENT" = "$COOLIFY_LATEST" ]; then
+            echo "✅ Coolify : $COOLIFY_CURRENT (à jour)" >> "$REPORT_FILE"
+          else
+            echo "🔶 Coolify : $COOLIFY_CURRENT → $COOLIFY_LATEST dispo" >> "$REPORT_FILE"
+          fi
+
+          # Get Traefik version from Coolify server info
+          TRAEFIK_CURRENT=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/servers 2>/dev/null | jq -r '.[0].detected_traefik_version // "?"')
+          if [ "$TRAEFIK_CURRENT" = "$TRAEFIK_LATEST" ]; then
+            echo "✅ Traefik : $TRAEFIK_CURRENT (à jour)" >> "$REPORT_FILE"
+          else
+            echo "🔶 Traefik : $TRAEFIK_CURRENT → $TRAEFIK_LATEST dispo" >> "$REPORT_FILE"
+          fi
+
+          # --- Infra: Hostinger VPS ---
+          VPS_INFO=$(curl -s --max-time 5 -H "Authorization: Bearer $HOSTINGER_API_TOKEN" "https://developers.hostinger.com/api/vps/v1/virtual-machines" 2>/dev/null)
+          VPS_STATE=$(echo "$VPS_INFO" | jq -r '.[0].state // "?"')
+          VPS_OS=$(echo "$VPS_INFO" | jq -r '.[0].template.name // "?"')
+          if [ "$VPS_STATE" = "running" ]; then
+            echo "✅ VPS : running ($VPS_OS)" >> "$REPORT_FILE"
+          else
+            echo "🔴 VPS : $VPS_STATE" >> "$REPORT_FILE"
+          fi
+          echo "" >> "$REPORT_FILE"
+
           # --- GitHub Issues ---
           ISSUES_COUNT=$(gh issue list --json number --jq 'length' 2>/dev/null || echo '0')
           echo "📋 Issues GitHub : ${ISSUES_COUNT}" >> "$REPORT_FILE"
@@ -115,6 +146,8 @@ jobs:
           echo "report_file=$REPORT_FILE" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ github.token }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          HOSTINGER_API_TOKEN: ${{ secrets.HOSTINGER_API_TOKEN }}
 
       - name: Send to Telegram
         run: |
