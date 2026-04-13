@@ -153,40 +153,52 @@ interface ProgressStep {
   isSessionHeader: boolean;
 }
 
-const ProgressStepRow = ({ step, isLatest }: { step: ProgressStep; isLatest: boolean }) => {
-  const isIssue = step.type === "issues_count";
-
-  return (
-    <div
-      className={`flex items-center gap-3 transition-all duration-500 animate-fade-in-up ${
-        step.isSessionHeader ? "mt-6 first:mt-0" : "ml-6"
-      }`}
-    >
-      {step.isSessionHeader ? (
-        isLatest ? (
-          <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
-        ) : (
-          <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-        )
-      ) : isIssue ? (
-        <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+const ProgressSessionCard = ({
+  title,
+  steps,
+  isActive,
+  isDone,
+}: {
+  title: string;
+  steps: ProgressStep[];
+  isActive: boolean;
+  isDone: boolean;
+}) => (
+  <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4 animate-fade-in-up">
+    <div className="flex items-center gap-3 mb-3">
+      {isDone ? (
+        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+      ) : isActive ? (
+        <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
       ) : (
-        <CheckCircle className="w-4 h-4 text-emerald-400/70 shrink-0" />
+        <div className="w-5 h-5 rounded-full border-2 border-white/[0.12] shrink-0" />
       )}
-      <span
-        className={`text-sm ${
-          step.isSessionHeader
-            ? "font-semibold text-foreground"
-            : isIssue
-            ? "text-amber-400"
-            : "text-muted-foreground"
-        }`}
-      >
-        {step.label}
-      </span>
+      <span className="font-semibold text-sm text-foreground">{title}</span>
     </div>
-  );
-};
+    {steps.length > 0 && (
+      <div className="ml-8 space-y-2">
+        {steps.map((step, i) => (
+          <div key={i} className="flex items-center gap-2 animate-fade-in-up">
+            {step.type === "issues_count" ? (
+              <AlertTriangle className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            ) : (
+              <CheckCircle className="w-3.5 h-3.5 text-emerald-400/70 shrink-0" />
+            )}
+            <span
+              className={`text-xs ${
+                step.type === "issues_count"
+                  ? "text-amber-400"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {step.label}
+            </span>
+          </div>
+        ))}
+      </div>
+    )}
+  </div>
+);
 
 /* ══════════════════════════════════════════════════════════════════
    Main Page
@@ -370,6 +382,32 @@ const AuditResults = () => {
   const displayUrl = auditResult?.url || auditUrl || "—";
   const categories: AuditCategorySummary[] = auditResult?.categories || [];
 
+  /* ── Group progress steps by session ── */
+  const sessionGroups: { title: string; steps: ProgressStep[]; isDone: boolean }[] = [];
+  let currentGroup: { title: string; steps: ProgressStep[]; isDone: boolean } | null = null;
+
+  for (const step of progressSteps) {
+    if (step.isSessionHeader) {
+      if (currentGroup) {
+        currentGroup.isDone = true;
+        sessionGroups.push(currentGroup);
+      }
+      currentGroup = { title: step.label, steps: [], isDone: false };
+    } else if (currentGroup) {
+      if (step.type === "session_complete") {
+        currentGroup.isDone = true;
+      } else {
+        currentGroup.steps.push(step);
+      }
+    } else {
+      // Steps before any session header (e.g. standalone steps)
+      sessionGroups.push({ title: step.label, steps: [], isDone: true });
+    }
+  }
+  if (currentGroup) {
+    sessionGroups.push(currentGroup);
+  }
+
   return (
     <>
       <EvervaultGlow />
@@ -429,21 +467,25 @@ const AuditResults = () => {
                   Analyse en cours...
                 </h2>
 
-                {/* Live progress steps */}
+                {/* Live progress — grouped by session in cards */}
                 <div className="space-y-3 text-left">
-                  {progressSteps.length === 0 && (
-                    <div className="flex items-center gap-3">
-                      <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
-                      <span className="text-sm text-muted-foreground">
-                        Connexion au scanner...
-                      </span>
+                  {sessionGroups.length === 0 && (
+                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4">
+                      <div className="flex items-center gap-3">
+                        <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
+                        <span className="text-sm text-muted-foreground">
+                          Connexion au scanner...
+                        </span>
+                      </div>
                     </div>
                   )}
-                  {progressSteps.map((step, i) => (
-                    <ProgressStepRow
+                  {sessionGroups.map((group, i) => (
+                    <ProgressSessionCard
                       key={i}
-                      step={step}
-                      isLatest={i === progressSteps.length - 1 && step.isSessionHeader}
+                      title={group.title}
+                      steps={group.steps}
+                      isActive={i === sessionGroups.length - 1 && !group.isDone}
+                      isDone={group.isDone}
                     />
                   ))}
                 </div>
