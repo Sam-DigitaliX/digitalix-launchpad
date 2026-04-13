@@ -23,7 +23,6 @@ jobs:
       - name: Generate report
         id: audit
         run: |
-          # Write report to a file to avoid %0A formatting issues
           REPORT_FILE=$(mktemp)
 
           echo "📊 *Rapport Hebdo DigitaliX*" >> "$REPORT_FILE"
@@ -38,111 +37,106 @@ jobs:
           else
             echo "🔴 API : $HEALTH_STATUS" >> "$REPORT_FILE"
           fi
+
+          # --- Infra: Coolify + Traefik + VPS ---
           echo "" >> "$REPORT_FILE"
-
-          # --- Deps critiques (production only) ---
-          # Backend prod deps
-          PROD_CRITICAL=""
-          cd api
-          BACKEND_JSON=$(npm outdated --json 2>/dev/null || echo '{}')
-
-          # Filter: only production deps with major updates (exclude @types/*)
-          BACKEND_PROD_MAJOR=$(echo "$BACKEND_JSON" | jq -r '
-            to_entries[]
-            | select(.key | startswith("@types/") | not)
-            | select(.value.type == "dependencies" or .value.type == null)
-            | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0]))
-            | "• \(.key): \(.value.current) → \(.value.latest)"
-          ' 2>/dev/null)
-          BACKEND_TOTAL=$(echo "$BACKEND_JSON" | jq 'length')
-          cd ..
-
-          # Frontend prod deps
-          FRONTEND_JSON=$(npm outdated --json 2>/dev/null || echo '{}')
-          FRONTEND_PROD_MAJOR=$(echo "$FRONTEND_JSON" | jq -r '
-            to_entries[]
-            | select(.key | startswith("@types/") | not)
-            | select(.key | test("^(eslint|@eslint|prettier|jsdom|globals|@vitejs)") | not)
-            | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0]))
-            | "• \(.key): \(.value.current) → \(.value.latest)"
-          ' 2>/dev/null)
-          FRONTEND_TOTAL=$(echo "$FRONTEND_JSON" | jq 'length')
-
-          # Count dev-only major updates (filtered out above)
-          FRONTEND_DEV_MAJOR=$(echo "$FRONTEND_JSON" | jq '[
-            to_entries[]
-            | select(
-                (.key | startswith("@types/"))
-                or (.key | test("^(eslint|@eslint|prettier|jsdom|globals|@vitejs)"))
-              )
-            | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0]))
-          ] | length')
-
-          # --- Build the deps section ---
-          HAS_IMPORTANT=false
-
-          if [ -n "$BACKEND_PROD_MAJOR" ]; then
-            echo "🔶 *Backend — updates importantes*" >> "$REPORT_FILE"
-            echo "$BACKEND_PROD_MAJOR" >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            HAS_IMPORTANT=true
-          fi
-
-          if [ -n "$FRONTEND_PROD_MAJOR" ]; then
-            echo "🔶 *Frontend — updates importantes*" >> "$REPORT_FILE"
-            echo "$FRONTEND_PROD_MAJOR" >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-            HAS_IMPORTANT=true
-          fi
-
-          if [ "$HAS_IMPORTANT" = false ]; then
-            echo "✅ Aucune update critique" >> "$REPORT_FILE"
-            echo "" >> "$REPORT_FILE"
-          fi
-
-          # Summary line
-          echo "📦 _${BACKEND_TOTAL} backend + ${FRONTEND_TOTAL} frontend outdated au total_" >> "$REPORT_FILE"
-          if [ "$FRONTEND_DEV_MAJOR" != "0" ]; then
-            echo "_(dont ${FRONTEND_DEV_MAJOR} devDeps majeures, non urgentes)_" >> "$REPORT_FILE"
-          fi
-          echo "" >> "$REPORT_FILE"
-
-          # --- Infra: Coolify ---
           echo "🖥 *Infrastructure*" >> "$REPORT_FILE"
-          COOLIFY_CURRENT=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/version 2>/dev/null || echo "?")
-          COOLIFY_LATEST=$(curl -s --max-time 5 https://cdn.coollabs.io/coolify/versions.json 2>/dev/null | jq -r '.coolify.v4.version // "?"')
-          TRAEFIK_LATEST=$(curl -s --max-time 5 https://cdn.coollabs.io/coolify/versions.json 2>/dev/null | jq -r '.traefik."v3.6" // "?"')
+
+          COOLIFY_CURRENT=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/version 2>/dev/null | tr -d '\n' || echo "?")
+          VERSIONS_JSON=$(curl -s --max-time 5 https://cdn.coollabs.io/coolify/versions.json 2>/dev/null)
+          COOLIFY_LATEST=$(echo "$VERSIONS_JSON" | jq -r '.coolify.v4.version // "?"' | tr -d '\n')
+          TRAEFIK_LATEST=$(echo "$VERSIONS_JSON" | jq -r '.traefik."v3.6" // "?"' | tr -d '\n')
+
+          # Coolify server info (for Traefik version)
+          SERVER_JSON=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/servers 2>/dev/null)
+          TRAEFIK_CURRENT=$(echo "$SERVER_JSON" | jq -r '.[0].settings.detected_traefik_version // .[0].detected_traefik_version // "?"' | tr -d '\n')
 
           if [ "$COOLIFY_CURRENT" = "$COOLIFY_LATEST" ]; then
-            echo "✅ Coolify : $COOLIFY_CURRENT (à jour)" >> "$REPORT_FILE"
+            echo "✅ Coolify $COOLIFY_CURRENT" >> "$REPORT_FILE"
           else
-            echo "🔶 Coolify : $COOLIFY_CURRENT → $COOLIFY_LATEST dispo" >> "$REPORT_FILE"
+            echo "🔶 Coolify $COOLIFY_CURRENT → $COOLIFY_LATEST" >> "$REPORT_FILE"
           fi
 
-          # Get Traefik version from Coolify server info
-          TRAEFIK_CURRENT=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/servers 2>/dev/null | jq -r '.[0].detected_traefik_version // "?"')
-          if [ "$TRAEFIK_CURRENT" = "$TRAEFIK_LATEST" ]; then
-            echo "✅ Traefik : $TRAEFIK_CURRENT (à jour)" >> "$REPORT_FILE"
+          if [ "$TRAEFIK_CURRENT" = "?" ] || [ -z "$TRAEFIK_CURRENT" ]; then
+            echo "✅ Traefik (version non détectée)" >> "$REPORT_FILE"
+          elif [ "$TRAEFIK_CURRENT" = "$TRAEFIK_LATEST" ]; then
+            echo "✅ Traefik $TRAEFIK_CURRENT" >> "$REPORT_FILE"
           else
-            echo "🔶 Traefik : $TRAEFIK_CURRENT → $TRAEFIK_LATEST dispo" >> "$REPORT_FILE"
+            echo "🔶 Traefik $TRAEFIK_CURRENT → $TRAEFIK_LATEST" >> "$REPORT_FILE"
           fi
 
-          # --- Infra: Hostinger VPS ---
           VPS_INFO=$(curl -s --max-time 5 -H "Authorization: Bearer $HOSTINGER_API_TOKEN" "https://developers.hostinger.com/api/vps/v1/virtual-machines" 2>/dev/null)
-          VPS_STATE=$(echo "$VPS_INFO" | jq -r '.[0].state // "?"')
-          VPS_OS=$(echo "$VPS_INFO" | jq -r '.[0].template.name // "?"')
+          VPS_STATE=$(echo "$VPS_INFO" | jq -r '.[0].state // "?"' | tr -d '\n')
           if [ "$VPS_STATE" = "running" ]; then
-            echo "✅ VPS : running ($VPS_OS)" >> "$REPORT_FILE"
+            echo "✅ VPS running" >> "$REPORT_FILE"
           else
             echo "🔴 VPS : $VPS_STATE" >> "$REPORT_FILE"
           fi
+
+          # --- Deps: only list key packages ---
           echo "" >> "$REPORT_FILE"
+          echo "📦 *Dépendances*" >> "$REPORT_FILE"
+
+          # Key packages to track (production-critical)
+          KEY_PACKAGES="react react-dom react-router-dom vite tailwindcss typescript hono playwright"
+
+          cd api
+          BACKEND_JSON=$(npm outdated --json 2>/dev/null || echo '{}')
+          BACKEND_TOTAL=$(echo "$BACKEND_JSON" | jq 'length' | tr -d '\n')
+          cd ..
+          FRONTEND_JSON=$(npm outdated --json 2>/dev/null || echo '{}')
+          FRONTEND_TOTAL=$(echo "$FRONTEND_JSON" | jq 'length' | tr -d '\n')
+
+          # Merge both JSON and filter key packages with major updates
+          HAS_KEY_UPDATE=false
+          for pkg in $KEY_PACKAGES; do
+            # Check frontend
+            CURRENT=$(echo "$FRONTEND_JSON" | jq -r --arg p "$pkg" '.[$p].current // empty' | tr -d '\n')
+            LATEST=$(echo "$FRONTEND_JSON" | jq -r --arg p "$pkg" '.[$p].latest // empty' | tr -d '\n')
+            # Check backend if not found
+            if [ -z "$CURRENT" ]; then
+              CURRENT=$(echo "$BACKEND_JSON" | jq -r --arg p "$pkg" '.[$p].current // empty' | tr -d '\n')
+              LATEST=$(echo "$BACKEND_JSON" | jq -r --arg p "$pkg" '.[$p].latest // empty' | tr -d '\n')
+            fi
+            if [ -n "$CURRENT" ] && [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
+              # Check if major update
+              CURRENT_MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+              LATEST_MAJOR=$(echo "$LATEST" | cut -d. -f1)
+              if [ "$CURRENT_MAJOR" != "$LATEST_MAJOR" ]; then
+                echo "🔶 $pkg : $CURRENT → $LATEST" >> "$REPORT_FILE"
+                HAS_KEY_UPDATE=true
+              fi
+            fi
+          done
+
+          if [ "$HAS_KEY_UPDATE" = false ]; then
+            echo "✅ Packages clés à jour" >> "$REPORT_FILE"
+          fi
+
+          echo "_${BACKEND_TOTAL} backend + ${FRONTEND_TOTAL} frontend outdated au total_" >> "$REPORT_FILE"
 
           # --- GitHub Issues ---
-          ISSUES_COUNT=$(gh issue list --json number --jq 'length' 2>/dev/null || echo '0')
-          echo "📋 Issues GitHub : ${ISSUES_COUNT}" >> "$REPORT_FILE"
+          echo "" >> "$REPORT_FILE"
+          ISSUES_COUNT=$(gh issue list --json number --jq 'length' 2>/dev/null | tr -d '\n' || echo '0')
+          echo "📋 Issues : ${ISSUES_COUNT}" >> "$REPORT_FILE"
 
-          # Save report path for next step
+          # --- Verdict ---
+          echo "" >> "$REPORT_FILE"
+          # Count action items
+          ACTION_COUNT=$(grep -c "🔶\|🔴" "$REPORT_FILE" || true)
+          HAS_CRITICAL=$(grep -c "🔴" "$REPORT_FILE" || true)
+
+          if [ "$HAS_CRITICAL" -gt 0 ]; then
+            echo "⚡ *Verdict : ACTION REQUISE*" >> "$REPORT_FILE"
+            echo "_Des éléments critiques nécessitent ton attention._" >> "$REPORT_FILE"
+          elif [ "$ACTION_COUNT" -gt 0 ]; then
+            echo "💡 *Verdict : PAS URGENT*" >> "$REPORT_FILE"
+            echo "_${ACTION_COUNT} updates dispos. À planifier quand tu as le temps._" >> "$REPORT_FILE"
+          else
+            echo "✅ *Verdict : TOUT EST OK*" >> "$REPORT_FILE"
+            echo "_Rien à faire cette semaine._" >> "$REPORT_FILE"
+          fi
+
           echo "report_file=$REPORT_FILE" >> "$GITHUB_OUTPUT"
         env:
           GH_TOKEN: ${{ github.token }}
