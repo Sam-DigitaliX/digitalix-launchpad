@@ -139,6 +139,8 @@ app.post('/', async (c) => {
 
       state.result = result;
       state.done = true;
+      // Push a final event to wake up SSE listeners
+      pushEvent(auditId, { type: 'scan_complete', label: `Score final : ${result.overallScore}/100` });
     } catch (err) {
       console.error('[audit] Scan failed:', err);
       const errorMessage = err instanceof Error ? err.message : 'Scan failed';
@@ -148,8 +150,8 @@ app.post('/', async (c) => {
         WHERE id = ${auditId}
       `;
 
-      pushEvent(auditId, { type: 'error', label: errorMessage });
       state.done = true;
+      pushEvent(auditId, { type: 'error', label: errorMessage });
     }
   })();
 
