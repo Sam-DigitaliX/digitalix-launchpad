@@ -14,6 +14,7 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
     url,
     strategy: 'mobile',
     category: 'performance',
+    key: process.env.PAGESPEED_API_KEY ?? '',
   });
 
   const controller = new AbortController();
