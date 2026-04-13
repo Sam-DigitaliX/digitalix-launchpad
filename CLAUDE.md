@@ -236,7 +236,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 ### Chantier C — Backlog
 - [ ] CRUD contacts in admin dashboard (edit, delete, add notes)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
-- [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
+- [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Decommission Supabase project after 2-week monitoring period
 - [ ] Cross-domain tracking detection
 - [ ] Security headers analysis

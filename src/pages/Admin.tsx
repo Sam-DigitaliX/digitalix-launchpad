@@ -7,12 +7,22 @@ import {
   getAdminEmailStats,
   getAdminContactEmails,
   getAdminHealth,
+  updateAdminContact,
+  deleteAdminContact,
+  getAdminContactNotes,
+  createAdminContactNote,
+  deleteAdminContactNote,
+  getAdminContactTags,
+  addAdminContactTag,
+  removeAdminContactTag,
   type AdminContact,
   type AdminInteraction,
   type AdminStats,
   type AdminContactAudit,
   type AdminEmailStats,
   type AdminEmailLog,
+  type AdminNote,
+  type AdminTag,
   type HealthCheckResponse,
   ApiError,
 } from "@/lib/api";
@@ -35,6 +45,13 @@ import {
   HardDrive,
   Cpu,
   RefreshCw,
+  Pencil,
+  Trash2,
+  X,
+  Plus,
+  MessageSquare,
+  Tag,
+  Save,
   ExternalLink,
   Globe,
 } from "lucide-react";
@@ -138,15 +155,140 @@ function MetadataGrid({ data }: { data: Record<string, unknown> }) {
 }
 
 /* ------------------------------------------------------------------ */
-/*  Contact row with expandable timeline + audits + emails             */
+/*  Suggested tags                                                     */
 /* ------------------------------------------------------------------ */
 
-function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: string }) {
+const SUGGESTED_TAGS = ["prospect", "client", "perdu", "relancer", "prioritaire"];
+
+const TAG_COLORS: Record<string, string> = {
+  prospect: "bg-sky-500/10 text-sky-400 border-sky-500/20",
+  client: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  perdu: "bg-red-500/10 text-red-400 border-red-500/20",
+  relancer: "bg-orange-500/10 text-orange-400 border-orange-500/20",
+  prioritaire: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+};
+
+/* ------------------------------------------------------------------ */
+/*  Delete confirmation modal                                          */
+/* ------------------------------------------------------------------ */
+
+function DeleteModal({ contactName, onConfirm, onCancel }: {
+  contactName: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm" onClick={onCancel}>
+      <div className="ev-card p-6 max-w-sm w-full mx-4" onClick={(e) => e.stopPropagation()}>
+        <div className="relative z-10 space-y-4">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-red-500/10">
+              <Trash2 className="w-4 h-4 text-red-400" />
+            </div>
+            <h3 className="font-bold text-foreground font-display">Supprimer le contact</h3>
+          </div>
+          <p className="text-sm text-muted-foreground">
+            Supprimer définitivement <span className="text-foreground font-medium">{contactName}</span> et toutes ses données (interactions, audits, notes, tags) ?
+          </p>
+          <div className="flex gap-3 justify-end">
+            <button onClick={onCancel} className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-glass">
+              Annuler
+            </button>
+            <button onClick={onConfirm} className="px-4 py-2 text-sm font-medium bg-red-500/20 text-red-400 border border-red-500/30 rounded-lg hover:bg-red-500/30 transition-colors">
+              Supprimer
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Edit contact inline form                                           */
+/* ------------------------------------------------------------------ */
+
+function EditContactForm({ contact, adminKey, onSave, onCancel }: {
+  contact: AdminContact;
+  adminKey: string;
+  onSave: () => void;
+  onCancel: () => void;
+}) {
+  const [fullName, setFullName] = useState(contact.full_name ?? "");
+  const [companyName, setCompanyName] = useState(contact.company_name ?? "");
+  const [phone, setPhone] = useState(contact.phone ?? "");
+  const [profileType, setProfileType] = useState(contact.profile_type ?? "");
+  const [saving, setSaving] = useState(false);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await updateAdminContact(adminKey, contact.id, {
+        full_name: fullName || null,
+        company_name: companyName || null,
+        phone: phone || null,
+        profile_type: profileType || null,
+      });
+      onSave();
+    } catch (err) {
+      console.error('[Admin] Update contact error:', err);
+    }
+    setSaving(false);
+  };
+
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <div>
+        <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Nom</label>
+        <input value={fullName} onChange={(e) => setFullName(e.target.value)} className="w-full mt-1 px-3 py-2 ev-input text-sm" />
+      </div>
+      <div>
+        <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Entreprise</label>
+        <input value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="w-full mt-1 px-3 py-2 ev-input text-sm" />
+      </div>
+      <div>
+        <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Téléphone</label>
+        <input value={phone} onChange={(e) => setPhone(e.target.value)} className="w-full mt-1 px-3 py-2 ev-input text-sm" />
+      </div>
+      <div>
+        <label className="text-[10px] text-muted-foreground uppercase tracking-wider">Profil</label>
+        <input value={profileType} onChange={(e) => setProfileType(e.target.value)} className="w-full mt-1 px-3 py-2 ev-input text-sm" />
+      </div>
+      <div className="col-span-2 flex gap-2 justify-end mt-2">
+        <button onClick={onCancel} className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-glass">
+          Annuler
+        </button>
+        <button onClick={handleSave} disabled={saving} className="px-3 py-1.5 text-xs font-medium ev-btn-primary rounded-lg flex items-center gap-1.5">
+          <Save className="w-3 h-3" />
+          {saving ? "..." : "Enregistrer"}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  Contact row with expandable timeline + audits + emails + CRUD      */
+/* ------------------------------------------------------------------ */
+
+function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
+  contact: AdminContact;
+  adminKey: string;
+  onDelete: (id: string) => void;
+  onUpdate: () => void;
+}) {
   const [expanded, setExpanded] = useState(false);
   const [timeline, setTimeline] = useState<AdminInteraction[] | null>(null);
   const [audits, setAudits] = useState<AdminContactAudit[] | null>(null);
   const [emails, setEmails] = useState<AdminEmailLog[] | null>(null);
+  const [notes, setNotes] = useState<AdminNote[] | null>(null);
+  const [tags, setTags] = useState<AdminTag[] | null>(null);
   const [loading, setLoading] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [newNote, setNewNote] = useState("");
+  const [addingNote, setAddingNote] = useState(false);
+  const [newTag, setNewTag] = useState("");
 
   const loadDetails = useCallback(async () => {
     if (timeline) {
@@ -155,14 +297,18 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
     }
     setLoading(true);
     try {
-      const [timelineData, auditsData, emailsData] = await Promise.all([
+      const [timelineData, auditsData, emailsData, notesData, tagsData] = await Promise.all([
         getAdminContactTimeline(adminKey, contact.id),
         getAdminContactAudits(adminKey, contact.id),
         getAdminContactEmails(adminKey, contact.id),
+        getAdminContactNotes(adminKey, contact.id),
+        getAdminContactTags(adminKey, contact.id),
       ]);
       setTimeline(timelineData);
       setAudits(auditsData);
       setEmails(emailsData);
+      setNotes(notesData);
+      setTags(tagsData);
       setExpanded(true);
     } catch (err) {
       console.error('[Admin] Details load error:', err);
@@ -170,8 +316,68 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
     setLoading(false);
   }, [adminKey, contact.id, timeline]);
 
+  const handleDelete = async () => {
+    try {
+      await deleteAdminContact(adminKey, contact.id);
+      onDelete(contact.id);
+    } catch (err) {
+      console.error('[Admin] Delete contact error:', err);
+    }
+    setShowDeleteModal(false);
+  };
+
+  const handleAddNote = async () => {
+    if (!newNote.trim()) return;
+    setAddingNote(true);
+    try {
+      const note = await createAdminContactNote(adminKey, contact.id, newNote.trim());
+      setNotes((prev) => [note, ...(prev ?? [])]);
+      setNewNote("");
+    } catch (err) {
+      console.error('[Admin] Add note error:', err);
+    }
+    setAddingNote(false);
+  };
+
+  const handleDeleteNote = async (noteId: string) => {
+    try {
+      await deleteAdminContactNote(adminKey, contact.id, noteId);
+      setNotes((prev) => prev?.filter((n) => n.id !== noteId) ?? []);
+    } catch (err) {
+      console.error('[Admin] Delete note error:', err);
+    }
+  };
+
+  const handleAddTag = async (label: string) => {
+    const tagLabel = label || newTag.trim();
+    if (!tagLabel) return;
+    try {
+      const tag = await addAdminContactTag(adminKey, contact.id, tagLabel);
+      setTags((prev) => [...(prev ?? []), tag]);
+      setNewTag("");
+    } catch (err) {
+      console.error('[Admin] Add tag error:', err);
+    }
+  };
+
+  const handleRemoveTag = async (label: string) => {
+    try {
+      await removeAdminContactTag(adminKey, contact.id, label);
+      setTags((prev) => prev?.filter((t) => t.label !== label) ?? []);
+    } catch (err) {
+      console.error('[Admin] Remove tag error:', err);
+    }
+  };
+
   return (
     <>
+      {showDeleteModal && (
+        <DeleteModal
+          contactName={contact.full_name ?? contact.email}
+          onConfirm={handleDelete}
+          onCancel={() => setShowDeleteModal(false)}
+        />
+      )}
       <tr
         className="ev-table-row border-b border-glass-border/40 cursor-pointer group"
         onClick={loadDetails}
@@ -182,6 +388,15 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
         <td className="px-5 py-4">
           <div className="font-medium text-foreground">{contact.full_name ?? "—"}</div>
           <div className="text-xs text-muted-foreground mt-0.5 font-mono">{contact.email}</div>
+          {tags && tags.length > 0 && (
+            <div className="flex flex-wrap gap-1 mt-1.5">
+              {tags.map((tag) => (
+                <span key={tag.id} className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium border ${TAG_COLORS[tag.label] ?? "bg-glass text-muted-foreground border-glass-border"}`}>
+                  {tag.label}
+                </span>
+              ))}
+            </div>
+          )}
         </td>
         <td className="px-5 py-4 text-sm text-muted-foreground">{contact.company_name ?? "—"}</td>
         <td className="px-5 py-4 text-sm text-muted-foreground">{contact.profile_type ?? "—"}</td>
@@ -191,20 +406,133 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
         <td className="px-5 py-4 text-sm text-center text-muted-foreground font-mono">{contact.audit_count}</td>
         <td className="px-5 py-4 text-sm text-center text-muted-foreground font-mono">{contact.interaction_count}</td>
         <td className="px-5 py-4 text-sm text-muted-foreground">{formatDateShort(contact.last_seen_at)}</td>
-        <td className="px-5 py-4 text-center">
-          {loading ? (
-            <span className="inline-block w-4 h-4 border-2 border-primary/50 border-t-transparent rounded-full animate-spin" />
-          ) : expanded ? (
-            <ChevronUp className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-          ) : (
-            <ChevronDown className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
-          )}
+        <td className="px-5 py-4">
+          <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+            <button onClick={() => { loadDetails(); setEditing(true); }} className="p-1.5 rounded-lg hover:bg-glass text-muted-foreground hover:text-foreground transition-colors" title="Modifier">
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button onClick={() => setShowDeleteModal(true)} className="p-1.5 rounded-lg hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors" title="Supprimer">
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
+            {loading ? (
+              <span className="inline-block w-4 h-4 border-2 border-primary/50 border-t-transparent rounded-full animate-spin ml-1" />
+            ) : expanded ? (
+              <ChevronUp className="w-4 h-4 text-muted-foreground cursor-pointer" onClick={loadDetails} />
+            ) : (
+              <ChevronDown className="w-4 h-4 text-muted-foreground cursor-pointer" onClick={loadDetails} />
+            )}
+          </div>
         </td>
       </tr>
       {expanded && (
         <tr>
           <td colSpan={9} className="px-5 py-5 bg-glass">
             <div className="space-y-6 pl-2">
+              {/* Edit form */}
+              {editing && (
+                <div>
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
+                    Modifier le contact
+                  </h4>
+                  <EditContactForm
+                    contact={contact}
+                    adminKey={adminKey}
+                    onSave={() => { setEditing(false); onUpdate(); }}
+                    onCancel={() => setEditing(false)}
+                  />
+                </div>
+              )}
+
+              {/* Tags section */}
+              <div>
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
+                  <Tag className="w-3 h-3 inline mr-1" />
+                  Tags
+                </h4>
+                <div className="flex flex-wrap items-center gap-2">
+                  {tags?.map((tag) => (
+                    <button
+                      key={tag.id}
+                      onClick={() => handleRemoveTag(tag.label)}
+                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border hover:opacity-70 transition-opacity ${TAG_COLORS[tag.label] ?? "bg-glass text-muted-foreground border-glass-border"}`}
+                      title="Cliquer pour retirer"
+                    >
+                      {tag.label}
+                      <X className="w-2.5 h-2.5" />
+                    </button>
+                  ))}
+                  {/* Suggested tags (not already added) */}
+                  {SUGGESTED_TAGS.filter((s) => !tags?.some((t) => t.label === s)).map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => handleAddTag(suggestion)}
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border border-dashed border-glass-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                    >
+                      <Plus className="w-2.5 h-2.5" />
+                      {suggestion}
+                    </button>
+                  ))}
+                  {/* Custom tag input */}
+                  <div className="flex items-center gap-1">
+                    <input
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      onKeyDown={(e) => { if (e.key === "Enter") handleAddTag(""); }}
+                      placeholder="Autre..."
+                      className="px-2 py-1 text-[11px] bg-transparent border-b border-glass-border text-foreground focus:outline-none focus:border-primary/50 w-20"
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Notes section */}
+              <div>
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
+                  <MessageSquare className="w-3 h-3 inline mr-1" />
+                  Notes · {notes?.length ?? 0}
+                </h4>
+                {/* Add note */}
+                <div className="flex gap-2 mb-3">
+                  <input
+                    value={newNote}
+                    onChange={(e) => setNewNote(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") handleAddNote(); }}
+                    placeholder="Ajouter une note..."
+                    className="flex-1 px-3 py-2 ev-input text-sm"
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <button
+                    onClick={handleAddNote}
+                    disabled={addingNote || !newNote.trim()}
+                    className="px-3 py-2 ev-btn-primary text-xs font-medium rounded-lg flex items-center gap-1.5"
+                  >
+                    <Plus className="w-3 h-3" />
+                    {addingNote ? "..." : "Ajouter"}
+                  </button>
+                </div>
+                {/* Notes list */}
+                {notes && notes.length > 0 && (
+                  <div className="space-y-2">
+                    {notes.map((note) => (
+                      <div key={note.id} className="flex items-start gap-3 pl-4 border-l border-amber-500/30 py-2 group/note">
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm text-foreground">{note.content}</p>
+                          <span className="text-xs text-muted-foreground font-mono">{formatDate(note.created_at)}</span>
+                        </div>
+                        <button
+                          onClick={() => handleDeleteNote(note.id)}
+                          className="p-1 rounded opacity-0 group-hover/note:opacity-100 hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-all"
+                          title="Supprimer"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               {/* Audits section */}
               {audits && audits.length > 0 && (
                 <div>
@@ -293,11 +621,6 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
                     </div>
                   ))}
                 </div>
-              )}
-
-              {/* Empty state */}
-              {timeline?.length === 0 && audits?.length === 0 && emails?.length === 0 && (
-                <p className="text-sm text-muted-foreground">Aucune activité enregistrée.</p>
               )}
             </div>
           </td>
@@ -861,7 +1184,16 @@ export default function Admin() {
                   </thead>
                   <tbody>
                     {filteredContacts.map((contact) => (
-                      <ContactRow key={contact.id} contact={contact} adminKey={adminKey} />
+                      <ContactRow
+                        key={contact.id}
+                        contact={contact}
+                        adminKey={adminKey}
+                        onDelete={(id) => setContacts((prev) => prev.filter((c) => c.id !== id))}
+                        onUpdate={async () => {
+                          const data = await getAdminContacts(adminKey);
+                          setContacts(data);
+                        }}
+                      />
                     ))}
                   </tbody>
                 </table>

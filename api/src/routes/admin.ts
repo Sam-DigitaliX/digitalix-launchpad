@@ -109,6 +109,144 @@ app.get('/contacts/:id/audits', async (c) => {
 });
 
 /**
+ * PUT /admin/contacts/:id
+ */
+app.put('/contacts/:id', async (c) => {
+  const contactId = c.req.param('id');
+  const body = await c.req.json();
+  const { full_name, company_name, phone, profile_type } = body;
+
+  const rows = await sql`
+    UPDATE contacts
+    SET full_name = COALESCE(${full_name ?? null}, full_name),
+        company_name = COALESCE(${company_name ?? null}, company_name),
+        phone = COALESCE(${phone ?? null}, phone),
+        profile_type = COALESCE(${profile_type ?? null}, profile_type)
+    WHERE id = ${contactId}
+    RETURNING id
+  `;
+
+  if (rows.length === 0) {
+    return c.json({ error: 'Contact not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
+ * DELETE /admin/contacts/:id
+ */
+app.delete('/contacts/:id', async (c) => {
+  const contactId = c.req.param('id');
+  const rows = await sql`DELETE FROM contacts WHERE id = ${contactId} RETURNING id`;
+  if (rows.length === 0) {
+    return c.json({ error: 'Contact not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
+ * GET /admin/contacts/:id/notes
+ */
+app.get('/contacts/:id/notes', async (c) => {
+  const contactId = c.req.param('id');
+  const rows = await sql`
+    SELECT id, content, created_at
+    FROM contact_notes
+    WHERE contact_id = ${contactId}
+    ORDER BY created_at DESC
+  `;
+  return c.json(rows);
+});
+
+/**
+ * POST /admin/contacts/:id/notes
+ */
+app.post('/contacts/:id/notes', async (c) => {
+  const contactId = c.req.param('id');
+  const body = await c.req.json();
+  const content = body.content;
+
+  if (!content || typeof content !== 'string' || !content.trim()) {
+    return c.json({ error: 'Content is required' }, 400);
+  }
+
+  const rows = await sql`
+    INSERT INTO contact_notes (contact_id, content)
+    VALUES (${contactId}, ${content.trim()})
+    RETURNING id, content, created_at
+  `;
+  return c.json(rows[0], 201);
+});
+
+/**
+ * DELETE /admin/contacts/:id/notes/:noteId
+ */
+app.delete('/contacts/:id/notes/:noteId', async (c) => {
+  const noteId = c.req.param('noteId');
+  const rows = await sql`DELETE FROM contact_notes WHERE id = ${noteId} RETURNING id`;
+  if (rows.length === 0) {
+    return c.json({ error: 'Note not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
+ * GET /admin/contacts/:id/tags
+ */
+app.get('/contacts/:id/tags', async (c) => {
+  const contactId = c.req.param('id');
+  const rows = await sql`
+    SELECT id, label
+    FROM contact_tags
+    WHERE contact_id = ${contactId}
+    ORDER BY created_at
+  `;
+  return c.json(rows);
+});
+
+/**
+ * POST /admin/contacts/:id/tags
+ */
+app.post('/contacts/:id/tags', async (c) => {
+  const contactId = c.req.param('id');
+  const body = await c.req.json();
+  const label = body.label;
+
+  if (!label || typeof label !== 'string' || !label.trim()) {
+    return c.json({ error: 'Label is required' }, 400);
+  }
+
+  const rows = await sql`
+    INSERT INTO contact_tags (contact_id, label)
+    VALUES (${contactId}, ${label.trim().toLowerCase()})
+    ON CONFLICT (contact_id, label) DO NOTHING
+    RETURNING id, label
+  `;
+
+  if (rows.length === 0) {
+    return c.json({ error: 'Tag already exists' }, 409);
+  }
+  return c.json(rows[0], 201);
+});
+
+/**
+ * DELETE /admin/contacts/:id/tags/:label
+ */
+app.delete('/contacts/:id/tags/:label', async (c) => {
+  const contactId = c.req.param('id');
+  const label = decodeURIComponent(c.req.param('label'));
+  const rows = await sql`
+    DELETE FROM contact_tags
+    WHERE contact_id = ${contactId} AND label = ${label}
+    RETURNING id
+  `;
+  if (rows.length === 0) {
+    return c.json({ error: 'Tag not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
  * GET /admin/health
  * System health check — all subsystems
  */

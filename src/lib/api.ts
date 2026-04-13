@@ -275,6 +275,87 @@ export function getAdminContactEmails(adminKey: string, contactId: string) {
   });
 }
 
+/* ──────────────────── Admin: Contact CRUD ──────────────────── */
+
+export interface UpdateContactParams {
+  full_name?: string | null;
+  company_name?: string | null;
+  phone?: string | null;
+  profile_type?: string | null;
+}
+
+export function updateAdminContact(adminKey: string, contactId: string, data: UpdateContactParams) {
+  return request<{ success: boolean }>(`/api/admin/contacts/${contactId}`, {
+    method: 'PUT',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify(data),
+  });
+}
+
+export function deleteAdminContact(adminKey: string, contactId: string) {
+  return request<{ success: boolean }>(`/api/admin/contacts/${contactId}`, {
+    method: 'DELETE',
+    headers: adminHeaders(adminKey),
+  });
+}
+
+/* ──────────────────── Admin: Contact Notes ──────────────────── */
+
+export interface AdminNote {
+  id: string;
+  content: string;
+  created_at: string;
+}
+
+export function getAdminContactNotes(adminKey: string, contactId: string) {
+  return request<AdminNote[]>(`/api/admin/contacts/${contactId}/notes`, {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+export function createAdminContactNote(adminKey: string, contactId: string, content: string) {
+  return request<AdminNote>(`/api/admin/contacts/${contactId}/notes`, {
+    method: 'POST',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify({ content }),
+  });
+}
+
+export function deleteAdminContactNote(adminKey: string, contactId: string, noteId: string) {
+  return request<{ success: boolean }>(`/api/admin/contacts/${contactId}/notes/${noteId}`, {
+    method: 'DELETE',
+    headers: adminHeaders(adminKey),
+  });
+}
+
+/* ──────────────────── Admin: Contact Tags ──────────────────── */
+
+export interface AdminTag {
+  id: string;
+  label: string;
+}
+
+export function getAdminContactTags(adminKey: string, contactId: string) {
+  return request<AdminTag[]>(`/api/admin/contacts/${contactId}/tags`, {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+export function addAdminContactTag(adminKey: string, contactId: string, label: string) {
+  return request<AdminTag>(`/api/admin/contacts/${contactId}/tags`, {
+    method: 'POST',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify({ label }),
+  });
+}
+
+export function removeAdminContactTag(adminKey: string, contactId: string, label: string) {
+  return request<{ success: boolean }>(`/api/admin/contacts/${contactId}/tags/${encodeURIComponent(label)}`, {
+    method: 'DELETE',
+    headers: adminHeaders(adminKey),
+  });
+}
+
 /* ──────────────────── Admin: Health Check ──────────────────── */
 
 export interface HealthCheck {
