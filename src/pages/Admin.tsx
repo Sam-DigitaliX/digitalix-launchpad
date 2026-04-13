@@ -27,6 +27,7 @@ import {
   ApiError,
 } from "@/lib/api";
 import {
+  ArrowLeft,
   Lock,
   Users,
   CheckCircle,
@@ -1020,6 +1021,15 @@ export default function Admin() {
               <p className="text-center text-[11px] text-muted-foreground/50 mt-5">
                 Accès restreint · DigitaliX Admin
               </p>
+
+              {/* Back to site */}
+              <a
+                href="/"
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 py-2.5 text-xs text-muted-foreground hover:text-foreground border border-glass-border rounded-xl hover:bg-glass transition-colors"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                Retourner sur le site
+              </a>
             </div>
           </form>
         </div>
