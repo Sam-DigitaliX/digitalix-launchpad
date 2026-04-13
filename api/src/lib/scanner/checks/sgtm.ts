@@ -2,7 +2,26 @@ import type { CheckModule, ScanContext } from '../types.js';
 
 const GTM_SCRIPT_PATTERN = /(?:https?:)?\/\/([^/]+)\/gtm\.js\?id=GTM-/;
 
-function findGtmScriptDomain(ctx: ScanContext): string | null {
+function isFirstPartyDomain(gtmDomain: string, siteDomain: string): boolean {
+  const cleanGtm = gtmDomain.replace(/^www\./, '');
+  return cleanGtm.endsWith(siteDomain) || siteDomain.endsWith(cleanGtm);
+}
+
+function findGtmDomain(ctx: ScanContext): string | null {
+  // 1. Check real network requests from Playwright sessions
+  for (const session of ctx.sessions) {
+    for (const req of session.networkRequests) {
+      if (req.url.includes('/gtm.js?id=GTM-')) {
+        try {
+          return new URL(req.url).hostname;
+        } catch {
+          // continue
+        }
+      }
+    }
+  }
+
+  // 2. Fallback: check scripts from HTML
   for (const src of ctx.scripts) {
     const match = GTM_SCRIPT_PATTERN.exec(src);
     if (match) return match[1];
@@ -16,11 +35,6 @@ function findGtmScriptDomain(ctx: ScanContext): string | null {
   return null;
 }
 
-function isFirstPartyDomain(gtmDomain: string, siteDomain: string): boolean {
-  const cleanGtm = gtmDomain.replace(/^www\./, '');
-  return cleanGtm.endsWith(siteDomain) || siteDomain.endsWith(cleanGtm);
-}
-
 export const sgtmCheck: CheckModule = {
   id: 'sgtm',
   category: 'serverside',
@@ -28,7 +42,7 @@ export const sgtmCheck: CheckModule = {
   impact: 'critical',
   gated: false,
   run(ctx: ScanContext) {
-    const gtmDomain = findGtmScriptDomain(ctx);
+    const gtmDomain = findGtmDomain(ctx);
 
     if (!gtmDomain) {
       return {

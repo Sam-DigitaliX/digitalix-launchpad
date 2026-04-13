@@ -3,7 +3,32 @@ import type { CheckModule, ScanContext } from '../types.js';
 const GTAG_CONFIG_PATTERN = /gtag\s*\(\s*['"]config['"]\s*,\s*['"](G-[A-Z0-9]+)['"]/g;
 const GTAG_SCRIPT_PATTERN = /googletagmanager\.com\/gtag\/js\?id=(G-[A-Z0-9]+)/;
 
-function findGa4Ids(ctx: ScanContext): string[] {
+function findGa4FromNetwork(ctx: ScanContext): string[] {
+  const ids = new Set<string>();
+
+  for (const session of ctx.sessions) {
+    for (const req of session.networkRequests) {
+      // Direct gtag.js loading
+      const match = GTAG_SCRIPT_PATTERN.exec(req.url);
+      if (match) ids.add(match[1]);
+
+      // /g/collect or /j/collect requests contain tid parameter
+      if (req.url.includes('/g/collect') || req.url.includes('/j/collect')) {
+        try {
+          const params = new URL(req.url).searchParams;
+          const tid = params.get('tid');
+          if (tid?.startsWith('G-')) ids.add(tid);
+        } catch {
+          // continue
+        }
+      }
+    }
+  }
+
+  return [...ids];
+}
+
+function findGa4FromHtml(ctx: ScanContext): string[] {
   const ids = new Set<string>();
 
   for (const src of ctx.scripts) {
@@ -29,18 +54,24 @@ export const ga4Check: CheckModule = {
   impact: 'high',
   gated: false,
   run(ctx: ScanContext) {
-    const ids = findGa4Ids(ctx);
+    // Prefer network-based detection (more reliable)
+    const networkIds = findGa4FromNetwork(ctx);
+    const htmlIds = findGa4FromHtml(ctx);
+    const allIds = [...new Set([...networkIds, ...htmlIds])];
 
-    if (ids.length > 0) {
+    if (allIds.length > 0) {
+      const source = networkIds.length > 0 ? 'requetes reseau' : 'HTML';
       return {
         status: 'pass',
-        description: `GA4 detecte : ${ids.join(', ')}.`,
-        rawData: { measurementIds: ids },
+        description: `GA4 detecte : ${allIds.join(', ')} (via ${source}).`,
+        rawData: { measurementIds: allIds, networkIds, htmlIds },
       };
     }
 
-    // GTM present but no direct GA4 — likely loaded via GTM
-    const hasGtm = ctx.scripts.some((s) => s.includes('googletagmanager.com/gtm.js'));
+    // Check if GTM is present (GA4 likely loaded via GTM but no collect fired yet)
+    const hasGtm = ctx.scripts.some((s) => s.includes('googletagmanager.com/gtm.js'))
+      || ctx.sessions.some((s) => s.networkRequests.some((r) => r.url.includes('/gtm.js?id=GTM-')));
+
     if (hasGtm) {
       return {
         status: 'info',

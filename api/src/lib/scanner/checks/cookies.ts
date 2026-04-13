@@ -9,48 +9,55 @@ export const cookiesCheck: CheckModule = {
   impact: 'critical',
   gated: true,
   run(ctx: ScanContext) {
-    const serverCookies: string[] = [];
-    const allDetected: string[] = [];
+    const postAccept = ctx.sessions.find((s) => s.phase === 'post-accept');
 
-    for (const cookie of ctx.cookies) {
-      if (ANALYTICS_COOKIES.includes(cookie.name)) {
-        allDetected.push(cookie.name);
-        if (!cookie.isThirdParty) {
+    // Use post-accept session cookies if available (most complete)
+    const cookiesToAnalyze = postAccept?.cookies ?? ctx.cookies;
+
+    const serverCookies: string[] = [];
+    const clientCookies: string[] = [];
+
+    for (const cookie of cookiesToAnalyze) {
+      if (ANALYTICS_COOKIES.some((name) => cookie.name.startsWith(name))) {
+        if (cookie.httpOnly || (!cookie.isThirdParty && cookie.expires)) {
+          // Server-set indicators: httpOnly flag, or first-party with explicit expiry
           serverCookies.push(cookie.name);
+        } else {
+          clientCookies.push(cookie.name);
         }
       }
     }
 
-    if (serverCookies.length === 0 && allDetected.length === 0) {
+    const total = serverCookies.length + clientCookies.length;
+
+    if (total === 0) {
       return {
         status: 'info',
-        description: 'Aucun cookie analytics detecte dans les headers HTTP. Les cookies sont probablement poses cote client.',
-        rawData: { serverCookies: [], clientOnlyCookies: [] },
+        description: 'Aucun cookie analytics detecte apres acceptation. Les cookies sont peut-etre poses cote client uniquement.',
+        rawData: { serverCookies: [], clientOnlyCookies: [], sessionUsed: !!postAccept },
       };
     }
 
-    const clientOnly = allDetected.filter((c) => !serverCookies.includes(c));
-
-    if (serverCookies.length > 0 && clientOnly.length === 0) {
+    if (serverCookies.length > 0 && clientCookies.length === 0) {
       return {
         status: 'pass',
         description: `Cookies analytics poses en server-side : ${serverCookies.join(', ')}. Duree de vie preservee (bypass ITP Safari).`,
-        rawData: { serverCookies, clientOnlyCookies: clientOnly },
+        rawData: { serverCookies, clientOnlyCookies: [] },
       };
     }
 
     if (serverCookies.length > 0) {
       return {
         status: 'warning',
-        description: `Mix server/client : ${serverCookies.join(', ')} en server-side, ${clientOnly.join(', ')} en client-side.`,
-        rawData: { serverCookies, clientOnlyCookies: clientOnly },
+        description: `Mix server/client : ${serverCookies.join(', ')} en server-side, ${clientCookies.join(', ')} en client-side.`,
+        rawData: { serverCookies, clientOnlyCookies: clientCookies },
       };
     }
 
     return {
       status: 'fail',
-      description: `Cookies analytics (${allDetected.join(', ')}) poses uniquement cote client — duree de vie limitee par ITP Safari (7 jours max).`,
-      rawData: { serverCookies: [], clientOnlyCookies: allDetected },
+      description: `Cookies analytics (${clientCookies.join(', ')}) poses uniquement cote client — duree de vie limitee par ITP Safari (7 jours max).`,
+      rawData: { serverCookies: [], clientOnlyCookies: clientCookies },
     };
   },
 };

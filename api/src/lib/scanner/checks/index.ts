@@ -6,6 +6,8 @@ import { datalayerCheck } from './datalayer.js';
 import { enhancedConvCheck } from './enhanced-conv.js';
 import { tiktokPixelCheck } from './tiktok-pixel.js';
 import { linkedinCheck } from './linkedin.js';
+import { ecommerceCheck } from './ecommerce.js';
+import { tagFiringOrderCheck } from './tag-firing-order.js';
 import { sgtmCheck } from './sgtm.js';
 import { cookiesCheck } from './cookies.js';
 import { capiMetaCheck } from './capi-meta.js';
@@ -14,6 +16,8 @@ import { cmpCheck } from './cmp.js';
 import { consentModeCheck } from './consent-mode.js';
 import { thirdPartyCookiesCheck } from './third-party-cookies.js';
 import { privacyPageCheck } from './privacy-page.js';
+import { preConsentViolationsCheck } from './pre-consent-violations.js';
+import { postRejectViolationsCheck } from './post-reject-violations.js';
 import { pageLoadCheck } from './page-load.js';
 import { scriptsCheck } from './scripts.js';
 import { scriptLoadingCheck } from './script-loading.js';
@@ -28,6 +32,8 @@ export const allChecks: CheckModule[] = [
   enhancedConvCheck,
   tiktokPixelCheck,
   linkedinCheck,
+  ecommerceCheck,
+  tagFiringOrderCheck,
   // Server-Side
   sgtmCheck,
   cookiesCheck,
@@ -36,6 +42,8 @@ export const allChecks: CheckModule[] = [
   // Privacy & Consent
   cmpCheck,
   consentModeCheck,
+  preConsentViolationsCheck,
+  postRejectViolationsCheck,
   thirdPartyCookiesCheck,
   privacyPageCheck,
   // Performance

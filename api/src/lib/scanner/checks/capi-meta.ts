@@ -1,8 +1,5 @@
 import type { CheckModule, ScanContext } from '../types.js';
 
-const EVENT_ID_PATTERN = /eventID\s*[:\s]\s*['"][^'"]+['"]/;
-const FBQ_EVENT_ID_PATTERN = /fbq\s*\(\s*['"]track['"]\s*,\s*['"][^'"]+['"]\s*,\s*\{[^}]*\}\s*,\s*\{\s*eventID/;
-
 export const capiMetaCheck: CheckModule = {
   id: 'capi-meta',
   category: 'serverside',
@@ -10,8 +7,12 @@ export const capiMetaCheck: CheckModule = {
   impact: 'critical',
   gated: true,
   run(ctx: ScanContext) {
-    const hasMetaPixel = ctx.scripts.some(
-      (s) => s.includes('connect.facebook.net') && s.includes('fbevents.js')
+    // Check if Meta Pixel is present at all
+    const hasMetaPixel = ctx.sessions.some((s) =>
+      s.networkRequests.some((r) =>
+        (r.url.includes('connect.facebook.net') && r.url.includes('fbevents.js'))
+        || r.url.includes('facebook.com/tr/?')
+      )
     ) || ctx.inlineScripts.some((s) => s.includes('fbq('));
 
     if (!hasMetaPixel) {
@@ -22,15 +23,29 @@ export const capiMetaCheck: CheckModule = {
       };
     }
 
+    // Check for event deduplication (eventID) in network requests or inline scripts
     let hasEventId = false;
-    for (const script of ctx.inlineScripts) {
-      if (EVENT_ID_PATTERN.test(script) || FBQ_EVENT_ID_PATTERN.test(script)) {
-        hasEventId = true;
-        break;
+
+    for (const session of ctx.sessions) {
+      for (const req of session.networkRequests) {
+        if (req.url.includes('facebook.com/tr/') && req.url.includes('eid=')) {
+          hasEventId = true;
+          break;
+        }
+      }
+      if (hasEventId) break;
+    }
+
+    if (!hasEventId) {
+      for (const script of ctx.inlineScripts) {
+        if (/eventID\s*[:\s]\s*['"][^'"]+['"]/.test(script) || /fbq\s*\([^)]*eventID/.test(script)) {
+          hasEventId = true;
+          break;
+        }
       }
     }
 
-    const fbpServerSet = ctx.cookies.some((c) => c.name === '_fbp' && !c.isThirdParty);
+    const fbpServerSet = ctx.cookies.some((c) => c.name === '_fbp' && !c.isThirdParty && c.httpOnly);
 
     if (hasEventId && fbpServerSet) {
       return {

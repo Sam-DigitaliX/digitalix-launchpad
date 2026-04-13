@@ -1,8 +1,6 @@
 import type { CheckModule, ScanContext } from '../types.js';
 
-const CONSENT_DEFAULT_PATTERN = /gtag\s*\(\s*['"]consent['"]\s*,\s*['"]default['"]/;
 const V2_PARAMS = ['ad_storage', 'ad_user_data', 'ad_personalization', 'analytics_storage'];
-const WAIT_FOR_UPDATE_PATTERN = /wait_for_update/;
 
 export const consentModeCheck: CheckModule = {
   id: 'consent-mode',
@@ -11,50 +9,88 @@ export const consentModeCheck: CheckModule = {
   impact: 'critical',
   gated: true,
   run(ctx: ScanContext) {
-    let hasConsentDefault = false;
-    const foundParams: string[] = [];
-    let hasWaitForUpdate = false;
+    // Use real consent state from Playwright sessions
+    const preConsent = ctx.sessions.find((s) => s.phase === 'pre-consent');
+    const postAccept = ctx.sessions.find((s) => s.phase === 'post-accept');
+    const postReject = ctx.sessions.find((s) => s.phase === 'post-reject');
 
-    for (const script of ctx.inlineScripts) {
-      if (CONSENT_DEFAULT_PATTERN.test(script)) {
-        hasConsentDefault = true;
+    const hasConsentMode = ctx.sessions.some((s) => s.consentState.hasConsentMode);
 
-        for (const param of V2_PARAMS) {
-          if (script.includes(param)) {
-            foundParams.push(param);
+    if (hasConsentMode && preConsent) {
+      const defaultParams = preConsent.consentState.defaultParameters;
+      const foundDefault = V2_PARAMS.filter((p) => p in defaultParams);
+      const missingDefault = V2_PARAMS.filter((p) => !(p in defaultParams));
+
+      // Check if consent updates properly after accept
+      const updatedAfterAccept = postAccept?.consentState.updatedParameters ?? {};
+      const grantedAfterAccept = V2_PARAMS.filter((p) => updatedAfterAccept[p] === 'granted');
+
+      // Check gcs values for advanced vs basic mode
+      const preGcs = preConsent.consentState.gcsValues;
+      const hasAdvancedMode = preGcs.some((g) => g.startsWith('G1'));
+
+      if (foundDefault.length === V2_PARAMS.length) {
+        const details: string[] = ['Consent Mode v2 configure avec les 4 parametres requis'];
+
+        if (grantedAfterAccept.length > 0) {
+          details.push(`${grantedAfterAccept.length} parametre(s) passe(s) a "granted" apres acceptation`);
+        }
+
+        if (hasAdvancedMode) {
+          details.push('mode Advanced detecte (pings anonymises sans consentement)');
+        }
+
+        // Verify post-reject behavior
+        if (postReject) {
+          const rejectGcs = postReject.consentState.gcsValues;
+          const stillDenied = rejectGcs.every((g) => !g.startsWith('G11'));
+          if (stillDenied) {
+            details.push('verification post-refus OK');
           }
         }
 
-        if (WAIT_FOR_UPDATE_PATTERN.test(script)) {
-          hasWaitForUpdate = true;
+        return {
+          status: 'pass',
+          description: details.join('. ') + '.',
+          rawData: { defaultParams, updatedAfterAccept, gcsValues: preGcs, hasAdvancedMode },
+        };
+      }
+
+      return {
+        status: 'warning',
+        description: `Consent Mode detecte mais incomplet — parametre(s) manquant(s) : ${missingDefault.join(', ')}. La v2 requiert les 4 parametres.`,
+        rawData: { defaultParams, foundDefault, missingDefault, hasAdvancedMode },
+      };
+    }
+
+    // Fallback: check inline scripts for consent default pattern
+    const CONSENT_DEFAULT_PATTERN = /gtag\s*\(\s*['"]consent['"]\s*,\s*['"]default['"]/;
+
+    for (const script of ctx.inlineScripts) {
+      if (CONSENT_DEFAULT_PATTERN.test(script)) {
+        const foundParams = V2_PARAMS.filter((p) => script.includes(p));
+        const missingParams = V2_PARAMS.filter((p) => !script.includes(p));
+
+        if (missingParams.length === 0) {
+          return {
+            status: 'pass',
+            description: 'Consent Mode v2 detecte avec les 4 parametres requis (detection HTML).',
+            rawData: { parameters: foundParams, detectionMethod: 'html' },
+          };
         }
+
+        return {
+          status: 'warning',
+          description: `Consent Mode detecte mais incomplet — parametre(s) manquant(s) : ${missingParams.join(', ')}.`,
+          rawData: { parameters: foundParams, missingParams, detectionMethod: 'html' },
+        };
       }
     }
 
-    const uniqueParams = [...new Set(foundParams)];
-
-    if (!hasConsentDefault) {
-      return {
-        status: 'fail',
-        description: 'Google Consent Mode non detecte — requis depuis mars 2024 pour Google Ads. Les conversions ne sont pas modelisees.',
-        rawData: { hasConsentDefault: false, parameters: [], hasWaitForUpdate: false },
-      };
-    }
-
-    const missingParams = V2_PARAMS.filter((p) => !uniqueParams.includes(p));
-
-    if (missingParams.length === 0) {
-      return {
-        status: 'pass',
-        description: `Consent Mode v2 configure avec les 4 parametres requis.${hasWaitForUpdate ? ' wait_for_update actif.' : ''}`,
-        rawData: { hasConsentDefault: true, parameters: uniqueParams, hasWaitForUpdate },
-      };
-    }
-
     return {
-      status: 'warning',
-      description: `Consent Mode detecte mais incomplet — parametre(s) manquant(s) : ${missingParams.join(', ')}. La v2 requiert les 4 parametres.`,
-      rawData: { hasConsentDefault: true, parameters: uniqueParams, missingParams, hasWaitForUpdate },
+      status: 'fail',
+      description: 'Google Consent Mode non detecte — requis depuis mars 2024 pour Google Ads. Les conversions ne sont pas modelisees.',
+      rawData: { hasConsentMode: false },
     };
   },
 };

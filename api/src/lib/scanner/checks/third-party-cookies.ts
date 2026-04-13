@@ -7,14 +7,18 @@ export const thirdPartyCookiesCheck: CheckModule = {
   impact: 'high',
   gated: true,
   run(ctx: ScanContext) {
-    const thirdParty = ctx.cookies.filter((c) => c.isThirdParty);
-    const domains = [...new Set(thirdParty.map((c) => c.domain).filter(Boolean))];
+    // Use post-accept session for most complete cookie picture
+    const postAccept = ctx.sessions.find((s) => s.phase === 'post-accept');
+    const cookiesToAnalyze = postAccept?.cookies ?? ctx.cookies;
+
+    const thirdParty = cookiesToAnalyze.filter((c) => c.isThirdParty);
+    const domains = [...new Set(thirdParty.map((c) => c.domain).filter(Boolean))] as string[];
     const count = thirdParty.length;
 
     if (count === 0) {
       return {
         status: 'pass',
-        description: 'Aucun cookie tiers detecte dans les headers HTTP.',
+        description: 'Aucun cookie tiers detecte apres acceptation.',
         rawData: { count: 0, domains: [] },
       };
     }

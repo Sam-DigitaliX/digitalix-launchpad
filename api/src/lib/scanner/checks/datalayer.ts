@@ -1,32 +1,6 @@
 import type { CheckModule, ScanContext } from '../types.js';
 
-const DATALAYER_PUSH_PATTERN = /dataLayer\.push\s*\(/g;
 const ECOMMERCE_EVENTS = ['purchase', 'begin_checkout', 'add_to_cart', 'view_item', 'add_payment_info', 'view_item_list'];
-
-function analyzeDataLayer(ctx: ScanContext) {
-  let hasDataLayer = false;
-  let pushCount = 0;
-  const detectedEvents: string[] = [];
-
-  for (const script of ctx.inlineScripts) {
-    if (script.includes('dataLayer')) {
-      hasDataLayer = true;
-    }
-
-    while (DATALAYER_PUSH_PATTERN.exec(script) !== null) {
-      pushCount++;
-    }
-    DATALAYER_PUSH_PATTERN.lastIndex = 0;
-
-    for (const event of ECOMMERCE_EVENTS) {
-      if (script.includes(`'${event}'`) || script.includes(`"${event}"`)) {
-        detectedEvents.push(event);
-      }
-    }
-  }
-
-  return { hasDataLayer, pushCount, detectedEvents: [...new Set(detectedEvents)] };
-}
 
 export const datalayerCheck: CheckModule = {
   id: 'datalayer',
@@ -35,28 +9,82 @@ export const datalayerCheck: CheckModule = {
   impact: 'high',
   gated: true,
   run(ctx: ScanContext) {
-    const { hasDataLayer, pushCount, detectedEvents } = analyzeDataLayer(ctx);
+    // Use real dataLayer from Playwright sessions if available
+    const allPushes = ctx.sessions.flatMap((s) => s.dataLayerPushes);
+    const hasRealData = allPushes.length > 0;
+
+    if (hasRealData) {
+      const events: string[] = [];
+      for (const push of allPushes) {
+        const event = (push as Record<string, unknown>).event;
+        if (typeof event === 'string') events.push(event);
+      }
+
+      const uniqueEvents = [...new Set(events)];
+      const ecommerceEvents = uniqueEvents.filter((e) => ECOMMERCE_EVENTS.includes(e));
+
+      if (uniqueEvents.length === 0) {
+        return {
+          status: 'warning',
+          description: `dataLayer actif (${allPushes.length} push(es)) mais aucun event nomme detecte.`,
+          rawData: { pushCount: allPushes.length, events: [], source: 'playwright' },
+        };
+      }
+
+      if (ecommerceEvents.length > 0) {
+        return {
+          status: 'pass',
+          description: `dataLayer actif avec ${uniqueEvents.length} event(s) dont ${ecommerceEvents.length} e-commerce : ${ecommerceEvents.join(', ')}.`,
+          rawData: { pushCount: allPushes.length, events: uniqueEvents, ecommerceEvents, source: 'playwright' },
+        };
+      }
+
+      return {
+        status: 'warning',
+        description: `dataLayer actif avec ${uniqueEvents.length} event(s) (${uniqueEvents.slice(0, 5).join(', ')}${uniqueEvents.length > 5 ? '...' : ''}) mais aucun event e-commerce detecte.`,
+        rawData: { pushCount: allPushes.length, events: uniqueEvents, ecommerceEvents: [], source: 'playwright' },
+      };
+    }
+
+    // Fallback: HTML-based detection
+    let hasDataLayer = false;
+    let pushCount = 0;
+    const detectedEvents: string[] = [];
+
+    for (const script of ctx.inlineScripts) {
+      if (script.includes('dataLayer')) hasDataLayer = true;
+      const pushMatches = script.match(/dataLayer\.push\s*\(/g);
+      if (pushMatches) pushCount += pushMatches.length;
+
+      for (const event of ECOMMERCE_EVENTS) {
+        if (script.includes(`'${event}'`) || script.includes(`"${event}"`)) {
+          detectedEvents.push(event);
+        }
+      }
+    }
 
     if (!hasDataLayer) {
       return {
         status: 'fail',
         description: 'Aucun dataLayer detecte. Les donnees structurees ne sont pas transmises a GTM.',
-        rawData: { hasDataLayer: false, pushCount: 0, events: [] },
+        rawData: { hasDataLayer: false, pushCount: 0, events: [], source: 'html' },
       };
     }
 
-    if (detectedEvents.length > 0) {
+    const uniqueDetected = [...new Set(detectedEvents)];
+
+    if (uniqueDetected.length > 0) {
       return {
         status: 'pass',
-        description: `dataLayer actif avec ${pushCount} push(es) et ${detectedEvents.length} event(s) e-commerce detecte(s) : ${detectedEvents.join(', ')}.`,
-        rawData: { hasDataLayer: true, pushCount, events: detectedEvents },
+        description: `dataLayer actif avec ${pushCount} push(es) et ${uniqueDetected.length} event(s) e-commerce : ${uniqueDetected.join(', ')}.`,
+        rawData: { hasDataLayer: true, pushCount, events: uniqueDetected, source: 'html' },
       };
     }
 
     return {
       status: 'warning',
       description: `dataLayer present avec ${pushCount} push(es) mais aucun event e-commerce detecte.`,
-      rawData: { hasDataLayer: true, pushCount, events: [] },
+      rawData: { hasDataLayer: true, pushCount, events: [], source: 'html' },
     };
   },
 };
