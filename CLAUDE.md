@@ -208,13 +208,33 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - Sites with anti-bot (DataDome, Akamai) block headless Chromium → degraded scan results
 - PageSpeed Insights API not accessible from VPS → LCP/CLS/INP show as "non disponible"
 
-### Chantier B — Dashboard leads (planned)
+### Chantier B — Dashboard leads + system health (planned, next)
+**Leads intelligence:**
 - [ ] Admin endpoints: contacts/:id/audits, enriched contacts list
 - [ ] Lead temperature scoring (audit + form + resource = hot)
 - [ ] Timeline: show audits (site, score, link to results) per contact
 - [ ] Multi-audit view: number of sites audited, links to results
 - [ ] Date filter on dashboard
 - [ ] Filter contacts by source (audit / form / both)
+
+**System health check (read-only, visual):**
+- [ ] `GET /api/admin/health` endpoint — checks all subsystems, returns status + versions
+  - API, Database (connexion + tables), Playwright/Chromium
+  - Disk usage, Memory usage (via Hostinger MCP)
+  - SSL certificates (days until expiry)
+  - Resend API key validity
+- [ ] Version tracking with update indicators:
+  - Node.js (current vs latest LTS)
+  - npm deps (outdated packages)
+  - Coolify (current vs latest, via MCP)
+  - Traefik (current vs latest, already in Coolify data)
+  - PostgreSQL version
+  - Chromium version
+- [ ] Dashboard UI: status banner on admin page (green/orange/red)
+  - Expandable detail view with cards by category (Infra, App, Data, Security)
+  - Glass card design matching existing design system
+  - Auto-check on page load + refresh every 5 min
+  - No action buttons — read-only, manual updates only
 
 ### Chantier C — Backlog
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
