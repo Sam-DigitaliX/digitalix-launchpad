@@ -274,3 +274,33 @@ export function getAdminContactEmails(adminKey: string, contactId: string) {
     headers: adminHeaders(adminKey),
   });
 }
+
+/* ──────────────────── Admin: Health Check ──────────────────── */
+
+export interface HealthCheck {
+  category: 'app' | 'data' | 'infra';
+  name: string;
+  status: 'ok' | 'warning' | 'error';
+  message: string;
+  value?: string | number;
+  duration?: number;
+}
+
+export interface HealthCheckResponse {
+  status: 'healthy' | 'degraded' | 'unhealthy';
+  timestamp: string;
+  uptime: number;
+  duration: number;
+  checks: HealthCheck[];
+  versions: {
+    node: string;
+    postgresql: string;
+    chromium: string;
+  };
+}
+
+export function getAdminHealth(adminKey: string) {
+  return request<HealthCheckResponse>('/api/admin/health', {
+    headers: adminHeaders(adminKey),
+  });
+}

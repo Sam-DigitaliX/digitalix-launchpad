@@ -208,33 +208,30 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - Sites with anti-bot (DataDome, Akamai) block headless Chromium → degraded scan results
 - PageSpeed Insights API not accessible from VPS → LCP/CLS/INP show as "non disponible"
 
-### Chantier B — Dashboard leads + system health (planned, next)
-**Leads intelligence:**
-- [ ] Admin endpoints: contacts/:id/audits, enriched contacts list
-- [ ] Lead temperature scoring (audit + form + resource = hot)
-- [ ] Timeline: show audits (site, score, link to results) per contact
-- [ ] Multi-audit view: number of sites audited, links to results
-- [ ] Date filter on dashboard
-- [ ] Filter contacts by source (audit / form / both)
+### Chantier B — Dashboard leads + system health (in progress)
+**Leads intelligence (COMPLETE — 2026-04-13):**
+- [x] Admin endpoints: contacts/:id/audits, enriched contacts list, email stats wrappers
+- [x] Lead temperature scoring (hot/warm/cold computed in SQL view)
+- [x] Timeline: show audits (site, score, link to results) + emails (status badges) per contact
+- [x] Multi-audit view: audit count column in contacts table
+- [x] Date filter on dashboard (7j / 30j / 90j)
+- [x] Filter contacts by source (audit / form / both)
+- [x] Email stats row: total sent, open rate (wired existing API endpoints)
+- [x] Migration 003: enriched admin_contacts_overview view with DROP+CREATE pattern
+- [x] Fix: DROP VIEW IF EXISTS before CREATE VIEW for safe idempotent redeployment
 
-**System health check (read-only, visual):**
-- [ ] `GET /api/admin/health` endpoint — checks all subsystems, returns status + versions
-  - API, Database (connexion + tables), Playwright/Chromium
-  - Disk usage, Memory usage (via Hostinger MCP)
-  - SSL certificates (days until expiry)
-  - Resend API key validity
-- [ ] Version tracking with update indicators:
-  - Node.js (current vs latest LTS)
-  - npm deps (outdated packages)
-  - Coolify (current vs latest, via MCP)
-  - Traefik (current vs latest, already in Coolify data)
-  - PostgreSQL version
-  - Chromium version
-- [ ] Dashboard UI: status banner on admin page (green/orange/red)
-  - Expandable detail view with cards by category (Infra, App, Data, Security)
-  - Glass card design matching existing design system
+**System health check (COMPLETE — 2026-04-13):**
+- [x] `GET /api/admin/health` endpoint — 10 checks across 3 categories (App, Data, Infra)
+  - App: Node.js version, uptime, Playwright binary, Chromium version
+  - Data: DB connexion (with latency), PostgreSQL version, tables integrity (6 tables)
+  - Infra: disk usage (warning >80%, error >95%), memory usage (warning >85%, error >95%)
+- [x] Version tracking: Node.js, PostgreSQL, Chromium (in-container only, skipped Coolify/Traefik/SSL/Resend)
+- [x] Dashboard UI: status banner (healthy/degraded/unhealthy) with expandable detail panel
+  - Cards by category (App, Data, Infra) with glass design
+  - Versions section with mono badges
   - Auto-check on page load + refresh every 5 min
-  - No action buttons — read-only, manual updates only
+  - Manual refresh button
+  - Read-only, no action buttons
 
 ### Chantier C — Backlog
 - [ ] CRUD contacts in admin dashboard (edit, delete, add notes)

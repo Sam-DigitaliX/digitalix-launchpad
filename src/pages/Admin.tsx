@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect, useRef } from "react";
 import {
   getAdminStats,
   getAdminContacts,
@@ -6,12 +6,14 @@ import {
   getAdminContactAudits,
   getAdminEmailStats,
   getAdminContactEmails,
+  getAdminHealth,
   type AdminContact,
   type AdminInteraction,
   type AdminStats,
   type AdminContactAudit,
   type AdminEmailStats,
   type AdminEmailLog,
+  type HealthCheckResponse,
   ApiError,
 } from "@/lib/api";
 import {
@@ -28,6 +30,11 @@ import {
   Search,
   Mail,
   BarChart3,
+  Heart,
+  Database,
+  HardDrive,
+  Cpu,
+  RefreshCw,
   ExternalLink,
   Globe,
 } from "lucide-react";
@@ -331,6 +338,141 @@ function StatCard({
 }
 
 /* ------------------------------------------------------------------ */
+/*  Health Banner                                                      */
+/* ------------------------------------------------------------------ */
+
+const HEALTH_STATUS_CONFIG: Record<string, { color: string; bgColor: string; label: string }> = {
+  healthy: { color: "text-emerald-400", bgColor: "bg-emerald-500/10 border-emerald-500/20", label: "Système opérationnel" },
+  degraded: { color: "text-orange-400", bgColor: "bg-orange-500/10 border-orange-500/20", label: "Système dégradé" },
+  unhealthy: { color: "text-red-400", bgColor: "bg-red-500/10 border-red-500/20", label: "Système en erreur" },
+};
+
+const CHECK_STATUS_DOT: Record<string, string> = {
+  ok: "bg-emerald-500",
+  warning: "bg-orange-400",
+  error: "bg-red-500",
+};
+
+const CATEGORY_CONFIG: Record<string, { icon: React.ElementType; label: string }> = {
+  app: { icon: Cpu, label: "Application" },
+  data: { icon: Database, label: "Données" },
+  infra: { icon: HardDrive, label: "Infrastructure" },
+};
+
+function HealthBanner({ adminKey }: { adminKey: string }) {
+  const [health, setHealth] = useState<HealthCheckResponse | null>(null);
+  const [expanded, setExpanded] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const fetchHealth = useCallback(async () => {
+    setLoading(true);
+    try {
+      const data = await getAdminHealth(adminKey);
+      setHealth(data);
+    } catch (err) {
+      console.error('[Admin] Health check error:', err);
+    }
+    setLoading(false);
+  }, [adminKey]);
+
+  useEffect(() => {
+    fetchHealth();
+    intervalRef.current = setInterval(fetchHealth, 5 * 60 * 1000);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [fetchHealth]);
+
+  if (!health && !loading) return null;
+
+  const statusConfig = health ? HEALTH_STATUS_CONFIG[health.status] ?? HEALTH_STATUS_CONFIG.unhealthy : HEALTH_STATUS_CONFIG.healthy;
+  const groupedChecks = health ? (['app', 'data', 'infra'] as const).map((cat) => ({
+    category: cat,
+    ...CATEGORY_CONFIG[cat],
+    checks: health.checks.filter((ch) => ch.category === cat),
+  })) : [];
+
+  return (
+    <div className="ev-fade-in">
+      {/* Banner bar */}
+      <div className={`rounded-xl border px-5 py-3 flex items-center justify-between ${statusConfig.bgColor}`}>
+        <div className="flex items-center gap-3">
+          <Heart className={`w-4 h-4 ${statusConfig.color}`} />
+          <span className={`text-sm font-medium ${statusConfig.color}`}>
+            {loading && !health ? "Vérification..." : statusConfig.label}
+          </span>
+          {health && (
+            <span className="text-xs text-muted-foreground font-mono">
+              ({health.duration}ms)
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={fetchHealth}
+            disabled={loading}
+            className="p-1.5 rounded-lg hover:bg-glass transition-colors"
+            title="Rafraîchir"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-muted-foreground ${loading ? "animate-spin" : ""}`} />
+          </button>
+          <button
+            onClick={() => setExpanded((e) => !e)}
+            className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors px-2 py-1 rounded-lg hover:bg-glass"
+          >
+            Détails
+            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Expanded detail panel */}
+      {expanded && health && (
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {groupedChecks.map(({ category, icon: CatIcon, label, checks }) => (
+            <div key={category} className="ev-card-static p-5 space-y-3">
+              <div className="relative z-10">
+                <div className="flex items-center gap-2 mb-4">
+                  <CatIcon className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display">{label}</span>
+                </div>
+                <div className="space-y-2.5">
+                  {checks.map((check) => (
+                    <div key={check.name} className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className={`w-1.5 h-1.5 rounded-full ${CHECK_STATUS_DOT[check.status]}`} />
+                        <span className="text-sm text-foreground">{check.name}</span>
+                      </div>
+                      <span className="text-xs text-muted-foreground font-mono">{check.message}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {/* Versions */}
+          <div className="md:col-span-3 ev-card-static p-5">
+            <div className="relative z-10">
+              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display">Versions</span>
+              <div className="flex flex-wrap gap-4 mt-3">
+                {Object.entries(health.versions).map(([name, version]) => (
+                  <div key={name} className="flex items-center gap-2">
+                    <span className="text-xs text-muted-foreground">{name}:</span>
+                    <span className="text-xs text-foreground font-mono px-2 py-0.5 rounded bg-glass border border-glass-border">{version || "—"}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /*  Filters                                                            */
 /* ------------------------------------------------------------------ */
 
@@ -593,6 +735,9 @@ export default function Admin() {
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Health banner */}
+        <HealthBanner adminKey={adminKey} />
+
         {/* Stats row 1 — Contacts & Interactions */}
         {stats && (
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
