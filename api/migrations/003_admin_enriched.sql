@@ -2,7 +2,8 @@
 -- DigitaliX — Enriched admin view with audit data + lead temperature
 -- ============================================================
 
-CREATE OR REPLACE VIEW admin_contacts_overview AS
+DROP VIEW IF EXISTS admin_contacts_overview;
+CREATE VIEW admin_contacts_overview AS
 SELECT
   c.id,
   c.email,

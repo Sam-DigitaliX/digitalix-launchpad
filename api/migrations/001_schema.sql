@@ -73,7 +73,8 @@ CREATE TABLE IF NOT EXISTS admin_config (
 -- ============================================================
 -- 5. View: admin_contacts_overview
 -- ============================================================
-CREATE OR REPLACE VIEW admin_contacts_overview AS
+DROP VIEW IF EXISTS admin_contacts_overview;
+CREATE VIEW admin_contacts_overview AS
 SELECT
   c.id,
   c.email,
