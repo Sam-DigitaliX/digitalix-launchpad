@@ -431,7 +431,7 @@ function HealthBanner({ adminKey }: { adminKey: string }) {
       {expanded && health && (
         <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
           {groupedChecks.map(({ category, icon: CatIcon, label, checks }) => (
-            <div key={category} className="ev-card-static p-5 space-y-3">
+            <div key={category} className="ev-card p-5 space-y-3">
               <div className="relative z-10">
                 <div className="flex items-center gap-2 mb-4">
                   <CatIcon className="w-4 h-4 text-muted-foreground" />
@@ -453,7 +453,7 @@ function HealthBanner({ adminKey }: { adminKey: string }) {
           ))}
 
           {/* Versions */}
-          <div className="md:col-span-3 ev-card-static p-5">
+          <div className="md:col-span-3 ev-card p-5">
             <div className="relative z-10">
               <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display">Versions</span>
               <div className="flex flex-wrap gap-4 mt-3">
