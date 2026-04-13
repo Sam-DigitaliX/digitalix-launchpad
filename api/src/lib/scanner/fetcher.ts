@@ -19,7 +19,7 @@ import type {
 } from './types.js';
 
 const PAGE_TIMEOUT_MS = 15000;
-const CMP_WAIT_MS = 5000;
+const CMP_WAIT_MS = 10000;
 const POST_CONSENT_WAIT_MS = 4000;
 const NETWORK_IDLE_TIMEOUT_MS = 3000;
 
@@ -351,7 +351,9 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
     const detectPage = await detectContext.newPage();
     let finalUrl = url;
 
+    const pageLoadStart = Date.now();
     await detectPage.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
+    const pageLoadMs = Date.now() - pageLoadStart;
     finalUrl = detectPage.url();
 
     // Wait for CMP
@@ -415,7 +417,8 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
       onProgress({ type: 'step_done', session: 1, totalSessions: 1, label: 'Mode degrade — pas de CMP detectee, sessions consent ignorees' });
     }
 
-    const fetchDurationMs = Date.now() - start;
+    // Use actual page load time, not total scan duration
+    const fetchDurationMs = pageLoadMs;
 
     // Merge cookies from all sessions for backward compatibility
     const allCookies = sessions.flatMap((s) => s.cookies);
