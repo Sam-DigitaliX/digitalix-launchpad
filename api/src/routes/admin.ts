@@ -238,9 +238,10 @@ app.get('/health', async (c) => {
     });
   }
 
-  // Chromium version
+  // Chromium version (use Playwright's executable path)
   try {
-    const output = execSync('chromium --version 2>/dev/null || chromium-browser --version 2>/dev/null || echo "unknown"', {
+    const chromiumPath = chromium.executablePath();
+    const output = execSync(`"${chromiumPath}" --version 2>/dev/null || echo "unknown"`, {
       timeout: 5000,
       encoding: 'utf-8',
     }).trim();
