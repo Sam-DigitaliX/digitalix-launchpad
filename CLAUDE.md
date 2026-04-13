@@ -233,14 +233,29 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
   - Manual refresh button
   - Read-only, no action buttons
 
-### Chantier C — Backlog
+### Chantier C — Backlog fonctionnel
 - [x] CRUD contacts in admin dashboard (edit, delete, notes, tags) (2026-04-13)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Decommission Supabase project after 2-week monitoring period
-- [ ] Cross-domain tracking detection
-- [ ] Security headers analysis
-- [ ] Redirect chain analysis
+- [ ] Cross-domain tracking detection (nouveau check audit)
+- [ ] Security headers analysis (nouveau check audit)
+- [ ] Redirect chain analysis (nouveau check audit)
+
+### Chantier D — Migrations majeures
+**Batch 1 — faible risque :**
+- [ ] lucide-react 0.462 → 1.x (renaming d'icônes)
+- [ ] zod 3.x → 4.x (API changes mineures)
+- [ ] typescript 5.x → 6.x (nouvelles règles strictes)
+
+**Batch 2 — moyen risque :**
+- [ ] vite 5.x → 8.x (breaking changes config)
+- [ ] recharts 2.x → 3.x
+
+**Batch 3 — haut risque (planifier ensemble) :**
+- [ ] tailwindcss 3.x → 4.x (refonte CSS-first)
+- [ ] react 18 → 19 + react-dom (attendre support shadcn/ui)
+- [ ] react-router-dom 6 → 7 (refonte API loaders/actions)
 
 ### Nice to have
 - [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
