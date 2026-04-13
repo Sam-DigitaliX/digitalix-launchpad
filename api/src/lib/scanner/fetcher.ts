@@ -20,8 +20,8 @@ import type {
 
 const PAGE_TIMEOUT_MS = 15000;
 const CMP_WAIT_MS = 10000;
-const POST_CONSENT_WAIT_MS = 4000;
-const NETWORK_IDLE_TIMEOUT_MS = 3000;
+const POST_CONSENT_WAIT_MS = 6000;
+const NETWORK_IDLE_TIMEOUT_MS = 5000;
 
 function extractDomain(url: string): string {
   return new URL(url).hostname.replace(/^www\./, '');
@@ -254,14 +254,32 @@ async function runSession(
   try {
     // Navigate
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
+
+    // Trigger lazy-loaded scripts (WP Rocket, etc.) by scrolling + waiting
+    await page.evaluate(() => {
+      window.scrollBy(0, 300);
+      window.dispatchEvent(new Event('scroll'));
+      // Some lazy-loaders also trigger on mousemove/touchstart
+      document.dispatchEvent(new MouseEvent('mousemove'));
+    });
+    try {
+      await page.waitForLoadState('networkidle', { timeout: NETWORK_IDLE_TIMEOUT_MS });
+    } catch {
+      // Some sites never reach networkidle
+    }
     onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Page chargee' });
 
-    // Wait a bit for CMP to appear
+    // Wait for CMP to appear
     await page.waitForTimeout(2000);
 
     if (phase === 'pre-consent') {
       // Just wait and observe — no interaction
       await page.waitForTimeout(POST_CONSENT_WAIT_MS);
+      try {
+        await page.waitForLoadState('networkidle', { timeout: NETWORK_IDLE_TIMEOUT_MS });
+      } catch {
+        // timeout is fine
+      }
       onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Requetes et cookies captures' });
     } else {
       // Wait for CMP and click
