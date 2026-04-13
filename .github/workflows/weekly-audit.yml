@@ -1,0 +1,114 @@
+name: Weekly Audit
+
+on:
+  schedule:
+    - cron: '0 18 * * 0' # Dimanche 20h Paris (18h UTC)
+  workflow_dispatch: # Permet de lancer manuellement
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: |
+          npm ci --ignore-scripts
+          cd api && npm ci --ignore-scripts
+
+      - name: Run audit checks
+        id: audit
+        run: |
+          REPORT=""
+          STATUS="OK"
+
+          # --- Header ---
+          REPORT="*Rapport Hebdo DigitaliX*"
+          REPORT="$REPORT%0A$(date +'%d/%m/%Y - %Hh%M UTC')"
+          REPORT="$REPORT%0A"
+
+          # --- Health Check API ---
+          HEALTH=$(curl -s --max-time 10 https://api.digitalix.xyz/api/health 2>/dev/null || echo '{"status":"unreachable"}')
+          HEALTH_STATUS=$(echo "$HEALTH" | jq -r '.status // "unreachable"')
+          if [ "$HEALTH_STATUS" = "ok" ]; then
+            REPORT="$REPORT%0A✅ *API* : opérationnelle"
+          else
+            REPORT="$REPORT%0A⚠️ *API* : $HEALTH_STATUS"
+            STATUS="ATTENTION"
+          fi
+
+          # --- Backend npm outdated ---
+          REPORT="$REPORT%0A%0A*Backend (api/)*"
+          cd api
+          BACKEND_OUTDATED=$(npm outdated --json 2>/dev/null || echo '{}')
+          BACKEND_COUNT=$(echo "$BACKEND_OUTDATED" | jq 'length')
+          if [ "$BACKEND_COUNT" = "0" ]; then
+            REPORT="$REPORT%0A✅ Toutes les deps sont à jour"
+          else
+            BACKEND_MAJOR=$(echo "$BACKEND_OUTDATED" | jq '[to_entries[] | select(.value.current != .value.latest) | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0]))] | length')
+            BACKEND_MINOR=$(echo "$BACKEND_OUTDATED" | jq "[to_entries[] | select(.value.current != .value.latest) | select((.value.current | split(\".\")[0]) == (.value.latest | split(\".\")[0]))] | length")
+            REPORT="$REPORT%0A📦 $BACKEND_COUNT packages outdated"
+            if [ "$BACKEND_MAJOR" != "0" ]; then
+              REPORT="$REPORT (${BACKEND_MAJOR} majeures)"
+              STATUS="ATTENTION"
+            fi
+            # List major updates
+            MAJOR_LIST=$(echo "$BACKEND_OUTDATED" | jq -r 'to_entries[] | select(.value.current != .value.latest) | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0])) | "  - \(.key): \(.value.current) → \(.value.latest)"' 2>/dev/null)
+            if [ -n "$MAJOR_LIST" ]; then
+              REPORT="$REPORT%0A$MAJOR_LIST"
+            fi
+          fi
+          cd ..
+
+          # --- Frontend npm outdated ---
+          REPORT="$REPORT%0A%0A*Frontend*"
+          FRONTEND_OUTDATED=$(npm outdated --json 2>/dev/null || echo '{}')
+          FRONTEND_COUNT=$(echo "$FRONTEND_OUTDATED" | jq 'length')
+          if [ "$FRONTEND_COUNT" = "0" ]; then
+            REPORT="$REPORT%0A✅ Toutes les deps sont à jour"
+          else
+            FRONTEND_MAJOR=$(echo "$FRONTEND_OUTDATED" | jq '[to_entries[] | select(.value.current != .value.latest) | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0]))] | length')
+            REPORT="$REPORT%0A📦 $FRONTEND_COUNT packages outdated"
+            if [ "$FRONTEND_MAJOR" != "0" ]; then
+              REPORT="$REPORT (${FRONTEND_MAJOR} majeures)"
+              STATUS="ATTENTION"
+            fi
+            MAJOR_LIST=$(echo "$FRONTEND_OUTDATED" | jq -r 'to_entries[] | select(.value.current != .value.latest) | select((.value.current | split(".")[0]) != (.value.latest | split(".")[0])) | "  - \(.key): \(.value.current) → \(.value.latest)"' 2>/dev/null)
+            if [ -n "$MAJOR_LIST" ]; then
+              REPORT="$REPORT%0A$MAJOR_LIST"
+            fi
+          fi
+
+          # --- GitHub Issues ---
+          REPORT="$REPORT%0A%0A*GitHub Issues* : $(gh issue list --json number --jq 'length' 2>/dev/null || echo '?') ouvertes"
+
+          # --- Status header ---
+          if [ "$STATUS" = "OK" ]; then
+            HEADER="✅ *État : OK*"
+          else
+            HEADER="⚠️ *État : ATTENTION*"
+          fi
+          REPORT="$HEADER%0A$REPORT"
+
+          echo "report<<ENDOFREPORT" >> $GITHUB_OUTPUT
+          echo "$REPORT" >> $GITHUB_OUTPUT
+          echo "ENDOFREPORT" >> $GITHUB_OUTPUT
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Send to Telegram
+        run: |
+          REPORT=$(cat <<'ENDOFREPORT'
+          ${{ steps.audit.outputs.report }}
+          ENDOFREPORT
+          )
+          # Replace %0A with actual newlines for Telegram
+          REPORT=$(echo "$REPORT" | sed 's/%0A/\n/g')
+          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            -d "parse_mode=Markdown" \
+            --data-urlencode "text=$REPORT"
