@@ -38,14 +38,14 @@ import {
 
 const INTERACTION_LABELS: Record<string, string> = {
   qualification_form: "Formulaire qualification",
-  audit_unlock: "Audit d\u00e9bloqu\u00e9",
+  audit_unlock: "Audit débloqué",
   audit_email_click: "Clic email audit",
-  resource_download: "T\u00e9l\u00e9chargement ressource",
-  email_sent: "Email envoy\u00e9",
+  resource_download: "Téléchargement ressource",
+  email_sent: "Email envoyé",
 };
 
 function formatDate(iso: string | null) {
-  if (!iso) return "\u2014";
+  if (!iso) return "—";
   return new Date(iso).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "short",
@@ -56,7 +56,7 @@ function formatDate(iso: string | null) {
 }
 
 function formatDateShort(iso: string | null) {
-  if (!iso) return "\u2014";
+  if (!iso) return "—";
   return new Date(iso).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "short",
@@ -68,14 +68,14 @@ type SourceFilter = "all" | "audit" | "form" | "both";
 type DateFilter = "all" | "7" | "30" | "90";
 
 function ScoreBadge({ score, qualified }: { score: number | null; qualified: boolean | null }) {
-  if (score == null) return <span className="text-muted-foreground text-xs">\u2014</span>;
+  if (score == null) return <span className="text-muted-foreground text-xs">—</span>;
   const color = qualified
     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
     : "bg-orange-500/10 text-orange-400 border-orange-500/20";
   return (
     <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border ${color}`}>
       {score}
-      {qualified ? " \u00b7 Qualifi\u00e9" : " \u00b7 Non qualifi\u00e9"}
+      {qualified ? " · Qualifié" : " · Non qualifié"}
     </span>
   );
 }
@@ -117,7 +117,7 @@ function TypeBadge({ type }: { type: string }) {
 
 function MetadataGrid({ data }: { data: Record<string, unknown> }) {
   const entries = Object.entries(data).filter(([, v]) => v != null && v !== "");
-  if (entries.length === 0) return <span className="text-muted-foreground text-xs">Aucune donn\u00e9e</span>;
+  if (entries.length === 0) return <span className="text-muted-foreground text-xs">Aucune donnée</span>;
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5 text-xs">
       {entries.map(([key, value]) => (
@@ -173,11 +173,11 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
           <TemperatureDot temperature={contact.lead_temperature} />
         </td>
         <td className="px-5 py-4">
-          <div className="font-medium text-foreground">{contact.full_name ?? "\u2014"}</div>
+          <div className="font-medium text-foreground">{contact.full_name ?? "—"}</div>
           <div className="text-xs text-muted-foreground mt-0.5 font-mono">{contact.email}</div>
         </td>
-        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.company_name ?? "\u2014"}</td>
-        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.profile_type ?? "\u2014"}</td>
+        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.company_name ?? "—"}</td>
+        <td className="px-5 py-4 text-sm text-muted-foreground">{contact.profile_type ?? "—"}</td>
         <td className="px-5 py-4">
           <ScoreBadge score={contact.qualification_score} qualified={contact.is_qualified} />
         </td>
@@ -202,7 +202,7 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
               {audits && audits.length > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
-                    Audits \u00b7 {audits.length}
+                    Audits · {audits.length}
                   </h4>
                   <div className="space-y-2">
                     {audits.map((audit) => (
@@ -237,7 +237,7 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
               {emails && emails.length > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
-                    Emails \u00b7 {emails.length}
+                    Emails · {emails.length}
                   </h4>
                   <div className="space-y-2">
                     {emails.map((email) => (
@@ -254,7 +254,7 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
                               ? "bg-sky-500/10 text-sky-400 border-sky-500/20"
                               : "bg-glass text-muted-foreground border-glass-border"
                         }`}>
-                          {email.clicked_at ? "Cliqu\u00e9" : email.opened_at ? "Ouvert" : "Envoy\u00e9"}
+                          {email.clicked_at ? "Cliqué" : email.opened_at ? "Ouvert" : "Envoyé"}
                         </span>
                         <span className="text-xs text-muted-foreground">{formatDateShort(email.sent_at)}</span>
                       </div>
@@ -267,7 +267,7 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
               {timeline && timeline.length > 0 && (
                 <div>
                   <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider font-display mb-3">
-                    Timeline \u00b7 {timeline.length} interaction{timeline.length > 1 ? "s" : ""}
+                    Timeline · {timeline.length} interaction{timeline.length > 1 ? "s" : ""}
                   </h4>
                   {timeline.map((interaction) => (
                     <div
@@ -290,7 +290,7 @@ function ContactRow({ contact, adminKey }: { contact: AdminContact; adminKey: st
 
               {/* Empty state */}
               {timeline?.length === 0 && audits?.length === 0 && emails?.length === 0 && (
-                <p className="text-sm text-muted-foreground">Aucune activit\u00e9 enregistr\u00e9e.</p>
+                <p className="text-sm text-muted-foreground">Aucune activité enregistrée.</p>
               )}
             </div>
           </td>
@@ -379,7 +379,7 @@ function FilterBar({
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">P\u00e9riode</span>
+        <span className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">Période</span>
         <div className="flex gap-1">
           {dateOptions.map((opt) => (
             <button
@@ -469,9 +469,9 @@ export default function Admin() {
       setDataLoading(false);
     } catch (err) {
       if (err instanceof ApiError && err.status === 401) {
-        setAuthError("Cl\u00e9 invalide.");
+        setAuthError("Clé invalide.");
       } else {
-        setAuthError("Erreur r\u00e9seau.");
+        setAuthError("Erreur réseau.");
       }
     }
     setAuthLoading(false);
@@ -507,7 +507,7 @@ export default function Admin() {
                     Admin Dashboard
                   </h1>
                   <p className="text-sm text-muted-foreground mt-1.5">
-                    Entrez votre cl\u00e9 d'acc\u00e8s pour continuer
+                    Entrez votre clé d'accès pour continuer
                   </p>
                 </div>
               </div>
@@ -515,13 +515,13 @@ export default function Admin() {
               {/* Input */}
               <div className="mt-7 space-y-2">
                 <label className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
-                  Cl\u00e9 d'acc\u00e8s
+                  Clé d'accès
                 </label>
                 <input
                   type="password"
                   value={adminKey}
                   onChange={(e) => setAdminKey(e.target.value)}
-                  placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022"
+                  placeholder="••••••••••••••••"
                   className="w-full px-4 py-3 ev-input text-sm"
                   autoFocus
                 />
@@ -544,16 +544,16 @@ export default function Admin() {
                 {authLoading ? (
                   <span className="inline-flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    V\u00e9rification...
+                    Vérification...
                   </span>
                 ) : (
-                  "Acc\u00e9der au dashboard"
+                  "Accéder au dashboard"
                 )}
               </button>
 
               {/* Footer hint */}
               <p className="text-center text-[11px] text-muted-foreground/50 mt-5">
-                Acc\u00e8s restreint \u00b7 DigitaliX Admin
+                Accès restreint · DigitaliX Admin
               </p>
             </div>
           </form>
@@ -587,7 +587,7 @@ export default function Admin() {
             className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-3 py-2 rounded-lg hover:bg-glass"
           >
             <LogOut className="w-3.5 h-3.5" />
-            D\u00e9connexion
+            Déconnexion
           </button>
         </div>
       </div>
@@ -605,7 +605,7 @@ export default function Admin() {
             />
             <StatCard
               icon={CheckCircle}
-              label="Qualifi\u00e9s"
+              label="Qualifiés"
               value={stats.qualified_count}
               color="bg-emerald-500/10 text-emerald-400"
               delay="ev-fade-in-delay-2"
@@ -640,13 +640,13 @@ export default function Admin() {
             <StatCard
               icon={BarChart3}
               label="Score moyen"
-              value={stats?.avg_audit_score ?? "\u2014"}
+              value={stats?.avg_audit_score ?? "—"}
               color="bg-indigo-500/10 text-indigo-400"
               delay="ev-fade-in-delay-2"
             />
             <StatCard
               icon={Mail}
-              label="Emails envoy\u00e9s"
+              label="Emails envoyés"
               value={emailStats?.total_sent ?? 0}
               color="bg-teal-500/10 text-teal-400"
               delay="ev-fade-in-delay-3"
@@ -654,7 +654,7 @@ export default function Admin() {
             <StatCard
               icon={Eye}
               label="Taux d'ouverture"
-              value={emailStats ? `${emailStats.open_rate}%` : "\u2014"}
+              value={emailStats ? `${emailStats.open_rate}%` : "—"}
               color="bg-sky-500/10 text-sky-400"
               delay="ev-fade-in-delay-4"
             />
@@ -671,7 +671,7 @@ export default function Admin() {
                     Contacts
                   </h2>
                   <p className="text-[11px] text-muted-foreground mt-0.5">
-                    Cliquez sur une ligne pour voir le d\u00e9tail
+                    Cliquez sur une ligne pour voir le détail
                   </p>
                 </div>
                 <span className="text-xs font-mono text-muted-foreground bg-glass px-3 py-1.5 rounded-lg border border-glass-border">
@@ -710,7 +710,7 @@ export default function Admin() {
                       <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Score</th>
                       <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest text-center">Audits</th>
                       <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest text-center">Actions</th>
-                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Derni\u00e8re visite</th>
+                      <th className="px-5 py-3.5 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Dernière visite</th>
                       <th className="px-5 py-3.5 w-10"></th>
                     </tr>
                   </thead>
