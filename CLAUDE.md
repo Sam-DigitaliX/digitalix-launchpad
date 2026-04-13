@@ -148,10 +148,11 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 **Approach**: Playwright headless (Chromium) on the VPS, 3-session consent protocol, integrated into the Hono API.
 
 **Scanner** (`api/src/lib/scanner/`):
-- `fetcher.ts` — Playwright-based: launches headless Chromium, captures HTML, cookies, network requests, console
-- `checks/` — check modules analyzing real browser data (network requests, cookies, dataLayer, consent state)
-- `index.ts` — orchestrator: runs 3 sessions sequentially, executes checks, computes scores
-- `pagespeed.ts` — Core Web Vitals from real browser metrics (LCP, CLS, INP)
+- `fetcher.ts` — Playwright-based: launches headless Chromium, 3 sequential sessions, captures HTML, cookies, network requests, dataLayer
+- `cmp-selectors.ts` — 15 CMP definitions with accept/reject selectors + ARIA/text fallbacks
+- `checks/` — 22 sync CheckModule files + `pagespeed.ts` (3 async Core Web Vitals)
+- `index.ts` — orchestrator: runs scan with onProgress callback, executes all checks, computes scores
+- Total: **25 checks** across 4 categories
 
 **3-session consent protocol**:
 1. **Pre-consent** — navigate, no CMP interaction. Capture cookies/requests that fire without consent (violations)
@@ -169,30 +170,33 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 **API routes** (`api/src/routes/audit.ts`):
 | Method | Path | Description |
 |--------|------|-------------|
-| `POST` | `/api/audit` | Submit URL → scan (SSE progress events) → store → return results |
-| `GET` | `/api/audit/:id` | Retrieve audit (respects unlock state) |
-| `POST` | `/api/audit/:id/unlock` | Email → upsert contact → send email → return all checks |
+| `POST` | `/api/audit` | Create audit (status=scanning), launch scan in background, return `{ id }` |
+| `GET` | `/api/audit/:id/progress` | SSE stream — real-time scan progress events |
+| `GET` | `/api/audit/:id` | Retrieve completed audit (respects unlock state) |
+| `POST` | `/api/audit/:id/unlock` | Email → upsert contact → send email (with UTM) → return all checks |
 | `POST` | `/api/audit/:id/track-click` | Log `audit_email_click` interaction (from email link with `?cid=`) |
 
 **Frontend scan UX**: real-time progress via SSE — each session step displayed live (30s total)
 
 **DB**: `api/migrations/002_audit.sql` — tables `audits` + `audit_checks`
 **Rate limit**: 3 audits/IP/hour (in-memory, single concurrent scan)
-**Email**: `audit_unlock` template includes "Revoir mon rapport" link with `?cid={contactId}` for click tracking
+**Email**: `audit_unlock` template with UTM parameters (utm_source=email, utm_medium=transactional, utm_campaign=audit_unlock) + "Revoir mon rapport" link with `?cid={contactId}` for click tracking
 **Dependencies**: playwright (Chromium headless), cheerio (HTML parsing fallback)
+**Dockerfile**: node:20-slim (Debian) with Chromium system deps + `npx playwright install chromium`
 
 **Server resources**: ~400MB RAM per scan, sequential execution, KVM1 (4GB) viable for 1 scan at a time
 
 ## Roadmap
 
-### Chantier A — Playwright scanner (in progress)
-- [ ] Install playwright + Chromium in Docker
-- [ ] Rewrite fetcher.ts with Playwright (3-session consent protocol)
-- [ ] CMP button detection (selectors → ARIA → text cascade)
-- [ ] SSE progress events (real-time scan feedback to frontend)
-- [ ] Adapt frontend loader (live session steps, ~30s)
-- [ ] Enrich checks with real network/cookie data
-- [ ] New checks: e-commerce detection, dataLayer inspect, GA4 collect analysis, tag firing order
+### Chantier A — Playwright scanner (COMPLETE — 2026-04-13)
+- [x] A1: Install playwright + Chromium in Docker (node:20-slim)
+- [x] A2: Rewrite fetcher.ts with Playwright (3-session consent protocol)
+- [x] A2: CMP button detection (15 CMP selectors → ARIA → text cascade)
+- [x] A3: SSE progress events (real-time scan feedback to frontend)
+- [x] A4: Frontend loader (live session steps via EventSource)
+- [x] A4: UTM parameters in audit_unlock email
+- [x] A5: Enrich 10 existing checks with real network/cookie/dataLayer data
+- [x] A6: 4 new checks (pre-consent violations, post-reject violations, e-commerce, tag firing order)
 
 ### Chantier B — Dashboard leads (planned)
 - [ ] Admin endpoints: contacts/:id/audits, enriched contacts list
@@ -216,13 +220,14 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Run schema migration on PostgreSQL + insert admin key
 - [x] Set env vars on Vercel: VITE_API_URL
 - [x] Audit Tracking V1: static fetch scanner, 21 checks, deployed (2026-04-13)
+- [x] Audit Tracking V2: Playwright scanner, 25 checks, 3-session consent protocol, SSE progress, deployed (2026-04-13)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
 - **Do NOT import from `src/integrations/supabase/`** — directory has been deleted
 - The API backend code lives in the `api/` folder of this repo
 - Auto-deploy is enabled: pushing to `main` triggers Coolify build + deploy
-- The Dockerfile uses **Node.js 20 Alpine** (NOT Bun)
+- The Dockerfile uses **Node.js 20 Slim (Debian)** with Chromium for Playwright (NOT Alpine, NOT Bun)
 - For infra changes (Coolify, VPS, DNS), use a session with MCP access to Coolify/Hostinger/Vercel
 
 ## Commands
