@@ -35,7 +35,7 @@ jobs:
           if [ "$HEALTH_STATUS" = "ok" ]; then
             echo "✅ API opérationnelle" >> "$REPORT_FILE"
           else
-            echo "🔴 API : $HEALTH_STATUS" >> "$REPORT_FILE"
+            echo "🔴 API down — vérifier Coolify" >> "$REPORT_FILE"
           fi
 
           # --- Infra: Coolify + Traefik + VPS ---
@@ -47,7 +47,6 @@ jobs:
           COOLIFY_LATEST=$(echo "$VERSIONS_JSON" | jq -r '.coolify.v4.version // "?"' | tr -d '\n')
           TRAEFIK_LATEST=$(echo "$VERSIONS_JSON" | jq -r '.traefik."v3.6" // "?"' | tr -d '\n')
 
-          # Coolify server info (for Traefik version)
           SERVER_JSON=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/servers 2>/dev/null)
           TRAEFIK_CURRENT=$(echo "$SERVER_JSON" | jq -r '.[0].settings.detected_traefik_version // .[0].detected_traefik_version // "?"' | tr -d '\n')
 
@@ -55,14 +54,16 @@ jobs:
             echo "✅ Coolify $COOLIFY_CURRENT" >> "$REPORT_FILE"
           else
             echo "🔶 Coolify $COOLIFY_CURRENT → $COOLIFY_LATEST" >> "$REPORT_FILE"
+            echo "  _→ UI Coolify > Settings > Update_" >> "$REPORT_FILE"
           fi
 
           if [ "$TRAEFIK_CURRENT" = "?" ] || [ -z "$TRAEFIK_CURRENT" ]; then
-            echo "✅ Traefik (version non détectée)" >> "$REPORT_FILE"
+            echo "✅ Traefik OK" >> "$REPORT_FILE"
           elif [ "$TRAEFIK_CURRENT" = "$TRAEFIK_LATEST" ]; then
             echo "✅ Traefik $TRAEFIK_CURRENT" >> "$REPORT_FILE"
           else
             echo "🔶 Traefik $TRAEFIK_CURRENT → $TRAEFIK_LATEST" >> "$REPORT_FILE"
+            echo "  _→ Se met à jour avec Coolify_" >> "$REPORT_FILE"
           fi
 
           VPS_INFO=$(curl -s --max-time 5 -H "Authorization: Bearer $HOSTINGER_API_TOKEN" "https://developers.hostinger.com/api/vps/v1/virtual-machines" 2>/dev/null)
@@ -70,14 +71,13 @@ jobs:
           if [ "$VPS_STATE" = "running" ]; then
             echo "✅ VPS running" >> "$REPORT_FILE"
           else
-            echo "🔴 VPS : $VPS_STATE" >> "$REPORT_FILE"
+            echo "🔴 VPS $VPS_STATE — vérifier Hostinger" >> "$REPORT_FILE"
           fi
 
-          # --- Deps: only list key packages ---
+          # --- Deps: key packages only ---
           echo "" >> "$REPORT_FILE"
           echo "📦 *Dépendances*" >> "$REPORT_FILE"
 
-          # Key packages to track (production-critical)
           KEY_PACKAGES="react react-dom react-router-dom vite tailwindcss typescript hono playwright"
 
           cd api
@@ -87,19 +87,15 @@ jobs:
           FRONTEND_JSON=$(npm outdated --json 2>/dev/null || echo '{}')
           FRONTEND_TOTAL=$(echo "$FRONTEND_JSON" | jq 'length' | tr -d '\n')
 
-          # Merge both JSON and filter key packages with major updates
           HAS_KEY_UPDATE=false
           for pkg in $KEY_PACKAGES; do
-            # Check frontend
             CURRENT=$(echo "$FRONTEND_JSON" | jq -r --arg p "$pkg" '.[$p].current // empty' | tr -d '\n')
             LATEST=$(echo "$FRONTEND_JSON" | jq -r --arg p "$pkg" '.[$p].latest // empty' | tr -d '\n')
-            # Check backend if not found
             if [ -z "$CURRENT" ]; then
               CURRENT=$(echo "$BACKEND_JSON" | jq -r --arg p "$pkg" '.[$p].current // empty' | tr -d '\n')
               LATEST=$(echo "$BACKEND_JSON" | jq -r --arg p "$pkg" '.[$p].latest // empty' | tr -d '\n')
             fi
             if [ -n "$CURRENT" ] && [ -n "$LATEST" ] && [ "$CURRENT" != "$LATEST" ]; then
-              # Check if major update
               CURRENT_MAJOR=$(echo "$CURRENT" | cut -d. -f1)
               LATEST_MAJOR=$(echo "$LATEST" | cut -d. -f1)
               if [ "$CURRENT_MAJOR" != "$LATEST_MAJOR" ]; then
@@ -109,11 +105,14 @@ jobs:
             fi
           done
 
-          if [ "$HAS_KEY_UPDATE" = false ]; then
+          if [ "$HAS_KEY_UPDATE" = true ]; then
+            echo "  _→ Créer une branche, npm install, tester avant merge_" >> "$REPORT_FILE"
+          else
             echo "✅ Packages clés à jour" >> "$REPORT_FILE"
           fi
 
           echo "_${BACKEND_TOTAL} backend + ${FRONTEND_TOTAL} frontend outdated au total_" >> "$REPORT_FILE"
+          echo "_→ Pour tout mettre à jour : npm update (mineures/patchs seulement)_" >> "$REPORT_FILE"
 
           # --- GitHub Issues ---
           echo "" >> "$REPORT_FILE"
@@ -122,19 +121,18 @@ jobs:
 
           # --- Verdict ---
           echo "" >> "$REPORT_FILE"
-          # Count action items
           ACTION_COUNT=$(grep -c "🔶\|🔴" "$REPORT_FILE" || true)
           HAS_CRITICAL=$(grep -c "🔴" "$REPORT_FILE" || true)
 
           if [ "$HAS_CRITICAL" -gt 0 ]; then
-            echo "⚡ *Verdict : ACTION REQUISE*" >> "$REPORT_FILE"
-            echo "_Des éléments critiques nécessitent ton attention._" >> "$REPORT_FILE"
+            echo "⚡ *ACTION REQUISE*" >> "$REPORT_FILE"
+            echo "_Un service est down. Vérifier immédiatement._" >> "$REPORT_FILE"
           elif [ "$ACTION_COUNT" -gt 0 ]; then
-            echo "💡 *Verdict : PAS URGENT*" >> "$REPORT_FILE"
-            echo "_${ACTION_COUNT} updates dispos. À planifier quand tu as le temps._" >> "$REPORT_FILE"
+            echo "💡 *PAS URGENT*" >> "$REPORT_FILE"
+            echo "_${ACTION_COUNT} updates dispos. Rien ne casse, à planifier quand tu as un créneau._" >> "$REPORT_FILE"
           else
-            echo "✅ *Verdict : TOUT EST OK*" >> "$REPORT_FILE"
-            echo "_Rien à faire cette semaine._" >> "$REPORT_FILE"
+            echo "✅ *TOUT EST OK*" >> "$REPORT_FILE"
+            echo "_Rien à faire. Bonne semaine !_" >> "$REPORT_FILE"
           fi
 
           echo "report_file=$REPORT_FILE" >> "$GITHUB_OUTPUT"
