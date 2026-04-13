@@ -453,7 +453,7 @@ function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
                   {tags?.map((tag) => (
                     <button
                       key={tag.id}
-                      onClick={() => handleRemoveTag(tag.label)}
+                      onClick={(e) => { e.stopPropagation(); handleRemoveTag(tag.label); }}
                       className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border hover:opacity-70 transition-opacity ${TAG_COLORS[tag.label] ?? "bg-glass text-muted-foreground border-glass-border"}`}
                       title="Cliquer pour retirer"
                     >
@@ -465,7 +465,7 @@ function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
                   {SUGGESTED_TAGS.filter((s) => !tags?.some((t) => t.label === s)).map((suggestion) => (
                     <button
                       key={suggestion}
-                      onClick={() => handleAddTag(suggestion)}
+                      onClick={(e) => { e.stopPropagation(); handleAddTag(suggestion); }}
                       className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[11px] font-medium border border-dashed border-glass-border text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
                     >
                       <Plus className="w-2.5 h-2.5" />
@@ -503,7 +503,7 @@ function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
                     onClick={(e) => e.stopPropagation()}
                   />
                   <button
-                    onClick={handleAddNote}
+                    onClick={(e) => { e.stopPropagation(); handleAddNote(); }}
                     disabled={addingNote || !newNote.trim()}
                     className="px-3 py-2 ev-btn-primary text-xs font-medium rounded-lg flex items-center gap-1.5"
                   >
