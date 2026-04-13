@@ -106,13 +106,13 @@ jobs:
           done
 
           if [ "$HAS_KEY_UPDATE" = true ]; then
-            echo "  _→ Créer une branche, npm install, tester avant merge_" >> "$REPORT_FILE"
+            echo "  _→ Majeures : demander à Claude Code de migrer_" >> "$REPORT_FILE"
           else
             echo "✅ Packages clés à jour" >> "$REPORT_FILE"
           fi
 
           echo "_${BACKEND_TOTAL} backend + ${FRONTEND_TOTAL} frontend outdated au total_" >> "$REPORT_FILE"
-          echo "_→ Pour tout mettre à jour : npm update (mineures/patchs seulement)_" >> "$REPORT_FILE"
+          echo "_→ Mineures/patchs : lance_ \`npm update\` _dans le terminal puis push_" >> "$REPORT_FILE"
 
           # --- GitHub Issues ---
           echo "" >> "$REPORT_FILE"
