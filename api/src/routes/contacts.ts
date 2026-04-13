@@ -56,12 +56,28 @@ app.post('/', async (c) => {
     RETURNING id
   `;
 
-  const contactId = result[0].id;
+  const contactId = result[0].id as string;
+
+  // Auto-assign "prospect" tag for new contacts
+  await sql`
+    INSERT INTO contact_tags (contact_id, label)
+    VALUES (${contactId}, 'prospect')
+    ON CONFLICT (contact_id, label) DO NOTHING
+  `;
 
   if (interaction_type) {
     await sql`
       INSERT INTO interactions (contact_id, type, metadata)
       VALUES (${contactId}, ${interaction_type}, ${JSON.stringify(interaction_metadata ?? {})})
+    `;
+  }
+
+  // Auto-assign "prioritaire" tag if contact is qualified (hot)
+  if (is_qualified === true) {
+    await sql`
+      INSERT INTO contact_tags (contact_id, label)
+      VALUES (${contactId}, 'prioritaire')
+      ON CONFLICT (contact_id, label) DO NOTHING
     `;
   }
 

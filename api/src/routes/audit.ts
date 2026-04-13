@@ -334,6 +334,13 @@ app.post('/:id/unlock', async (c) => {
 
   const contactId = contactRows[0].id as string;
 
+  // Auto-assign "prospect" tag for new contacts
+  await sql`
+    INSERT INTO contact_tags (contact_id, label)
+    VALUES (${contactId}, 'prospect')
+    ON CONFLICT (contact_id, label) DO NOTHING
+  `;
+
   await sql`
     UPDATE audits SET contact_id = ${contactId}, unlocked_at = now()
     WHERE id = ${id}

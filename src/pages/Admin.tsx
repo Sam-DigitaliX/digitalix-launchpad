@@ -389,15 +389,18 @@ function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
         <td className="px-5 py-4">
           <div className="font-medium text-foreground">{contact.full_name ?? "—"}</div>
           <div className="text-xs text-muted-foreground mt-0.5 font-mono">{contact.email}</div>
-          {tags && tags.length > 0 && (
-            <div className="flex flex-wrap gap-1 mt-1.5">
-              {tags.map((tag) => (
-                <span key={tag.id} className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium border ${TAG_COLORS[tag.label] ?? "bg-glass text-muted-foreground border-glass-border"}`}>
-                  {tag.label}
-                </span>
-              ))}
-            </div>
-          )}
+          {(() => {
+            const displayTags = tags ?? (contact.tags?.map((label) => ({ id: label, label })) ?? []);
+            return displayTags.length > 0 ? (
+              <div className="flex flex-wrap gap-1 mt-1.5">
+                {displayTags.map((tag) => (
+                  <span key={tag.id} className={`inline-flex px-2 py-0.5 rounded-full text-[10px] font-medium border ${TAG_COLORS[tag.label] ?? "bg-glass text-muted-foreground border-glass-border"}`}>
+                    {tag.label}
+                  </span>
+                ))}
+              </div>
+            ) : null;
+          })()}
         </td>
         <td className="px-5 py-4 text-sm text-muted-foreground">{contact.company_name ?? "—"}</td>
         <td className="px-5 py-4 text-sm text-muted-foreground">{contact.profile_type ?? "—"}</td>
@@ -883,6 +886,10 @@ export default function Admin() {
 
   const [sourceFilter, setSourceFilter] = useState<SourceFilter>("all");
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [showAllContacts, setShowAllContacts] = useState(false);
+  const [refreshingContacts, setRefreshingContacts] = useState(false);
+
+  const CONTACTS_PREVIEW_COUNT = 5;
 
   const filteredContacts = useMemo(() => {
     let filtered = contacts;
@@ -1152,9 +1159,34 @@ export default function Admin() {
                     Cliquez sur une ligne pour voir le détail
                   </p>
                 </div>
-                <span className="text-xs font-mono text-muted-foreground bg-glass px-3 py-1.5 rounded-lg border border-glass-border">
-                  {filteredContacts.length}{filteredContacts.length !== contacts.length && ` / ${contacts.length}`}
-                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={async () => {
+                      setRefreshingContacts(true);
+                      try {
+                        const [contactsData, statsData, emailStatsData] = await Promise.all([
+                          getAdminContacts(adminKey),
+                          getAdminStats(adminKey),
+                          getAdminEmailStats(adminKey),
+                        ]);
+                        setContacts(contactsData);
+                        setStats(statsData);
+                        setEmailStats(emailStatsData);
+                      } catch (err) {
+                        console.error('[Admin] Refresh error:', err);
+                      }
+                      setRefreshingContacts(false);
+                    }}
+                    disabled={refreshingContacts}
+                    className="p-1.5 rounded-lg hover:bg-glass text-muted-foreground hover:text-foreground transition-colors"
+                    title="Actualiser"
+                  >
+                    <RefreshCw className={`w-3.5 h-3.5 ${refreshingContacts ? "animate-spin" : ""}`} />
+                  </button>
+                  <span className="text-xs font-mono text-muted-foreground bg-glass px-3 py-1.5 rounded-lg border border-glass-border">
+                    {filteredContacts.length}{filteredContacts.length !== contacts.length && ` / ${contacts.length}`}
+                  </span>
+                </div>
               </div>
               <FilterBar
                 sourceFilter={sourceFilter}
@@ -1193,7 +1225,7 @@ export default function Admin() {
                     </tr>
                   </thead>
                   <tbody>
-                    {filteredContacts.map((contact) => (
+                    {(showAllContacts ? filteredContacts : filteredContacts.slice(0, CONTACTS_PREVIEW_COUNT)).map((contact) => (
                       <ContactRow
                         key={contact.id}
                         contact={contact}
@@ -1207,6 +1239,26 @@ export default function Admin() {
                     ))}
                   </tbody>
                 </table>
+                {filteredContacts.length > CONTACTS_PREVIEW_COUNT && (
+                  <div className="px-6 py-4 border-t border-glass-border flex items-center justify-center">
+                    <button
+                      onClick={() => setShowAllContacts((s) => !s)}
+                      className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors px-4 py-2 rounded-lg hover:bg-glass"
+                    >
+                      {showAllContacts ? (
+                        <>
+                          <ChevronUp className="w-3.5 h-3.5" />
+                          Réduire ({CONTACTS_PREVIEW_COUNT} premiers)
+                        </>
+                      ) : (
+                        <>
+                          <ChevronDown className="w-3.5 h-3.5" />
+                          Voir tout ({filteredContacts.length} contacts)
+                        </>
+                      )}
+                    </button>
+                  </div>
+                )}
               </div>
             )}
           </div>

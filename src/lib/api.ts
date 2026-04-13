@@ -199,6 +199,7 @@ export interface AdminContact {
   best_audit_score: number | null;
   last_audit_at: string | null;
   lead_temperature: 'hot' | 'warm' | 'cold';
+  tags: string[] | null;
 }
 
 export function getAdminContacts(adminKey: string) {

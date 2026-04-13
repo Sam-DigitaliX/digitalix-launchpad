@@ -35,7 +35,8 @@ SELECT
       OR array_position(ARRAY_AGG(DISTINCT i.type) FILTER (WHERE i.type IS NOT NULL), 'audit_unlock') IS NOT NULL
       THEN 'warm'
     ELSE 'cold'
-  END AS lead_temperature
+  END AS lead_temperature,
+  (SELECT ARRAY_AGG(ct.label ORDER BY ct.created_at) FROM contact_tags ct WHERE ct.contact_id = c.id) AS tags
 FROM contacts c
 LEFT JOIN interactions i ON i.contact_id = c.id
 LEFT JOIN audits a ON a.contact_id = c.id
