@@ -18,7 +18,10 @@ app.get('/stats', async (c) => {
       (SELECT COUNT(*) FROM contacts WHERE is_qualified = true) AS qualified_count,
       (SELECT COUNT(*) FROM interactions) AS total_interactions,
       (SELECT COUNT(*) FROM interactions WHERE created_at >= CURRENT_DATE) AS interactions_today,
-      (SELECT i2.type FROM interactions i2 GROUP BY i2.type ORDER BY COUNT(*) DESC LIMIT 1) AS top_interaction_type
+      (SELECT i2.type FROM interactions i2 GROUP BY i2.type ORDER BY COUNT(*) DESC LIMIT 1) AS top_interaction_type,
+      (SELECT COUNT(*) FROM audits) AS total_audits,
+      (SELECT COUNT(*) FROM audits WHERE created_at >= CURRENT_DATE) AS audits_today,
+      (SELECT ROUND(AVG(overall_score)) FROM audits WHERE overall_score IS NOT NULL) AS avg_audit_score
   `;
   return c.json(rows[0]);
 });
@@ -83,6 +86,20 @@ app.get('/contacts/:id/emails', async (c) => {
     FROM email_logs
     WHERE contact_id = ${contactId}
     ORDER BY sent_at DESC
+  `;
+  return c.json(rows);
+});
+
+/**
+ * GET /admin/contacts/:id/audits
+ */
+app.get('/contacts/:id/audits', async (c) => {
+  const contactId = c.req.param('id');
+  const rows = await sql`
+    SELECT id, url, domain, status, overall_score, created_at, unlocked_at
+    FROM audits
+    WHERE contact_id = ${contactId}
+    ORDER BY created_at DESC
   `;
   return c.json(rows);
 });

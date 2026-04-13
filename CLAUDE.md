@@ -237,6 +237,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
   - No action buttons — read-only, manual updates only
 
 ### Chantier C — Backlog
+- [ ] CRUD contacts in admin dashboard (edit, delete, add notes)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io (Resend + Cloudflare Email Routing)
 - [ ] Decommission Supabase project after 2-week monitoring period

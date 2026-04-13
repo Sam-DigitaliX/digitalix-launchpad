@@ -167,6 +167,9 @@ export interface AdminStats {
   total_interactions: number;
   interactions_today: number;
   top_interaction_type: string | null;
+  total_audits: number;
+  audits_today: number;
+  avg_audit_score: number | null;
 }
 
 export function getAdminStats(adminKey: string) {
@@ -192,6 +195,10 @@ export interface AdminContact {
   interaction_count: number;
   interaction_types: string[] | null;
   last_interaction_at: string | null;
+  audit_count: number;
+  best_audit_score: number | null;
+  last_audit_at: string | null;
+  lead_temperature: 'hot' | 'warm' | 'cold';
 }
 
 export function getAdminContacts(adminKey: string) {
@@ -209,6 +216,61 @@ export interface AdminInteraction {
 
 export function getAdminContactTimeline(adminKey: string, contactId: string) {
   return request<AdminInteraction[]>(`/api/admin/contacts/${contactId}/timeline`, {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+/* ──────────────────── Admin: Contact Audits ──────────────────── */
+
+export interface AdminContactAudit {
+  id: string;
+  url: string;
+  domain: string;
+  status: string;
+  overall_score: number | null;
+  created_at: string;
+  unlocked_at: string | null;
+}
+
+export function getAdminContactAudits(adminKey: string, contactId: string) {
+  return request<AdminContactAudit[]>(`/api/admin/contacts/${contactId}/audits`, {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+/* ──────────────────── Admin: Email Stats ──────────────────── */
+
+export interface AdminEmailStats {
+  total_sent: number;
+  sent_today: number;
+  total_opened: number;
+  total_clicked: number;
+  open_rate: number;
+  click_rate: number;
+  top_template: string | null;
+}
+
+export function getAdminEmailStats(adminKey: string) {
+  return request<AdminEmailStats>('/api/admin/email-stats', {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+/* ──────────────────── Admin: Contact Emails ──────────────────── */
+
+export interface AdminEmailLog {
+  id: string;
+  template_key: string;
+  subject: string;
+  status: string;
+  resend_message_id: string;
+  sent_at: string;
+  opened_at: string | null;
+  clicked_at: string | null;
+}
+
+export function getAdminContactEmails(adminKey: string, contactId: string) {
+  return request<AdminEmailLog[]>(`/api/admin/contacts/${contactId}/emails`, {
     headers: adminHeaders(adminKey),
   });
 }
