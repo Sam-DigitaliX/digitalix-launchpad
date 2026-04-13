@@ -109,42 +109,6 @@ app.get('/contacts/:id/audits', async (c) => {
 });
 
 /**
- * PUT /admin/contacts/:id
- */
-app.put('/contacts/:id', async (c) => {
-  const contactId = c.req.param('id');
-  const body = await c.req.json();
-  const { full_name, company_name, phone, profile_type } = body;
-
-  const rows = await sql`
-    UPDATE contacts
-    SET full_name = COALESCE(${full_name ?? null}, full_name),
-        company_name = COALESCE(${company_name ?? null}, company_name),
-        phone = COALESCE(${phone ?? null}, phone),
-        profile_type = COALESCE(${profile_type ?? null}, profile_type)
-    WHERE id = ${contactId}
-    RETURNING id
-  `;
-
-  if (rows.length === 0) {
-    return c.json({ error: 'Contact not found' }, 404);
-  }
-  return c.json({ success: true });
-});
-
-/**
- * DELETE /admin/contacts/:id
- */
-app.delete('/contacts/:id', async (c) => {
-  const contactId = c.req.param('id');
-  const rows = await sql`DELETE FROM contacts WHERE id = ${contactId} RETURNING id`;
-  if (rows.length === 0) {
-    return c.json({ error: 'Contact not found' }, 404);
-  }
-  return c.json({ success: true });
-});
-
-/**
  * GET /admin/contacts/:id/notes
  */
 app.get('/contacts/:id/notes', async (c) => {
@@ -242,6 +206,44 @@ app.delete('/contacts/:id/tags/:label', async (c) => {
   `;
   if (rows.length === 0) {
     return c.json({ error: 'Tag not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
+ * PUT /admin/contacts/:id
+ * (placed after sub-resource routes to avoid matching /contacts/:id/tags/:label)
+ */
+app.put('/contacts/:id', async (c) => {
+  const contactId = c.req.param('id');
+  const body = await c.req.json();
+  const { full_name, company_name, phone, profile_type } = body;
+
+  const rows = await sql`
+    UPDATE contacts
+    SET full_name = COALESCE(${full_name ?? null}, full_name),
+        company_name = COALESCE(${company_name ?? null}, company_name),
+        phone = COALESCE(${phone ?? null}, phone),
+        profile_type = COALESCE(${profile_type ?? null}, profile_type)
+    WHERE id = ${contactId}
+    RETURNING id
+  `;
+
+  if (rows.length === 0) {
+    return c.json({ error: 'Contact not found' }, 404);
+  }
+  return c.json({ success: true });
+});
+
+/**
+ * DELETE /admin/contacts/:id
+ * (placed after sub-resource routes to avoid matching /contacts/:id/tags/:label)
+ */
+app.delete('/contacts/:id', async (c) => {
+  const contactId = c.req.param('id');
+  const rows = await sql`DELETE FROM contacts WHERE id = ${contactId} RETURNING id`;
+  if (rows.length === 0) {
+    return c.json({ error: 'Contact not found' }, 404);
   }
   return c.json({ success: true });
 });

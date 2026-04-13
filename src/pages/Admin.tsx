@@ -558,9 +558,9 @@ function ContactRow({ contact, adminKey, onDelete, onUpdate }: {
                           target="_blank"
                           rel="noopener noreferrer"
                           onClick={(e) => e.stopPropagation()}
-                          className="inline-flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                          className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium ev-btn-primary rounded-lg"
                         >
-                          Voir <ExternalLink className="w-3 h-3" />
+                          Voir le rapport <ExternalLink className="w-3 h-3" />
                         </a>
                       </div>
                     ))}
