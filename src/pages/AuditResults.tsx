@@ -21,7 +21,6 @@ import {
   Shield,
   Zap,
   Loader2,
-  Scan,
   RefreshCw,
 } from "lucide-react";
 import type { AuditCheck, AuditResult, AuditCategorySummary } from "@/types/audit";
@@ -454,50 +453,33 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
-                {/* Animated spinner — concentric gradient rings */}
-                <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-10">
-                  {/* Outer ring */}
-                  <div
-                    className="absolute inset-0 rounded-full animate-spin"
-                    style={{
-                      animationDuration: '8s',
-                      border: '2px solid transparent',
-                      borderImage: 'linear-gradient(135deg, hsl(262 83% 58% / 0.4), hsl(188 94% 43% / 0.4)) 1',
-                      borderRadius: '9999px',
-                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(262 83% 58% / 0.4), hsl(188 94% 43% / 0.4)) border-box',
-                    }}
-                  />
-                  {/* Middle ring */}
-                  <div
-                    className="absolute inset-5 rounded-full animate-spin"
-                    style={{
-                      animationDuration: '5s',
-                      animationDirection: 'reverse',
-                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(188 94% 43% / 0.5), hsl(262 83% 58% / 0.5)) border-box',
-                      border: '2px solid transparent',
-                      borderRadius: '9999px',
-                    }}
-                  />
-                  {/* Inner ring */}
-                  <div
-                    className="absolute inset-10 rounded-full animate-spin"
-                    style={{
-                      animationDuration: '3s',
-                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(262 83% 58% / 0.6), hsl(188 94% 43% / 0.6)) border-box',
-                      border: '2px solid transparent',
-                      borderRadius: '9999px',
-                    }}
-                  />
-                  {/* Center icon */}
-                  <div className="absolute inset-0 flex items-center justify-center">
+                {/* OrbitLoader — inline variant */}
+                <div className="relative w-28 h-28 mx-auto mb-10">
+                  {/* Ambient glow */}
+                  <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
                     <div
-                      className="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center"
-                      style={{
-                        background: 'linear-gradient(135deg, hsl(262 83% 58%), hsl(188 94% 43%))',
-                      }}
-                    >
-                      <Scan className="w-7 h-7 md:w-8 md:h-8 text-white" />
-                    </div>
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full blur-[80px]"
+                      style={{ background: 'hsl(262 83% 58% / 0.12)' }}
+                    />
+                    <div
+                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[30%] w-[150px] h-[150px] rounded-full blur-[60px]"
+                      style={{ background: 'hsl(188 94% 43% / 0.10)' }}
+                    />
+                  </div>
+                  {/* Orbit rings */}
+                  <div className="orbit-loader relative w-28 h-28">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div
+                        key={i}
+                        className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          width: `${100 - i * 22}%`,
+                          height: `${100 - i * 22}%`,
+                        }}
+                      />
+                    ))}
+                    {/* Center dot */}
+                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gradient-to-br from-primary to-secondary" />
                   </div>
                 </div>
 
