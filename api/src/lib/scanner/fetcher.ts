@@ -74,6 +74,48 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
     }
   }
 
+  // Fallback: detect any visible dialog/overlay containing consent keywords
+  try {
+    const genericCmp = await page.evaluate(() => {
+      const keywords = ['cookie', 'consent', 'consentement', 'accepter', 'acceptez', 'privacy', 'confidentialit', 'données personnelles', 'vie privée'];
+      // Check dialogs
+      const dialogs = document.querySelectorAll('dialog[open], [role="dialog"], [aria-modal="true"]');
+      for (const dialog of dialogs) {
+        const text = dialog.textContent?.toLowerCase() ?? '';
+        if (keywords.some((kw) => text.includes(kw))) {
+          return { found: true, tag: dialog.tagName, id: dialog.id, className: dialog.className };
+        }
+      }
+      // Check fixed/sticky overlays
+      const allElements = document.querySelectorAll('div, section, aside');
+      for (const el of allElements) {
+        const style = window.getComputedStyle(el);
+        if (style.position !== 'fixed' && style.position !== 'sticky') continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.width < 200 || rect.height < 100) continue;
+        const text = el.textContent?.toLowerCase() ?? '';
+        if (keywords.some((kw) => text.includes(kw))) {
+          return { found: true, tag: el.tagName, id: el.id, className: el.className };
+        }
+      }
+      return { found: false };
+    });
+
+    if (genericCmp.found) {
+      return {
+        cmp: {
+          name: `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`,
+          appearanceDelayMs: Date.now() - startTime,
+          acceptButtonFound: true, // we'll try text fallback
+          rejectButtonFound: true,
+        },
+        matchedIndex: -1, // will use ARIA/text fallback for clicking
+      };
+    }
+  } catch {
+    // evaluate failed
+  }
+
   return { cmp: null, matchedIndex: -1 };
 }
 
