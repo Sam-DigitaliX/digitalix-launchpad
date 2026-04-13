@@ -234,13 +234,17 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
   - Read-only, no action buttons
 
 ### Chantier C — Backlog
-- [ ] CRUD contacts in admin dashboard (edit, delete, add notes)
+- [x] CRUD contacts in admin dashboard (edit, delete, notes, tags) (2026-04-13)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Decommission Supabase project after 2-week monitoring period
 - [ ] Cross-domain tracking detection
 - [ ] Security headers analysis
 - [ ] Redirect chain analysis
+
+### Nice to have
+- [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
+- [ ] Audit results: exposer raw_data dans GET /api/audit/:id
 
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
@@ -260,6 +264,8 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Chantier B: Leads intelligence — temperature, audits/emails timeline, filters, email stats (2026-04-13)
 - [x] Chantier B: System health check — 10 checks, dashboard banner, auto-refresh 5min (2026-04-13)
 - [x] Weekly audit GitHub Action + Telegram bot monitoring (2026-04-13)
+- [x] Chantier C: CRUD contacts — edit, delete, notes, tags with suggested labels (2026-04-13)
+- [x] Fix: CORS PUT/DELETE methods, tag route ordering, categories JSON parsing (2026-04-13)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
