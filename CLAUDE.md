@@ -242,6 +242,13 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] Security headers analysis
 - [ ] Redirect chain analysis
 
+### Monitoring
+- Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
+- Telegram bot: @digitalix_monitor_bot (chat ID: 6155735961)
+- GitHub Secrets: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `COOLIFY_API_TOKEN`, `HOSTINGER_API_TOKEN`
+- Checks: API health, Coolify/Traefik versions, VPS state, npm outdated (key packages), GitHub issues
+- Verdict: OK / PAS URGENT / ACTION REQUISE
+
 ### Done
 - [x] Supabase → PostgreSQL migration (2026-04-10)
 - [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)
@@ -250,6 +257,9 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Audit Tracking V1: static fetch scanner, 21 checks, deployed (2026-04-13)
 - [x] Audit Tracking V2: Playwright scanner, 25 checks, 3-session consent protocol, SSE progress, deployed (2026-04-13)
 - [x] Audit Tracking V2 bugfixes: CMP detection, page load timing, SSE transition, OrbitLoader (2026-04-13)
+- [x] Chantier B: Leads intelligence — temperature, audits/emails timeline, filters, email stats (2026-04-13)
+- [x] Chantier B: System health check — 10 checks, dashboard banner, auto-refresh 5min (2026-04-13)
+- [x] Weekly audit GitHub Action + Telegram bot monitoring (2026-04-13)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
