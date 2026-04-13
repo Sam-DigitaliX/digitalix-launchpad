@@ -454,12 +454,50 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
-                {/* Animated spinner */}
-                <div className="relative w-24 h-24 mx-auto mb-10">
-                  <div className="absolute inset-0 rounded-full border-4 border-white/[0.08]" />
-                  <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-secondary animate-spin" />
+                {/* Animated spinner — concentric gradient rings */}
+                <div className="relative w-40 h-40 md:w-48 md:h-48 mx-auto mb-10">
+                  {/* Outer ring */}
+                  <div
+                    className="absolute inset-0 rounded-full animate-spin"
+                    style={{
+                      animationDuration: '8s',
+                      border: '2px solid transparent',
+                      borderImage: 'linear-gradient(135deg, hsl(262 83% 58% / 0.4), hsl(188 94% 43% / 0.4)) 1',
+                      borderRadius: '9999px',
+                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(262 83% 58% / 0.4), hsl(188 94% 43% / 0.4)) border-box',
+                    }}
+                  />
+                  {/* Middle ring */}
+                  <div
+                    className="absolute inset-5 rounded-full animate-spin"
+                    style={{
+                      animationDuration: '5s',
+                      animationDirection: 'reverse',
+                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(188 94% 43% / 0.5), hsl(262 83% 58% / 0.5)) border-box',
+                      border: '2px solid transparent',
+                      borderRadius: '9999px',
+                    }}
+                  />
+                  {/* Inner ring */}
+                  <div
+                    className="absolute inset-10 rounded-full animate-spin"
+                    style={{
+                      animationDuration: '3s',
+                      background: 'linear-gradient(hsl(240 15% 6%), hsl(240 15% 6%)) padding-box, linear-gradient(135deg, hsl(262 83% 58% / 0.6), hsl(188 94% 43% / 0.6)) border-box',
+                      border: '2px solid transparent',
+                      borderRadius: '9999px',
+                    }}
+                  />
+                  {/* Center icon */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <Scan className="w-8 h-8 icon-gradient" />
+                    <div
+                      className="w-14 h-14 md:w-16 md:h-16 rounded-2xl flex items-center justify-center"
+                      style={{
+                        background: 'linear-gradient(135deg, hsl(262 83% 58%), hsl(188 94% 43%))',
+                      }}
+                    >
+                      <Scan className="w-7 h-7 md:w-8 md:h-8 text-white" />
+                    </div>
                   </div>
                 </div>
 
