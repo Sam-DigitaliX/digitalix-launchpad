@@ -379,7 +379,10 @@ const AuditResults = () => {
   const failCount = checks.filter((c) => c.status === "fail").length;
   const warnCount = checks.filter((c) => c.status === "warning").length;
   const displayUrl = auditResult?.url || auditUrl || "—";
-  const categories: AuditCategorySummary[] = auditResult?.categories || [];
+  const rawCategories = auditResult?.categories;
+  const categories: AuditCategorySummary[] = typeof rawCategories === 'string'
+    ? JSON.parse(rawCategories)
+    : rawCategories || [];
 
   /* ── Group progress steps by session ── */
   const sessionGroups: { title: string; steps: ProgressStep[]; isDone: boolean }[] = [];
