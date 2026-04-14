@@ -376,7 +376,16 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
     const pageLoadMs = Date.now() - pageLoadStart;
     finalUrl = detectPage.url();
 
-    // Wait for CMP
+    // Trigger lazy-loaded scripts (WP Rocket, etc.) before waiting for CMP
+    await detectPage.evaluate(() => {
+      const events = ['mousemove', 'touchstart', 'touchend', 'wheel', 'keydown'];
+      for (const evt of events) {
+        window.dispatchEvent(new Event(evt, { bubbles: true }));
+      }
+      window.scrollBy(0, 300);
+    });
+
+    // Wait for CMP (lazy-loaded scripts need time to load GTM → GTM loads CMP)
     await detectPage.waitForTimeout(CMP_WAIT_MS);
     const { cmp, matchedIndex } = await detectCmp(detectPage, start);
 
