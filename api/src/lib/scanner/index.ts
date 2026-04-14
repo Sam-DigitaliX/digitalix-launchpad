@@ -10,6 +10,8 @@ interface AuditCheck {
   description: string;
   impact: 'critical' | 'high' | 'medium' | 'low';
   gated: boolean;
+  rawData: Record<string, unknown>;
+  businessNote: string | null;
 }
 
 interface AuditCategorySummary {
@@ -58,6 +60,8 @@ function toAuditCheck(module: CheckModule, result: CheckResult): AuditCheck {
     description: result.description,
     impact: module.impact,
     gated: module.gated,
+    rawData: result.rawData ?? {},
+    businessNote: result.businessNote ?? null,
   };
 }
 
@@ -157,6 +161,8 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     description: lcpResult.description,
     impact: 'high',
     gated: false,
+    rawData: lcpResult.rawData ?? {},
+    businessNote: lcpResult.businessNote ?? null,
   });
 
   const clsResult = checkCls(pageSpeed.cls);
@@ -168,6 +174,8 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     description: clsResult.description,
     impact: 'medium',
     gated: true,
+    rawData: clsResult.rawData ?? {},
+    businessNote: clsResult.businessNote ?? null,
   });
 
   const inpResult = checkInp(pageSpeed.inp);
@@ -179,6 +187,8 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     description: inpResult.description,
     impact: 'medium',
     gated: true,
+    rawData: inpResult.rawData ?? {},
+    businessNote: inpResult.businessNote ?? null,
   });
 
   // Compute scores
