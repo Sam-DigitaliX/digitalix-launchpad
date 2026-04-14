@@ -251,6 +251,221 @@ const TrackersTable = ({ checks }: { checks: AuditCheck[] }) => {
 };
 
 /* ══════════════════════════════════════════════════════════════════
+   Privacy & Consent Section
+   ══════════════════════════════════════════════════════════════════ */
+
+const PRIVACY_IDS = ['cmp', 'consent-mode', 'pre-consent-violations', 'post-reject-violations', 'third-party-cookies', 'privacy-page', 'first-party-cookies'];
+
+function parseRawData(check: AuditCheck): Record<string, unknown> {
+  if (!check.rawData) return {};
+  return typeof check.rawData === 'string' ? JSON.parse(check.rawData) : check.rawData;
+}
+
+const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
+  const privacyChecks = PRIVACY_IDS
+    .map((id) => checks.find((c) => c.id === id))
+    .filter((c): c is AuditCheck => c !== undefined);
+
+  if (privacyChecks.length === 0) return null;
+
+  const cmp = privacyChecks.find((c) => c.id === 'cmp');
+  const consentMode = privacyChecks.find((c) => c.id === 'consent-mode');
+  const preConsent = privacyChecks.find((c) => c.id === 'pre-consent-violations');
+  const postReject = privacyChecks.find((c) => c.id === 'post-reject-violations');
+  const thirdParty = privacyChecks.find((c) => c.id === 'third-party-cookies');
+  const firstParty = privacyChecks.find((c) => c.id === 'first-party-cookies');
+  const privacyPage = privacyChecks.find((c) => c.id === 'privacy-page');
+
+  const cmpRaw = cmp ? parseRawData(cmp) : {};
+  const consentRaw = consentMode ? parseRawData(consentMode) : {};
+  const preRaw = preConsent ? parseRawData(preConsent) : {};
+  const thirdRaw = thirdParty ? parseRawData(thirdParty) : {};
+  const firstRaw = firstParty ? parseRawData(firstParty) : {};
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold text-foreground font-display">Privacy & Consentement</h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* CMP */}
+        {cmp && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={cmp.status} />
+                <span className="font-semibold text-sm text-foreground">Bandeau de consentement (CMP)</span>
+              </div>
+              {cmp.status === 'pass' ? (
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p>CMP : <span className="text-foreground font-medium">{String(cmpRaw.provider ?? '—')}</span></p>
+                  {cmpRaw.appearanceDelayMs != null && (
+                    <p>Délai d'apparition : <span className="text-foreground font-mono">{(Number(cmpRaw.appearanceDelayMs) / 1000).toFixed(1)}s</span></p>
+                  )}
+                  <div className="flex gap-3">
+                    <span className={cmpRaw.acceptButtonFound ? 'text-emerald-400' : 'text-red-400'}>
+                      Accepter : {cmpRaw.acceptButtonFound ? '✓' : '✗'}
+                    </span>
+                    <span className={cmpRaw.rejectButtonFound ? 'text-emerald-400' : 'text-red-400'}>
+                      Refuser : {cmpRaw.rejectButtonFound ? '✓' : '✗'}
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm text-muted-foreground">{cmp.description}</p>
+                  {cmp.businessNote && <p className="text-xs text-amber-400/80 mt-1.5">{cmp.businessNote}</p>}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Consent Mode v2 */}
+        {consentMode && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={consentMode.status} />
+                <span className="font-semibold text-sm text-foreground">Google Consent Mode v2</span>
+              </div>
+              {consentMode.status === 'pass' && consentRaw.defaultParams ? (
+                <div className="space-y-2 text-xs">
+                  <p className="text-muted-foreground">Paramètres détectés :</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {Object.entries(consentRaw.defaultParams as Record<string, string>).map(([key, val]) => (
+                      <span key={key} className={`px-2 py-0.5 rounded font-mono text-[10px] ${val === 'denied' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
+                        {key}: {val}
+                      </span>
+                    ))}
+                  </div>
+                  {consentRaw.hasAdvancedMode && (
+                    <p className="text-emerald-400 text-[11px]">Mode avancé actif (pings anonymisés)</p>
+                  )}
+                </div>
+              ) : (
+                <div>
+                  <p className="text-sm text-muted-foreground">{consentMode.description}</p>
+                  {consentMode.businessNote && <p className="text-xs text-amber-400/80 mt-1.5">{consentMode.businessNote}</p>}
+                  {consentRaw.missingDefault && (consentRaw.missingDefault as string[]).length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {(consentRaw.missingDefault as string[]).map((p) => (
+                        <span key={p} className="px-2 py-0.5 rounded font-mono text-[10px] bg-red-500/10 text-red-400 border border-red-500/20">
+                          {p} manquant
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Pre-consent violations */}
+        {preConsent && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={preConsent.status} />
+                <span className="font-semibold text-sm text-foreground">Violations pré-consentement</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{preConsent.description}</p>
+              {preConsent.businessNote && preConsent.status !== 'pass' && (
+                <p className="text-xs text-amber-400/80 mt-1.5">{preConsent.businessNote}</p>
+              )}
+              {preConsent.status === 'fail' && (preRaw.violatingRequests as string[] | undefined)?.length ? (
+                <div className="mt-2 space-y-1">
+                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Domaines fautifs :</p>
+                  {(preRaw.violatingRequests as string[]).slice(0, 5).map((r, i) => (
+                    <p key={i} className="text-xs font-mono text-red-400/80 truncate">{r}</p>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* Post-reject violations */}
+        {postReject && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={postReject.status} />
+                <span className="font-semibold text-sm text-foreground">Respect du refus</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{postReject.description}</p>
+              {postReject.businessNote && postReject.status !== 'pass' && (
+                <p className="text-xs text-amber-400/80 mt-1.5">{postReject.businessNote}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Third-party cookies */}
+        {thirdParty && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={thirdParty.status} />
+                <span className="font-semibold text-sm text-foreground">Cookies tiers</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{thirdParty.description}</p>
+              {(thirdRaw.domains as string[] | undefined)?.length ? (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {(thirdRaw.domains as string[]).slice(0, 8).map((d) => (
+                    <span key={d} className="px-2 py-0.5 rounded font-mono text-[10px] bg-glass text-muted-foreground border border-glass-border">
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* First-party cookies */}
+        {firstParty && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={firstParty.status} />
+                <span className="font-semibold text-sm text-foreground">Cookies first-party</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{firstParty.description}</p>
+              {(firstRaw.serverCookies as string[] | undefined)?.length ? (
+                <div className="flex flex-wrap gap-1.5 mt-2">
+                  {(firstRaw.serverCookies as string[]).map((c) => (
+                    <span key={c} className="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      {c}
+                    </span>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        )}
+
+        {/* Privacy page */}
+        {privacyPage && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={privacyPage.status} />
+                <span className="font-semibold text-sm text-foreground">Politique de confidentialité</span>
+              </div>
+              <p className="text-sm text-muted-foreground">{privacyPage.description}</p>
+              {privacyPage.businessNote && privacyPage.status !== 'pass' && (
+                <p className="text-xs text-amber-400/80 mt-1.5">{privacyPage.businessNote}</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════════
    Progress Step
    ══════════════════════════════════════════════════════════════════ */
 
@@ -765,14 +980,26 @@ const AuditResults = () => {
                         <TrackersTable checks={checks} />
                       </div>
 
-                      {/* Other checks */}
+                      {/* Privacy & Consent section */}
+                      <div className="animate-fade-in-up mt-6">
+                        <PrivacySection checks={checks} />
+                      </div>
+
+                      {/* Other checks (not trackers, not privacy) */}
                       {checks
-                        .filter((c) => !TRACKER_IDS.includes(c.id))
-                        .map((check) => (
-                          <div key={check.id} className="animate-fade-in-up">
-                            <CheckRow check={check} />
-                          </div>
-                        ))}
+                        .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
+                        .length > 0 && (
+                        <div className="mt-6 space-y-3">
+                          <h3 className="text-lg font-bold text-foreground font-display">Autres vérifications</h3>
+                          {checks
+                            .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
+                            .map((check) => (
+                              <div key={check.id} className="animate-fade-in-up">
+                                <CheckRow check={check} />
+                              </div>
+                            ))}
+                        </div>
+                      )}
                     </>
                   )}
                 </div>
