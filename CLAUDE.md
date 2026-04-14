@@ -206,7 +206,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 ### Known limitations
 - Sites with anti-bot (DataDome, Akamai) block headless Chromium → degraded scan results
-- PageSpeed Insights API not accessible from VPS → LCP/CLS/INP show as "non disponible"
+- INP (Interaction to Next Paint) always "non disponible" — requires user interaction, not measurable in lab/headless mode
 
 ### Chantier B — Dashboard leads + system health (in progress)
 **Leads intelligence (COMPLETE — 2026-04-13):**
@@ -261,7 +261,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] Audit results: restructurer l'UI par sections (Privacy & RGPD, Tracking, Performance, Server-Side)
 - [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
 - [ ] Audit results: exposer raw_data dans GET /api/audit/:id
-- [ ] Scanner: vérifier fix WP Rocket lazy-load (events window) sur belangue.com après deploy
+- [ ] INP: simuler une interaction (clic) dans Playwright pour mesurer INP en headless
 
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
@@ -283,6 +283,12 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Weekly audit GitHub Action + Telegram bot monitoring (2026-04-13)
 - [x] Chantier C: CRUD contacts — edit, delete, notes, tags with suggested labels (2026-04-13)
 - [x] Fix: CORS PUT/DELETE methods, tag route ordering, categories JSON parsing (2026-04-13)
+- [x] PageSpeed API key integration — LCP/CLS now working (timeout 15s → 30s) (2026-04-14)
+- [x] WP Rocket lazy-load support — dispatch trigger events (mousemove, touchstart, wheel, keydown) in CMP detection + scan sessions (2026-04-14)
+- [x] Scanner timing improvements — CMP wait 2s → 5s, post-consent 4s → 6s, networkidle 3s → 5s (2026-04-14)
+- [x] Auto-tags: "prospect" on new contact, "prioritaire" when qualified (2026-04-14)
+- [x] Dashboard: tags visible without expand, contacts toggle (5 default), refresh button (2026-04-14)
+- [x] npm minor/patch dependencies updated (2026-04-14)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
