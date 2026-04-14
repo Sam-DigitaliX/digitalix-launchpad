@@ -257,19 +257,26 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] react 18 → 19 + react-dom (attendre support shadcn/ui)
 - [ ] react-router-dom 6 → 7 (refonte API loaders/actions)
 
-### Retours utilisateurs (2026-04-14)
-**Haute priorité :**
-- [x] Accents manquants dans les descriptions des checks — corrigé dans 22 fichiers
-- [x] Loader: Block progress loader (20 blocs gradient + pulse) dans `AuditResults.tsx:459`
+### Retours utilisateurs (2026-04-14) — TOUS TRAITÉS
+- [x] Accents manquants dans les descriptions des checks — corrigé dans 22 fichiers + SSE labels
+- [x] Loader: Block progress loader (composant réutilisable `BlockProgressLoader`)
 - [x] Contraste texte/fond — muted-foreground 55% → 65%
 - [x] Mention e-commerce sur sites vitrines — adapté dans datalayer.ts
-- [ ] Badge "critical" confus sur check pass — masquer le badge impact quand status=pass, ou renommer en "importance"
-- [ ] Ajouter une phrase d'explication business sous chaque check ("pourquoi c'est utile pour moi ?")
+- [x] Badge "critical" confus → renommé Essentiel/Important/Utile/Mineur, masqué quand pass
+- [x] Explications business sous chaque check → businessNote dans 20 fichiers de checks
+
+### Chantier E — Refonte Audit Results (COMPLETE — 2026-04-14)
+- [x] Phase 1: Backend — exposer raw_data + business_note dans API, migration 005
+- [x] Phase 2: Frontend types — rawData + businessNote dans AuditCheck
+- [x] Phase 3: Badges impact renommés + businessNote affiché en amber
+- [x] Phase 4: TrackersTable — tableau structuré (Tracker, Plateforme, ID, Méthode, Statut)
+- [x] Phase 5: PrivacySection — cards CMP, Consent Mode, violations, cookies tiers/first-party
+- [x] Phase 6: RecommendationsSection — cards numérotées triées par impact + CTA → /contact
+- [x] Phase 7: PerformanceSection — Core Web Vitals jauges + scripts count + loading strategy
+- [x] Email gate: tous les checks floutés (blur 3px), overlay gradient transparent→opaque
+- [x] SSE timeout 60s → 180s pour scans longs
 
 ### Nice to have
-- [ ] Audit results: restructurer l'UI par sections (Privacy & RGPD, Tracking, Performance, Server-Side)
-- [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
-- [ ] Audit results: exposer raw_data dans GET /api/audit/:id
 - [ ] INP: simuler une interaction (clic) dans Playwright pour mesurer INP en headless
 
 ### Monitoring
@@ -298,6 +305,11 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Auto-tags: "prospect" on new contact, "prioritaire" when qualified (2026-04-14)
 - [x] Dashboard: tags visible without expand, contacts toggle (5 default), refresh button (2026-04-14)
 - [x] npm minor/patch dependencies updated (2026-04-14)
+- [x] Chantier E: Refonte Audit Results — 7 phases, sections structurées, businessNotes, raw_data exposé (2026-04-14)
+- [x] Fix: SSE timeout 60s → 180s, progress % dynamique, accents SSE labels (2026-04-14)
+- [x] BlockProgressLoader: composant réutilisable (`src/components/ui/block-progress-loader.tsx`) (2026-04-14)
+- [x] ev-card applied to audit scan + results pages (2026-04-14)
+- [x] Blur email gate: all checks blurred with transparent→opaque gradient (2026-04-14)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
