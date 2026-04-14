@@ -140,8 +140,9 @@ function TypeBadge({ type }: { type: string }) {
 /*  Metadata viewer                                                    */
 /* ------------------------------------------------------------------ */
 
-function MetadataGrid({ data }: { data: Record<string, unknown> }) {
-  const entries = Object.entries(data).filter(([, v]) => v != null && v !== "");
+function MetadataGrid({ data }: { data: Record<string, unknown> | string }) {
+  const parsed = typeof data === 'string' ? (() => { try { return JSON.parse(data); } catch { return {}; } })() : data;
+  const entries = Object.entries(parsed).filter(([, v]) => v != null && v !== "");
   if (entries.length === 0) return <span className="text-muted-foreground text-xs">Aucune donnée</span>;
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-1.5 text-xs">
