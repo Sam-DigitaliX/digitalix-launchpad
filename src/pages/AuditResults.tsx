@@ -572,6 +572,189 @@ const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
 };
 
 /* ══════════════════════════════════════════════════════════════════
+   Performance Section
+   ══════════════════════════════════════════════════════════════════ */
+
+const PERFORMANCE_IDS = ['page-load', 'lcp', 'cls', 'inp', 'scripts-count', 'script-loading'];
+
+function MetricGauge({ value, thresholds, unit, label, status }: {
+  value: number | null;
+  thresholds: [number, number];
+  unit: string;
+  label: string;
+  status: string;
+}) {
+  if (value === null) {
+    return (
+      <div className="text-center">
+        <p className="text-xs text-muted-foreground mb-1">{label}</p>
+        <p className="text-2xl font-bold text-muted-foreground font-display">—</p>
+        <p className="text-[10px] text-muted-foreground mt-1">Non disponible</p>
+      </div>
+    );
+  }
+
+  const color = status === 'pass' ? 'text-emerald-400' : status === 'warning' ? 'text-amber-400' : 'text-red-400';
+  const bgColor = status === 'pass' ? 'bg-emerald-400' : status === 'warning' ? 'bg-amber-400' : 'bg-red-400';
+  const pct = Math.min(value / (thresholds[1] * 1.5) * 100, 100);
+
+  return (
+    <div className="text-center">
+      <p className="text-xs text-muted-foreground mb-1">{label}</p>
+      <p className={`text-2xl font-bold font-display ${color}`}>{value}{unit}</p>
+      <div className="w-full h-1.5 rounded-full bg-white/[0.06] mt-2">
+        <div className={`h-full rounded-full ${bgColor} transition-all duration-500`} style={{ width: `${pct}%` }} />
+      </div>
+      <div className="flex justify-between mt-1">
+        <span className="text-[9px] text-muted-foreground">0</span>
+        <span className="text-[9px] text-emerald-400/60">{thresholds[0]}{unit}</span>
+        <span className="text-[9px] text-red-400/60">{thresholds[1]}{unit}</span>
+      </div>
+    </div>
+  );
+}
+
+const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
+  const perfChecks = PERFORMANCE_IDS
+    .map((id) => checks.find((c) => c.id === id))
+    .filter((c): c is AuditCheck => c !== undefined);
+
+  if (perfChecks.length === 0) return null;
+
+  const lcp = perfChecks.find((c) => c.id === 'lcp');
+  const cls = perfChecks.find((c) => c.id === 'cls');
+  const inp = perfChecks.find((c) => c.id === 'inp');
+  const pageLoad = perfChecks.find((c) => c.id === 'page-load');
+  const scriptsCount = perfChecks.find((c) => c.id === 'scripts-count');
+  const scriptLoading = perfChecks.find((c) => c.id === 'script-loading');
+
+  const lcpRaw = lcp ? parseRawData(lcp) : {};
+  const clsRaw = cls ? parseRawData(cls) : {};
+  const inpRaw = inp ? parseRawData(inp) : {};
+  const pageLoadRaw = pageLoad ? parseRawData(pageLoad) : {};
+  const scriptsRaw = scriptsCount ? parseRawData(scriptsCount) : {};
+  const loadingRaw = scriptLoading ? parseRawData(scriptLoading) : {};
+
+  const lcpValue = lcpRaw.lcpMs != null ? Number((Number(lcpRaw.lcpMs) / 1000).toFixed(1)) : null;
+  const clsValue = clsRaw.cls != null ? Number(Number(clsRaw.cls).toFixed(2)) : null;
+  const inpValue = inpRaw.inpMs != null ? Math.round(Number(inpRaw.inpMs)) : null;
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold text-foreground font-display">Performance</h3>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Core Web Vitals */}
+        <div className="ev-card p-5 md:col-span-2">
+          <div className="relative z-10">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-4">Core Web Vitals</p>
+            <div className="grid grid-cols-3 gap-6">
+              <MetricGauge
+                value={lcpValue}
+                thresholds={[2.5, 4]}
+                unit="s"
+                label="LCP"
+                status={lcp?.status ?? 'info'}
+              />
+              <MetricGauge
+                value={clsValue}
+                thresholds={[0.1, 0.25]}
+                unit=""
+                label="CLS"
+                status={cls?.status ?? 'info'}
+              />
+              <MetricGauge
+                value={inpValue}
+                thresholds={[200, 500]}
+                unit="ms"
+                label="INP"
+                status={inp?.status ?? 'info'}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Server response time */}
+        {pageLoad && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={pageLoad.status} />
+                <span className="font-semibold text-sm text-foreground">Temps de réponse serveur</span>
+              </div>
+              {pageLoadRaw.durationMs != null ? (
+                <p className="text-2xl font-bold font-display text-foreground">
+                  {(Number(pageLoadRaw.durationMs) / 1000).toFixed(1)}s
+                </p>
+              ) : (
+                <p className="text-sm text-muted-foreground">{pageLoad.description}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Scripts */}
+        {scriptsCount && (
+          <div className="ev-card p-5">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={scriptsCount.status} />
+                <span className="font-semibold text-sm text-foreground">Scripts tiers</span>
+              </div>
+              {scriptsRaw.total != null ? (
+                <div className="space-y-2">
+                  <p className="text-2xl font-bold font-display text-foreground">{String(scriptsRaw.total)} <span className="text-sm font-normal text-muted-foreground">scripts</span></p>
+                  <div className="flex gap-4 text-xs text-muted-foreground">
+                    <span>1st party : <span className="text-foreground font-mono">{String(scriptsRaw.firstParty ?? 0)}</span></span>
+                    <span>3rd party : <span className="text-foreground font-mono">{String(scriptsRaw.thirdParty ?? 0)}</span></span>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">{scriptsCount.description}</p>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Script loading strategy */}
+        {scriptLoading && (
+          <div className="ev-card p-5 md:col-span-2">
+            <div className="relative z-10">
+              <div className="flex items-center gap-2 mb-3">
+                <StatusIcon status={scriptLoading.status} />
+                <span className="font-semibold text-sm text-foreground">Stratégie de chargement</span>
+              </div>
+              {loadingRaw.total != null ? (
+                <div className="flex gap-6 text-xs">
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-red-400 font-display">{String(loadingRaw.blocking ?? 0)}</p>
+                    <p className="text-muted-foreground">Bloquants</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-emerald-400 font-display">{String(loadingRaw.async ?? 0)}</p>
+                    <p className="text-muted-foreground">Async</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-sky-400 font-display">{String(loadingRaw.defer ?? 0)}</p>
+                    <p className="text-muted-foreground">Defer</p>
+                  </div>
+                  <div className="text-center">
+                    <p className="text-lg font-bold text-foreground font-display">{String(loadingRaw.total)}</p>
+                    <p className="text-muted-foreground">Total</p>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">{scriptLoading.description}</p>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════════
    Progress Step
    ══════════════════════════════════════════════════════════════════ */
 
@@ -1091,15 +1274,21 @@ const AuditResults = () => {
                         <PrivacySection checks={checks} />
                       </div>
 
+                      {/* Performance section */}
+                      <div className="animate-fade-in-up mt-6">
+                        <PerformanceSection checks={checks} />
+                      </div>
+
                       {/* Recommendations */}
                       <div className="animate-fade-in-up mt-6">
                         <RecommendationsSection checks={checks} />
                       </div>
 
-                      {/* Other checks (not trackers, not privacy, only pass/info) */}
+                      {/* Other checks (not in any section, only pass/info) */}
                       {(() => {
+                        const sectionIds = [...TRACKER_IDS, ...PRIVACY_IDS, ...PERFORMANCE_IDS];
                         const otherChecks = checks
-                          .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
+                          .filter((c) => !sectionIds.includes(c.id))
                           .filter((c) => c.status === 'pass' || c.status === 'info');
                         return otherChecks.length > 0 ? (
                           <div className="mt-6 space-y-3">
