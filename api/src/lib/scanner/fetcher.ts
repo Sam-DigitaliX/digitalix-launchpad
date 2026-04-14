@@ -269,7 +269,7 @@ async function runSession(
     } catch {
       // Some sites never reach networkidle
     }
-    onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Page chargee' });
+    onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Page chargée' });
 
     // Wait for CMP to appear (needs time for lazy-loaders + CMP script load + render)
     await page.waitForTimeout(5000);
@@ -282,17 +282,17 @@ async function runSession(
       } catch {
         // timeout is fine
       }
-      onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Requetes et cookies captures' });
+      onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Requêtes et cookies capturés' });
     } else {
       // Wait for CMP and click
       const action = phase === 'post-accept' ? 'accept' : 'reject';
-      const actionLabel = phase === 'post-accept' ? 'Consentement accepte' : 'Consentement refuse';
+      const actionLabel = phase === 'post-accept' ? 'Consentement accepté' : 'Consentement refusé';
 
       const clicked = await clickCmpButton(page, action, matchedCmpIndex);
       if (clicked) {
         onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: actionLabel });
       } else {
-        onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: `Bouton ${action} non trouve` });
+        onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: `Bouton ${action} non trouvé` });
       }
 
       // Wait for tags to fire after consent action
@@ -302,7 +302,7 @@ async function runSession(
       } catch {
         // timeout is fine — some sites never reach network idle
       }
-      onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Tags et requetes analysees' });
+      onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Tags et requêtes analysées' });
     }
 
     // Capture cookies
@@ -334,9 +334,9 @@ async function runSession(
       onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${preConsentIssues} cookie(s) analytics avant consentement`, issuesCount: preConsentIssues });
     } else if (phase === 'post-reject') {
       const postRejectIssues = cookies.filter((c) => !c.httpOnly && (c.name.startsWith('_ga') || c.name.startsWith('_fb') || c.name.startsWith('_gcl'))).length;
-      onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${postRejectIssues} cookie(s) analytics apres refus`, issuesCount: postRejectIssues });
+      onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${postRejectIssues} cookie(s) analytics après refus`, issuesCount: postRejectIssues });
     } else {
-      onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${trackingRequests.length} requetes tracking detectees`, issuesCount: trackingRequests.length });
+      onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${trackingRequests.length} requêtes tracking détectées`, issuesCount: trackingRequests.length });
     }
 
     return { phase, cookies, networkRequests, consentState, dataLayerPushes, scriptsLoaded };
@@ -360,7 +360,7 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
 
   try {
     // ── Session 1: Pre-consent ──
-    onProgress({ type: 'session_start', session: 1, totalSessions: 3, label: 'Analyse pre-consentement' });
+    onProgress({ type: 'session_start', session: 1, totalSessions: 3, label: 'Analyse pré-consentement' });
 
     // Quick pre-scan to detect CMP
     const detectContext = await browser.newContext({
@@ -390,9 +390,9 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
     const { cmp, matchedIndex } = await detectCmp(detectPage, start);
 
     if (cmp) {
-      onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: `CMP detectee : ${cmp.name}` });
+      onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: `CMP détectée : ${cmp.name}` });
     } else {
-      onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: 'Aucune CMP detectee' });
+      onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: 'Aucune CMP détectée' });
     }
 
     // Capture HTML from detect page
@@ -425,7 +425,7 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
 
     // Run session 1 (pre-consent)
     const session1 = await runSession(browser, url, domain, 'pre-consent', matchedIndex, onProgress, 1);
-    onProgress({ type: 'session_complete', session: 1, totalSessions: 3, label: 'Pre-consentement termine' });
+    onProgress({ type: 'session_complete', session: 1, totalSessions: 3, label: 'Pré-consentement terminé' });
 
     const sessions: ScanSession[] = [session1];
     const degradedMode = cmp === null;
@@ -434,16 +434,16 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
       // ── Session 2: Post-accept ──
       onProgress({ type: 'session_start', session: 2, totalSessions: 3, label: 'Acceptation des cookies' });
       const session2 = await runSession(browser, url, domain, 'post-accept', matchedIndex, onProgress, 2);
-      onProgress({ type: 'session_complete', session: 2, totalSessions: 3, label: 'Post-acceptation termine' });
+      onProgress({ type: 'session_complete', session: 2, totalSessions: 3, label: 'Post-acceptation terminé' });
       sessions.push(session2);
 
       // ── Session 3: Post-reject ──
       onProgress({ type: 'session_start', session: 3, totalSessions: 3, label: 'Refus des cookies' });
       const session3 = await runSession(browser, url, domain, 'post-reject', matchedIndex, onProgress, 3);
-      onProgress({ type: 'session_complete', session: 3, totalSessions: 3, label: 'Post-refus termine' });
+      onProgress({ type: 'session_complete', session: 3, totalSessions: 3, label: 'Post-refus terminé' });
       sessions.push(session3);
     } else {
-      onProgress({ type: 'step_done', session: 1, totalSessions: 1, label: 'Mode degrade — pas de CMP detectee, sessions consent ignorees' });
+      onProgress({ type: 'step_done', session: 1, totalSessions: 1, label: 'Mode dégradé — pas de CMP détectée, sessions consent ignorées' });
     }
 
     // Use actual page load time, not total scan duration

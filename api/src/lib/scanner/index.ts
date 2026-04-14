@@ -139,7 +139,7 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     ? pageSpeedResult.value
     : { lcp: null, cls: null, inp: null };
 
-  onProgress({ type: 'step_done', label: 'Execution des verifications...' });
+  onProgress({ type: 'step_done', label: 'Exécution des vérifications...' });
 
   // Run all synchronous checks against the ScanContext
   const checks: AuditCheck[] = allChecks.map((module) => {
