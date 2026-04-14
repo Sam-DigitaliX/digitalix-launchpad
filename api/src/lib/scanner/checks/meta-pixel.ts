@@ -57,8 +57,8 @@ export const metaPixelCheck: CheckModule = {
       return {
         status: 'pass',
         description: allIds.length > 0
-          ? `Meta Pixel detecte : ${allIds.join(', ')}.`
-          : 'Meta Pixel detecte (script fbevents.js present).',
+          ? `Meta Pixel détecté : ${allIds.join(', ')}.`
+          : 'Meta Pixel détecté (script fbevents.js présent).',
         rawData: { pixelIds: allIds, hasScript: network.hasScript || hasFbScript },
       };
     }
@@ -67,14 +67,14 @@ export const metaPixelCheck: CheckModule = {
     if (hasGtm) {
       return {
         status: 'info',
-        description: 'Meta Pixel non detecte en direct. Il peut etre charge via GTM.',
+        description: 'Meta Pixel non détecté en direct. Il peut être chargé via GTM.',
         rawData: { pixelIds: [], viaGtm: true },
       };
     }
 
     return {
       status: 'info',
-      description: 'Aucun Meta Pixel detecte.',
+      description: 'Aucun Meta Pixel détecté.',
       rawData: { pixelIds: [] },
     };
   },

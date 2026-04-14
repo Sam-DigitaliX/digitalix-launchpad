@@ -18,7 +18,7 @@ export const capiMetaCheck: CheckModule = {
     if (!hasMetaPixel) {
       return {
         status: 'info',
-        description: 'Aucun Meta Pixel detecte — CAPI non applicable.',
+        description: 'Aucun Meta Pixel détecté — CAPI non applicable.',
         rawData: { hasMetaPixel: false },
       };
     }
@@ -50,7 +50,7 @@ export const capiMetaCheck: CheckModule = {
     if (hasEventId && fbpServerSet) {
       return {
         status: 'pass',
-        description: 'Meta CAPI detecte : deduplication (eventID) active et _fbp pose en server-side.',
+        description: 'Meta CAPI détecté : déduplication (eventID) active et _fbp posé en server-side.',
         rawData: { hasEventId, fbpServerSet },
       };
     }
@@ -58,14 +58,14 @@ export const capiMetaCheck: CheckModule = {
     if (hasEventId) {
       return {
         status: 'warning',
-        description: 'Deduplication eventID detectee mais _fbp non pose en server-side. CAPI partiellement configure.',
+        description: 'Déduplication eventID détectée mais _fbp non posé en server-side. CAPI partiellement configuré.',
         rawData: { hasEventId, fbpServerSet },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Meta Pixel present sans deduplication eventID — CAPI probablement non implementee. Perte de donnees de conversion.',
+      description: 'Meta Pixel présent sans déduplication eventID — CAPI probablement non implémentée. Perte de données de conversion.',
       rawData: { hasEventId: false, fbpServerSet },
     };
   },

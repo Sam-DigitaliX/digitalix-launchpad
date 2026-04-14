@@ -3,7 +3,7 @@ import type { CheckModule, ScanContext } from '../types.js';
 export const pageLoadCheck: CheckModule = {
   id: 'page-load',
   category: 'performance',
-  name: 'Temps de Reponse Serveur',
+  name: 'Temps de Réponse Serveur',
   impact: 'high',
   gated: false,
   run(ctx: ScanContext) {
@@ -13,7 +13,7 @@ export const pageLoadCheck: CheckModule = {
     if (ms < 1500) {
       return {
         status: 'pass',
-        description: `Temps de reponse serveur : ${seconds}s — rapide.`,
+        description: `Temps de réponse serveur : ${seconds}s — rapide.`,
         rawData: { durationMs: ms },
       };
     }
@@ -21,14 +21,14 @@ export const pageLoadCheck: CheckModule = {
     if (ms < 3000) {
       return {
         status: 'warning',
-        description: `Temps de reponse serveur : ${seconds}s — ameliorable. Un temps superieur a 1.5s impacte l'experience utilisateur.`,
+        description: `Temps de réponse serveur : ${seconds}s — améliorable. Un temps supérieur à 1.5s impacte l'expérience utilisateur.`,
         rawData: { durationMs: ms },
       };
     }
 
     return {
       status: 'fail',
-      description: `Temps de reponse serveur : ${seconds}s — lent. Impact negatif sur le taux de conversion et le SEO.`,
+      description: `Temps de réponse serveur : ${seconds}s — lent. Impact négatif sur le taux de conversion et le SEO.`,
       rawData: { durationMs: ms },
     };
   },

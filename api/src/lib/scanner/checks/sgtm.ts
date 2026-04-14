@@ -47,7 +47,7 @@ export const sgtmCheck: CheckModule = {
     if (!gtmDomain) {
       return {
         status: 'info',
-        description: 'Aucun script GTM detecte — impossible d\'evaluer le server-side.',
+        description: 'Aucun script GTM détecté — impossible d\'évaluer le server-side.',
         rawData: { gtmDomain: null },
       };
     }
@@ -57,7 +57,7 @@ export const sgtmCheck: CheckModule = {
     if (!isGoogle && isFirstPartyDomain(gtmDomain, ctx.domain)) {
       return {
         status: 'pass',
-        description: `GTM charge depuis un domaine first-party (${gtmDomain}) — server-side GTM detecte.`,
+        description: `GTM chargé depuis un domaine first-party (${gtmDomain}) — server-side GTM détecté.`,
         rawData: { gtmDomain, isFirstParty: true },
       };
     }
@@ -65,14 +65,14 @@ export const sgtmCheck: CheckModule = {
     if (!isGoogle) {
       return {
         status: 'pass',
-        description: `GTM charge depuis un domaine custom (${gtmDomain}) — server-side GTM probable.`,
+        description: `GTM chargé depuis un domaine custom (${gtmDomain}) — server-side GTM probable.`,
         rawData: { gtmDomain, isFirstParty: false },
       };
     }
 
     return {
       status: 'fail',
-      description: 'GTM charge depuis googletagmanager.com — pas de server-side. Donnees vulnerables aux adblockers et ITP.',
+      description: 'GTM chargé depuis googletagmanager.com — pas de server-side. Données vulnérables aux adblockers et ITP.',
       rawData: { gtmDomain, isFirstParty: false },
     };
   },

@@ -24,7 +24,7 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm && gclAuServerSet && hasUserData) {
       return {
         status: 'pass',
-        description: 'sGTM detecte avec _gcl_au server-side et enhanced conversions — tracking Google server-side complet.',
+        description: 'sGTM détecté avec _gcl_au server-side et enhanced conversions — tracking Google server-side complet.',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
@@ -32,7 +32,7 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm && gclAuServerSet) {
       return {
         status: 'pass',
-        description: 'sGTM detecte avec _gcl_au pose en server-side.',
+        description: 'sGTM détecté avec _gcl_au posé en server-side.',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
@@ -40,14 +40,14 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm) {
       return {
         status: 'warning',
-        description: 'sGTM detecte mais _gcl_au non pose en server-side. Configuration incomplete.',
+        description: 'sGTM détecté mais _gcl_au non posé en server-side. Configuration incomplète.',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Pas de tracking Google server-side detecte.',
+      description: 'Pas de tracking Google server-side détecté.',
       rawData: { hasSgtm: false, gclAuServerSet, hasUserData },
     };
   },

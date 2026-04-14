@@ -71,7 +71,7 @@ export function checkLcp(lcp: number | null): CheckResult {
   if (lcp < 4000) {
     return {
       status: 'warning',
-      description: `LCP : ${seconds}s — amelioration necessaire (objectif : < 2.5s).`,
+      description: `LCP : ${seconds}s — amélioration nécessaire (objectif : < 2.5s).`,
       rawData: { lcpMs: lcp },
     };
   }
@@ -105,14 +105,14 @@ export function checkCls(cls: number | null): CheckResult {
   if (cls < 0.25) {
     return {
       status: 'warning',
-      description: `CLS : ${value} — amelioration necessaire (objectif : < 0.1). Les elements de la page bougent pendant le chargement.`,
+      description: `CLS : ${value} — amélioration nécessaire (objectif : < 0.1). Les éléments de la page bougent pendant le chargement.`,
       rawData: { cls },
     };
   }
 
   return {
     status: 'fail',
-    description: `CLS : ${value} — mauvais. Instabilite visuelle importante, impact sur l'experience utilisateur.`,
+    description: `CLS : ${value} — mauvais. Instabilité visuelle importante, impact sur l'expérience utilisateur.`,
     rawData: { cls },
   };
 }
@@ -139,14 +139,14 @@ export function checkInp(inp: number | null): CheckResult {
   if (inp < 500) {
     return {
       status: 'warning',
-      description: `INP : ${ms}ms — amelioration necessaire (objectif : < 200ms). Les interactions sont lentes.`,
+      description: `INP : ${ms}ms — amélioration nécessaire (objectif : < 200ms). Les interactions sont lentes.`,
       rawData: { inpMs: inp },
     };
   }
 
   return {
     status: 'fail',
-    description: `INP : ${ms}ms — mauvais. Les interactions avec la page sont tres lentes.`,
+    description: `INP : ${ms}ms — mauvais. Les interactions avec la page sont très lentes.`,
     rawData: { inpMs: inp },
   };
 }

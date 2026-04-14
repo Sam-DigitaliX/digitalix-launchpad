@@ -33,7 +33,7 @@ export const cookiesCheck: CheckModule = {
     if (total === 0) {
       return {
         status: 'info',
-        description: 'Aucun cookie analytics detecte apres acceptation. Les cookies sont peut-etre poses cote client uniquement.',
+        description: 'Aucun cookie analytics détecté après acceptation. Les cookies sont peut-être posés côté client uniquement.',
         rawData: { serverCookies: [], clientOnlyCookies: [], sessionUsed: !!postAccept },
       };
     }
@@ -41,7 +41,7 @@ export const cookiesCheck: CheckModule = {
     if (serverCookies.length > 0 && clientCookies.length === 0) {
       return {
         status: 'pass',
-        description: `Cookies analytics poses en server-side : ${serverCookies.join(', ')}. Duree de vie preservee (bypass ITP Safari).`,
+        description: `Cookies analytics posés en server-side : ${serverCookies.join(', ')}. Durée de vie préservée (bypass ITP Safari).`,
         rawData: { serverCookies, clientOnlyCookies: [] },
       };
     }
@@ -56,7 +56,7 @@ export const cookiesCheck: CheckModule = {
 
     return {
       status: 'fail',
-      description: `Cookies analytics (${clientCookies.join(', ')}) poses uniquement cote client — duree de vie limitee par ITP Safari (7 jours max).`,
+      description: `Cookies analytics (${clientCookies.join(', ')}) posés uniquement côté client — durée de vie limitée par ITP Safari (7 jours max).`,
       rawData: { serverCookies: [], clientOnlyCookies: clientCookies },
     };
   },

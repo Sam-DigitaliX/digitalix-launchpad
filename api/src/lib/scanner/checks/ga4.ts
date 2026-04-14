@@ -60,10 +60,10 @@ export const ga4Check: CheckModule = {
     const allIds = [...new Set([...networkIds, ...htmlIds])];
 
     if (allIds.length > 0) {
-      const source = networkIds.length > 0 ? 'requetes reseau' : 'HTML';
+      const source = networkIds.length > 0 ? 'requêtes réseau' : 'HTML';
       return {
         status: 'pass',
-        description: `GA4 detecte : ${allIds.join(', ')} (via ${source}).`,
+        description: `GA4 détecté : ${allIds.join(', ')} (via ${source}).`,
         rawData: { measurementIds: allIds, networkIds, htmlIds },
       };
     }
@@ -75,14 +75,14 @@ export const ga4Check: CheckModule = {
     if (hasGtm) {
       return {
         status: 'info',
-        description: 'GA4 non detecte en direct mais GTM est present — GA4 est probablement charge via GTM.',
+        description: 'GA4 non détecté en direct mais GTM est présent — GA4 est probablement chargé via GTM.',
         rawData: { measurementIds: [], viaGtm: true },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Aucune implementation GA4 detectee.',
+      description: 'Aucune implémentation GA4 détectée.',
       rawData: { measurementIds: [] },
     };
   },

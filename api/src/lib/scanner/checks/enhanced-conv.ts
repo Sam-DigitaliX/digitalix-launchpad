@@ -20,7 +20,7 @@ export const enhancedConvCheck: CheckModule = {
     if (hasGtagSetUserData || hasEnhancedConversions) {
       return {
         status: 'pass',
-        description: 'Enhanced Conversions configure — les donnees utilisateur sont transmises pour ameliorer l\'attribution.',
+        description: 'Enhanced Conversions configuré — les données utilisateur sont transmises pour améliorer l\'attribution.',
         rawData: { hasEnhancedConversions, hasUserData, hasGtagSetUserData },
       };
     }
@@ -30,14 +30,14 @@ export const enhancedConvCheck: CheckModule = {
     if (hasGtm && hasUserData) {
       return {
         status: 'info',
-        description: 'Donnees user_data detectees avec GTM — Enhanced Conversions probablement configure dans GTM.',
+        description: 'Données user_data détectées avec GTM — Enhanced Conversions probablement configuré dans GTM.',
         rawData: { hasEnhancedConversions, hasUserData, hasGtagSetUserData, viaGtm: true },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Enhanced Conversions non detecte — perte potentielle de donnees d\'attribution Google Ads.',
+      description: 'Enhanced Conversions non détecté — perte potentielle de données d\'attribution Google Ads.',
       rawData: { hasEnhancedConversions: false, hasUserData: false, hasGtagSetUserData: false },
     };
   },

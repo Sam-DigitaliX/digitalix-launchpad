@@ -13,13 +13,13 @@ export const cmpCheck: CheckModule = {
         s.dataLayerPushes.some((p) => JSON.stringify(p).includes('__tcfapi'))
       ) || ctx.inlineScripts.some((s) => s.includes('__tcfapi') || s.includes('__cmp'));
 
-      const details: string[] = [`CMP detectee : ${ctx.cmp.name}`];
+      const details: string[] = [`CMP détectée : ${ctx.cmp.name}`];
       if (tcfDetected) details.push('compatible TCF');
       details.push(`apparition en ${(ctx.cmp.appearanceDelayMs / 1000).toFixed(1)}s`);
 
       const issues: string[] = [];
-      if (!ctx.cmp.acceptButtonFound) issues.push('bouton "Accepter" non trouve');
-      if (!ctx.cmp.rejectButtonFound) issues.push('bouton "Refuser" non trouve — non-conforme RGPD/CNIL');
+      if (!ctx.cmp.acceptButtonFound) issues.push('bouton "Accepter" non trouvé');
+      if (!ctx.cmp.rejectButtonFound) issues.push('bouton "Refuser" non trouvé — non-conforme RGPD/CNIL');
 
       if (issues.length > 0) {
         return {
@@ -31,7 +31,7 @@ export const cmpCheck: CheckModule = {
 
       return {
         status: 'pass',
-        description: `${details.join(', ')}. Boutons accepter et refuser detectes.`,
+        description: `${details.join(', ')}. Boutons accepter et refuser détectés.`,
         rawData: { provider: ctx.cmp.name, tcfDetected, ...ctx.cmp },
       };
     }
@@ -53,7 +53,7 @@ export const cmpCheck: CheckModule = {
       if (sig.p.some((p) => allContent.includes(p.toLowerCase()))) {
         return {
           status: 'pass',
-          description: `CMP detectee : ${sig.name} (detection HTML).`,
+          description: `CMP détectée : ${sig.name} (détection HTML).`,
           rawData: { provider: sig.name, detectionMethod: 'html' },
         };
       }
@@ -61,7 +61,7 @@ export const cmpCheck: CheckModule = {
 
     return {
       status: 'fail',
-      description: 'Aucune CMP detectee — risque de non-conformite RGPD/CNIL. Un bandeau de consentement est obligatoire.',
+      description: 'Aucune CMP détectée — risque de non-conformité RGPD/CNIL. Un bandeau de consentement est obligatoire.',
       rawData: { provider: null },
     };
   },

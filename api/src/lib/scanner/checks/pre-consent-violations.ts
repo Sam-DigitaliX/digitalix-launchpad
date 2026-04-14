@@ -11,7 +11,7 @@ const TRACKING_DOMAINS = [
 export const preConsentViolationsCheck: CheckModule = {
   id: 'pre-consent-violations',
   category: 'privacy',
-  name: 'Violations Pre-Consentement',
+  name: 'Violations Pré-Consentement',
   impact: 'critical',
   gated: true,
   run(ctx: ScanContext) {
@@ -20,7 +20,7 @@ export const preConsentViolationsCheck: CheckModule = {
     if (!preConsent) {
       return {
         status: 'info',
-        description: 'Session pre-consentement non disponible.',
+        description: 'Session pré-consentement non disponible.',
         rawData: {},
       };
     }
@@ -43,7 +43,7 @@ export const preConsentViolationsCheck: CheckModule = {
     if (cookieNames.length === 0 && requestDomains.length === 0) {
       return {
         status: 'pass',
-        description: 'Aucun cookie analytics ni requete tracking avant consentement — conforme RGPD.',
+        description: 'Aucun cookie analytics ni requête tracking avant consentement — conforme RGPD.',
         rawData: { violatingCookies: [], violatingRequests: [] },
       };
     }
@@ -53,12 +53,12 @@ export const preConsentViolationsCheck: CheckModule = {
       issues.push(`${cookieNames.length} cookie(s) analytics (${cookieNames.join(', ')})`);
     }
     if (requestDomains.length > 0) {
-      issues.push(`${requestDomains.length} requete(s) tracking (${requestDomains.join(', ')})`);
+      issues.push(`${requestDomains.length} requête(s) tracking (${requestDomains.join(', ')})`);
     }
 
     return {
       status: 'fail',
-      description: `Violation RGPD : ${issues.join(' et ')} detecte(s) AVANT consentement. Les donnees sont collectees sans accord de l'utilisateur.`,
+      description: `Violation RGPD : ${issues.join(' et ')} détecté(s) AVANT consentement. Les données sont collectées sans accord de l'utilisateur.`,
       rawData: { violatingCookies: cookieNames, violatingRequests: requestDomains },
     };
   },

@@ -18,7 +18,7 @@ export const thirdPartyCookiesCheck: CheckModule = {
     if (count === 0) {
       return {
         status: 'pass',
-        description: 'Aucun cookie tiers detecte apres acceptation.',
+        description: 'Aucun cookie tiers détecté après acceptation.',
         rawData: { count: 0, domains: [] },
       };
     }
@@ -26,7 +26,7 @@ export const thirdPartyCookiesCheck: CheckModule = {
     if (count <= 2) {
       return {
         status: 'pass',
-        description: `${count} cookie(s) tiers detecte(s) — niveau acceptable.`,
+        description: `${count} cookie(s) tiers détecté(s) — niveau acceptable.`,
         rawData: { count, domains },
       };
     }
@@ -34,14 +34,14 @@ export const thirdPartyCookiesCheck: CheckModule = {
     if (count <= 10) {
       return {
         status: 'warning',
-        description: `${count} cookies tiers detectes (domaines : ${domains.join(', ')}). Risque de non-conformite RGPD sans consentement.`,
+        description: `${count} cookies tiers détectés (domaines : ${domains.join(', ')}). Risque de non-conformité RGPD sans consentement.`,
         rawData: { count, domains },
       };
     }
 
     return {
       status: 'fail',
-      description: `${count} cookies tiers detectes — nombre excessif. Impact sur la conformite et la vie privee des utilisateurs.`,
+      description: `${count} cookies tiers détectés — nombre excessif. Impact sur la conformité et la vie privée des utilisateurs.`,
       rawData: { count, domains },
     };
   },

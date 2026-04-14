@@ -30,14 +30,14 @@ export const consentModeCheck: CheckModule = {
       const hasAdvancedMode = preGcs.some((g) => g.startsWith('G1'));
 
       if (foundDefault.length === V2_PARAMS.length) {
-        const details: string[] = ['Consent Mode v2 configure avec les 4 parametres requis'];
+        const details: string[] = ['Consent Mode v2 configuré avec les 4 paramètres requis'];
 
         if (grantedAfterAccept.length > 0) {
-          details.push(`${grantedAfterAccept.length} parametre(s) passe(s) a "granted" apres acceptation`);
+          details.push(`${grantedAfterAccept.length} paramètre(s) passé(s) à "granted" après acceptation`);
         }
 
         if (hasAdvancedMode) {
-          details.push('mode Advanced detecte (pings anonymises sans consentement)');
+          details.push('mode Advanced détecté (pings anonymisés sans consentement)');
         }
 
         // Verify post-reject behavior
@@ -45,7 +45,7 @@ export const consentModeCheck: CheckModule = {
           const rejectGcs = postReject.consentState.gcsValues;
           const stillDenied = rejectGcs.every((g) => !g.startsWith('G11'));
           if (stillDenied) {
-            details.push('verification post-refus OK');
+            details.push('vérification post-refus OK');
           }
         }
 
@@ -58,7 +58,7 @@ export const consentModeCheck: CheckModule = {
 
       return {
         status: 'warning',
-        description: `Consent Mode detecte mais incomplet — parametre(s) manquant(s) : ${missingDefault.join(', ')}. La v2 requiert les 4 parametres.`,
+        description: `Consent Mode détecté mais incomplet — paramètre(s) manquant(s) : ${missingDefault.join(', ')}. La v2 requiert les 4 paramètres.`,
         rawData: { defaultParams, foundDefault, missingDefault, hasAdvancedMode },
       };
     }
@@ -74,14 +74,14 @@ export const consentModeCheck: CheckModule = {
         if (missingParams.length === 0) {
           return {
             status: 'pass',
-            description: 'Consent Mode v2 detecte avec les 4 parametres requis (detection HTML).',
+            description: 'Consent Mode v2 détecté avec les 4 paramètres requis (détection HTML).',
             rawData: { parameters: foundParams, detectionMethod: 'html' },
           };
         }
 
         return {
           status: 'warning',
-          description: `Consent Mode detecte mais incomplet — parametre(s) manquant(s) : ${missingParams.join(', ')}.`,
+          description: `Consent Mode détecté mais incomplet — paramètre(s) manquant(s) : ${missingParams.join(', ')}.`,
           rawData: { parameters: foundParams, missingParams, detectionMethod: 'html' },
         };
       }
@@ -89,7 +89,7 @@ export const consentModeCheck: CheckModule = {
 
     return {
       status: 'fail',
-      description: 'Google Consent Mode non detecte — requis depuis mars 2024 pour Google Ads. Les conversions ne sont pas modelisees.',
+      description: 'Google Consent Mode non détecté — requis depuis mars 2024 pour Google Ads. Les conversions ne sont pas modélisées.',
       rawData: { hasConsentMode: false },
     };
   },

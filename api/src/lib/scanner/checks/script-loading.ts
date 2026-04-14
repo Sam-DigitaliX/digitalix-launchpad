@@ -26,7 +26,7 @@ function analyzeLoading(ctx: ScanContext) {
 export const scriptLoadingCheck: CheckModule = {
   id: 'script-loading',
   category: 'performance',
-  name: 'Strategie de Chargement des Scripts',
+  name: 'Stratégie de Chargement des Scripts',
   impact: 'medium',
   gated: true,
   run(ctx: ScanContext) {
@@ -35,7 +35,7 @@ export const scriptLoadingCheck: CheckModule = {
     if (total === 0) {
       return {
         status: 'info',
-        description: 'Aucun script externe detecte.',
+        description: 'Aucun script externe détecté.',
         rawData: { blocking: 0, async: 0, defer: 0, total: 0 },
       };
     }
@@ -60,7 +60,7 @@ export const scriptLoadingCheck: CheckModule = {
 
     return {
       status: 'fail',
-      description: `${blocking} scripts bloquants sur ${total} — la majorite des scripts ralentissent le rendu. Ajoutez async ou defer.`,
+      description: `${blocking} scripts bloquants sur ${total} — la majorité des scripts ralentissent le rendu. Ajoutez async ou defer.`,
       rawData: { blocking, async: asyncCount, defer, total },
     };
   },

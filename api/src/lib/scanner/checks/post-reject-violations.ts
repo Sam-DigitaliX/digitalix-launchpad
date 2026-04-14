@@ -15,7 +15,7 @@ export const postRejectViolationsCheck: CheckModule = {
       if (ctx.degradedMode) {
         return {
           status: 'info',
-          description: 'Pas de CMP detectee — verification post-refus impossible.',
+          description: 'Pas de CMP détectée — vérification post-refus impossible.',
           rawData: {},
         };
       }
@@ -42,29 +42,29 @@ export const postRejectViolationsCheck: CheckModule = {
       if (hasAnonymizedPings) {
         return {
           status: 'pass',
-          description: 'Refus respecte. Consent Mode Advanced actif : pings Google anonymises (sans identifiant), aucun cookie analytics.',
+          description: 'Refus respecté. Consent Mode Advanced actif : pings Google anonymisés (sans identifiant), aucun cookie analytics.',
           rawData: { violatingCookies: [], gcsValues, hasAnonymizedPings: true },
         };
       }
 
       return {
         status: 'pass',
-        description: 'Refus respecte. Aucun cookie analytics ni ping tracking apres refus — conforme RGPD.',
+        description: 'Refus respecté. Aucun cookie analytics ni ping tracking après refus — conforme RGPD.',
         rawData: { violatingCookies: [], gcsValues },
       };
     }
 
     const issues: string[] = [];
     if (cookieNames.length > 0) {
-      issues.push(`${cookieNames.length} cookie(s) analytics encore present(s) : ${cookieNames.join(', ')}`);
+      issues.push(`${cookieNames.length} cookie(s) analytics encore présent(s) : ${cookieNames.join(', ')}`);
     }
     if (hasGrantedPings) {
-      issues.push('pings Google en mode "granted" malgre le refus');
+      issues.push('pings Google en mode "granted" malgré le refus');
     }
 
     return {
       status: 'fail',
-      description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas correctement applique.`,
+      description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas correctement appliqué.`,
       rawData: { violatingCookies: cookieNames, gcsValues, hasGrantedPings },
     };
   },

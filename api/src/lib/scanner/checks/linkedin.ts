@@ -26,15 +26,15 @@ export const linkedinCheck: CheckModule = {
       return {
         status: 'pass',
         description: partnerId
-          ? `LinkedIn Insight Tag detecte : partner ID ${partnerId}.`
-          : 'LinkedIn Insight Tag detecte.',
+          ? `LinkedIn Insight Tag détecté : partner ID ${partnerId}.`
+          : 'LinkedIn Insight Tag détecté.',
         rawData: { partnerId, hasScript: hasLinkedinScript },
       };
     }
 
     return {
       status: 'info',
-      description: 'LinkedIn Insight Tag non detecte.',
+      description: 'LinkedIn Insight Tag non détecté.',
       rawData: { partnerId: null },
     };
   },

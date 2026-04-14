@@ -15,7 +15,7 @@ const TRACKING_PATTERNS: { name: string; pattern: string }[] = [
 export const tagFiringOrderCheck: CheckModule = {
   id: 'tag-firing-order',
   category: 'tracking',
-  name: 'Ordre de Declenchement des Tags',
+  name: 'Ordre de Déclenchement des Tags',
   impact: 'medium',
   gated: true,
   run(ctx: ScanContext) {
@@ -25,7 +25,7 @@ export const tagFiringOrderCheck: CheckModule = {
     if (!postAccept && !preConsent) {
       return {
         status: 'info',
-        description: 'Donnees de session non disponibles pour l\'analyse de l\'ordre des tags.',
+        description: 'Données de session non disponibles pour l\'analyse de l\'ordre des tags.',
         rawData: {},
       };
     }
@@ -39,7 +39,7 @@ export const tagFiringOrderCheck: CheckModule = {
     if (trackingRequests.length === 0) {
       return {
         status: 'warning',
-        description: 'Aucune requete tracking detectee apres consentement.',
+        description: 'Aucune requête tracking détectée après consentement.',
         rawData: { firingOrder: [] },
       };
     }
@@ -73,7 +73,7 @@ export const tagFiringOrderCheck: CheckModule = {
 
     return {
       status: 'pass',
-      description: `${uniqueOrder.length} outil(s) tracking detecte(s). Ordre : ${orderNames.join(' → ')}.${consentBeforeTracking ? ' Consentement gere avant le declenchement.' : ''}`,
+      description: `${uniqueOrder.length} outil(s) tracking détecté(s). Ordre : ${orderNames.join(' → ')}.${consentBeforeTracking ? ' Consentement géré avant le déclenchement.' : ''}`,
       rawData: { firingOrder: uniqueOrder, consentBeforeTracking, totalRequests: trackingRequests.length },
     };
   },

@@ -10,14 +10,14 @@ export const ecommerceCheck: CheckModule = {
     if (ctx.ecommercePlatform) {
       return {
         status: 'info',
-        description: `Plateforme e-commerce detectee : ${ctx.ecommercePlatform}. Les recommandations sont adaptees a cette plateforme.`,
+        description: `Plateforme e-commerce détectée : ${ctx.ecommercePlatform}. Les recommandations sont adaptées à cette plateforme.`,
         rawData: { platform: ctx.ecommercePlatform },
       };
     }
 
     return {
       status: 'info',
-      description: 'Aucune plateforme e-commerce detectee (site vitrine ou CMS custom).',
+      description: 'Aucune plateforme e-commerce détectée (site vitrine ou CMS custom).',
       rawData: { platform: null },
     };
   },

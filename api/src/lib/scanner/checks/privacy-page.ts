@@ -21,7 +21,7 @@ const LEGAL_PATTERNS = [
 export const privacyPageCheck: CheckModule = {
   id: 'privacy-page',
   category: 'privacy',
-  name: 'Page Politique de Confidentialite',
+  name: 'Page Politique de Confidentialité',
   impact: 'medium',
   gated: true,
   run(ctx: ScanContext) {
@@ -33,7 +33,7 @@ export const privacyPageCheck: CheckModule = {
     if (hasPrivacyLink) {
       return {
         status: 'pass',
-        description: 'Lien vers une page de politique de confidentialite detecte.',
+        description: 'Lien vers une page de politique de confidentialité détecté.',
         rawData: { hasPrivacyLink, hasLegalLink },
       };
     }
@@ -41,14 +41,14 @@ export const privacyPageCheck: CheckModule = {
     if (hasLegalLink) {
       return {
         status: 'warning',
-        description: 'Page de mentions legales detectee mais pas de politique de confidentialite dediee. Le RGPD recommande une page separee.',
+        description: 'Page de mentions légales détectée mais pas de politique de confidentialité dédiée. Le RGPD recommande une page séparée.',
         rawData: { hasPrivacyLink: false, hasLegalLink },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Aucun lien vers une page de confidentialite ou mentions legales detecte.',
+      description: 'Aucun lien vers une page de confidentialité ou mentions légales détecté.',
       rawData: { hasPrivacyLink: false, hasLegalLink: false },
     };
   },

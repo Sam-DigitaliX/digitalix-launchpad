@@ -37,7 +37,7 @@ export const gtmCheck: CheckModule = {
     if (ids.length === 0) {
       return {
         status: 'fail',
-        description: 'Aucun container Google Tag Manager detecte.',
+        description: 'Aucun container Google Tag Manager détecté.',
         rawData: { containerIds: [] },
       };
     }
@@ -45,14 +45,14 @@ export const gtmCheck: CheckModule = {
     if (ids.length > 1) {
       return {
         status: 'warning',
-        description: `${ids.length} containers GTM detectes (${ids.join(', ')}). Plusieurs containers peuvent causer des conflits.`,
+        description: `${ids.length} containers GTM détectés (${ids.join(', ')}). Plusieurs containers peuvent causer des conflits.`,
         rawData: { containerIds: ids },
       };
     }
 
     return {
       status: 'pass',
-      description: `Container GTM detecte : ${ids[0]}.`,
+      description: `Container GTM détecté : ${ids[0]}.`,
       rawData: { containerIds: ids },
     };
   },

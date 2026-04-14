@@ -51,14 +51,14 @@ export const scriptsCheck: CheckModule = {
     if (thirdParty <= 15) {
       return {
         status: 'warning',
-        description: `${thirdParty} scripts tiers detectes via ${source} (${domains.length} domaines). Chaque script ajoute du temps de chargement.`,
+        description: `${thirdParty} scripts tiers détectés via ${source} (${domains.length} domaines). Chaque script ajoute du temps de chargement.`,
         rawData: { total, firstParty, thirdParty, domains, source },
       };
     }
 
     return {
       status: 'fail',
-      description: `${thirdParty} scripts tiers detectes — impact majeur sur le temps de chargement et la vie privee.`,
+      description: `${thirdParty} scripts tiers détectés — impact majeur sur le temps de chargement et la vie privée.`,
       rawData: { total, firstParty, thirdParty, domains, source },
     };
   },

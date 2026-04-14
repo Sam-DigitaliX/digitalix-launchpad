@@ -26,7 +26,7 @@ export const datalayerCheck: CheckModule = {
       if (uniqueEvents.length === 0) {
         return {
           status: 'warning',
-          description: `dataLayer actif (${allPushes.length} push(es)) mais aucun event nomme detecte.`,
+          description: `dataLayer actif (${allPushes.length} push(es)) mais aucun event nommé détecté.`,
           rawData: { pushCount: allPushes.length, events: [], source: 'playwright' },
         };
       }
@@ -39,9 +39,12 @@ export const datalayerCheck: CheckModule = {
         };
       }
 
+      const ecomNote = ctx.ecommercePlatform
+        ? `mais aucun event e-commerce détecté (${ctx.ecommercePlatform} identifié).`
+        : '(site vitrine — events e-commerce non attendus).';
       return {
-        status: 'warning',
-        description: `dataLayer actif avec ${uniqueEvents.length} event(s) (${uniqueEvents.slice(0, 5).join(', ')}${uniqueEvents.length > 5 ? '...' : ''}) mais aucun event e-commerce detecte.`,
+        status: ctx.ecommercePlatform ? 'warning' : 'pass',
+        description: `dataLayer actif avec ${uniqueEvents.length} event(s) (${uniqueEvents.slice(0, 5).join(', ')}${uniqueEvents.length > 5 ? '...' : ''}) ${ecomNote}`,
         rawData: { pushCount: allPushes.length, events: uniqueEvents, ecommerceEvents: [], source: 'playwright' },
       };
     }
@@ -66,7 +69,7 @@ export const datalayerCheck: CheckModule = {
     if (!hasDataLayer) {
       return {
         status: 'fail',
-        description: 'Aucun dataLayer detecte. Les donnees structurees ne sont pas transmises a GTM.',
+        description: 'Aucun dataLayer détecté. Les données structurées ne sont pas transmises à GTM.',
         rawData: { hasDataLayer: false, pushCount: 0, events: [], source: 'html' },
       };
     }
@@ -81,9 +84,12 @@ export const datalayerCheck: CheckModule = {
       };
     }
 
+    const ecomFallbackNote = ctx.ecommercePlatform
+      ? `mais aucun event e-commerce détecté (${ctx.ecommercePlatform} identifié).`
+      : '(site vitrine — events e-commerce non attendus).';
     return {
-      status: 'warning',
-      description: `dataLayer present avec ${pushCount} push(es) mais aucun event e-commerce detecte.`,
+      status: ctx.ecommercePlatform ? 'warning' : 'pass',
+      description: `dataLayer présent avec ${pushCount} push(es) ${ecomFallbackNote}`,
       rawData: { hasDataLayer: true, pushCount, events: [], source: 'html' },
     };
   },

@@ -26,15 +26,15 @@ export const tiktokPixelCheck: CheckModule = {
       return {
         status: 'pass',
         description: pixelId
-          ? `TikTok Pixel detecte : ${pixelId}.`
-          : 'TikTok Pixel detecte.',
+          ? `TikTok Pixel détecté : ${pixelId}.`
+          : 'TikTok Pixel détecté.',
         rawData: { pixelId, hasScript: hasTiktokScript },
       };
     }
 
     return {
       status: 'info',
-      description: 'TikTok Pixel non detecte.',
+      description: 'TikTok Pixel non détecté.',
       rawData: { pixelId: null },
     };
   },
