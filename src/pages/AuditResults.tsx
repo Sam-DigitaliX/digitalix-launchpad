@@ -1215,7 +1215,8 @@ const AuditResults = () => {
 
                       {/* Email gate overlay */}
                       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-transparent to-background rounded-xl">
-                        <div className="text-center max-w-md px-6">
+                        <div className="ev-card p-8 text-center max-w-md mx-6">
+                          <div className="relative z-10">
                           <div className="icon-gradient w-14 h-14 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-7 h-7" />
                           </div>
@@ -1259,6 +1260,7 @@ const AuditResults = () => {
                               {emailError}
                             </p>
                           )}
+                          </div>
                         </div>
                       </div>
                     </div>
