@@ -460,14 +460,7 @@ const AuditResults = () => {
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
                 <BlockProgressLoader
-                  percentage={(() => {
-                    const steps = progressSteps.length;
-                    if (steps === 0) return 0;
-                    // Estimate total based on detected sessions (3 sessions × ~6 events + 2 overhead)
-                    const sessionStarts = progressSteps.filter((s) => s.type === "session_start").length;
-                    const totalEstimate = sessionStarts >= 3 ? 20 : sessionStarts >= 1 ? 10 : 5;
-                    return Math.min(Math.round((steps / totalEstimate) * 100), 95);
-                  })()}
+                  percentage={Math.min(Math.round((progressSteps.length / 20) * 100), 95)}
                   label={progressSteps.length > 0 ? progressSteps[progressSteps.length - 1].label : "Connexion au scanner..."}
                 />
                 <div className="mb-10" />
