@@ -456,11 +456,13 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
-                {/* Progress percentage */}
+                {/* Block progress loader */}
                 {(() => {
+                  const totalBlocks = 20;
                   const totalSteps = 17;
                   const completedSteps = progressSteps.length;
                   const pct = Math.min(Math.round((completedSteps / totalSteps) * 100), 99);
+                  const filledBlocks = Math.round((pct / 100) * totalBlocks);
                   const currentLabel = progressSteps.length > 0
                     ? progressSteps[progressSteps.length - 1].label
                     : "Connexion au scanner...";
@@ -468,7 +470,7 @@ const AuditResults = () => {
                   return (
                     <>
                       {/* Ambient glow */}
-                      <div className="relative mx-auto mb-8" aria-hidden="true">
+                      <div className="relative mx-auto mb-6" aria-hidden="true">
                         <div
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] rounded-full blur-[80px]"
                           style={{ background: 'hsl(262 83% 58% / 0.12)' }}
@@ -479,30 +481,55 @@ const AuditResults = () => {
                         />
                       </div>
 
-                      {/* Percentage display */}
-                      <div className="relative mb-6">
-                        <span className="text-5xl md:text-6xl font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 relative">
+                        Analyse en cours
+                        <span className="inline-flex ml-1">
+                          <span className="animate-[pulse_1.4s_ease-in-out_infinite]">.</span>
+                          <span className="animate-[pulse_1.4s_ease-in-out_0.2s_infinite]">.</span>
+                          <span className="animate-[pulse_1.4s_ease-in-out_0.4s_infinite]">.</span>
+                        </span>
+                      </h2>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        {currentLabel}
+                      </p>
+
+                      {/* Percentage */}
+                      <div className="mb-4">
+                        <span className="text-4xl md:text-5xl font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                           {pct}%
                         </span>
                       </div>
 
-                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
-                        Analyse en cours
-                      </h2>
-                      <p className="text-sm text-muted-foreground mb-8">
-                        {currentLabel}
-                      </p>
-
-                      {/* Progress bar */}
-                      <div className="relative w-full h-2 rounded-full bg-white/[0.06] border border-white/[0.08] overflow-hidden mb-10">
-                        <div
-                          className="absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out"
-                          style={{
-                            width: `${pct}%`,
-                            background: 'linear-gradient(90deg, hsl(262 83% 58%), hsl(188 94% 43%))',
-                            boxShadow: '0 0 12px hsl(262 83% 58% / 0.4), 0 0 24px hsl(188 94% 43% / 0.2)',
-                          }}
-                        />
+                      {/* Block grid in ev-card container */}
+                      <div className="ev-card p-4 mb-10">
+                        <div className="relative z-10 flex gap-1.5 justify-center">
+                          {Array.from({ length: totalBlocks }).map((_, i) => {
+                            const isFilled = i < filledBlocks;
+                            const isNext = i === filledBlocks;
+                            return (
+                              <div
+                                key={i}
+                                className={`h-8 flex-1 rounded-sm transition-all duration-500 ${
+                                  isFilled
+                                    ? ""
+                                    : isNext
+                                      ? "animate-[pulse_1.5s_ease-in-out_infinite]"
+                                      : ""
+                                }`}
+                                style={
+                                  isFilled
+                                    ? {
+                                        background: `linear-gradient(135deg, hsl(262 83% ${58 + (i / totalBlocks) * 15}%), hsl(188 94% ${43 + (i / totalBlocks) * 15}%))`,
+                                        boxShadow: '0 0 8px hsl(262 83% 58% / 0.3)',
+                                      }
+                                    : isNext
+                                      ? { background: 'hsl(262 83% 58% / 0.25)' }
+                                      : { background: 'hsl(0 0% 100% / 0.04)', border: '1px solid hsl(0 0% 100% / 0.06)' }
+                                }
+                              />
+                            );
+                          })}
+                        </div>
                       </div>
                     </>
                   );
