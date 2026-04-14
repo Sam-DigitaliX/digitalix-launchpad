@@ -1066,6 +1066,11 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
+                {/* H1 title */}
+                <h1 className="text-lg md:text-xl font-bold text-foreground font-display mb-8">
+                  Analyse de <span className="text-primary">{displayUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                </h1>
+
                 <BlockProgressLoader
                   percentage={Math.min(Math.round((progressSteps.length / 20) * 100), 95)}
                   label={progressSteps.length > 0 ? progressSteps[progressSteps.length - 1].label : "Connexion au scanner..."}
@@ -1093,6 +1098,55 @@ const AuditResults = () => {
                       isDone={group.isDone}
                     />
                   ))}
+                </div>
+
+                {/* Email + consent during scan */}
+                <div className="ev-card p-6 mt-8 text-left">
+                  <div className="relative z-10">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Mail className="w-4 h-4 text-primary" />
+                      <span className="font-semibold text-sm text-foreground">Recevez votre rapport par email</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-4">
+                      Entrez votre email pour débloquer le rapport complet dès la fin de l'analyse.
+                    </p>
+                    <form
+                      onSubmit={handleEmailSubmit}
+                      className="flex flex-col sm:flex-row gap-2 mb-3"
+                    >
+                      <div className="relative flex-1">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                        <Input
+                          type="email"
+                          placeholder="votre@email.com"
+                          value={email}
+                          onChange={(e) => {
+                            setEmail(e.target.value);
+                            setEmailError("");
+                          }}
+                          className="pl-10 ev-input"
+                        />
+                      </div>
+                      <Button
+                        type="submit"
+                        variant="heroGradient"
+                        disabled={emailSubmitting || !email.trim()}
+                      >
+                        {emailSubmitting ? (
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                        ) : (
+                          "Débloquer"
+                        )}
+                      </Button>
+                    </form>
+                    {emailError && (
+                      <p className="text-destructive text-xs mb-2">{emailError}</p>
+                    )}
+                    <p className="text-[10px] text-muted-foreground/70">
+                      En soumettant, vous acceptez de recevoir votre rapport par email. Vos données sont traitées conformément à notre{" "}
+                      <a href="/politique-de-confidentialite" className="underline hover:text-foreground">politique de confidentialité</a>. Pas de spam.
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
