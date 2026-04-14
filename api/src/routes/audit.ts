@@ -388,7 +388,7 @@ app.post('/:id/unlock', async (c) => {
   }
 
   const checkRows = await sql`
-    SELECT check_id, category, name, status, description, impact, gated
+    SELECT check_id, category, name, status, description, impact, gated, raw_data, business_note
     FROM audit_checks WHERE audit_id = ${id}
     ORDER BY created_at
   `;
@@ -401,6 +401,8 @@ app.post('/:id/unlock', async (c) => {
     description: row.description,
     impact: row.impact,
     gated: row.gated,
+    rawData: row.raw_data ?? {},
+    businessNote: row.business_note ?? null,
   }));
 
   return c.json({ success: true, checks, contactId });

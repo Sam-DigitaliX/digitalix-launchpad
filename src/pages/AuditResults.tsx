@@ -910,12 +910,12 @@ const AuditResults = () => {
                     setPhase("results");
                     setTimeout(() => setScoreAnimated(true), 300);
                   } else if (result.status === "failed") {
-                    setErrorMessage(result.errorMessage || "Analyse echouee.");
+                    setErrorMessage(result.errorMessage || "Analyse échouée.");
                     setPhase("error");
                   }
                 })
                 .catch(() => {
-                  setErrorMessage("Connexion perdue. Veuillez reessayer.");
+                  setErrorMessage("Connexion perdue. Veuillez réessayer.");
                   setPhase("error");
                 });
             }
@@ -931,7 +931,7 @@ const AuditResults = () => {
             setErrorMessage(
               err instanceof ApiError
                 ? err.message
-                : "Une erreur est survenue. Veuillez reessayer."
+                : "Une erreur est survenue. Veuillez réessayer."
             );
           }
           setPhase("error");
@@ -979,7 +979,7 @@ const AuditResults = () => {
       setIsUnlocked(true);
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);
-      setEmailError("Erreur lors du deblocage. Veuillez reessayer.");
+      setEmailError("Erreur lors du déblocage. Veuillez réessayer.");
     }
 
     setEmailSubmitting(false);
@@ -1203,13 +1203,13 @@ const AuditResults = () => {
                       Score de votre tracking
                     </h1>
                     <p className="text-foreground/70 mb-4 max-w-md">
-                      Nous avons detecte{" "}
+                      Nous avons détecté{" "}
                       <span className="font-bold text-destructive">
-                        {failCount} problemes critiques
+                        {failCount} problèmes critiques
                       </span>{" "}
                       et{" "}
                       <span className="font-bold text-amber-400">
-                        {warnCount} points d'amelioration
+                        {warnCount} points d'amélioration
                       </span>{" "}
                       sur votre site.
                     </p>
@@ -1252,7 +1252,7 @@ const AuditResults = () => {
                 {/* ── Checks List ── */}
                 <div className="space-y-3">
                   <h2 className="text-xl font-bold text-foreground mb-4">
-                    Detail des verifications
+                    Détail des vérifications
                   </h2>
 
                   {!isUnlocked ? (
@@ -1364,12 +1364,12 @@ const AuditResults = () => {
                 {/* ── CTA ── */}
                 <div className="mt-12 ev-card p-8 text-center">
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
-                    Un expert analyse vos resultats
+                    Un expert analyse vos résultats
                   </h3>
                   <p className="text-foreground/70 mb-6 max-w-lg mx-auto">
-                    Ce diagnostic automatique est un premier apercu. Reservez un
+                    Ce diagnostic automatique est un premier aperçu. Réservez un
                     audit approfondi avec un expert DigitaliX pour un plan
-                    d'action personnalise.
+                    d'action personnalisé.
                   </p>
                   <Button variant="heroGradient" size="xl" asChild>
                     <Link to="/contact">
