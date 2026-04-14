@@ -351,8 +351,6 @@ const noopProgress: OnProgress = () => {};
 
 export async function fetchPage(url: string, onProgress: OnProgress = noopProgress): Promise<ScanContext> {
   const domain = extractDomain(url);
-  const start = Date.now();
-
   const browser = await chromium.launch({
     headless: true,
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
@@ -387,7 +385,7 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
 
     // Wait for CMP (lazy-loaded scripts need time to load GTM → GTM loads CMP)
     await detectPage.waitForTimeout(CMP_WAIT_MS);
-    const { cmp, matchedIndex } = await detectCmp(detectPage, start);
+    const { cmp, matchedIndex } = await detectCmp(detectPage, pageLoadStart);
 
     if (cmp) {
       onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: `CMP détectée : ${cmp.name}` });
