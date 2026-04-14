@@ -1066,10 +1066,11 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
-                {/* H1 title */}
-                <h1 className="text-lg md:text-xl font-bold text-foreground font-display mb-8">
-                  Analyse de <span className="text-primary">{displayUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}</span>
+                {/* Domain title */}
+                <h1 className="text-3xl md:text-4xl font-bold font-display mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                  {displayUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                 </h1>
+                <p className="text-sm text-muted-foreground mb-10">Diagnostic tracking en cours</p>
 
                 <BlockProgressLoader
                   percentage={Math.min(Math.round((progressSteps.length / 20) * 100), 95)}
