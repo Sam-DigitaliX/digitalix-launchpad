@@ -257,6 +257,17 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] react 18 → 19 + react-dom (attendre support shadcn/ui)
 - [ ] react-router-dom 6 → 7 (refonte API loaders/actions)
 
+### Retours utilisateurs (2026-04-14)
+**Haute priorité :**
+- [ ] Accents manquants dans les descriptions des checks (scanner backend — toutes les strings)
+- [ ] Loader: remplacer OrbitLoader par barre de progression avec % (garder le style gradient/glow)
+- [ ] Badge "critical" confus sur check pass — masquer le badge impact quand status=pass, ou renommer en "importance"
+- [ ] Ajouter une phrase d'explication business sous chaque check ("pourquoi c'est utile pour moi ?")
+
+**Moyenne priorité :**
+- [ ] Contraste texte/fond trop faible sur la page résultats
+- [ ] Mention "aucun event e-commerce" sur sites vitrines — adapter le message dataLayer quand plateforme non détectée
+
 ### Nice to have
 - [ ] Audit results: restructurer l'UI par sections (Privacy & RGPD, Tracking, Performance, Server-Side)
 - [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
