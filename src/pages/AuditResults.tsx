@@ -377,8 +377,6 @@ const AuditResults = () => {
   };
 
   /* ── Derived data ── */
-  const visibleChecks = checks.filter((c) => !c.gated);
-  const gatedChecks = checks.filter((c) => c.gated);
   const failCount = checks.filter((c) => c.status === "fail").length;
   const warnCount = checks.filter((c) => c.status === "warning").length;
   const displayUrl = auditResult?.url || auditUrl || "—";
@@ -594,32 +592,29 @@ const AuditResults = () => {
                     Detail des verifications
                   </h2>
 
-                  {visibleChecks.map((check) => (
-                    <CheckRow key={check.id} check={check} />
-                  ))}
-
                   {!isUnlocked ? (
-                    <div className="relative mt-2">
+                    <div className="relative">
+                      {/* All checks blurred as teaser */}
                       <div
-                        className="space-y-3 blur-sm pointer-events-none select-none"
+                        className="space-y-3 blur-[6px] pointer-events-none select-none opacity-60"
                         aria-hidden
                       >
-                        {gatedChecks.slice(0, 3).map((check) => (
+                        {checks.slice(0, 6).map((check) => (
                           <CheckRow key={check.id} check={check} />
                         ))}
                       </div>
 
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-background/40 via-background/90 to-background rounded-xl">
+                      {/* Email gate overlay */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-background/20 via-background/70 to-background rounded-xl">
                         <div className="text-center max-w-md px-6">
                           <div className="icon-gradient w-14 h-14 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-7 h-7" />
                           </div>
                           <h3 className="text-xl font-bold text-foreground mb-2">
-                            Debloquez votre rapport complet
+                            Débloquez votre rapport complet
                           </h3>
                           <p className="text-sm text-muted-foreground mb-6">
-                            {gatedChecks.length} verifications supplementaires
-                            avec recommandations detaillees.
+                            {checks.length} vérifications avec recommandations détaillées.
                           </p>
                           <form
                             onSubmit={handleEmailSubmit}
@@ -659,7 +654,7 @@ const AuditResults = () => {
                       </div>
                     </div>
                   ) : (
-                    gatedChecks.map((check) => (
+                    checks.map((check) => (
                       <div key={check.id} className="animate-fade-in-up">
                         <CheckRow check={check} />
                       </div>
