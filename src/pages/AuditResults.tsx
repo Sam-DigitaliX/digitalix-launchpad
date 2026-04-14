@@ -119,7 +119,7 @@ function getCategoryColor(score: number): string {
    ══════════════════════════════════════════════════════════════════ */
 
 const CheckRow = ({ check }: { check: AuditCheck }) => (
-  <div className="ev-card-static p-4">
+  <div className="ev-card p-4">
     <div className="relative z-10 flex items-start gap-4">
     <StatusIcon status={check.status} />
     <div className="flex-1 min-w-0">
@@ -166,7 +166,7 @@ const ProgressSessionCard = ({
   isActive: boolean;
   isDone: boolean;
 }) => (
-  <div className="ev-card-static p-4 animate-fade-in-up">
+  <div className="ev-card p-4 animate-fade-in-up">
     <div className="flex items-center gap-3 mb-3">
       {isDone ? (
         <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -475,7 +475,7 @@ const AuditResults = () => {
                 {/* Live progress — grouped by session in cards */}
                 <div className="space-y-3 text-left">
                   {sessionGroups.length === 0 && (
-                    <div className="ev-card-static p-4">
+                    <div className="ev-card p-4">
                       <div className="relative z-10 flex items-center gap-3">
                         <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
                         <span className="text-sm text-muted-foreground">
@@ -576,7 +576,7 @@ const AuditResults = () => {
                     return (
                       <div
                         key={cat.id}
-                        className="ev-card-static p-4 text-center"
+                        className="ev-card p-4 text-center"
                       >
                         <div className="flex items-center justify-center mb-2">
                           <Icon className={`w-5 h-5 ${color}`} />
