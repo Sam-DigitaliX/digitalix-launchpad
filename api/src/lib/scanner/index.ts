@@ -114,15 +114,13 @@ function computeOverallScore(categories: AuditCategorySummary[]): number {
 const noopProgress: OnProgress = () => {};
 
 export async function scanUrl(url: string, onProgress: OnProgress = noopProgress): Promise<ScanResult> {
-  // Launch Playwright scan and PageSpeed in parallel
-  const [ctxResult, pageSpeedResult] = await Promise.allSettled([
-    fetchPage(url, onProgress),
-    fetchPageSpeedMetrics(url),
-  ]);
+  // Run Playwright scan first, then PageSpeed (sequential to avoid resource contention on VPS)
+  const ctxResult = await Promise.allSettled([fetchPage(url, onProgress)]);
+  const pageSpeedResult = await Promise.allSettled([fetchPageSpeedMetrics(url)]);
 
-  if (ctxResult.status === 'rejected') {
-    const errorMessage = ctxResult.reason instanceof Error
-      ? ctxResult.reason.message
+  if (ctxResult[0].status === 'rejected') {
+    const errorMessage = ctxResult[0].reason instanceof Error
+      ? ctxResult[0].reason.message
       : 'Impossible de charger la page.';
 
     onProgress({ type: 'error', label: errorMessage });
@@ -138,9 +136,9 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     };
   }
 
-  const ctx = ctxResult.value;
-  const pageSpeed = pageSpeedResult.status === 'fulfilled'
-    ? pageSpeedResult.value
+  const ctx = ctxResult[0].value;
+  const pageSpeed = pageSpeedResult[0].status === 'fulfilled'
+    ? pageSpeedResult[0].value
     : { lcp: null, cls: null, inp: null };
 
   onProgress({ type: 'step_done', label: 'Exécution des vérifications...' });
