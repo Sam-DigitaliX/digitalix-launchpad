@@ -258,8 +258,10 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] react-router-dom 6 → 7 (refonte API loaders/actions)
 
 ### Nice to have
+- [ ] Audit results: restructurer l'UI par sections (Privacy & RGPD, Tracking, Performance, Server-Side)
 - [ ] Audit results: toggle technique par check (raw_data en bullet points + annotation)
 - [ ] Audit results: exposer raw_data dans GET /api/audit/:id
+- [ ] Scanner: vérifier fix WP Rocket lazy-load (events window) sur belangue.com après deploy
 
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
