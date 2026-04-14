@@ -13,6 +13,8 @@ export interface AuditCheck {
   impact: CheckImpact;
   /** true = requires email to see */
   gated: boolean;
+  rawData?: Record<string, unknown>;
+  businessNote?: string | null;
 }
 
 export interface AuditCategorySummary {
