@@ -276,6 +276,10 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Email gate: tous les checks floutés (blur 3px), overlay gradient transparent→opaque
 - [x] SSE timeout 60s → 180s pour scans longs
 
+### Bugs à investiguer
+- [ ] Core Web Vitals (LCP/CLS/INP) ne s'affichent pas — PageSpeed API timeout depuis le VPS malgré clé API valide, séquentialisation Playwright→PageSpeed, et env var runtime OK. À investiguer : logs serveur, test curl depuis le container, vérifier si le fetch aboutit.
+- [ ] CMP apparition delay encore élevé (~12-15s) — le fix pageLoadStart est déployé mais les valeurs restent hautes. Vérifier si c'est un vrai délai (lazy-load WP Rocket) ou un problème de calcul.
+
 ### Nice to have
 - [ ] INP: simuler une interaction (clic) dans Playwright pour mesurer INP en headless
 
@@ -310,6 +314,10 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] BlockProgressLoader: composant réutilisable (`src/components/ui/block-progress-loader.tsx`) (2026-04-14)
 - [x] ev-card applied to audit scan + results pages (2026-04-14)
 - [x] Blur email gate: all checks blurred with transparent→opaque gradient (2026-04-14)
+- [x] Fix: unlock endpoint returns rawData + businessNote (2026-04-14)
+- [x] Fix: all hardcoded French accents in AuditResults.tsx (2026-04-14)
+- [x] Scan page: domain H1 gradient + email/consent form during scan (2026-04-14)
+- [x] Fix: PageSpeed sequential after Playwright (resource contention on VPS) (2026-04-14)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
