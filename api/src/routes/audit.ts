@@ -250,11 +250,11 @@ app.get('/:id/progress', async (c) => {
 
       state.listeners.add(listener);
 
-      // Safety timeout — close after 60s max
+      // Safety timeout — close after 3 minutes max (scan can take 90-120s)
       setTimeout(() => {
         state.listeners.delete(listener);
         resolve();
-      }, 60_000);
+      }, 180_000);
     });
   });
 });
