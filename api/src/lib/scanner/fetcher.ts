@@ -255,12 +255,14 @@ async function runSession(
     // Navigate
     await page.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
 
-    // Trigger lazy-loaded scripts (WP Rocket, etc.) by scrolling + waiting
+    // Trigger lazy-loaded scripts (WP Rocket, etc.)
+    // WP Rocket listens for: keydown, mousedown, mousemove, touchmove, touchstart, touchend, wheel
     await page.evaluate(() => {
+      const events = ['mousemove', 'touchstart', 'touchend', 'wheel', 'keydown'];
+      for (const evt of events) {
+        window.dispatchEvent(new Event(evt, { bubbles: true }));
+      }
       window.scrollBy(0, 300);
-      window.dispatchEvent(new Event('scroll'));
-      // Some lazy-loaders also trigger on mousemove/touchstart
-      document.dispatchEvent(new MouseEvent('mousemove'));
     });
     try {
       await page.waitForLoadState('networkidle', { timeout: NETWORK_IDLE_TIMEOUT_MS });
