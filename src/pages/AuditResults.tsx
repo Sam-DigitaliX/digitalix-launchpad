@@ -456,39 +456,57 @@ const AuditResults = () => {
           <section className="py-24 md:py-32">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="max-w-lg mx-auto text-center">
-                {/* OrbitLoader — inline variant */}
-                <div className="relative w-28 h-28 mx-auto mb-10">
-                  {/* Ambient glow */}
-                  <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
-                    <div
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200px] h-[200px] rounded-full blur-[80px]"
-                      style={{ background: 'hsl(262 83% 58% / 0.12)' }}
-                    />
-                    <div
-                      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[30%] w-[150px] h-[150px] rounded-full blur-[60px]"
-                      style={{ background: 'hsl(188 94% 43% / 0.10)' }}
-                    />
-                  </div>
-                  {/* Orbit rings */}
-                  <div className="orbit-loader relative w-28 h-28">
-                    {[0, 1, 2, 3].map((i) => (
-                      <div
-                        key={i}
-                        className="orbit-ring absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          width: `${100 - i * 22}%`,
-                          height: `${100 - i * 22}%`,
-                        }}
-                      />
-                    ))}
-                    {/* Center dot */}
-                    <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-gradient-to-br from-primary to-secondary" />
-                  </div>
-                </div>
+                {/* Progress percentage */}
+                {(() => {
+                  const totalSteps = 17;
+                  const completedSteps = progressSteps.length;
+                  const pct = Math.min(Math.round((completedSteps / totalSteps) * 100), 99);
+                  const currentLabel = progressSteps.length > 0
+                    ? progressSteps[progressSteps.length - 1].label
+                    : "Connexion au scanner...";
 
-                <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8">
-                  Analyse en cours...
-                </h2>
+                  return (
+                    <>
+                      {/* Ambient glow */}
+                      <div className="relative mx-auto mb-8" aria-hidden="true">
+                        <div
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[100px] rounded-full blur-[80px]"
+                          style={{ background: 'hsl(262 83% 58% / 0.12)' }}
+                        />
+                        <div
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-[20%] w-[200px] h-[80px] rounded-full blur-[60px]"
+                          style={{ background: 'hsl(188 94% 43% / 0.10)' }}
+                        />
+                      </div>
+
+                      {/* Percentage display */}
+                      <div className="relative mb-6">
+                        <span className="text-5xl md:text-6xl font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                          {pct}%
+                        </span>
+                      </div>
+
+                      <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
+                        Analyse en cours
+                      </h2>
+                      <p className="text-sm text-muted-foreground mb-8">
+                        {currentLabel}
+                      </p>
+
+                      {/* Progress bar */}
+                      <div className="relative w-full h-2 rounded-full bg-white/[0.06] border border-white/[0.08] overflow-hidden mb-10">
+                        <div
+                          className="absolute inset-y-0 left-0 rounded-full transition-all duration-700 ease-out"
+                          style={{
+                            width: `${pct}%`,
+                            background: 'linear-gradient(90deg, hsl(262 83% 58%), hsl(188 94% 43%))',
+                            boxShadow: '0 0 12px hsl(262 83% 58% / 0.4), 0 0 24px hsl(188 94% 43% / 0.2)',
+                          }}
+                        />
+                      </div>
+                    </>
+                  );
+                })()}
 
                 {/* Live progress — grouped by session in cards */}
                 <div className="space-y-3 text-left">
