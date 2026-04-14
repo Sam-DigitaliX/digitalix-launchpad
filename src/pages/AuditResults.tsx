@@ -118,6 +118,20 @@ function getCategoryColor(score: number): string {
    Check Row
    ══════════════════════════════════════════════════════════════════ */
 
+const IMPACT_LABELS: Record<string, string> = {
+  critical: "Essentiel",
+  high: "Important",
+  medium: "Utile",
+  low: "Mineur",
+};
+
+const IMPACT_COLORS: Record<string, string> = {
+  critical: "bg-destructive/15 text-destructive",
+  high: "bg-amber-500/15 text-amber-400",
+  medium: "bg-primary/15 text-primary",
+  low: "bg-muted text-muted-foreground",
+};
+
 const CheckRow = ({ check }: { check: AuditCheck }) => (
   <div className="ev-card p-4">
     <div className="relative z-10 flex items-start gap-4">
@@ -127,19 +141,16 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
         <span className="font-semibold text-sm text-foreground">
           {check.name}
         </span>
-        <span
-          className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
-            check.impact === "critical"
-              ? "bg-destructive/15 text-destructive"
-              : check.impact === "high"
-              ? "bg-amber-500/15 text-amber-400"
-              : "bg-primary/15 text-primary"
-          }`}
-        >
-          {check.impact}
-        </span>
+        {check.status !== "pass" && (
+          <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${IMPACT_COLORS[check.impact] ?? IMPACT_COLORS.medium}`}>
+            {IMPACT_LABELS[check.impact] ?? check.impact}
+          </span>
+        )}
       </div>
       <p className="text-sm text-muted-foreground">{check.description}</p>
+      {check.businessNote && check.status !== "pass" && (
+        <p className="text-xs text-amber-400/80 mt-1.5">{check.businessNote}</p>
+      )}
     </div>
     </div>
   </div>
