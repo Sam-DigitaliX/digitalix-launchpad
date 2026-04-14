@@ -271,8 +271,8 @@ async function runSession(
     }
     onProgress({ type: 'step_done', session: sessionNum, totalSessions: 3, label: 'Page chargee' });
 
-    // Wait for CMP to appear
-    await page.waitForTimeout(2000);
+    // Wait for CMP to appear (needs time for lazy-loaders + CMP script load + render)
+    await page.waitForTimeout(5000);
 
     if (phase === 'pre-consent') {
       // Just wait and observe — no interaction
