@@ -157,6 +157,100 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
 );
 
 /* ══════════════════════════════════════════════════════════════════
+   Trackers Table
+   ══════════════════════════════════════════════════════════════════ */
+
+const TRACKER_IDS = ['gtm', 'ga4', 'meta-pixel', 'tiktok', 'linkedin', 'sgtm'];
+
+const TRACKER_PLATFORMS: Record<string, string> = {
+  gtm: 'Google',
+  ga4: 'Google',
+  'meta-pixel': 'Meta',
+  tiktok: 'TikTok',
+  linkedin: 'LinkedIn',
+  sgtm: 'Google',
+};
+
+function getTrackerIds(check: AuditCheck): string {
+  const raw = typeof check.rawData === 'string' ? JSON.parse(check.rawData) : (check.rawData ?? {});
+  if (raw.containerIds?.length) return raw.containerIds.join(', ');
+  if (raw.measurementIds?.length) return raw.measurementIds.join(', ');
+  if (raw.networkIds?.length) return raw.networkIds.join(', ');
+  if (raw.pixelIds?.length) return raw.pixelIds.join(', ');
+  if (raw.pixelId) return raw.pixelId;
+  if (raw.partnerId) return raw.partnerId;
+  if (raw.gtmDomain) return raw.gtmDomain;
+  return '—';
+}
+
+function getLoadingMethod(check: AuditCheck): string {
+  const raw = typeof check.rawData === 'string' ? JSON.parse(check.rawData) : (check.rawData ?? {});
+  if (check.id === 'sgtm') return raw.isFirstParty ? 'Server-side (1st party)' : 'Client-side';
+  if (raw.viaGtm) return 'Via GTM';
+  return 'Direct';
+}
+
+const TrackersTable = ({ checks }: { checks: AuditCheck[] }) => {
+  const trackerChecks = TRACKER_IDS
+    .map((id) => checks.find((c) => c.id === id))
+    .filter((c): c is AuditCheck => c !== undefined);
+
+  if (trackerChecks.length === 0) return null;
+
+  return (
+    <div className="ev-card overflow-hidden">
+      <div className="relative z-10">
+        <div className="px-5 py-4 border-b border-glass-border">
+          <h3 className="text-sm font-bold text-foreground font-display">Trackers détectés</h3>
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-sm">
+            <thead>
+              <tr className="border-b border-glass-border">
+                <th className="px-5 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Tracker</th>
+                <th className="px-5 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Plateforme</th>
+                <th className="px-5 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">ID</th>
+                <th className="px-5 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Méthode</th>
+                <th className="px-5 py-3 text-[10px] font-medium text-muted-foreground uppercase tracking-widest">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              {trackerChecks.map((check) => (
+                <tr key={check.id} className="border-b border-glass-border/40">
+                  <td className="px-5 py-3 font-medium text-foreground">{check.name}</td>
+                  <td className="px-5 py-3 text-muted-foreground">{TRACKER_PLATFORMS[check.id] ?? '—'}</td>
+                  <td className="px-5 py-3 font-mono text-xs text-muted-foreground">{getTrackerIds(check)}</td>
+                  <td className="px-5 py-3 text-muted-foreground">{getLoadingMethod(check)}</td>
+                  <td className="px-5 py-3">
+                    <span className={`inline-flex items-center gap-1.5 text-xs font-medium ${
+                      check.status === 'pass' ? 'text-emerald-400' :
+                      check.status === 'fail' ? 'text-red-400' :
+                      check.status === 'warning' ? 'text-amber-400' :
+                      'text-muted-foreground'
+                    }`}>
+                      <span className={`w-1.5 h-1.5 rounded-full ${
+                        check.status === 'pass' ? 'bg-emerald-400' :
+                        check.status === 'fail' ? 'bg-red-400' :
+                        check.status === 'warning' ? 'bg-amber-400' :
+                        'bg-muted-foreground'
+                      }`} />
+                      {check.status === 'pass' ? 'Détecté' :
+                       check.status === 'fail' ? 'Non détecté' :
+                       check.status === 'warning' ? 'Partiel' :
+                       'Non détecté'}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════════
    Progress Step
    ══════════════════════════════════════════════════════════════════ */
 
@@ -665,11 +759,21 @@ const AuditResults = () => {
                       </div>
                     </div>
                   ) : (
-                    checks.map((check) => (
-                      <div key={check.id} className="animate-fade-in-up">
-                        <CheckRow check={check} />
+                    <>
+                      {/* Trackers table */}
+                      <div className="animate-fade-in-up">
+                        <TrackersTable checks={checks} />
                       </div>
-                    ))
+
+                      {/* Other checks */}
+                      {checks
+                        .filter((c) => !TRACKER_IDS.includes(c.id))
+                        .map((check) => (
+                          <div key={check.id} className="animate-fade-in-up">
+                            <CheckRow check={check} />
+                          </div>
+                        ))}
+                    </>
                   )}
                 </div>
 
