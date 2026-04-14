@@ -466,6 +466,112 @@ const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
 };
 
 /* ══════════════════════════════════════════════════════════════════
+   Recommendations Section
+   ══════════════════════════════════════════════════════════════════ */
+
+const IMPACT_ORDER: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
+
+const ACTION_PREFIXES: Record<string, string> = {
+  gtm: 'Installer',
+  ga4: 'Configurer',
+  'meta-pixel': 'Installer',
+  'enhanced-conv': 'Activer',
+  datalayer: 'Configurer',
+  sgtm: 'Passer au',
+  'capi-google': 'Configurer',
+  'capi-meta': 'Configurer',
+  'first-party-cookies': 'Activer',
+  cmp: 'Installer',
+  'consent-mode': 'Configurer',
+  'pre-consent-violations': 'Corriger',
+  'post-reject-violations': 'Corriger',
+  'third-party-cookies': 'Vérifier',
+  'privacy-page': 'Ajouter',
+  'page-load': 'Optimiser',
+  'script-loading': 'Optimiser',
+  'scripts-count': 'Réduire',
+  lcp: 'Améliorer',
+  cls: 'Corriger',
+  inp: 'Améliorer',
+  'tag-firing-order': 'Corriger',
+  tiktok: 'Installer',
+  linkedin: 'Installer',
+  ecommerce: 'Configurer',
+};
+
+const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
+  const actionableChecks = checks
+    .filter((c) => c.status === 'fail' || c.status === 'warning')
+    .sort((a, b) => (IMPACT_ORDER[a.impact] ?? 3) - (IMPACT_ORDER[b.impact] ?? 3));
+
+  if (actionableChecks.length === 0) return null;
+
+  return (
+    <div className="space-y-4">
+      <h3 className="text-lg font-bold text-foreground font-display">Recommandations</h3>
+      <p className="text-sm text-muted-foreground">
+        {actionableChecks.length} action{actionableChecks.length > 1 ? 's' : ''} recommandée{actionableChecks.length > 1 ? 's' : ''}, triées par priorité.
+      </p>
+
+      <div className="space-y-3">
+        {actionableChecks.map((check, i) => {
+          const prefix = ACTION_PREFIXES[check.id] ?? 'Configurer';
+          return (
+            <div key={check.id} className="ev-card p-5">
+              <div className="relative z-10">
+                <div className="flex items-start gap-4">
+                  {/* Number */}
+                  <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 border border-primary/20 flex items-center justify-center">
+                    <span className="text-sm font-bold font-display bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+                      {i + 1}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 min-w-0">
+                    {/* Title + badge */}
+                    <div className="flex items-center gap-2 flex-wrap mb-2">
+                      <span className="font-bold text-foreground">
+                        {prefix} {check.name}
+                      </span>
+                      <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${IMPACT_COLORS[check.impact] ?? IMPACT_COLORS.medium}`}>
+                        {IMPACT_LABELS[check.impact] ?? check.impact}
+                      </span>
+                    </div>
+
+                    {/* Description */}
+                    <p className="text-sm text-muted-foreground">{check.description}</p>
+
+                    {/* Business note */}
+                    {check.businessNote && (
+                      <p className="text-sm text-amber-400/90 mt-2">{check.businessNote}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* CTA */}
+      <div className="ev-card p-6 text-center mt-6">
+        <div className="relative z-10">
+          <p className="text-foreground font-semibold mb-2">Besoin d'aide pour mettre en place ces recommandations ?</p>
+          <p className="text-sm text-muted-foreground mb-4">Un expert DigitaliX analyse vos résultats et vous accompagne.</p>
+          <a
+            href="/contact"
+            className="inline-flex items-center gap-2 px-6 py-3 ev-btn-primary text-sm font-bold rounded-xl"
+          >
+            Contactez un expert
+            <ArrowRight className="w-4 h-4" />
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════════
    Progress Step
    ══════════════════════════════════════════════════════════════════ */
 
@@ -985,21 +1091,27 @@ const AuditResults = () => {
                         <PrivacySection checks={checks} />
                       </div>
 
-                      {/* Other checks (not trackers, not privacy) */}
-                      {checks
-                        .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
-                        .length > 0 && (
-                        <div className="mt-6 space-y-3">
-                          <h3 className="text-lg font-bold text-foreground font-display">Autres vérifications</h3>
-                          {checks
-                            .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
-                            .map((check) => (
+                      {/* Recommendations */}
+                      <div className="animate-fade-in-up mt-6">
+                        <RecommendationsSection checks={checks} />
+                      </div>
+
+                      {/* Other checks (not trackers, not privacy, only pass/info) */}
+                      {(() => {
+                        const otherChecks = checks
+                          .filter((c) => !TRACKER_IDS.includes(c.id) && !PRIVACY_IDS.includes(c.id))
+                          .filter((c) => c.status === 'pass' || c.status === 'info');
+                        return otherChecks.length > 0 ? (
+                          <div className="mt-6 space-y-3">
+                            <h3 className="text-lg font-bold text-foreground font-display">Autres vérifications</h3>
+                            {otherChecks.map((check) => (
                               <div key={check.id} className="animate-fade-in-up">
                                 <CheckRow check={check} />
                               </div>
                             ))}
-                        </div>
-                      )}
+                          </div>
+                        ) : null;
+                      })()}
                     </>
                   )}
                 </div>
