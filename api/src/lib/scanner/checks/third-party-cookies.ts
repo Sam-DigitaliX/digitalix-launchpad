@@ -35,6 +35,7 @@ export const thirdPartyCookiesCheck: CheckModule = {
       return {
         status: 'warning',
         description: `${count} cookies tiers détectés (domaines : ${domains.join(', ')}). Risque de non-conformité RGPD sans consentement.`,
+        businessNote: 'Des cookies tiers sont déposés sur votre site. Assurez-vous qu\'ils sont couverts par le consentement utilisateur.',
         rawData: { count, domains },
       };
     }
@@ -42,6 +43,7 @@ export const thirdPartyCookiesCheck: CheckModule = {
     return {
       status: 'fail',
       description: `${count} cookies tiers détectés — nombre excessif. Impact sur la conformité et la vie privée des utilisateurs.`,
+      businessNote: 'Trop de cookies tiers sont déposés sur votre site. Assurez-vous qu\'ils sont couverts par le consentement utilisateur.',
       rawData: { count, domains },
     };
   },

@@ -38,6 +38,7 @@ export const gtmCheck: CheckModule = {
       return {
         status: 'fail',
         description: 'Aucun container Google Tag Manager détecté.',
+        businessNote: 'Sans Google Tag Manager, vous ne pouvez pas gérer vos tags marketing de manière centralisée. Chaque modification nécessite un développeur.',
         rawData: { containerIds: [] },
       };
     }

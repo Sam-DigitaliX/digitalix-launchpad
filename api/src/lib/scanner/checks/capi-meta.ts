@@ -59,6 +59,7 @@ export const capiMetaCheck: CheckModule = {
       return {
         status: 'warning',
         description: 'Déduplication eventID détectée mais _fbp non posé en server-side. CAPI partiellement configuré.',
+        businessNote: 'CAPI partiellement configuré — la déduplication des events n\'est pas en place.',
         rawData: { hasEventId, fbpServerSet },
       };
     }
@@ -66,6 +67,7 @@ export const capiMetaCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Meta Pixel présent sans déduplication eventID — CAPI probablement non implémentée. Perte de données de conversion.',
+      businessNote: 'Sans Conversions API Meta, vous perdez 30-50% des données de conversion Facebook/Instagram Ads.',
       rawData: { hasEventId: false, fbpServerSet },
     };
   },

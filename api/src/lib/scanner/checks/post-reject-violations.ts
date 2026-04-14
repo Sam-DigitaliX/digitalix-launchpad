@@ -65,6 +65,7 @@ export const postRejectViolationsCheck: CheckModule = {
     return {
       status: 'fail',
       description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas correctement appliqué.`,
+      businessNote: 'Des cookies analytics persistent après le refus de consentement. C\'est une violation RGPD.',
       rawData: { violatingCookies: cookieNames, gcsValues, hasGrantedPings },
     };
   },

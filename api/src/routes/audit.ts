@@ -131,7 +131,8 @@ app.post('/', async (c) => {
               description: check.description,
               impact: check.impact,
               gated: check.gated,
-              raw_data: JSON.stringify({}),
+              raw_data: JSON.stringify(check.rawData ?? {}),
+              business_note: check.businessNote ?? null,
             }))
           )}
         `;
@@ -200,6 +201,7 @@ app.get('/:id/progress', async (c) => {
               checks: state.result.checks.map((check) => ({
                 ...check,
                 description: check.gated ? GATED_PLACEHOLDER : check.description,
+                rawData: check.gated ? {} : check.rawData,
               })),
             },
           }),
@@ -235,6 +237,7 @@ app.get('/:id/progress', async (c) => {
                   checks: state.result.checks.map((check) => ({
                     ...check,
                     description: check.gated ? GATED_PLACEHOLDER : check.description,
+                    rawData: check.gated ? {} : check.rawData,
                   })),
                 },
               }),
@@ -277,7 +280,7 @@ app.get('/:id', async (c) => {
   const isUnlocked = audit.unlocked_at !== null;
 
   const checkRows = await sql`
-    SELECT check_id, category, name, status, description, impact, gated
+    SELECT check_id, category, name, status, description, impact, gated, raw_data, business_note
     FROM audit_checks WHERE audit_id = ${id}
     ORDER BY created_at
   `;
@@ -290,6 +293,8 @@ app.get('/:id', async (c) => {
     description: row.gated && !isUnlocked ? GATED_PLACEHOLDER : row.description,
     impact: row.impact,
     gated: row.gated,
+    rawData: isUnlocked ? (row.raw_data ?? {}) : {},
+    businessNote: row.business_note ?? null,
   }));
 
   return c.json({

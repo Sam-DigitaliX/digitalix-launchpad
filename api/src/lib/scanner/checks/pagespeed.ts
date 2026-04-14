@@ -72,6 +72,7 @@ export function checkLcp(lcp: number | null): CheckResult {
     return {
       status: 'warning',
       description: `LCP : ${seconds}s — amélioration nécessaire (objectif : < 2.5s).`,
+      businessNote: 'Le LCP est améliorable — optimisez les images et le chargement des ressources critiques.',
       rawData: { lcpMs: lcp },
     };
   }
@@ -79,6 +80,7 @@ export function checkLcp(lcp: number | null): CheckResult {
   return {
     status: 'fail',
     description: `LCP : ${seconds}s — mauvais. Impact direct sur le taux de rebond et le SEO.`,
+    businessNote: 'Un LCP supérieur à 4 secondes dégrade votre SEO et votre taux de conversion.',
     rawData: { lcpMs: lcp },
   };
 }
@@ -106,6 +108,7 @@ export function checkCls(cls: number | null): CheckResult {
     return {
       status: 'warning',
       description: `CLS : ${value} — amélioration nécessaire (objectif : < 0.1). Les éléments de la page bougent pendant le chargement.`,
+      businessNote: 'Des éléments bougent pendant le chargement — ajoutez des dimensions fixes aux images et embeds.',
       rawData: { cls },
     };
   }
@@ -113,6 +116,7 @@ export function checkCls(cls: number | null): CheckResult {
   return {
     status: 'fail',
     description: `CLS : ${value} — mauvais. Instabilité visuelle importante, impact sur l'expérience utilisateur.`,
+    businessNote: 'Une instabilité visuelle importante dégrade l\'expérience utilisateur et le score SEO.',
     rawData: { cls },
   };
 }
@@ -140,6 +144,7 @@ export function checkInp(inp: number | null): CheckResult {
     return {
       status: 'warning',
       description: `INP : ${ms}ms — amélioration nécessaire (objectif : < 200ms). Les interactions sont lentes.`,
+      businessNote: 'Les interactions pourraient être plus réactives. Réduisez le JavaScript bloquant.',
       rawData: { inpMs: inp },
     };
   }
@@ -147,6 +152,7 @@ export function checkInp(inp: number | null): CheckResult {
   return {
     status: 'fail',
     description: `INP : ${ms}ms — mauvais. Les interactions avec la page sont très lentes.`,
+    businessNote: 'Les interactions sont très lentes — vos visiteurs risquent d\'abandonner avant de convertir.',
     rawData: { inpMs: inp },
   };
 }

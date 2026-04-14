@@ -50,6 +50,7 @@ export const cookiesCheck: CheckModule = {
       return {
         status: 'warning',
         description: `Mix server/client : ${serverCookies.join(', ')} en server-side, ${clientCookies.join(', ')} en client-side.`,
+        businessNote: 'Certains cookies analytics sont encore posés en client-side. Sur Safari (ITP), leur durée de vie est limitée à 7 jours maximum.',
         rawData: { serverCookies, clientOnlyCookies: clientCookies },
       };
     }
@@ -57,6 +58,7 @@ export const cookiesCheck: CheckModule = {
     return {
       status: 'fail',
       description: `Cookies analytics (${clientCookies.join(', ')}) posés uniquement côté client — durée de vie limitée par ITP Safari (7 jours max).`,
+      businessNote: 'Vos cookies analytics sont posés en client-side. Sur Safari (ITP), leur durée de vie est limitée à 7 jours maximum.',
       rawData: { serverCookies: [], clientOnlyCookies: clientCookies },
     };
   },

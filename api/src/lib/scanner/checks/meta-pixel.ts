@@ -75,6 +75,7 @@ export const metaPixelCheck: CheckModule = {
     return {
       status: 'info',
       description: 'Aucun Meta Pixel détecté.',
+      businessNote: 'Sans le Pixel Meta, vous ne pouvez pas mesurer ni optimiser vos campagnes Facebook/Instagram Ads.',
       rawData: { pixelIds: [] },
     };
   },

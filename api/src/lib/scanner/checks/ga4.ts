@@ -83,6 +83,7 @@ export const ga4Check: CheckModule = {
     return {
       status: 'fail',
       description: 'Aucune implémentation GA4 détectée.',
+      businessNote: 'Sans GA4, vous ne mesurez pas vos conversions ni le comportement de vos visiteurs.',
       rawData: { measurementIds: [] },
     };
   },

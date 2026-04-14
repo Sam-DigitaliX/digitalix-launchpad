@@ -73,6 +73,7 @@ export const sgtmCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'GTM chargé depuis googletagmanager.com — pas de server-side. Données vulnérables aux adblockers et ITP.',
+      businessNote: 'Vos données sont vulnérables aux adblockers et à l\'ITP Safari. Vous perdez 20-40% de vos données analytics et conversions.',
       rawData: { gtmDomain, isFirstParty: false },
     };
   },

@@ -41,6 +41,7 @@ export const capiGoogleCheck: CheckModule = {
       return {
         status: 'warning',
         description: 'sGTM détecté mais _gcl_au non posé en server-side. Configuration incomplète.',
+        businessNote: 'Sans tracking server-side Google complet, vos données de conversion sont incomplètes et vulnérables aux bloqueurs.',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
@@ -48,6 +49,7 @@ export const capiGoogleCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Pas de tracking Google server-side détecté.',
+      businessNote: 'Sans tracking server-side Google, vos données de conversion sont incomplètes et vulnérables aux bloqueurs.',
       rawData: { hasSgtm: false, gclAuServerSet, hasUserData },
     };
   },

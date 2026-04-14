@@ -25,6 +25,7 @@ export const cmpCheck: CheckModule = {
         return {
           status: 'warning',
           description: `${details.join(', ')}. Attention : ${issues.join(', ')}.`,
+          businessNote: 'Sans bandeau de consentement conforme, vous êtes en infraction RGPD. Risque d\'amende CNIL jusqu\'à 4% du chiffre d\'affaires.',
           rawData: { provider: ctx.cmp.name, tcfDetected, ...ctx.cmp },
         };
       }
@@ -62,6 +63,7 @@ export const cmpCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Aucune CMP détectée — risque de non-conformité RGPD/CNIL. Un bandeau de consentement est obligatoire.',
+      businessNote: 'Sans bandeau de consentement, vous êtes en infraction RGPD. Risque d\'amende CNIL jusqu\'à 4% du chiffre d\'affaires.',
       rawData: { provider: null },
     };
   },

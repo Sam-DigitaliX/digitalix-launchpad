@@ -52,6 +52,7 @@ export const scriptsCheck: CheckModule = {
       return {
         status: 'warning',
         description: `${thirdParty} scripts tiers détectés via ${source} (${domains.length} domaines). Chaque script ajoute du temps de chargement.`,
+        businessNote: 'Beaucoup de scripts tiers ralentissent votre site et exposent les données de vos visiteurs à des tiers.',
         rawData: { total, firstParty, thirdParty, domains, source },
       };
     }
@@ -59,6 +60,7 @@ export const scriptsCheck: CheckModule = {
     return {
       status: 'fail',
       description: `${thirdParty} scripts tiers détectés — impact majeur sur le temps de chargement et la vie privée.`,
+      businessNote: 'Trop de scripts tiers ralentissent votre site et exposent les données de vos visiteurs à des tiers.',
       rawData: { total, firstParty, thirdParty, domains, source },
     };
   },

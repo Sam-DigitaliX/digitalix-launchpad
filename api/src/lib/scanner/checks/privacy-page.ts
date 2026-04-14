@@ -42,6 +42,7 @@ export const privacyPageCheck: CheckModule = {
       return {
         status: 'warning',
         description: 'Page de mentions légales détectée mais pas de politique de confidentialité dédiée. Le RGPD recommande une page séparée.',
+        businessNote: 'Une page de mentions légales est détectée mais pas de politique de confidentialité dédiée.',
         rawData: { hasPrivacyLink: false, hasLegalLink },
       };
     }
@@ -49,6 +50,7 @@ export const privacyPageCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Aucun lien vers une page de confidentialité ou mentions légales détecté.',
+      businessNote: 'L\'absence de page de politique de confidentialité est une infraction légale (RGPD, article 13).',
       rawData: { hasPrivacyLink: false, hasLegalLink: false },
     };
   },

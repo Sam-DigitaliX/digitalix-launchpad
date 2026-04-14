@@ -103,6 +103,7 @@ export interface CheckResult {
   status: 'pass' | 'fail' | 'warning' | 'info';
   description: string;
   rawData?: Record<string, unknown>;
+  businessNote?: string;
 }
 
 export interface CheckModule {

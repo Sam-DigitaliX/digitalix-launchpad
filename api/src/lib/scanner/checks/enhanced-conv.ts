@@ -38,6 +38,7 @@ export const enhancedConvCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Enhanced Conversions non détecté — perte potentielle de données d\'attribution Google Ads.',
+      businessNote: 'Sans Enhanced Conversions, Google Ads perd 15-30% des données de conversion. Vos campagnes sont sous-optimisées.',
       rawData: { hasEnhancedConversions: false, hasUserData: false, hasGtagSetUserData: false },
     };
   },

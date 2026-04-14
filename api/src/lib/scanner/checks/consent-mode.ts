@@ -59,6 +59,7 @@ export const consentModeCheck: CheckModule = {
       return {
         status: 'warning',
         description: `Consent Mode détecté mais incomplet — paramètre(s) manquant(s) : ${missingDefault.join(', ')}. La v2 requiert les 4 paramètres.`,
+        businessNote: 'Consent Mode v2 incomplet — certains paramètres obligatoires sont manquants.',
         rawData: { defaultParams, foundDefault, missingDefault, hasAdvancedMode },
       };
     }
@@ -82,6 +83,7 @@ export const consentModeCheck: CheckModule = {
         return {
           status: 'warning',
           description: `Consent Mode détecté mais incomplet — paramètre(s) manquant(s) : ${missingParams.join(', ')}.`,
+          businessNote: 'Consent Mode v2 incomplet — certains paramètres obligatoires sont manquants.',
           rawData: { parameters: foundParams, missingParams, detectionMethod: 'html' },
         };
       }
@@ -90,6 +92,7 @@ export const consentModeCheck: CheckModule = {
     return {
       status: 'fail',
       description: 'Google Consent Mode non détecté — requis depuis mars 2024 pour Google Ads. Les conversions ne sont pas modélisées.',
+      businessNote: 'Sans Consent Mode v2, Google Ads ne peut pas modéliser les conversions des utilisateurs qui refusent les cookies.',
       rawData: { hasConsentMode: false },
     };
   },

@@ -45,6 +45,7 @@ export const datalayerCheck: CheckModule = {
       return {
         status: ctx.ecommercePlatform ? 'warning' : 'pass',
         description: `dataLayer actif avec ${uniqueEvents.length} event(s) (${uniqueEvents.slice(0, 5).join(', ')}${uniqueEvents.length > 5 ? '...' : ''}) ${ecomNote}`,
+        ...(ctx.ecommercePlatform ? { businessNote: 'Votre plateforme e-commerce est détectée mais aucun event de conversion n\'est remonté dans le dataLayer.' } : {}),
         rawData: { pushCount: allPushes.length, events: uniqueEvents, ecommerceEvents: [], source: 'playwright' },
       };
     }
@@ -70,6 +71,7 @@ export const datalayerCheck: CheckModule = {
       return {
         status: 'fail',
         description: 'Aucun dataLayer détecté. Les données structurées ne sont pas transmises à GTM.',
+        businessNote: 'Sans dataLayer, vos outils tracking ne reçoivent pas de données structurées. Impossible de mesurer les actions utilisateur.',
         rawData: { hasDataLayer: false, pushCount: 0, events: [], source: 'html' },
       };
     }
@@ -90,6 +92,7 @@ export const datalayerCheck: CheckModule = {
     return {
       status: ctx.ecommercePlatform ? 'warning' : 'pass',
       description: `dataLayer présent avec ${pushCount} push(es) ${ecomFallbackNote}`,
+      ...(ctx.ecommercePlatform ? { businessNote: 'Votre plateforme e-commerce est détectée mais aucun event de conversion n\'est remonté dans le dataLayer.' } : {}),
       rawData: { hasDataLayer: true, pushCount, events: [], source: 'html' },
     };
   },

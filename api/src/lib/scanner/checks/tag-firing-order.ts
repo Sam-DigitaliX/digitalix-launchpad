@@ -40,6 +40,7 @@ export const tagFiringOrderCheck: CheckModule = {
       return {
         status: 'warning',
         description: 'Aucune requête tracking détectée après consentement.',
+        businessNote: 'L\'ordre de déclenchement des tags n\'est pas optimal. Le consentement doit être vérifié avant tout déclenchement de tracking.',
         rawData: { firingOrder: [] },
       };
     }

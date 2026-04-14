@@ -54,6 +54,7 @@ export const scriptLoadingCheck: CheckModule = {
       return {
         status: 'warning',
         description: `${blocking} script(s) bloquant(s) sur ${total}. Les scripts sans async/defer retardent le rendu de la page.`,
+        businessNote: 'Certains scripts bloquent le rendu de la page. Utilisez async ou defer pour améliorer l\'expérience utilisateur.',
         rawData: { blocking, async: asyncCount, defer, total },
       };
     }
@@ -61,6 +62,7 @@ export const scriptLoadingCheck: CheckModule = {
     return {
       status: 'fail',
       description: `${blocking} scripts bloquants sur ${total} — la majorité des scripts ralentissent le rendu. Ajoutez async ou defer.`,
+      businessNote: 'La majorité de vos scripts bloquent le rendu de la page. Utilisez async ou defer pour améliorer l\'expérience utilisateur.',
       rawData: { blocking, async: asyncCount, defer, total },
     };
   },

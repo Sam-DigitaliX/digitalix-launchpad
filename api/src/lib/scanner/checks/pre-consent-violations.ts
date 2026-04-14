@@ -59,6 +59,7 @@ export const preConsentViolationsCheck: CheckModule = {
     return {
       status: 'fail',
       description: `Violation RGPD : ${issues.join(' et ')} détecté(s) AVANT consentement. Les données sont collectées sans accord de l'utilisateur.`,
+      businessNote: 'Des trackers se lancent avant le consentement utilisateur. C\'est une violation RGPD détectable lors d\'un contrôle CNIL.',
       rawData: { violatingCookies: cookieNames, violatingRequests: requestDomains },
     };
   },
