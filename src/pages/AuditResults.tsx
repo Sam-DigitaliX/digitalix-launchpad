@@ -596,7 +596,7 @@ const AuditResults = () => {
                     <div className="relative">
                       {/* All checks blurred as teaser */}
                       <div
-                        className="space-y-3 blur-[4px] pointer-events-none select-none opacity-75"
+                        className="space-y-3 blur-[3px] pointer-events-none select-none opacity-90"
                         aria-hidden
                       >
                         {checks.slice(0, 6).map((check) => (
@@ -605,7 +605,7 @@ const AuditResults = () => {
                       </div>
 
                       {/* Email gate overlay */}
-                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-background/50 to-background rounded-xl">
+                      <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-transparent via-transparent to-background rounded-xl">
                         <div className="text-center max-w-md px-6">
                           <div className="icon-gradient w-14 h-14 rounded-full bg-white/[0.05] border border-white/[0.06] flex items-center justify-center mx-auto mb-4">
                             <Lock className="w-7 h-7" />
