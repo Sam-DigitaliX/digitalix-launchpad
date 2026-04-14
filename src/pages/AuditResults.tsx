@@ -119,7 +119,8 @@ function getCategoryColor(score: number): string {
    ══════════════════════════════════════════════════════════════════ */
 
 const CheckRow = ({ check }: { check: AuditCheck }) => (
-  <div className="flex items-start gap-4 p-4 rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm">
+  <div className="ev-card-static p-4">
+    <div className="relative z-10 flex items-start gap-4">
     <StatusIcon status={check.status} />
     <div className="flex-1 min-w-0">
       <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -139,6 +140,7 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
         </span>
       </div>
       <p className="text-sm text-muted-foreground">{check.description}</p>
+    </div>
     </div>
   </div>
 );
@@ -164,7 +166,7 @@ const ProgressSessionCard = ({
   isActive: boolean;
   isDone: boolean;
 }) => (
-  <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4 animate-fade-in-up">
+  <div className="ev-card-static p-4 animate-fade-in-up">
     <div className="flex items-center gap-3 mb-3">
       {isDone ? (
         <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
@@ -473,8 +475,8 @@ const AuditResults = () => {
                 {/* Live progress — grouped by session in cards */}
                 <div className="space-y-3 text-left">
                   {sessionGroups.length === 0 && (
-                    <div className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4">
-                      <div className="flex items-center gap-3">
+                    <div className="ev-card-static p-4">
+                      <div className="relative z-10 flex items-center gap-3">
                         <Loader2 className="w-5 h-5 text-primary animate-spin shrink-0" />
                         <span className="text-sm text-muted-foreground">
                           Connexion au scanner...
@@ -574,7 +576,7 @@ const AuditResults = () => {
                     return (
                       <div
                         key={cat.id}
-                        className="rounded-xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm p-4 text-center"
+                        className="ev-card-static p-4 text-center"
                       >
                         <div className="flex items-center justify-center mb-2">
                           <Icon className={`w-5 h-5 ${color}`} />
@@ -640,7 +642,7 @@ const AuditResults = () => {
                                   setEmail(e.target.value);
                                   setEmailError("");
                                 }}
-                                className="pl-10 bg-white/[0.04] border-white/[0.08]"
+                                className="pl-10 ev-input"
                               />
                             </div>
                             <Button
@@ -673,7 +675,7 @@ const AuditResults = () => {
                 </div>
 
                 {/* ── CTA ── */}
-                <div className="mt-12 p-8 rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-sm text-center">
+                <div className="mt-12 ev-card p-8 text-center">
                   <h3 className="text-xl md:text-2xl font-bold text-foreground mb-3">
                     Un expert analyse vos resultats
                   </h3>
