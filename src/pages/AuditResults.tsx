@@ -1083,7 +1083,8 @@ const AuditResults = () => {
                 <h1 className="text-3xl md:text-4xl font-bold font-display mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   {displayUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                 </h1>
-                <p className="text-sm text-muted-foreground mb-10">Diagnostic tracking en cours</p>
+                <p className="text-sm text-muted-foreground mb-2">Diagnostic tracking en cours</p>
+                <p className="text-xs text-muted-foreground/80 mb-10">L'analyse peut prendre 2 à 3 minutes. Gardez cet onglet ouvert.</p>
 
                 <BlockProgressLoader
                   percentage={Math.min(Math.round((progressSteps.length / 20) * 100), 95)}
