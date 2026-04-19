@@ -1429,12 +1429,14 @@ const AuditResults = () => {
                     audit approfondi avec un expert DigitaliX pour un plan
                     d'action personnalisé.
                   </p>
-                  <Button variant="heroGradient" size="xl" asChild>
-                    <Link to="/contact">
-                      Reserver mon Audit Offert
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Link>
-                  </Button>
+                  <div className="flex justify-center">
+                    <Button variant="heroGradient" size="xl" asChild>
+                      <Link to="/contact">
+                        Reserver mon Audit Offert
+                        <ArrowRight className="w-5 h-5 ml-2" />
+                      </Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
