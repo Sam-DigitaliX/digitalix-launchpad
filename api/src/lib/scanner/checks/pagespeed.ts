@@ -6,7 +6,7 @@ const TIMEOUT_MS = 90000;
 interface PageSpeedMetrics {
   lcp: number | null;
   cls: number | null;
-  inp: number | null;
+  tbt: number | null;
   error: string | null;
 }
 
@@ -39,7 +39,7 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
       const snippet = body.slice(0, 200).replace(/\s+/g, ' ');
       const error = `HTTP ${response.status} after ${elapsed}ms${hasKey ? '' : ' (no API key)'} — ${snippet}`;
       console.error(`[pagespeed] ${error}`);
-      return { lcp: null, cls: null, inp: null, error };
+      return { lcp: null, cls: null, tbt: null, error };
     }
 
     const data = await response.json() as Record<string, unknown>;
@@ -49,17 +49,17 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
     if (!audits) {
       const error = `Réponse sans lighthouseResult.audits (clés: ${Object.keys(data).join(',')})`;
       console.error(`[pagespeed] ${error}`);
-      return { lcp: null, cls: null, inp: null, error };
+      return { lcp: null, cls: null, tbt: null, error };
     }
 
     const metrics = {
       lcp: audits['largest-contentful-paint']?.numericValue ?? null,
       cls: audits['cumulative-layout-shift']?.numericValue ?? null,
-      inp: audits['interaction-to-next-paint']?.numericValue ?? null,
+      tbt: audits['total-blocking-time']?.numericValue ?? null,
       error: null,
     };
 
-    console.log(`[pagespeed] OK in ${elapsed}ms — lcp=${metrics.lcp} cls=${metrics.cls} inp=${metrics.inp}`);
+    console.log(`[pagespeed] OK in ${elapsed}ms — lcp=${metrics.lcp} cls=${metrics.cls} tbt=${metrics.tbt}`);
     return metrics;
   } catch (err) {
     const elapsed = Date.now() - startedAt;
@@ -67,7 +67,7 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
     const reason = isAbort ? `timeout after ${TIMEOUT_MS}ms` : (err instanceof Error ? `${err.name}: ${err.message}` : String(err));
     const error = `${reason}${hasKey ? '' : ' (no API key)'} — elapsed ${elapsed}ms`;
     console.error(`[pagespeed] ${error}`);
-    return { lcp: null, cls: null, inp: null, error };
+    return { lcp: null, cls: null, tbt: null, error };
   } finally {
     clearTimeout(timeout);
   }
@@ -145,38 +145,38 @@ export function checkCls(cls: number | null, error: string | null = null): Check
   };
 }
 
-export function checkInp(inp: number | null, error: string | null = null): CheckResult {
-  if (inp === null) {
+export function checkTbt(tbt: number | null, error: string | null = null): CheckResult {
+  if (tbt === null) {
     return {
       status: 'info',
-      description: `INP non disponible — PageSpeed Insights : ${error ?? 'erreur inconnue'}.`,
-      rawData: { inp: null, pagespeedError: error },
+      description: `TBT non disponible — PageSpeed Insights : ${error ?? 'erreur inconnue'}.`,
+      rawData: { tbt: null, pagespeedError: error },
     };
   }
 
-  const ms = Math.round(inp);
+  const ms = Math.round(tbt);
 
-  if (inp < 200) {
+  if (tbt < 200) {
     return {
       status: 'pass',
-      description: `INP : ${ms}ms — bon (objectif : < 200ms).`,
-      rawData: { inpMs: inp },
+      description: `TBT : ${ms}ms — bon (objectif : < 200ms). La page répond rapidement aux interactions.`,
+      rawData: { tbtMs: tbt },
     };
   }
 
-  if (inp < 500) {
+  if (tbt < 600) {
     return {
       status: 'warning',
-      description: `INP : ${ms}ms — amélioration nécessaire (objectif : < 200ms). Les interactions sont lentes.`,
-      businessNote: 'Les interactions pourraient être plus réactives. Réduisez le JavaScript bloquant.',
-      rawData: { inpMs: inp },
+      description: `TBT : ${ms}ms — amélioration nécessaire (objectif : < 200ms). Le JavaScript bloque le thread principal.`,
+      businessNote: 'Le navigateur est bloqué trop longtemps par des scripts — réduisez le JavaScript non critique et différez-le.',
+      rawData: { tbtMs: tbt },
     };
   }
 
   return {
     status: 'fail',
-    description: `INP : ${ms}ms — mauvais. Les interactions avec la page sont très lentes.`,
-    businessNote: 'Les interactions sont très lentes — vos visiteurs risquent d\'abandonner avant de convertir.',
-    rawData: { inpMs: inp },
+    description: `TBT : ${ms}ms — mauvais. Les interactions utilisateur risquent d'être très lentes.`,
+    businessNote: 'Un TBT élevé indique que vos visiteurs attendent avant de pouvoir cliquer — impact direct sur le taux de conversion.',
+    rawData: { tbtMs: tbt },
   };
 }

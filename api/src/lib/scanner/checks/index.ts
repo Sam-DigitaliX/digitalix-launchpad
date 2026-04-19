@@ -21,7 +21,7 @@ import { postRejectViolationsCheck } from './post-reject-violations.js';
 import { pageLoadCheck } from './page-load.js';
 import { scriptsCheck } from './scripts.js';
 import { scriptLoadingCheck } from './script-loading.js';
-export { fetchPageSpeedMetrics, checkLcp, checkCls, checkInp } from './pagespeed.js';
+export { fetchPageSpeedMetrics, checkLcp, checkCls, checkTbt } from './pagespeed.js';
 
 export const allChecks: CheckModule[] = [
   // Tracking Setup

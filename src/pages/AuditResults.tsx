@@ -492,7 +492,7 @@ const ACTION_PREFIXES: Record<string, string> = {
   'scripts-count': 'Réduire',
   lcp: 'Améliorer',
   cls: 'Corriger',
-  inp: 'Améliorer',
+  tbt: 'Améliorer',
   'tag-firing-order': 'Corriger',
   tiktok: 'Installer',
   linkedin: 'Installer',
@@ -575,7 +575,7 @@ const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
    Performance Section
    ══════════════════════════════════════════════════════════════════ */
 
-const PERFORMANCE_IDS = ['page-load', 'lcp', 'cls', 'inp', 'scripts-count', 'script-loading'];
+const PERFORMANCE_IDS = ['page-load', 'lcp', 'cls', 'tbt', 'scripts-count', 'script-loading'];
 
 function MetricGauge({ value, thresholds, unit, label, status, errorDetail }: {
   value: number | null;
@@ -627,21 +627,21 @@ const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
 
   const lcp = perfChecks.find((c) => c.id === 'lcp');
   const cls = perfChecks.find((c) => c.id === 'cls');
-  const inp = perfChecks.find((c) => c.id === 'inp');
+  const tbt = perfChecks.find((c) => c.id === 'tbt');
   const pageLoad = perfChecks.find((c) => c.id === 'page-load');
   const scriptsCount = perfChecks.find((c) => c.id === 'scripts-count');
   const scriptLoading = perfChecks.find((c) => c.id === 'script-loading');
 
   const lcpRaw = lcp ? parseRawData(lcp) : {};
   const clsRaw = cls ? parseRawData(cls) : {};
-  const inpRaw = inp ? parseRawData(inp) : {};
+  const tbtRaw = tbt ? parseRawData(tbt) : {};
   const pageLoadRaw = pageLoad ? parseRawData(pageLoad) : {};
   const scriptsRaw = scriptsCount ? parseRawData(scriptsCount) : {};
   const loadingRaw = scriptLoading ? parseRawData(scriptLoading) : {};
 
   const lcpValue = lcpRaw.lcpMs != null ? Number((Number(lcpRaw.lcpMs) / 1000).toFixed(1)) : null;
   const clsValue = clsRaw.cls != null ? Number(Number(clsRaw.cls).toFixed(2)) : null;
-  const inpValue = inpRaw.inpMs != null ? Math.round(Number(inpRaw.inpMs)) : null;
+  const tbtValue = tbtRaw.tbtMs != null ? Math.round(Number(tbtRaw.tbtMs)) : null;
 
   return (
     <div className="space-y-4">
@@ -670,12 +670,12 @@ const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
                 errorDetail={clsRaw.pagespeedError as string | null | undefined}
               />
               <MetricGauge
-                value={inpValue}
-                thresholds={[200, 500]}
+                value={tbtValue}
+                thresholds={[200, 600]}
                 unit="ms"
-                label="INP"
-                status={inp?.status ?? 'info'}
-                errorDetail={inpRaw.pagespeedError as string | null | undefined}
+                label="TBT"
+                status={tbt?.status ?? 'info'}
+                errorDetail={tbtRaw.pagespeedError as string | null | undefined}
               />
             </div>
           </div>
