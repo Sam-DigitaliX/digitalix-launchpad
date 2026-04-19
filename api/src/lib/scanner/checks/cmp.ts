@@ -17,23 +17,47 @@ export const cmpCheck: CheckModule = {
       if (tcfDetected) details.push('compatible TCF');
       details.push(`apparition en ${(ctx.cmp.appearanceDelayMs / 1000).toFixed(1)}s`);
 
-      const issues: string[] = [];
-      if (!ctx.cmp.acceptButtonFound) issues.push('bouton "Accepter" non trouvé');
-      if (!ctx.cmp.rejectButtonFound) issues.push('bouton "Refuser" non trouvé — non-conforme RGPD/CNIL');
+      const rawData = { provider: ctx.cmp.name, tcfDetected, ...ctx.cmp };
 
-      if (issues.length > 0) {
+      // Branch 1: Reject button completely missing → hard warning
+      if (!ctx.cmp.rejectButtonFound) {
+        const missing: string[] = ['bouton "Refuser" introuvable'];
+        if (!ctx.cmp.acceptButtonFound) missing.push('bouton "Accepter" également introuvable');
         return {
           status: 'warning',
-          description: `${details.join(', ')}. Attention : ${issues.join(', ')}.`,
-          businessNote: 'Sans bandeau de consentement conforme, vous êtes en infraction RGPD. Risque d\'amende CNIL jusqu\'à 4% du chiffre d\'affaires.',
-          rawData: { provider: ctx.cmp.name, tcfDetected, ...ctx.cmp },
+          description: `${details.join(', ')}. ${missing.join(', ')} — non-conforme RGPD/CNIL.`,
+          businessNote: 'La CNIL exige un bouton "Refuser" au même niveau visuel que "Accepter". Sans cela, vous êtes en infraction RGPD — risque d\'amende CNIL jusqu\'à 4% du chiffre d\'affaires.',
+          rawData,
         };
       }
 
+      // Branch 2: Reject is "Continuer sans accepter" style → tolerated but not recommended
+      if (ctx.cmp.rejectIsContinueWithout) {
+        return {
+          status: 'warning',
+          description: `${details.join(', ')}. Mécanisme de refus via "${ctx.cmp.rejectButtonLabel}" — toléré depuis l'arrêt Google 2022 mais non-optimal.`,
+          businessNote: 'La CNIL recommande un bouton "Refuser" explicite au même niveau visuel que "Accepter". "Continuer sans accepter" reste un dark pattern qui peut être contesté lors d\'un contrôle.',
+          rawData,
+        };
+      }
+
+      // Branch 3: Accept missing (edge case — reject exists but not accept)
+      if (!ctx.cmp.acceptButtonFound) {
+        return {
+          status: 'warning',
+          description: `${details.join(', ')}. Bouton "Accepter" non trouvé.`,
+          rawData,
+        };
+      }
+
+      // Branch 4: Clean — explicit accept + explicit reject
+      const labelNote = ctx.cmp.rejectButtonLabel
+        ? ` (bouton refus : "${ctx.cmp.rejectButtonLabel}")`
+        : '';
       return {
         status: 'pass',
-        description: `${details.join(', ')}. Boutons accepter et refuser détectés.`,
-        rawData: { provider: ctx.cmp.name, tcfDetected, ...ctx.cmp },
+        description: `${details.join(', ')}. Boutons "Accepter" et "Refuser" détectés${labelNote}.`,
+        rawData,
       };
     }
 

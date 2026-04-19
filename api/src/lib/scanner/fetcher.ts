@@ -50,6 +50,36 @@ function toBrowserCookie(c: { name: string; value: string; domain: string; path:
 
 /* ──────────────────── CMP detection ──────────────────── */
 
+// Scan the whole page for a reject button via ARIA/text patterns. Returns the label found, or null.
+async function findRejectLabelFallback(page: Page): Promise<string | null> {
+  // ARIA labels
+  for (const sel of ARIA_REJECT_SELECTORS) {
+    try {
+      const btn = await page.$(sel);
+      if (btn && await btn.isVisible()) {
+        const ariaLabel = await btn.getAttribute('aria-label');
+        return ariaLabel ?? (await btn.textContent())?.trim() ?? sel;
+      }
+    } catch { /* continue */ }
+  }
+  // Text patterns
+  for (const text of TEXT_REJECT_PATTERNS) {
+    try {
+      const btn = page.getByRole('button', { name: text, exact: false });
+      if (await btn.isVisible({ timeout: 300 }).catch(() => false)) {
+        return text;
+      }
+    } catch { /* continue */ }
+  }
+  return null;
+}
+
+function isContinueWithoutPattern(label: string | null): boolean {
+  if (!label) return false;
+  const lower = label.toLowerCase();
+  return lower.includes('continuer sans') || lower.includes('continue without');
+}
+
 async function detectCmp(page: Page, startTime: number): Promise<{ cmp: DetectedCmp | null; matchedIndex: number }> {
   // Try known CMP selectors
   for (let i = 0; i < CMP_DEFINITIONS.length; i++) {
@@ -59,12 +89,31 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
       if (banner && await banner.isVisible()) {
         const acceptBtn = await page.$(def.acceptSelector);
         const rejectBtn = await page.$(def.rejectSelector);
+
+        let rejectButtonFound = rejectBtn !== null;
+        let rejectButtonLabel: string | null = null;
+
+        if (rejectBtn) {
+          rejectButtonLabel = (await rejectBtn.getAttribute('aria-label'))
+            ?? (await rejectBtn.textContent())?.trim()
+            ?? null;
+        } else {
+          // Specific selector missed — try ARIA / text fallback before declaring missing
+          const fallbackLabel = await findRejectLabelFallback(page);
+          if (fallbackLabel) {
+            rejectButtonFound = true;
+            rejectButtonLabel = fallbackLabel;
+          }
+        }
+
         return {
           cmp: {
             name: def.name,
             appearanceDelayMs: Date.now() - startTime,
             acceptButtonFound: acceptBtn !== null,
-            rejectButtonFound: rejectBtn !== null,
+            rejectButtonFound,
+            rejectButtonLabel,
+            rejectIsContinueWithout: isContinueWithoutPattern(rejectButtonLabel),
           },
           matchedIndex: i,
         };
@@ -102,12 +151,15 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
     });
 
     if (genericCmp.found) {
+      const rejectLabel = await findRejectLabelFallback(page);
       return {
         cmp: {
           name: `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`,
           appearanceDelayMs: Date.now() - startTime,
           acceptButtonFound: true, // we'll try text fallback
-          rejectButtonFound: true,
+          rejectButtonFound: rejectLabel !== null,
+          rejectButtonLabel: rejectLabel,
+          rejectIsContinueWithout: isContinueWithoutPattern(rejectLabel),
         },
         matchedIndex: -1, // will use ARIA/text fallback for clicking
       };
