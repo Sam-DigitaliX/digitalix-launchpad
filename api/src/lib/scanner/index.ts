@@ -116,6 +116,11 @@ const noopProgress: OnProgress = () => {};
 export async function scanUrl(url: string, onProgress: OnProgress = noopProgress): Promise<ScanResult> {
   // Run Playwright scan first, then PageSpeed (sequential to avoid resource contention on VPS)
   const ctxResult = await Promise.allSettled([fetchPage(url, onProgress)]);
+
+  if (ctxResult[0].status === 'fulfilled') {
+    onProgress({ type: 'step_done', label: 'Mesure des Core Web Vitals (PageSpeed Insights)...' });
+  }
+
   const pageSpeedResult = await Promise.allSettled([fetchPageSpeedMetrics(url)]);
 
   if (ctxResult[0].status === 'rejected') {
