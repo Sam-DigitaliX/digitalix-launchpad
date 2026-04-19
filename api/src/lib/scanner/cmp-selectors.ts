@@ -59,9 +59,10 @@ export const CMP_DEFINITIONS: CmpDefinition[] = [
   },
   {
     name: 'Sirdata',
-    bannerSelector: '#sd-cmp, .sd-cmp-container',
-    acceptSelector: '.sd-cmp-JHbJb, [data-testid="sd-accept-all"]',
-    rejectSelector: '.sd-cmp-Wbwvu, [data-testid="sd-refuse-all"]',
+    // Hashed classes (.sd-cmp-JHbJb) change on redeploy — rely on stable IDs and the ARIA/text fallback in detectCmp
+    bannerSelector: '#sd-cmp, .sd-cmp-container, [id^="sd-cmp"]',
+    acceptSelector: '[data-testid="sd-accept-all"], [data-info="accept-all"]',
+    rejectSelector: '[data-testid="sd-refuse-all"], [data-info="refuse-all"]',
   },
   {
     name: 'Iubenda',
@@ -99,6 +100,95 @@ export const CMP_DEFINITIONS: CmpDefinition[] = [
     acceptSelector: '.klaro .cm-btn-accept-all, .klaro .cm-btn-success',
     rejectSelector: '.klaro .cm-btn-decline, .klaro .cm-btn-danger',
   },
+  /* ─── Level 2 additions (Google-certified partner CMPs) ─── */
+  {
+    name: 'Sourcepoint',
+    bannerSelector: '.message-container, [data-sp-message-id], .sp_message_container',
+    acceptSelector: 'button.sp_choice_type_11, [title="Accept all" i], [aria-label*="Accept all" i]',
+    rejectSelector: 'button.sp_choice_type_13, [title="Reject all" i], [aria-label*="Reject all" i]',
+  },
+  {
+    name: 'TrustArc',
+    bannerSelector: '#truste-consent-track, #truste-consent-content, .truste_box_overlay',
+    acceptSelector: '#truste-consent-button, .truste-consent-button, .call',
+    rejectSelector: '#truste-consent-required, .required',
+  },
+  {
+    name: 'Termly',
+    bannerSelector: '#termly-code-snippet-support, .termly-embed-banner, [data-termly]',
+    acceptSelector: '[data-termly-action="accept-all"], [data-role="accept-all"]',
+    rejectSelector: '[data-termly-action="decline-all"], [data-role="decline-all"]',
+  },
+  {
+    name: 'Osano',
+    bannerSelector: '.osano-cm-window, .osano-cm-dialog',
+    acceptSelector: '.osano-cm-accept-all, .osano-cm-button--type_acceptAll',
+    rejectSelector: '.osano-cm-denyAll, .osano-cm-button--type_denyAll',
+  },
+  {
+    name: 'Ketch',
+    bannerSelector: '#lanyard_root, [id^="ketch-"], .ketch-banner',
+    acceptSelector: '[data-testid="acceptButton"], .ketch-banner-action--accept',
+    rejectSelector: '[data-testid="rejectButton"], .ketch-banner-action--reject',
+  },
+  {
+    name: 'Tealium Consent Manager',
+    bannerSelector: '#consent_prompt, .privacy_prompt, #privacy_prompt',
+    acceptSelector: '#consent_prompt_submit, .privacy_prompt_submit_all',
+    rejectSelector: '#consent_prompt_decline, .privacy_prompt_decline',
+  },
+  {
+    name: 'Adobe Privacy & Consent',
+    bannerSelector: '#feds-privacy, .feds-privacy-modal, [data-feds-privacy]',
+    acceptSelector: '.feds-privacy-accept, [data-feds="privacy-accept"]',
+    rejectSelector: '.feds-privacy-reject, [data-feds="privacy-reject"]',
+  },
+  {
+    name: 'Piwik PRO Consent Manager',
+    bannerSelector: '.ppms_cm_popup_overlay, .ppms_cm_popup',
+    acceptSelector: '.ppms_cm_agree-to-all, [data-cm="accept-all"]',
+    rejectSelector: '.ppms_cm_reject-all, [data-cm="reject-all"]',
+  },
+];
+
+/**
+ * Script URL signatures for CMP identification. Used as:
+ * - Enrichment when generic "CMP custom" is detected in DOM (fetcher.ts)
+ * - Fallback when no known CMP selector matched (cmp.ts)
+ *
+ * Covers Google's certified CMP partner list for Consent Mode v2 / TCF v2.2.
+ */
+export const CMP_SCRIPT_PATTERNS: { name: string; patterns: string[] }[] = [
+  { name: 'Cookiebot', patterns: ['consent.cookiebot.com', 'consent.cookiebot.eu'] },
+  { name: 'Didomi', patterns: ['sdk.privacy-center.org', 'didomi'] },
+  { name: 'OneTrust', patterns: ['cdn.cookielaw.org', 'cookiepro.com', 'onetrust'] },
+  { name: 'Axeptio', patterns: ['static.axept.io', 'axeptio'] },
+  { name: 'Sirdata', patterns: ['sddan.com', 'sirdata'] },
+  { name: 'TarteAuCitron', patterns: ['tarteaucitron'] },
+  { name: 'Usercentrics', patterns: ['usercentrics', 'app.usercentrics.eu'] },
+  { name: 'CookieYes', patterns: ['cookieyes', 'cdn-cookieyes.com'] },
+  { name: 'Quantcast / InMobi Choice', patterns: ['quantcast', 'choice.mgr.consensu.org', 'choice.inmobi.com'] },
+  { name: 'Commanders Act', patterns: ['cmp.commander1.com', 'commandersact'] },
+  { name: 'Iubenda', patterns: ['iubenda.com'] },
+  { name: 'Complianz', patterns: ['complianz'] },
+  { name: 'Consentmanager', patterns: ['consentmanager.net', 'delivery.consentmanager.net'] },
+  { name: 'CookieFirst', patterns: ['cookiefirst.com'] },
+  { name: 'Klaro', patterns: ['klaro'] },
+  { name: 'Sourcepoint', patterns: ['sourcepoint.com', 'cdn.privacy-mgmt.com', 'sp-prod.net'] },
+  { name: 'TrustArc', patterns: ['trustarc.com', 'truste.com'] },
+  { name: 'Termly', patterns: ['termly.io', 'app.termly.io'] },
+  { name: 'Osano', patterns: ['osano.com'] },
+  { name: 'Ketch', patterns: ['ketch.com', 'ketchjs.com'] },
+  { name: 'Cassie', patterns: ['cassiecloud.com'] },
+  { name: 'Clym', patterns: ['clym.io'] },
+  { name: 'Tealium', patterns: ['tags.tiqcdn.com', 'tealium'] },
+  { name: 'Adobe Privacy & Consent', patterns: ['adobeprivacy', 'privacy.adobe.com', 'feds.adobe.com'] },
+  { name: 'Piwik PRO', patterns: ['piwik.pro', 'containers.piwik.pro'] },
+  { name: 'Crownpeak / Evidon', patterns: ['evidon.com', 'betrad.com'] },
+  { name: 'Securiti', patterns: ['securiti.ai'] },
+  { name: 'Secureprivacy', patterns: ['secureprivacy.ai'] },
+  { name: 'Illow', patterns: ['illow.io'] },
+  { name: 'Legalmonster', patterns: ['legalmonster'] },
 ];
 
 /* ──────────────────── Fallback selectors ──────────────────── */

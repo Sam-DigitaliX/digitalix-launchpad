@@ -2,6 +2,7 @@ import { chromium, type Browser, type BrowserContext, type Page } from 'playwrig
 import * as cheerio from 'cheerio';
 import {
   CMP_DEFINITIONS,
+  CMP_SCRIPT_PATTERNS,
   ARIA_ACCEPT_SELECTORS,
   ARIA_REJECT_SELECTORS,
   TEXT_ACCEPT_PATTERNS,
@@ -152,9 +153,23 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
 
     if (genericCmp.found) {
       const rejectLabel = await findRejectLabelFallback(page);
+
+      // Enrich name via script URL signatures so we don't just say "CMP custom"
+      const scriptUrls = await page.evaluate(() =>
+        Array.from(document.scripts).map((s) => s.src).filter(Boolean).join(' ')
+      ).catch(() => '');
+      const lower = scriptUrls.toLowerCase();
+      const matchedVendor = CMP_SCRIPT_PATTERNS.find((sig) =>
+        sig.patterns.some((p) => lower.includes(p.toLowerCase()))
+      );
+
+      const name = matchedVendor
+        ? matchedVendor.name
+        : `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`;
+
       return {
         cmp: {
-          name: `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`,
+          name,
           appearanceDelayMs: Date.now() - startTime,
           acceptButtonFound: true, // we'll try text fallback
           rejectButtonFound: rejectLabel !== null,
