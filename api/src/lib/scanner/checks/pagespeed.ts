@@ -7,6 +7,7 @@ interface PageSpeedMetrics {
   lcp: number | null;
   cls: number | null;
   inp: number | null;
+  error: string | null;
 }
 
 export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetrics> {
@@ -35,8 +36,10 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
 
     if (!response.ok) {
       const body = await response.text().catch(() => '<unreadable>');
-      console.error(`[pagespeed] HTTP ${response.status} after ${elapsed}ms — body: ${body.slice(0, 500)}`);
-      return { lcp: null, cls: null, inp: null };
+      const snippet = body.slice(0, 200).replace(/\s+/g, ' ');
+      const error = `HTTP ${response.status} after ${elapsed}ms${hasKey ? '' : ' (no API key)'} — ${snippet}`;
+      console.error(`[pagespeed] ${error}`);
+      return { lcp: null, cls: null, inp: null, error };
     }
 
     const data = await response.json() as Record<string, unknown>;
@@ -44,14 +47,16 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
       .lighthouseResult?.audits;
 
     if (!audits) {
-      console.error(`[pagespeed] No lighthouseResult.audits in response after ${elapsed}ms — keys: ${Object.keys(data).join(',')}`);
-      return { lcp: null, cls: null, inp: null };
+      const error = `Réponse sans lighthouseResult.audits (clés: ${Object.keys(data).join(',')})`;
+      console.error(`[pagespeed] ${error}`);
+      return { lcp: null, cls: null, inp: null, error };
     }
 
     const metrics = {
       lcp: audits['largest-contentful-paint']?.numericValue ?? null,
       cls: audits['cumulative-layout-shift']?.numericValue ?? null,
       inp: audits['interaction-to-next-paint']?.numericValue ?? null,
+      error: null,
     };
 
     console.log(`[pagespeed] OK in ${elapsed}ms — lcp=${metrics.lcp} cls=${metrics.cls} inp=${metrics.inp}`);
@@ -60,19 +65,20 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
     const elapsed = Date.now() - startedAt;
     const isAbort = err instanceof Error && err.name === 'AbortError';
     const reason = isAbort ? `timeout after ${TIMEOUT_MS}ms` : (err instanceof Error ? `${err.name}: ${err.message}` : String(err));
-    console.error(`[pagespeed] Fetch failed after ${elapsed}ms — ${reason}`);
-    return { lcp: null, cls: null, inp: null };
+    const error = `${reason}${hasKey ? '' : ' (no API key)'} — elapsed ${elapsed}ms`;
+    console.error(`[pagespeed] ${error}`);
+    return { lcp: null, cls: null, inp: null, error };
   } finally {
     clearTimeout(timeout);
   }
 }
 
-export function checkLcp(lcp: number | null): CheckResult {
+export function checkLcp(lcp: number | null, error: string | null = null): CheckResult {
   if (lcp === null) {
     return {
       status: 'info',
-      description: 'LCP non disponible — impossible de contacter l\'API PageSpeed Insights.',
-      rawData: { lcp: null },
+      description: `LCP non disponible — PageSpeed Insights : ${error ?? 'erreur inconnue'}.`,
+      rawData: { lcp: null, pagespeedError: error },
     };
   }
 
@@ -103,12 +109,12 @@ export function checkLcp(lcp: number | null): CheckResult {
   };
 }
 
-export function checkCls(cls: number | null): CheckResult {
+export function checkCls(cls: number | null, error: string | null = null): CheckResult {
   if (cls === null) {
     return {
       status: 'info',
-      description: 'CLS non disponible — impossible de contacter l\'API PageSpeed Insights.',
-      rawData: { cls: null },
+      description: `CLS non disponible — PageSpeed Insights : ${error ?? 'erreur inconnue'}.`,
+      rawData: { cls: null, pagespeedError: error },
     };
   }
 
@@ -139,12 +145,12 @@ export function checkCls(cls: number | null): CheckResult {
   };
 }
 
-export function checkInp(inp: number | null): CheckResult {
+export function checkInp(inp: number | null, error: string | null = null): CheckResult {
   if (inp === null) {
     return {
       status: 'info',
-      description: 'INP non disponible — impossible de contacter l\'API PageSpeed Insights.',
-      rawData: { inp: null },
+      description: `INP non disponible — PageSpeed Insights : ${error ?? 'erreur inconnue'}.`,
+      rawData: { inp: null, pagespeedError: error },
     };
   }
 
