@@ -10,22 +10,32 @@ interface PageSpeedMetrics {
 }
 
 export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetrics> {
+  const apiKey = process.env.PAGESPEED_API_KEY ?? '';
+  const hasKey = apiKey.length > 0;
+
   const params = new URLSearchParams({
     url,
     strategy: 'mobile',
     category: 'performance',
-    key: process.env.PAGESPEED_API_KEY ?? '',
+    key: apiKey,
   });
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  const startedAt = Date.now();
+
+  console.log(`[pagespeed] Start url=${url} hasKey=${hasKey} timeoutMs=${TIMEOUT_MS}`);
 
   try {
     const response = await fetch(`${PAGESPEED_API}?${params}`, {
       signal: controller.signal,
     });
 
+    const elapsed = Date.now() - startedAt;
+
     if (!response.ok) {
+      const body = await response.text().catch(() => '<unreadable>');
+      console.error(`[pagespeed] HTTP ${response.status} after ${elapsed}ms — body: ${body.slice(0, 500)}`);
       return { lcp: null, cls: null, inp: null };
     }
 
@@ -34,15 +44,23 @@ export async function fetchPageSpeedMetrics(url: string): Promise<PageSpeedMetri
       .lighthouseResult?.audits;
 
     if (!audits) {
+      console.error(`[pagespeed] No lighthouseResult.audits in response after ${elapsed}ms — keys: ${Object.keys(data).join(',')}`);
       return { lcp: null, cls: null, inp: null };
     }
 
-    return {
+    const metrics = {
       lcp: audits['largest-contentful-paint']?.numericValue ?? null,
       cls: audits['cumulative-layout-shift']?.numericValue ?? null,
       inp: audits['interaction-to-next-paint']?.numericValue ?? null,
     };
-  } catch {
+
+    console.log(`[pagespeed] OK in ${elapsed}ms — lcp=${metrics.lcp} cls=${metrics.cls} inp=${metrics.inp}`);
+    return metrics;
+  } catch (err) {
+    const elapsed = Date.now() - startedAt;
+    const isAbort = err instanceof Error && err.name === 'AbortError';
+    const reason = isAbort ? `timeout after ${TIMEOUT_MS}ms` : (err instanceof Error ? `${err.name}: ${err.message}` : String(err));
+    console.error(`[pagespeed] Fetch failed after ${elapsed}ms — ${reason}`);
     return { lcp: null, cls: null, inp: null };
   } finally {
     clearTimeout(timeout);
