@@ -139,7 +139,14 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
   const ctx = ctxResult[0].value;
   const pageSpeed = pageSpeedResult[0].status === 'fulfilled'
     ? pageSpeedResult[0].value
-    : { lcp: null, cls: null, inp: null };
+    : {
+        lcp: null,
+        cls: null,
+        inp: null,
+        error: pageSpeedResult[0].reason instanceof Error
+          ? `${pageSpeedResult[0].reason.name}: ${pageSpeedResult[0].reason.message}`
+          : 'Promise rejected',
+      };
 
   onProgress({ type: 'step_done', label: 'Exécution des vérifications...' });
 
@@ -150,7 +157,7 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
   });
 
   // Add PageSpeed checks
-  const lcpResult = checkLcp(pageSpeed.lcp);
+  const lcpResult = checkLcp(pageSpeed.lcp, pageSpeed.error);
   checks.push({
     id: 'lcp',
     category: 'performance',
@@ -163,7 +170,7 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     businessNote: lcpResult.businessNote ?? null,
   });
 
-  const clsResult = checkCls(pageSpeed.cls);
+  const clsResult = checkCls(pageSpeed.cls, pageSpeed.error);
   checks.push({
     id: 'cls',
     category: 'performance',
@@ -176,7 +183,7 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     businessNote: clsResult.businessNote ?? null,
   });
 
-  const inpResult = checkInp(pageSpeed.inp);
+  const inpResult = checkInp(pageSpeed.inp, pageSpeed.error);
   checks.push({
     id: 'inp',
     category: 'performance',
