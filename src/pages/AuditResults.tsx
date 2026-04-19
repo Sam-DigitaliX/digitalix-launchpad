@@ -846,6 +846,7 @@ const AuditResults = () => {
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [emailError, setEmailError] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
+  const [consentChecked, setConsentChecked] = useState(false);
 
   const scanStarted = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -973,6 +974,11 @@ const AuditResults = () => {
 
     if (!email.trim() || !email.includes("@") || !email.includes(".")) {
       setEmailError("Veuillez entrer un email valide");
+      return;
+    }
+
+    if (!consentChecked) {
+      setEmailError("Veuillez accepter la politique de confidentialité");
       return;
     }
 
@@ -1111,49 +1117,77 @@ const AuditResults = () => {
                 {/* Email + consent during scan */}
                 <div className="ev-card p-6 mt-8 text-left">
                   <div className="relative z-10">
-                    <div className="flex items-center gap-2 mb-3">
-                      <Mail className="w-4 h-4 text-primary" />
-                      <span className="font-semibold text-sm text-foreground">Recevez votre rapport par email</span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mb-4">
-                      Entrez votre email pour débloquer le rapport complet dès la fin de l'analyse.
-                    </p>
-                    <form
-                      onSubmit={handleEmailSubmit}
-                      className="flex flex-col sm:flex-row gap-2 mb-3"
-                    >
-                      <div className="relative flex-1">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-                        <Input
-                          type="email"
-                          placeholder="votre@email.com"
-                          value={email}
-                          onChange={(e) => {
-                            setEmail(e.target.value);
-                            setEmailError("");
-                          }}
-                          className="pl-10 ev-input"
-                        />
+                    {isUnlocked ? (
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                        <div>
+                          <p className="font-semibold text-sm text-foreground">
+                            Email enregistré
+                          </p>
+                          <p className="text-xs text-muted-foreground mt-1">
+                            Vous recevrez votre rapport à <span className="text-foreground">{email}</span> dès la fin de l'analyse.
+                          </p>
+                        </div>
                       </div>
-                      <Button
-                        type="submit"
-                        variant="heroGradient"
-                        disabled={emailSubmitting || !email.trim()}
-                      >
-                        {emailSubmitting ? (
-                          <Loader2 className="w-4 h-4 animate-spin" />
-                        ) : (
-                          "Débloquer"
+                    ) : (
+                      <>
+                        <div className="flex items-center gap-2 mb-3">
+                          <Mail className="w-4 h-4 text-primary" />
+                          <span className="font-semibold text-sm text-foreground">Recevez votre rapport par email</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mb-4">
+                          Entrez votre email pour débloquer le rapport complet dès la fin de l'analyse.
+                        </p>
+                        <form
+                          onSubmit={handleEmailSubmit}
+                          className="flex flex-col sm:flex-row gap-2 mb-3"
+                        >
+                          <div className="relative flex-1">
+                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                            <Input
+                              type="email"
+                              placeholder="votre@email.com"
+                              value={email}
+                              onChange={(e) => {
+                                setEmail(e.target.value);
+                                setEmailError("");
+                              }}
+                              className="pl-10 ev-input"
+                            />
+                          </div>
+                          <Button
+                            type="submit"
+                            variant="heroGradient"
+                            disabled={emailSubmitting || !email.trim() || !consentChecked}
+                          >
+                            {emailSubmitting ? (
+                              <Loader2 className="w-4 h-4 animate-spin" />
+                            ) : (
+                              "Débloquer"
+                            )}
+                          </Button>
+                        </form>
+                        <label className="flex gap-2 items-start cursor-pointer mb-2">
+                          <input
+                            type="checkbox"
+                            checked={consentChecked}
+                            onChange={(e) => {
+                              setConsentChecked(e.target.checked);
+                              setEmailError("");
+                            }}
+                            className="mt-0.5 w-4 h-4 shrink-0 accent-primary cursor-pointer"
+                            required
+                          />
+                          <span className="text-[11px] text-muted-foreground/90 leading-relaxed">
+                            J'accepte de recevoir mon rapport d'audit par email et que mes données soient traitées conformément à la{" "}
+                            <a href="/politique-de-confidentialite" className="underline hover:text-foreground" target="_blank" rel="noreferrer">politique de confidentialité</a>. Conformément au RGPD, je peux retirer mon consentement à tout moment.
+                          </span>
+                        </label>
+                        {emailError && (
+                          <p className="text-destructive text-xs mt-2">{emailError}</p>
                         )}
-                      </Button>
-                    </form>
-                    {emailError && (
-                      <p className="text-destructive text-xs mb-2">{emailError}</p>
+                      </>
                     )}
-                    <p className="text-[10px] text-muted-foreground/70">
-                      En soumettant, vous acceptez de recevoir votre rapport par email. Vos données sont traitées conformément à notre{" "}
-                      <a href="/politique-de-confidentialite" className="underline hover:text-foreground">politique de confidentialité</a>. Pas de spam.
-                    </p>
                   </div>
                 </div>
               </div>
@@ -1308,7 +1342,7 @@ const AuditResults = () => {
                             <Button
                               type="submit"
                               variant="heroGradient"
-                              disabled={emailSubmitting}
+                              disabled={emailSubmitting || !consentChecked}
                             >
                               {emailSubmitting ? (
                                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -1317,6 +1351,22 @@ const AuditResults = () => {
                               )}
                             </Button>
                           </form>
+                          <label className="flex gap-2 items-start cursor-pointer mt-3 text-left">
+                            <input
+                              type="checkbox"
+                              checked={consentChecked}
+                              onChange={(e) => {
+                                setConsentChecked(e.target.checked);
+                                setEmailError("");
+                              }}
+                              className="mt-0.5 w-4 h-4 shrink-0 accent-primary cursor-pointer"
+                              required
+                            />
+                            <span className="text-[11px] text-muted-foreground/90 leading-relaxed">
+                              J'accepte de recevoir mon rapport d'audit par email et que mes données soient traitées conformément à la{" "}
+                              <a href="/politique-de-confidentialite" className="underline hover:text-foreground" target="_blank" rel="noreferrer">politique de confidentialité</a>. Conformément au RGPD, je peux retirer mon consentement à tout moment.
+                            </span>
+                          </label>
                           {emailError && (
                             <p className="text-destructive text-xs mt-2">
                               {emailError}
