@@ -138,7 +138,7 @@ const AuditTracking = () => {
 
               {/* Subtitle */}
               <p className="text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
-                Analysez n'importe quel site web en 30 secondes. Découvrez les
+                Analysez n'importe quel site web en 1 à 2 minutes. Découvrez les
                 fuites de données, les problèmes de conformité et les
                 opportunités manquées.
               </p>
@@ -197,7 +197,7 @@ const AuditTracking = () => {
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
                   <Zap className="w-4 h-4 icon-gradient" />
-                  <span className="text-sm text-foreground font-medium">Résultat instantané</span>
+                  <span className="text-sm text-foreground font-medium">Rapport sous 2 min</span>
                 </div>
                 <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/[0.04] border border-white/[0.08]">
                   <CheckCircle2 className="w-4 h-4 icon-gradient" />
