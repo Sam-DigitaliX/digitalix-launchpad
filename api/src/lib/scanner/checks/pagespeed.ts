@@ -1,7 +1,7 @@
 import type { CheckResult } from '../types.js';
 
 const PAGESPEED_API = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed';
-const TIMEOUT_MS = 30000;
+const TIMEOUT_MS = 90000;
 
 interface PageSpeedMetrics {
   lcp: number | null;
