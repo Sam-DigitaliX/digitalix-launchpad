@@ -1,5 +1,5 @@
 import { fetchPage } from './fetcher.js';
-import { allChecks, fetchPageSpeedMetrics, checkLcp, checkCls, checkInp } from './checks/index.js';
+import { allChecks, fetchPageSpeedMetrics, checkLcp, checkCls, checkTbt } from './checks/index.js';
 import type { CheckResult, CheckModule, OnProgress } from './types.js';
 
 interface AuditCheck {
@@ -147,7 +147,7 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     : {
         lcp: null,
         cls: null,
-        inp: null,
+        tbt: null,
         error: pageSpeedResult[0].reason instanceof Error
           ? `${pageSpeedResult[0].reason.name}: ${pageSpeedResult[0].reason.message}`
           : 'Promise rejected',
@@ -188,17 +188,17 @@ export async function scanUrl(url: string, onProgress: OnProgress = noopProgress
     businessNote: clsResult.businessNote ?? null,
   });
 
-  const inpResult = checkInp(pageSpeed.inp, pageSpeed.error);
+  const tbtResult = checkTbt(pageSpeed.tbt, pageSpeed.error);
   checks.push({
-    id: 'inp',
+    id: 'tbt',
     category: 'performance',
-    name: 'INP (Interaction to Next Paint)',
-    status: inpResult.status,
-    description: inpResult.description,
+    name: 'TBT (Total Blocking Time)',
+    status: tbtResult.status,
+    description: tbtResult.description,
     impact: 'medium',
     gated: true,
-    rawData: inpResult.rawData ?? {},
-    businessNote: inpResult.businessNote ?? null,
+    rawData: tbtResult.rawData ?? {},
+    businessNote: tbtResult.businessNote ?? null,
   });
 
   // Compute scores
