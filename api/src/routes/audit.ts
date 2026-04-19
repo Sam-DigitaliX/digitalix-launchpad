@@ -315,9 +315,14 @@ app.post('/:id/unlock', async (c) => {
   const id = c.req.param('id');
   const body = await c.req.json();
   const email = body.email;
+  const gdprConsent = body.gdpr_consent;
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     return c.json({ error: 'Valid email is required' }, 400);
+  }
+
+  if (gdprConsent !== true) {
+    return c.json({ error: 'GDPR consent is required' }, 400);
   }
 
   const auditRows = await sql`
@@ -331,9 +336,12 @@ app.post('/:id/unlock', async (c) => {
   const audit = auditRows[0];
 
   const contactRows = await sql`
-    INSERT INTO contacts (email, first_seen_at, last_seen_at)
-    VALUES (${email}, now(), now())
-    ON CONFLICT (email) DO UPDATE SET last_seen_at = now()
+    INSERT INTO contacts (email, gdpr_consent, gdpr_consent_at, first_seen_at, last_seen_at)
+    VALUES (${email}, true, now(), now(), now())
+    ON CONFLICT (email) DO UPDATE SET
+      gdpr_consent = true,
+      gdpr_consent_at = COALESCE(contacts.gdpr_consent_at, now()),
+      last_seen_at = now()
     RETURNING id
   `;
 

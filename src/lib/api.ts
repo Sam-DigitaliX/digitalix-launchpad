@@ -141,10 +141,10 @@ export function getAudit(id: string) {
   return request<AuditResult>('/api/audit/' + id);
 }
 
-export function unlockAudit(id: string, email: string) {
+export function unlockAudit(id: string, email: string, gdprConsent: boolean) {
   return request<{ success: boolean; checks: AuditCheck[]; contactId: string }>('/api/audit/' + id + '/unlock', {
     method: 'POST',
-    body: JSON.stringify({ email }),
+    body: JSON.stringify({ email, gdpr_consent: gdprConsent }),
   });
 }
 
