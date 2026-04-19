@@ -3,7 +3,7 @@ import type { CheckModule, ScanContext } from '../types.js';
 export const capiGoogleCheck: CheckModule = {
   id: 'capi-google',
   category: 'serverside',
-  name: 'Google Server-Side API',
+  name: 'Google Ads server-side (Enhanced Conversions)',
   impact: 'high',
   gated: true,
   run(ctx: ScanContext) {
@@ -24,7 +24,7 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm && gclAuServerSet && hasUserData) {
       return {
         status: 'pass',
-        description: 'sGTM détecté avec _gcl_au server-side et enhanced conversions — tracking Google server-side complet.',
+        description: 'sGTM + _gcl_au first-party + Enhanced Conversions détectés — routing Google Ads server-side complet.',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
@@ -32,7 +32,7 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm && gclAuServerSet) {
       return {
         status: 'pass',
-        description: 'sGTM détecté avec _gcl_au posé en server-side.',
+        description: 'sGTM + _gcl_au first-party détectés — Google Ads routé server-side. Enhanced Conversions non détectées (recommandé pour enrichir le matching).',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
@@ -40,16 +40,16 @@ export const capiGoogleCheck: CheckModule = {
     if (hasSgtm) {
       return {
         status: 'warning',
-        description: 'sGTM détecté mais _gcl_au non posé en server-side. Configuration incomplète.',
-        businessNote: 'Sans tracking server-side Google complet, vos données de conversion sont incomplètes et vulnérables aux bloqueurs.',
+        description: 'sGTM détecté mais _gcl_au n\'est pas posé en first-party — les conversions Google Ads ne transitent pas par votre serveur.',
+        businessNote: 'Configurez le tag Google Ads dans votre container sGTM pour propager _gcl_au en first-party (résiste aux bloqueurs et au capping ITP).',
         rawData: { hasSgtm, gclAuServerSet, hasUserData },
       };
     }
 
     return {
       status: 'fail',
-      description: 'Pas de tracking Google server-side détecté.',
-      businessNote: 'Sans tracking server-side Google, vos données de conversion sont incomplètes et vulnérables aux bloqueurs.',
+      description: 'Pas de sGTM détecté — les conversions Google Ads partent en client-side uniquement (vulnérables aux bloqueurs et à ITP).',
+      businessNote: 'Mettez en place sGTM avec le tag Google Ads pour routing server-side : meilleure qualité de signal, conversions résistantes aux bloqueurs.',
       rawData: { hasSgtm: false, gclAuServerSet, hasUserData },
     };
   },
