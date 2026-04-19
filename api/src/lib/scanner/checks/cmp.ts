@@ -1,4 +1,5 @@
 import type { CheckModule, ScanContext } from '../types.js';
+import { CMP_SCRIPT_PATTERNS } from '../cmp-selectors.js';
 
 export const cmpCheck: CheckModule = {
   id: 'cmp',
@@ -61,21 +62,10 @@ export const cmpCheck: CheckModule = {
       };
     }
 
-    // Fallback: HTML-based detection
-    const CMP_PATTERNS = [
-      { name: 'Cookiebot', p: ['consent.cookiebot.com'] },
-      { name: 'Didomi', p: ['sdk.privacy-center.org', 'didomi'] },
-      { name: 'OneTrust', p: ['cdn.cookielaw.org', 'onetrust'] },
-      { name: 'Axeptio', p: ['static.axept.io', 'axeptio'] },
-      { name: 'Sirdata', p: ['sirdata', 'sddan.com'] },
-      { name: 'TarteAuCitron', p: ['tarteaucitron'] },
-      { name: 'Usercentrics', p: ['usercentrics'] },
-      { name: 'CookieYes', p: ['cookieyes'] },
-    ];
-
+    // Fallback: HTML-based detection using the shared CMP script pattern map
     const allContent = [...ctx.scripts, ...ctx.inlineScripts].join(' ').toLowerCase();
-    for (const sig of CMP_PATTERNS) {
-      if (sig.p.some((p) => allContent.includes(p.toLowerCase()))) {
+    for (const sig of CMP_SCRIPT_PATTERNS) {
+      if (sig.patterns.some((p) => allContent.includes(p.toLowerCase()))) {
         return {
           status: 'pass',
           description: `CMP détectée : ${sig.name} (détection HTML).`,
