@@ -577,12 +577,13 @@ const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
 
 const PERFORMANCE_IDS = ['page-load', 'lcp', 'cls', 'inp', 'scripts-count', 'script-loading'];
 
-function MetricGauge({ value, thresholds, unit, label, status }: {
+function MetricGauge({ value, thresholds, unit, label, status, errorDetail }: {
   value: number | null;
   thresholds: [number, number];
   unit: string;
   label: string;
   status: string;
+  errorDetail?: string | null;
 }) {
   if (value === null) {
     return (
@@ -590,6 +591,9 @@ function MetricGauge({ value, thresholds, unit, label, status }: {
         <p className="text-xs text-muted-foreground mb-1">{label}</p>
         <p className="text-2xl font-bold text-muted-foreground font-display">—</p>
         <p className="text-[10px] text-muted-foreground mt-1">Non disponible</p>
+        {errorDetail && (
+          <p className="text-[9px] text-amber-400/80 mt-1 break-words px-1">{errorDetail}</p>
+        )}
       </div>
     );
   }
@@ -655,6 +659,7 @@ const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
                 unit="s"
                 label="LCP"
                 status={lcp?.status ?? 'info'}
+                errorDetail={lcpRaw.pagespeedError as string | null | undefined}
               />
               <MetricGauge
                 value={clsValue}
@@ -662,6 +667,7 @@ const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
                 unit=""
                 label="CLS"
                 status={cls?.status ?? 'info'}
+                errorDetail={clsRaw.pagespeedError as string | null | undefined}
               />
               <MetricGauge
                 value={inpValue}
@@ -669,6 +675,7 @@ const PerformanceSection = ({ checks }: { checks: AuditCheck[] }) => {
                 unit="ms"
                 label="INP"
                 status={inp?.status ?? 'info'}
+                errorDetail={inpRaw.pagespeedError as string | null | undefined}
               />
             </div>
           </div>
