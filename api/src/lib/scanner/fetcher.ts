@@ -119,6 +119,25 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
   return { cmp: null, matchedIndex: -1 };
 }
 
+// Poll detectCmp every POLL_INTERVAL_MS up to maxWaitMs, return on first detection
+async function pollDetectCmp(
+  page: Page,
+  startTime: number,
+  maxWaitMs: number,
+): Promise<{ cmp: DetectedCmp | null; matchedIndex: number }> {
+  const POLL_INTERVAL_MS = 200;
+  const deadline = startTime + maxWaitMs;
+
+  while (Date.now() < deadline) {
+    const result = await detectCmp(page, startTime);
+    if (result.cmp) return result;
+    await page.waitForTimeout(POLL_INTERVAL_MS);
+  }
+
+  // Last attempt at the deadline
+  return detectCmp(page, startTime);
+}
+
 async function clickCmpButton(page: Page, type: 'accept' | 'reject', matchedIndex: number): Promise<boolean> {
   // 1. Known CMP selector
   if (matchedIndex >= 0) {
@@ -383,9 +402,9 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
       window.scrollBy(0, 300);
     });
 
-    // Wait for CMP (lazy-loaded scripts need time to load GTM → GTM loads CMP)
-    await detectPage.waitForTimeout(CMP_WAIT_MS);
-    const { cmp, matchedIndex } = await detectCmp(detectPage, pageLoadStart);
+    // Poll for CMP (lazy-loaded scripts need time to load GTM → GTM loads CMP)
+    // Returns on first detection — appearanceDelayMs reflects real CMP appearance, not the poll timeout
+    const { cmp, matchedIndex } = await pollDetectCmp(detectPage, pageLoadStart, CMP_WAIT_MS);
 
     if (cmp) {
       onProgress({ type: 'step_done', session: 1, totalSessions: 3, label: `CMP détectée : ${cmp.name}` });
