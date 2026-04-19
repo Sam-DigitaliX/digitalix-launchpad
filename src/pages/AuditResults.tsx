@@ -847,6 +847,7 @@ const AuditResults = () => {
   const [emailError, setEmailError] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
+  const [scanAuditId, setScanAuditId] = useState<string | null>(null);
 
   const scanStarted = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -880,6 +881,7 @@ const AuditResults = () => {
             "",
             `/audit-tracking/resultats/${id}`
           );
+          setScanAuditId(id);
 
           const source = streamAuditProgress(
             id,
@@ -982,12 +984,16 @@ const AuditResults = () => {
       return;
     }
 
-    if (!auditResult) return;
+    const effectiveId = auditResult?.id ?? scanAuditId ?? (!isNewScan ? routeId : null);
+    if (!effectiveId) {
+      setEmailError("Analyse en cours d'initialisation, réessayez dans quelques secondes.");
+      return;
+    }
 
     setEmailSubmitting(true);
 
     try {
-      const result = await unlockAudit(auditResult.id, email.trim(), consentChecked);
+      const result = await unlockAudit(effectiveId, email.trim(), consentChecked);
       setChecks(result.checks);
       setIsUnlocked(true);
     } catch (err) {
