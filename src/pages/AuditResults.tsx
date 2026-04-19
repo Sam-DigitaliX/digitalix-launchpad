@@ -987,7 +987,7 @@ const AuditResults = () => {
     setEmailSubmitting(true);
 
     try {
-      const result = await unlockAudit(auditResult.id, email.trim());
+      const result = await unlockAudit(auditResult.id, email.trim(), consentChecked);
       setChecks(result.checks);
       setIsUnlocked(true);
     } catch (err) {

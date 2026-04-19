@@ -206,7 +206,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 ### Known limitations
 - Sites with anti-bot (DataDome, Akamai) block headless Chromium → degraded scan results
-- INP (Interaction to Next Paint) always "non disponible" — requires user interaction, not measurable in lab/headless mode
+- INP (Interaction to Next Paint) non mesurable en lab → remplacé par TBT (Total Blocking Time), proxy lab officiel de Google
 
 ### Chantier B — Dashboard leads + system health (in progress)
 **Leads intelligence (COMPLETE — 2026-04-13):**
@@ -277,11 +277,36 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] SSE timeout 60s → 180s pour scans longs
 
 ### Bugs à investiguer
-- [ ] Core Web Vitals (LCP/CLS/INP) ne s'affichent pas — PageSpeed API timeout depuis le VPS malgré clé API valide, séquentialisation Playwright→PageSpeed, et env var runtime OK. À investiguer : logs serveur, test curl depuis le container, vérifier si le fetch aboutit.
 - [ ] CMP apparition delay encore élevé (~12-15s) — le fix pageLoadStart est déployé mais les valeurs restent hautes. Vérifier si c'est un vrai délai (lazy-load WP Rocket) ou un problème de calcul.
 
-### Nice to have
-- [ ] INP: simuler une interaction (clic) dans Playwright pour mesurer INP en headless
+### Chantier F — Notifications Telegram temps réel (à planifier)
+**Contexte** : Le bot Telegram `@digitalix_monitor_bot` n'est utilisé que par le GitHub Action hebdomadaire. Objectif : push temps réel depuis l'API Hono quand un nouveau lead arrive ou change de statut.
+
+**Pré-requis d'infra** :
+- [ ] Ajouter `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` en env vars Coolify (mêmes valeurs que GitHub Secrets)
+
+**Enrichir la logique de statut** (la vue `admin_contacts_overview` ignore `audit_count` pour la temperature) :
+- [ ] Option A : `lead_temperature` devient `hot` aussi quand `audit_count >= 2` (actuellement ne prend pas en compte le multi-audit)
+- [ ] Option B : tag auto `récurrent` si `audit_count >= 2`, `très engagé` si `>= 3`
+- [ ] Reco : faire les deux
+
+**Détection des transitions** (approche retenue) :
+- [ ] Dans les routes `POST /api/contacts` et `POST /api/audit/:id/unlock` :
+  1. SELECT temperature + audit_count AVANT UPSERT
+  2. UPSERT contact + interaction
+  3. SELECT AFTER → diff → trigger notif si changement
+- [ ] Helper `api/src/lib/telegram.ts` (fire-and-forget, log erreurs sans bloquer l'user)
+
+**Typologie de notifs à implémenter** (choix final en attente) :
+- [ ] 🆕 Nouveau contact (première fois dans la DB)
+- [ ] 🔁 Audit récurrent (passe à 2, 3, 5 audits — seuils configurables)
+- [ ] 📈 Changement de temperature (warm → hot)
+- [ ] 🎯 Qualification form (avec score)
+
+**Questions produit en suspens** :
+- Enrichir la temperature (A+B) ou juste tags (B) ?
+- Les 4 types de notifs ou sous-ensemble ?
+- Emojis/sons distincts pour les leads hot ?
 
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
@@ -318,6 +343,13 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] Fix: all hardcoded French accents in AuditResults.tsx (2026-04-14)
 - [x] Scan page: domain H1 gradient + email/consent form during scan (2026-04-14)
 - [x] Fix: PageSpeed sequential after Playwright (resource contention on VPS) (2026-04-14)
+- [x] Fix: PageSpeed timeout 30s → 90s — silent catch was hiding timeouts on slow sites (digitalix.xyz: TTFB 4.4s + 98 scripts). LCP/CLS now display. (2026-04-19)
+- [x] Diagnostic: surface PageSpeed error (HTTP status / timeout / no API key) dans rawData + UI (ambre sous "Non disponible") pour diag futur sans accès logs (2026-04-19)
+- [x] SSE step "Mesure des Core Web Vitals..." avant PageSpeed pour éviter loader figé à 95% pendant 90s (2026-04-19)
+- [x] Remplacement INP → TBT (Total Blocking Time) — INP nécessite CrUX field data, TBT est le proxy lab de Google, toujours mesurable. Seuils 200/600ms. (2026-04-19)
+- [x] RGPD: checkbox consentement obligatoire sur email gate (scan + overlay résultats) + texte légal + lien politique de confidentialité (2026-04-19)
+- [x] RGPD: confirmation visuelle "Email enregistré" avec CheckCircle après soumission pendant le scan (2026-04-19)
+- [x] RGPD: persistance consentement — frontend envoie `gdpr_consent`, backend valide (400 si absent) et écrit `gdpr_consent = true` + `gdpr_consent_at = COALESCE(original, now())` dans contacts (2026-04-19)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
