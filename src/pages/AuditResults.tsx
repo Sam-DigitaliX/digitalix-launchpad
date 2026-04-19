@@ -847,6 +847,7 @@ const AuditResults = () => {
   const [emailError, setEmailError] = useState("");
   const [emailSubmitting, setEmailSubmitting] = useState(false);
   const [consentChecked, setConsentChecked] = useState(false);
+  const [scanAuditId, setScanAuditId] = useState<string | null>(null);
 
   const scanStarted = useRef(false);
   const eventSourceRef = useRef<EventSource | null>(null);
@@ -880,6 +881,7 @@ const AuditResults = () => {
             "",
             `/audit-tracking/resultats/${id}`
           );
+          setScanAuditId(id);
 
           const source = streamAuditProgress(
             id,
@@ -982,12 +984,16 @@ const AuditResults = () => {
       return;
     }
 
-    if (!auditResult) return;
+    const effectiveId = auditResult?.id ?? scanAuditId ?? (!isNewScan ? routeId : null);
+    if (!effectiveId) {
+      setEmailError("Analyse en cours d'initialisation, réessayez dans quelques secondes.");
+      return;
+    }
 
     setEmailSubmitting(true);
 
     try {
-      const result = await unlockAudit(auditResult.id, email.trim(), consentChecked);
+      const result = await unlockAudit(effectiveId, email.trim(), consentChecked);
       setChecks(result.checks);
       setIsUnlocked(true);
     } catch (err) {
@@ -1083,7 +1089,8 @@ const AuditResults = () => {
                 <h1 className="text-3xl md:text-4xl font-bold font-display mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   {displayUrl.replace(/^https?:\/\//, '').replace(/\/$/, '')}
                 </h1>
-                <p className="text-sm text-muted-foreground mb-10">Diagnostic tracking en cours</p>
+                <p className="text-sm text-muted-foreground mb-2">Diagnostic tracking en cours</p>
+                <p className="text-xs text-muted-foreground/80 mb-10">L'analyse peut prendre 2 à 3 minutes. Gardez cet onglet ouvert.</p>
 
                 <BlockProgressLoader
                   percentage={Math.min(Math.round((progressSteps.length / 20) * 100), 95)}
