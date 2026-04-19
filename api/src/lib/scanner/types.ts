@@ -60,6 +60,10 @@ export interface DetectedCmp {
   appearanceDelayMs: number;
   acceptButtonFound: boolean;
   rejectButtonFound: boolean;
+  /** Label/text of the detected reject button (when rejectButtonFound is true) */
+  rejectButtonLabel: string | null;
+  /** True if the reject path is a "Continuer sans accepter" style link (CNIL-tolerated but discouraged) */
+  rejectIsContinueWithout: boolean;
 }
 
 /* ──────────────────── Scan Context ──────────────────── */
