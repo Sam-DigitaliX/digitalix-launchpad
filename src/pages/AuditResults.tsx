@@ -490,6 +490,7 @@ const ACTION_PREFIXES: Record<string, string> = {
   'page-load': 'Optimiser',
   'script-loading': 'Optimiser',
   'scripts-count': 'Réduire',
+  'redirect-chain': 'Optimiser',
   lcp: 'Améliorer',
   cls: 'Corriger',
   tbt: 'Améliorer',

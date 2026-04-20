@@ -21,6 +21,7 @@ import { postRejectViolationsCheck } from './post-reject-violations.js';
 import { pageLoadCheck } from './page-load.js';
 import { scriptsCheck } from './scripts.js';
 import { scriptLoadingCheck } from './script-loading.js';
+import { redirectChainCheck } from './redirect-chain.js';
 export { fetchPageSpeedMetrics, checkLcp, checkCls, checkTbt } from './pagespeed.js';
 
 export const allChecks: CheckModule[] = [
@@ -50,4 +51,5 @@ export const allChecks: CheckModule[] = [
   pageLoadCheck,
   scriptsCheck,
   scriptLoadingCheck,
+  redirectChainCheck,
 ];

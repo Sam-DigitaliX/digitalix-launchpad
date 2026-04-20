@@ -16,6 +16,7 @@ import type {
   NetworkRequest,
   ConsentState,
   DetectedCmp,
+  RedirectHop,
   OnProgress,
 } from './types.js';
 
@@ -456,9 +457,29 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
     let finalUrl = url;
 
     const pageLoadStart = Date.now();
-    await detectPage.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
+    const mainResponse = await detectPage.goto(url, { waitUntil: 'domcontentloaded', timeout: PAGE_TIMEOUT_MS });
     const pageLoadMs = Date.now() - pageLoadStart;
     finalUrl = detectPage.url();
+
+    // Reconstruct the HTTP redirect chain by walking backwards from the final response
+    const redirectChain: RedirectHop[] = [];
+    if (mainResponse) {
+      redirectChain.push({
+        url: mainResponse.url(),
+        statusCode: mainResponse.status(),
+        method: mainResponse.request().method(),
+      });
+      let cursor = mainResponse.request().redirectedFrom();
+      while (cursor) {
+        const prevResponse = await cursor.response().catch(() => null);
+        redirectChain.unshift({
+          url: cursor.url(),
+          statusCode: prevResponse?.status() ?? 0,
+          method: cursor.method(),
+        });
+        cursor = cursor.redirectedFrom();
+      }
+    }
 
     // Trigger lazy-loaded scripts (WP Rocket, etc.) before waiting for CMP
     await detectPage.evaluate(() => {
@@ -554,6 +575,7 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
       sessions,
       degradedMode,
       ecommercePlatform,
+      redirectChain,
     };
   } finally {
     await browser.close();
