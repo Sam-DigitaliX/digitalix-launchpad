@@ -1006,7 +1006,11 @@ const AuditResults = () => {
 
     try {
       const result = await unlockAudit(effectiveId, email.trim(), consentChecked);
-      setChecks(result.checks);
+      // If unlock happens during scan, checks[] is empty in DB — keep current state
+      // and let the SSE result event populate with full (unlocked) descriptions.
+      if (result.checks.length > 0) {
+        setChecks(result.checks);
+      }
       setIsUnlocked(true);
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);
