@@ -160,14 +160,16 @@ const CheckRow = ({ check }: { check: AuditCheck }) => (
    Trackers Table
    ══════════════════════════════════════════════════════════════════ */
 
-const TRACKER_IDS = ['gtm', 'ga4', 'meta-pixel', 'tiktok', 'linkedin', 'sgtm'];
+const TRACKER_IDS = ['gtm', 'ga4', 'google-ads', 'meta-pixel', 'tiktok', 'linkedin', 'bing-ads', 'sgtm'];
 
 const TRACKER_PLATFORMS: Record<string, string> = {
   gtm: 'Google',
   ga4: 'Google',
+  'google-ads': 'Google',
   'meta-pixel': 'Meta',
   tiktok: 'TikTok',
   linkedin: 'LinkedIn',
+  'bing-ads': 'Microsoft',
   sgtm: 'Google',
 };
 
@@ -177,6 +179,8 @@ function getTrackerIds(check: AuditCheck): string {
   if (raw.measurementIds?.length) return raw.measurementIds.join(', ');
   if (raw.networkIds?.length) return raw.networkIds.join(', ');
   if (raw.pixelIds?.length) return raw.pixelIds.join(', ');
+  if (raw.ids?.length) return raw.ids.join(', ');
+  if (raw.uetIds?.length) return raw.uetIds.join(', ');
   if (raw.pixelId) return raw.pixelId;
   if (raw.partnerId) return raw.partnerId;
   if (raw.gtmDomain) return raw.gtmDomain;
@@ -186,6 +190,11 @@ function getTrackerIds(check: AuditCheck): string {
 function getLoadingMethod(check: AuditCheck): string {
   const raw = typeof check.rawData === 'string' ? JSON.parse(check.rawData) : (check.rawData ?? {});
   if (check.id === 'sgtm') return raw.isFirstParty ? 'Server-side (1st party)' : 'Client-side';
+  if (check.id === 'google-ads') {
+    if (raw.mode === 'hybrid') return 'Hybride (client + server)';
+    if (raw.mode === 'server') return 'Server-side';
+    if (raw.mode === 'client') return 'Client-side';
+  }
   if (raw.viaGtm) return 'Via GTM';
   return 'Direct';
 }

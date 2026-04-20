@@ -6,6 +6,8 @@ import { datalayerCheck } from './datalayer.js';
 import { enhancedConvCheck } from './enhanced-conv.js';
 import { tiktokPixelCheck } from './tiktok-pixel.js';
 import { linkedinCheck } from './linkedin.js';
+import { googleAdsCheck } from './google-ads.js';
+import { bingAdsCheck } from './bing-ads.js';
 import { ecommerceCheck } from './ecommerce.js';
 import { tagFiringOrderCheck } from './tag-firing-order.js';
 import { sgtmCheck } from './sgtm.js';
@@ -28,11 +30,13 @@ export const allChecks: CheckModule[] = [
   // Tracking Setup
   gtmCheck,
   ga4Check,
+  googleAdsCheck,
   metaPixelCheck,
   datalayerCheck,
   enhancedConvCheck,
   tiktokPixelCheck,
   linkedinCheck,
+  bingAdsCheck,
   ecommerceCheck,
   tagFiringOrderCheck,
   // Server-Side
