@@ -237,7 +237,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] CRUD contacts in admin dashboard (edit, delete, notes, tags) (2026-04-13)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
-- [ ] Decommission Supabase project after 2-week monitoring period
+- [ ] Supabase : supprimer le projet côté dashboard supabase.com (code 100% clean, commentaires "Replaces: supabase.x" retirés le 2026-04-20) — action manuelle infra
 - [ ] Cross-domain tracking detection (nouveau check audit)
 - [ ] Security headers analysis (nouveau check audit)
 - [ ] Redirect chain analysis (nouveau check audit)

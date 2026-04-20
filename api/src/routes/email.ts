@@ -12,7 +12,6 @@ const app = new Hono();
 
 /**
  * POST /email/send
- * Replaces: supabase.functions.invoke('send-confirmation')
  */
 app.post('/send-confirmation', async (c) => {
   const payload = await c.req.json();

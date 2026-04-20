@@ -5,7 +5,6 @@ const app = new Hono();
 
 /**
  * POST /api/contacts
- * Replaces: supabase.rpc('upsert_contact_with_interaction')
  */
 app.post('/', async (c) => {
   const body = await c.req.json();

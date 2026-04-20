@@ -13,7 +13,6 @@ app.use('/*', adminAuth);
 
 /**
  * GET /admin/stats
- * Replaces: supabase.rpc('admin_get_stats')
  */
 app.get('/stats', async (c) => {
   const rows = await sql`
@@ -32,7 +31,6 @@ app.get('/stats', async (c) => {
 
 /**
  * GET /admin/contacts
- * Replaces: supabase.rpc('admin_get_contacts')
  */
 app.get('/contacts', async (c) => {
   const rows = await sql`SELECT * FROM admin_contacts_overview`;
@@ -41,7 +39,6 @@ app.get('/contacts', async (c) => {
 
 /**
  * GET /admin/contacts/:id/timeline
- * Replaces: supabase.rpc('admin_get_contact_timeline')
  */
 app.get('/contacts/:id/timeline', async (c) => {
   const contactId = c.req.param('id');
@@ -56,7 +53,6 @@ app.get('/contacts/:id/timeline', async (c) => {
 
 /**
  * GET /admin/email-stats
- * Replaces: supabase.rpc('admin_get_email_stats')
  */
 app.get('/email-stats', async (c) => {
   const rows = await sql`
@@ -81,7 +77,6 @@ app.get('/email-stats', async (c) => {
 
 /**
  * GET /admin/contacts/:id/emails
- * Replaces: supabase.rpc('admin_get_contact_emails')
  */
 app.get('/contacts/:id/emails', async (c) => {
   const contactId = c.req.param('id');
