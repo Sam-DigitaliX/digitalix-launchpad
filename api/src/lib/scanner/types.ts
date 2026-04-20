@@ -24,6 +24,12 @@ export interface NetworkRequest {
   timestamp: number;
 }
 
+export interface RedirectHop {
+  url: string;
+  statusCode: number;
+  method: string;
+}
+
 /* ──────────────────── Consent ──────────────────── */
 
 export interface ConsentState {
@@ -87,6 +93,8 @@ export interface ScanContext {
   degradedMode: boolean;
   /** Detected e-commerce platform */
   ecommercePlatform: string | null;
+  /** HTTP redirect chain from the entered URL to the final page (includes the final 200) */
+  redirectChain: RedirectHop[];
 }
 
 /* ──────────────────── Progress ──────────────────── */
