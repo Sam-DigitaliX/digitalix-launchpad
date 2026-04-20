@@ -4,7 +4,7 @@ export const capiMetaCheck: CheckModule = {
   id: 'capi-meta',
   category: 'serverside',
   name: 'Meta Conversions API (CAPI)',
-  impact: 'critical',
+  impact: 'high',
   gated: true,
   run(ctx: ScanContext) {
     // Check if Meta Pixel is present at all
@@ -45,30 +45,27 @@ export const capiMetaCheck: CheckModule = {
       }
     }
 
-    const fbpServerSet = ctx.cookies.some((c) => c.name === '_fbp' && !c.isThirdParty && c.httpOnly);
+    const hasFbp = ctx.cookies.some((c) => c.name === '_fbp' && !c.isThirdParty);
+    const hasFbc = ctx.cookies.some((c) => c.name === '_fbc' && !c.isThirdParty);
 
-    if (hasEventId && fbpServerSet) {
-      return {
-        status: 'pass',
-        description: 'Meta CAPI détecté : déduplication (eventID) active et _fbp posé en server-side.',
-        rawData: { hasEventId, fbpServerSet },
-      };
-    }
+    const rawData = { hasMetaPixel: true, hasEventId, hasFbp, hasFbc };
+
+    // Important context: CAPI itself is server-to-server and invisible to a browser scan.
+    // We can only infer its likely presence from the client-side contract (eventID for dedup).
 
     if (hasEventId) {
       return {
-        status: 'warning',
-        description: 'Déduplication eventID détectée mais _fbp non posé en server-side. CAPI partiellement configuré.',
-        businessNote: 'CAPI partiellement configuré — la déduplication des events n\'est pas en place.',
-        rawData: { hasEventId, fbpServerSet },
+        status: 'pass',
+        description: `Déduplication eventID active côté client — CAPI probablement configurée en parallèle (dédup client/serveur en place).${hasFbp ? ' Cookie _fbp présent pour le matching.' : ''}`,
+        rawData,
       };
     }
 
     return {
-      status: 'fail',
-      description: 'Meta Pixel présent sans déduplication eventID — CAPI probablement non implémentée. Perte de données de conversion.',
-      businessNote: 'Sans Conversions API Meta, vous perdez 30-50% des données de conversion Facebook/Instagram Ads.',
-      rawData: { hasEventId: false, fbpServerSet },
+      status: 'warning',
+      description: 'Meta Pixel détecté sans eventID pour la déduplication. Si CAPI est activée, les events seront comptés en double ; sinon CAPI n\'est probablement pas en place.',
+      businessNote: 'Sans eventID dans vos fbq(\'track\', ...), impossible de dédupliquer les events entre le Pixel (client) et CAPI (serveur). Vous perdez 30-50% des conversions Meta Ads si CAPI n\'est pas activée, ou vous double-comptez si elle l\'est sans dedup.',
+      rawData,
     };
   },
 };
