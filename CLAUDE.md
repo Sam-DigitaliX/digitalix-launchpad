@@ -308,6 +308,39 @@ _Aucun bug ouvert — CMP delay résolu (2026-04-20, voir Done)._
 - Les 4 types de notifs ou sous-ensemble ?
 - Emojis/sons distincts pour les leads hot ?
 
+### Chantier G — Internationalisation EN/US (à valider produit avant de coder)
+**Contexte** : site 100% FR aujourd'hui, aucune infra i18n. Ouvrir le marché EN (UK/US/EU non-FR) demande une vraie traduction + adaptation produit.
+
+**Périmètre estimé** :
+- Frontend : ~400-500 strings (pages, composants, form de qualif)
+- Backend checks audit : ~130 descriptions + businessNotes réparties sur 24 fichiers dans `api/src/lib/scanner/checks/`
+- Emails Resend : 3 templates (~500 mots)
+- SSE labels scanner : ~10 strings dans `fetcher.ts`
+- DB : aucun changement nécessaire (descriptions générées au runtime, pas stockées)
+
+**Archi recommandée** :
+- Lib : `react-i18next` (léger, JSON splittable)
+- Routing : locale prefix `/fr/*` + `/en/*` + détection `Accept-Language` pour redirect entrée
+- Backend : factory `getChecks(locale)` qui renvoie la version localisée. Locale passée via header ou query dans `POST /api/audit`
+- SEO : `hreflang` alternatifs + sitemap dual (`sitemap-fr.xml` + `sitemap-en.xml`) + canonical URLs absolues
+
+**Effort estimé** : 4-6 semaines full-stack pour production-ready.
+- Frontend (extraction + traduction) : 2-3 semaines
+- Backend (24 checks + emails + SSE) : 1-2 semaines
+- SEO + metadata + QA : 1 semaine
+- Budget traducteur externe : ~800-1200€ pour ~5000 mots qualité
+
+**Deux stratégies de rollout** :
+- Option MVP (prudente) : Phase 1 = hero + audit tracking + email gate uniquement (~1 semaine). Valide le pattern et la demande EN avant d'investir.
+- Option big bang : tout traduit d'un coup en 4-6 semaines. Risque : investissement avant validation marché.
+
+**Questions produit à trancher AVANT de coder** :
+- [ ] Marché cible précis : UK, US, global EU ? (impacte wording US vs UK, refs RGPD/GDPR, prix affichés)
+- [ ] Positionnement légal en EN : on garde la focus CNIL/RGPD FR, ou bascule GDPR générique pour annonceurs non-EU qui vendent en Europe ?
+- [ ] Signaux de demande validés ? (prospects EN LinkedIn, recherches Search Console en EN, etc.) Recommandation : ne pas lancer avant d'avoir 3-5 signaux concrets
+
+**Reco en cours** : attendre validation produit (les 3 questions ci-dessus) avant d'investir. Si oui → partir sur Option MVP pour valider avant le full site.
+
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
 - Telegram bot: @digitalix_monitor_bot (chat ID: 6155735961)
