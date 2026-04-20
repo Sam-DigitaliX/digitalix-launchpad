@@ -1231,7 +1231,7 @@ const AuditResults = () => {
                   )}
                   <Button variant="outline" size="lg" asChild>
                     <Link to="/contact">
-                      Demander un audit expert
+                      Contacter un expert
                       <ArrowRight className="w-4 h-4 ml-2" />
                     </Link>
                   </Button>
@@ -1438,7 +1438,13 @@ const AuditResults = () => {
                   </p>
                   <div className="flex justify-center">
                     <Button variant="heroGradient" size="xl" asChild>
-                      <Link to="/contact">
+                      <Link
+                        to={`/contact?auditId=${auditResult?.id ?? scanAuditId ?? routeId ?? ''}`}
+                        state={{
+                          email: email || undefined,
+                          auditUrl: displayUrl,
+                        }}
+                      >
                         Reserver mon Audit Offert
                         <ArrowRight className="w-5 h-5 ml-2" />
                       </Link>
