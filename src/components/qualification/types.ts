@@ -108,11 +108,25 @@ export interface ScoringResult {
   score: number;
   baseScore: number;
   behavioralBonus: number;
+  postAuditBonus: number;
   isQualified: boolean;
   disqualifyReason?: string;
 }
 
-export function calculateScore(data: Partial<LeadFormData>, behavioralBonus: number = 0): ScoringResult {
+export interface AuditContext {
+  id: string;
+  url: string;
+  score: number | null;
+  createdAt: string;
+  /** Email from the unlock flow if available (pre-filled in the contact step) */
+  email?: string;
+}
+
+export function calculateScore(
+  data: Partial<LeadFormData>,
+  behavioralBonus: number = 0,
+  postAuditBonus: number = 0,
+): ScoringResult {
   let score = 0;
   let disqualifyReason: string | undefined;
 
@@ -164,9 +178,11 @@ export function calculateScore(data: Partial<LeadFormData>, behavioralBonus: num
 
   // Add behavioral bonus (doesn't override disqualification)
   score += behavioralBonus;
+  // Add post-audit bonus (user came from the audit flow — strong intent signal)
+  score += postAuditBonus;
 
   // Qualification threshold: 30 points minimum without disqualification
   const isQualified = score >= 30 && !disqualifyReason;
 
-  return { score, baseScore, behavioralBonus, isQualified, disqualifyReason };
+  return { score, baseScore, behavioralBonus, postAuditBonus, isQualified, disqualifyReason };
 }

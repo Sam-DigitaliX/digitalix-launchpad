@@ -1,4 +1,8 @@
+import { useEffect, useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { QualificationForm } from '@/components/qualification';
+import type { AuditContext } from '@/components/qualification/types';
+import { getAudit } from '@/lib/api';
 import Header from '@/components/landing/Header';
 import EvervaultGlow from '@/components/landing/EvervaultGlow';
 import Footer from '@/components/landing/Footer';
@@ -7,6 +11,45 @@ import TestimonialsSection from '@/components/landing/TestimonialsSection';
 import { Shield, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function Contact() {
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const auditId = searchParams.get('auditId');
+  const routeState = (location.state ?? {}) as { email?: string; auditUrl?: string };
+
+  const [auditContext, setAuditContext] = useState<AuditContext | null>(null);
+
+  useEffect(() => {
+    if (!auditId) return;
+    let cancelled = false;
+    getAudit(auditId)
+      .then((audit) => {
+        if (cancelled) return;
+        setAuditContext({
+          id: audit.id,
+          url: audit.url,
+          score: audit.overallScore ?? null,
+          createdAt: audit.createdAt,
+          email: routeState.email,
+        });
+      })
+      .catch((err) => {
+        console.warn('[Contact] Failed to load audit context:', err);
+        // Graceful degradation: fall back to email-only context from router state
+        if (routeState.auditUrl && routeState.email) {
+          setAuditContext({
+            id: auditId,
+            url: routeState.auditUrl,
+            score: null,
+            createdAt: new Date().toISOString(),
+            email: routeState.email,
+          });
+        }
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [auditId, routeState.email, routeState.auditUrl]);
+
   return (
     <div className="min-h-screen bg-background">
       <EvervaultGlow />
@@ -31,14 +74,21 @@ export default function Contact() {
             <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center space-y-4">
                 <span className="glass-badge px-4 py-1.5">
-                  <span className="text-gradient-primary">Audit Offert</span>
+                  <span className="text-gradient-primary">
+                    {auditContext ? 'Audit terminé' : 'Audit Offert'}
+                  </span>
                 </span>
                 <h1 className="text-4xl md:text-5xl font-bold">
-                  Parlons de votre <span className="text-gradient-primary">projet</span>
+                  {auditContext ? (
+                    <>Un expert analyse <span className="text-gradient-primary">vos résultats</span></>
+                  ) : (
+                    <>Parlons de votre <span className="text-gradient-primary">projet</span></>
+                  )}
                 </h1>
                 <p className="text-lg text-foreground/70 max-w-2xl mx-auto">
-                  Répondez à quelques questions pour que nous puissions vous proposer
-                  l'accompagnement le plus adapté à vos besoins.
+                  {auditContext
+                    ? "Vous venez de scanner votre site. Quelques infos et un expert vous recontacte sous 24h avec un plan d'action adapté."
+                    : "Répondez à quelques questions pour que nous puissions vous proposer l'accompagnement le plus adapté à vos besoins."}
                 </p>
               </div>
 
@@ -65,7 +115,7 @@ export default function Contact() {
         <div className="container max-w-6xl mx-auto px-4 py-16">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             <div className="flex-1 lg:max-w-3xl min-h-[80dvh] lg:min-h-0">
-              <QualificationForm />
+              <QualificationForm auditContext={auditContext ?? undefined} />
             </div>
             <aside className="hidden lg:block w-80 shrink-0">
               <div className="sticky top-28">

@@ -1,26 +1,33 @@
 import { useState, useEffect, useRef } from 'react';
 import { upsertContact, sendEmail, ApiError } from '@/lib/api';
 import { toast } from '@/hooks/use-toast';
-import { LeadFormData, leadSchema, calculateScore, ScoringResult } from './types';
+import { LeadFormData, leadSchema, calculateScore, ScoringResult, AuditContext } from './types';
 import { StepProgress } from './StepProgress';
 import { ProfileStep } from './steps/ProfileStep';
 import { SituationStep } from './steps/SituationStep';
 import { NeedStep } from './steps/NeedStep';
 import { ContactStep } from './steps/ContactStep';
 import { OutcomeStep } from './steps/OutcomeStep';
-import { X, Flame } from 'lucide-react';
+import { X, Flame, ScanSearch } from 'lucide-react';
 import { getBehavioralData, BehavioralData } from '@/lib/trackingUtils';
 
-const STEP_LABELS = ['Profil', 'Situation', 'Besoin', 'Contact', 'Résultat'];
-const TOTAL_STEPS = 5;
+const FULL_STEP_LABELS = ['Profil', 'Situation', 'Besoin', 'Contact', 'Résultat'];
+const AUDIT_STEP_LABELS = ['Profil', 'Besoin', 'Contact', 'Résultat'];
+const POST_AUDIT_BONUS = 25;
 
 interface QualificationFormProps {
   onClose?: () => void;
+  auditContext?: AuditContext;
 }
 
-export function QualificationForm({ onClose }: QualificationFormProps) {
+export function QualificationForm({ onClose, auditContext }: QualificationFormProps) {
+  const stepLabels = auditContext ? AUDIT_STEP_LABELS : FULL_STEP_LABELS;
+  const totalSteps = stepLabels.length;
+
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<LeadFormData>>({});
+  const [formData, setFormData] = useState<Partial<LeadFormData>>(() => (
+    auditContext?.email ? { email: auditContext.email } : {}
+  ));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [result, setResult] = useState<ScoringResult | null>(null);
   const [behavioralData, setBehavioralData] = useState<BehavioralData | null>(null);
@@ -44,7 +51,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
   };
 
   const nextStep = () => {
-    if (currentStep < TOTAL_STEPS) {
+    if (currentStep < totalSteps) {
       setCurrentStep(prev => prev + 1);
     }
   };
@@ -90,9 +97,10 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
     setIsSubmitting(true);
 
     try {
-      // Calculate score with behavioral bonus
+      // Calculate score with behavioral + post-audit bonuses
       const behavioralBonus = behavioralData?.bonusScore ?? 0;
-      const scoringResult = calculateScore(formData, behavioralBonus);
+      const postAuditBonus = auditContext ? POST_AUDIT_BONUS : 0;
+      const scoringResult = calculateScore(formData, behavioralBonus, postAuditBonus);
 
       const validData = validation.data;
 
@@ -109,7 +117,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         gdpr_consent_at: new Date().toISOString(),
         newsletter_optin: validData.newsletter_optin ?? false,
         behavioral_profile: behavioralData?.profileLabel ?? null,
-        interaction_type: 'qualification_form',
+        interaction_type: auditContext ? 'audit_contact_request' : 'qualification_form',
         interaction_metadata: {
           current_situation: validData.current_situation,
           pain_points: validData.pain_points,
@@ -121,16 +129,23 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
           first_visit_source: behavioralData?.firstVisitSource,
           current_visit_source: behavioralData?.currentSource,
           behavioral_bonus: behavioralBonus,
+          post_audit_bonus: postAuditBonus,
           score: scoringResult.score,
           base_score: scoringResult.baseScore,
           is_qualified: scoringResult.isQualified,
           disqualify_reason: scoringResult.disqualifyReason,
+          ...(auditContext && {
+            audit_id: auditContext.id,
+            audit_url: auditContext.url,
+            audit_score: auditContext.score,
+            source: 'post_audit_cta',
+          }),
         },
       });
 
       // Show result
       setResult(scoringResult);
-      setCurrentStep(TOTAL_STEPS);
+      setCurrentStep(totalSteps);
 
       toast({
         title: scoringResult.isQualified ? "Félicitations !" : "Demande envoyée",
@@ -185,7 +200,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
     });
   };
 
-  const isResultStep = currentStep === TOTAL_STEPS;
+  const isResultStep = currentStep === totalSteps;
 
   return (
     <div ref={formRef} className="relative w-full max-w-3xl mx-auto scroll-mt-4">
@@ -201,8 +216,29 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
       )}
 
       <div className="glass-card p-8 md:p-12">
+        {/* Audit context banner */}
+        {auditContext && !isResultStep && (
+          <div className="mb-6 p-4 rounded-xl border border-primary/30 bg-gradient-to-r from-primary/10 via-primary/5 to-transparent">
+            <div className="flex items-start gap-3">
+              <ScanSearch className="w-5 h-5 icon-gradient shrink-0 mt-0.5" />
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-foreground">
+                  Audit détecté :{' '}
+                  <span className="text-gradient-primary">
+                    {auditContext.url.replace(/^https?:\/\//, '').replace(/\/$/, '')}
+                  </span>
+                </p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  {auditContext.score != null && `Score ${auditContext.score}/100 — `}
+                  Quelques infos pour qu'un expert puisse analyser vos résultats.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Hot Prospect Badge */}
-        {isHotProspect && !isResultStep && (
+        {isHotProspect && !isResultStep && !auditContext && (
           <div className="flex items-center gap-2 mb-4 px-3 py-1.5 bg-gradient-to-r from-primary/20 to-secondary/20 rounded-full w-fit border border-primary/30">
             <Flame className="w-4 h-4 icon-gradient" />
             <span className="text-sm font-medium text-gradient-primary">Prospect prioritaire</span>
@@ -213,22 +249,22 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
         {!isResultStep && (
           <StepProgress
             currentStep={currentStep}
-            totalSteps={TOTAL_STEPS - 1}
-            stepLabels={STEP_LABELS.slice(0, -1)}
+            totalSteps={totalSteps - 1}
+            stepLabels={stepLabels.slice(0, -1)}
           />
         )}
 
-        {/* Steps */}
+        {/* Steps — Profile → (Situation if full) → Need → Contact */}
         {currentStep === 1 && (
           <ProfileStep
             data={formData}
             updateData={updateData}
             onNext={nextStep}
-            isHotProspect={isHotProspect}
+            isHotProspect={isHotProspect || !!auditContext}
           />
         )}
 
-        {currentStep === 2 && (
+        {!auditContext && currentStep === 2 && (
           <SituationStep
             data={formData}
             updateData={updateData}
@@ -237,7 +273,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
           />
         )}
 
-        {currentStep === 3 && (
+        {((!auditContext && currentStep === 3) || (auditContext && currentStep === 2)) && (
           <NeedStep
             data={formData}
             updateData={updateData}
@@ -246,7 +282,7 @@ export function QualificationForm({ onClose }: QualificationFormProps) {
           />
         )}
 
-        {currentStep === 4 && (
+        {((!auditContext && currentStep === 4) || (auditContext && currentStep === 3)) && (
           <ContactStep
             data={formData}
             updateData={updateData}
