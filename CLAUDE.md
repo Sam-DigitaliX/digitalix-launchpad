@@ -277,7 +277,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] SSE timeout 60s → 180s pour scans longs
 
 ### Bugs à investiguer
-- [ ] CMP apparition delay encore élevé (~12-15s) — le fix pageLoadStart est déployé mais les valeurs restent hautes. Vérifier si c'est un vrai délai (lazy-load WP Rocket) ou un problème de calcul.
+_Aucun bug ouvert — CMP delay résolu (2026-04-20, voir Done)._
 
 ### Chantier F — Notifications Telegram temps réel (à planifier)
 **Contexte** : Le bot Telegram `@digitalix_monitor_bot` n'est utilisé que par le GitHub Action hebdomadaire. Objectif : push temps réel depuis l'API Hono quand un nouveau lead arrive ou change de statut.
@@ -350,6 +350,14 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] RGPD: checkbox consentement obligatoire sur email gate (scan + overlay résultats) + texte légal + lien politique de confidentialité (2026-04-19)
 - [x] RGPD: confirmation visuelle "Email enregistré" avec CheckCircle après soumission pendant le scan (2026-04-19)
 - [x] RGPD: persistance consentement — frontend envoie `gdpr_consent`, backend valide (400 si absent) et écrit `gdpr_consent = true` + `gdpr_consent_at = COALESCE(original, now())` dans contacts (2026-04-19)
+- [x] Fix: CMP timing — remplacement du `waitForTimeout(10s)` bloquant par `pollDetectCmp` (200ms) qui retourne à la 1ère apparition. Les sites rapides affichent enfin une vraie valeur (~500ms-2s) au lieu du plafond artificiel 12-15s. (2026-04-20)
+- [x] Rename + refonte check `capi-google` → "Google Ads server-side (Enhanced Conversions)" — plus d'invention du terme "CAPI Google", messages contextuels alignés avec le check sGTM (plus de contradiction) (2026-04-20)
+- [x] Copy: durée scan alignée à 2-3 min sur toutes les pages (subtitle entry + badge "sous 3 min" + reassurance durant le scan "Gardez cet onglet ouvert") (2026-04-20)
+- [x] Style: CTA "Reserver mon Audit Offert" centré sur mobile via wrapper `flex justify-center` (2026-04-20)
+- [x] Fix: bouton "Débloquer" durant le scan était un no-op silencieux — `handleEmailSubmit` retournait early sur `!auditResult` (null pendant l'analyse). Nouveau state `scanAuditId` set dès que `startAudit()` résout, `effectiveId` combine `auditResult?.id ?? scanAuditId ?? routeId` (2026-04-20)
+- [x] CMP: détection bouton refus enrichie — fallback ARIA/texte après échec du sélecteur CMP (moins de faux négatifs "Refuser non trouvé") + détection explicite du pattern "Continuer sans accepter" avec message CNIL-aware ("toléré depuis l'arrêt Google 2022 mais non-optimal"). Nouveaux champs `rejectButtonLabel` + `rejectIsContinueWithout` dans DetectedCmp. (2026-04-20)
+- [x] CMP coverage étendue à la liste partenaire Google : nouvelle map `CMP_SCRIPT_PATTERNS` (30 entrées, identification par URL script) + 8 nouvelles CMPs full-selector (Sourcepoint, TrustArc, Termly, Osano, Ketch, Tealium, Adobe Privacy, Piwik PRO) → 23 CMPs supportées en 3-session protocol. Fix bonus : selectors Sirdata hashés dégagés au profit de sélecteurs stables. (2026-04-20)
+- [x] Contact smart context : CTA audit → `/contact?auditId=xxx` avec email + URL propagés via router state. Contact.tsx fetch l'audit, bannière contextualisée, QualificationForm passe en mode 3 étapes (skip Situation), email pré-rempli, bonus scoring +25 post-audit, `interaction_type: 'audit_contact_request'` + `audit_id` en metadata. (2026-04-20)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
