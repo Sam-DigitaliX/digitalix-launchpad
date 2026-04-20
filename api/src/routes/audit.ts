@@ -12,6 +12,27 @@ const app = new Hono();
 
 const GATED_PLACEHOLDER = 'Debloquez les resultats complets en renseignant votre email.';
 
+async function buildSseResultPayload(id: string, result: ScanResult) {
+  const rows = await sql`SELECT unlocked_at FROM audits WHERE id = ${id} LIMIT 1`;
+  const isUnlocked = rows.length > 0 && rows[0].unlocked_at !== null;
+
+  return {
+    type: 'result' as const,
+    result: {
+      id,
+      url: result.url,
+      status: result.status,
+      overallScore: result.overallScore,
+      categories: result.categories,
+      checks: result.checks.map((check) => ({
+        ...check,
+        description: check.gated && !isUnlocked ? GATED_PLACEHOLDER : check.description,
+        rawData: check.gated && !isUnlocked ? {} : check.rawData,
+      })),
+    },
+  };
+}
+
 /* ──────────────────── In-memory scan state ──────────────────── */
 
 interface ScanState {
@@ -190,21 +211,7 @@ app.get('/:id/progress', async (c) => {
     if (state.done) {
       if (state.result) {
         await stream.writeSSE({
-          data: JSON.stringify({
-            type: 'result',
-            result: {
-              id,
-              url: state.result.url,
-              status: state.result.status,
-              overallScore: state.result.overallScore,
-              categories: state.result.categories,
-              checks: state.result.checks.map((check) => ({
-                ...check,
-                description: check.gated ? GATED_PLACEHOLDER : check.description,
-                rawData: check.gated ? {} : check.rawData,
-              })),
-            },
-          }),
+          data: JSON.stringify(await buildSseResultPayload(id, state.result)),
           event: 'progress',
         });
       }
@@ -226,21 +233,7 @@ app.get('/:id/progress', async (c) => {
         if (state.done && state.result) {
           try {
             await stream.writeSSE({
-              data: JSON.stringify({
-                type: 'result',
-                result: {
-                  id,
-                  url: state.result.url,
-                  status: state.result.status,
-                  overallScore: state.result.overallScore,
-                  categories: state.result.categories,
-                  checks: state.result.checks.map((check) => ({
-                    ...check,
-                    description: check.gated ? GATED_PLACEHOLDER : check.description,
-                    rawData: check.gated ? {} : check.rawData,
-                  })),
-                },
-              }),
+              data: JSON.stringify(await buildSseResultPayload(id, state.result)),
               event: 'progress',
             });
           } catch {
