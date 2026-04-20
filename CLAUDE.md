@@ -235,12 +235,13 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 ### Chantier C — Backlog fonctionnel
 - [x] CRUD contacts in admin dashboard (edit, delete, notes, tags) (2026-04-13)
+- [x] Supabase code cleanup — 7 commentaires "Replaces: supabase.x" retirés (2026-04-20)
+- [x] Redirect chain analysis check — ajouté, 26 checks au total (2026-04-20)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
-- [ ] Supabase : supprimer le projet côté dashboard supabase.com (code 100% clean, commentaires "Replaces: supabase.x" retirés le 2026-04-20) — action manuelle infra
-- [ ] Cross-domain tracking detection (nouveau check audit)
-- [ ] Security headers analysis (nouveau check audit)
-- [ ] Redirect chain analysis (nouveau check audit)
+- [ ] Supabase : supprimer le projet côté dashboard supabase.com — action manuelle infra restante
+- [ ] Cross-domain tracking detection (nouveau check audit — spec définie : sous-domaines racine + whitelist payment/booking + croisement config linker)
+- [ ] Security headers analysis — **retiré du backlog** (hors scope tracking, dilue le positionnement server-side)
 
 ### Chantier D — Migrations majeures
 **Batch 1 — faible risque :**
@@ -391,6 +392,12 @@ _Aucun bug ouvert — CMP delay résolu (2026-04-20, voir Done)._
 - [x] CMP: détection bouton refus enrichie — fallback ARIA/texte après échec du sélecteur CMP (moins de faux négatifs "Refuser non trouvé") + détection explicite du pattern "Continuer sans accepter" avec message CNIL-aware ("toléré depuis l'arrêt Google 2022 mais non-optimal"). Nouveaux champs `rejectButtonLabel` + `rejectIsContinueWithout` dans DetectedCmp. (2026-04-20)
 - [x] CMP coverage étendue à la liste partenaire Google : nouvelle map `CMP_SCRIPT_PATTERNS` (30 entrées, identification par URL script) + 8 nouvelles CMPs full-selector (Sourcepoint, TrustArc, Termly, Osano, Ketch, Tealium, Adobe Privacy, Piwik PRO) → 23 CMPs supportées en 3-session protocol. Fix bonus : selectors Sirdata hashés dégagés au profit de sélecteurs stables. (2026-04-20)
 - [x] Contact smart context : CTA audit → `/contact?auditId=xxx` avec email + URL propagés via router state. Contact.tsx fetch l'audit, bannière contextualisée, QualificationForm passe en mode 3 étapes (skip Situation), email pré-rempli, bonus scoring +25 post-audit, `interaction_type: 'audit_contact_request'` + `audit_id` en metadata. (2026-04-20)
+- [x] Chantier C : Supabase code cleanup — 7 commentaires `* Replaces: supabase.x` retirés dans admin.ts / email.ts / contacts.ts. Reste uniquement l'action manuelle "supprimer le projet côté dashboard supabase.com". (2026-04-20)
+- [x] Chantier C : **Redirect chain analysis check** — capture la chaîne via Playwright `response.request().redirectedFrom()`, analyse hops + préservation des query params tracking (utm_*, gclid, gbraid, fbclid, msclkid, dclid, wbraid). Fail direct si params perdus (attribution Google Ads cassée). 0-1 hop → pass, 2 → warning, 3+ → fail. 26 checks au total. (2026-04-20)
+- [x] Audit Results : CTA inline "Contactez un expert" dans section Recommandations supportait l'audit context (auditId + state email/url) comme le CTA gradient du bas. (2026-04-20)
+- [x] Audit Results : section "Autres vérifications" (pass/info) déplacée AVANT "Recommandations" (fail/warning) pour que les actions restent collées au CTA gradient final et que l'utilisateur voie d'abord ce qui est OK. (2026-04-20)
+- [x] Fix critique : race condition unlock pendant scan — quand le user clique Débloquer avant la fin du scan, l'endpoint unlock écrit `unlocked_at = now()` mais `audit_checks` est vide → renvoie `checks: []`. Le SSE `result` event appliquait ensuite le mask gated sans checker l'unlock state → user voyait "Débloquez les résultats..." comme description dans TOUTES les cards alors qu'il avait donné son email. Fix backend : nouveau helper `buildSseResultPayload()` qui lit `unlocked_at` en DB avant de masquer. Fix frontend : n'écrase plus les checks avec un tableau vide quand unlock mid-scan retourne `[]`. (2026-04-20)
+- [x] Audit Results : CTA inline "Contactez un expert" retiré complètement — redondant avec le CTA gradient principal "Reserver mon Audit Offert". 1 CTA fort > 2 CTA moyens rapprochés. (2026-04-20)
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
