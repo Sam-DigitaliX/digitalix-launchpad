@@ -500,17 +500,7 @@ const ACTION_PREFIXES: Record<string, string> = {
   ecommerce: 'Configurer',
 };
 
-const RecommendationsSection = ({
-  checks,
-  auditId,
-  auditEmail,
-  auditUrl,
-}: {
-  checks: AuditCheck[];
-  auditId?: string;
-  auditEmail?: string;
-  auditUrl?: string;
-}) => {
+const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
   const actionableChecks = checks
     .filter((c) => c.status === 'fail' || c.status === 'warning')
     .sort((a, b) => (IMPACT_ORDER[a.impact] ?? 3) - (IMPACT_ORDER[b.impact] ?? 3));
@@ -562,22 +552,6 @@ const RecommendationsSection = ({
             </div>
           );
         })}
-      </div>
-
-      {/* CTA */}
-      <div className="ev-card p-6 text-center mt-6">
-        <div className="relative z-10">
-          <p className="text-foreground font-semibold mb-2">Besoin d'aide pour mettre en place ces recommandations ?</p>
-          <p className="text-sm text-muted-foreground mb-4">Un expert DigitaliX analyse vos résultats et vous accompagne.</p>
-          <Link
-            to={auditId ? `/contact?auditId=${auditId}` : '/contact'}
-            state={auditId ? { email: auditEmail || undefined, auditUrl } : undefined}
-            className="inline-flex items-center gap-2 px-6 py-3 ev-btn-primary text-sm font-bold rounded-xl"
-          >
-            Contactez un expert
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
       </div>
     </div>
   );
@@ -1436,12 +1410,7 @@ const AuditResults = () => {
 
                       {/* Recommendations */}
                       <div className="animate-fade-in-up mt-6">
-                        <RecommendationsSection
-                          checks={checks}
-                          auditId={auditResult?.id ?? scanAuditId ?? routeId ?? undefined}
-                          auditEmail={email || undefined}
-                          auditUrl={displayUrl}
-                        />
+                        <RecommendationsSection checks={checks} />
                       </div>
                     </>
                   )}
