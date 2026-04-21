@@ -12,6 +12,43 @@ const app = new Hono();
 
 const GATED_PLACEHOLDER = 'Debloquez les resultats complets en renseignant votre email.';
 
+async function sendUnlockEmailIfPending(
+  auditId: string,
+  contactId: string,
+  url: string,
+  score: number | null,
+  email: string,
+) {
+  // Guard against double-send (scan-completion handler + unlock endpoint may both try)
+  const existing = await sql`
+    SELECT id FROM email_logs
+    WHERE contact_id = ${contactId}
+      AND template_key = 'audit_unlock'
+      AND metadata->>'audit_id' = ${auditId}
+    LIMIT 1
+  `;
+  if (existing.length > 0) return;
+
+  try {
+    const emailResult = buildAuditUnlockEmail({ email, url, score, auditId, contactId });
+    const resendResult = await sendEmail({
+      to: email,
+      subject: emailResult.subject,
+      html: emailResult.html,
+    });
+    await sql`
+      INSERT INTO email_logs (contact_id, to_email, template_key, subject, resend_message_id, status, metadata)
+      VALUES (${contactId}, ${email}, ${emailResult.template_key}, ${emailResult.subject}, ${resendResult.id}, 'sent', ${JSON.stringify({
+        audit_id: auditId,
+        url,
+        score,
+      })})
+    `;
+  } catch (err) {
+    console.error('[audit/unlock-email] Failed to send:', err);
+  }
+}
+
 async function buildSseResultPayload(id: string, result: ScanResult) {
   const rows = await sql`SELECT unlocked_at FROM audits WHERE id = ${id} LIMIT 1`;
   const isUnlocked = rows.length > 0 && rows[0].unlocked_at !== null;
@@ -161,6 +198,24 @@ app.post('/', async (c) => {
 
       state.result = result;
       state.done = true;
+
+      // If user unlocked during the scan, send the unlock email NOW with the real score
+      try {
+        const unlockInfo = await sql`
+          SELECT a.unlocked_at, a.contact_id, c.email
+          FROM audits a
+          LEFT JOIN contacts c ON c.id = a.contact_id
+          WHERE a.id = ${auditId}
+          LIMIT 1
+        `;
+        const row = unlockInfo[0];
+        if (row?.unlocked_at && row.contact_id && row.email) {
+          await sendUnlockEmailIfPending(auditId, row.contact_id, url, result.overallScore, row.email);
+        }
+      } catch (err) {
+        console.error('[audit] Deferred unlock email failed:', err);
+      }
+
       // Push a final event to wake up SSE listeners
       pushEvent(auditId, { type: 'scan_complete', label: `Score final : ${result.overallScore}/100` });
     } catch (err) {
@@ -319,7 +374,7 @@ app.post('/:id/unlock', async (c) => {
   }
 
   const auditRows = await sql`
-    SELECT id, url, overall_score FROM audits WHERE id = ${id} LIMIT 1
+    SELECT id, url, status, overall_score FROM audits WHERE id = ${id} LIMIT 1
   `;
 
   if (auditRows.length === 0) {
@@ -361,31 +416,11 @@ app.post('/:id/unlock', async (c) => {
     })})
   `;
 
-  try {
-    const emailResult = buildAuditUnlockEmail({
-      email,
-      url: audit.url,
-      score: audit.overall_score,
-      auditId: id,
-      contactId,
-    });
-
-    const resendResult = await sendEmail({
-      to: email,
-      subject: emailResult.subject,
-      html: emailResult.html,
-    });
-
-    await sql`
-      INSERT INTO email_logs (contact_id, to_email, template_key, subject, resend_message_id, status, metadata)
-      VALUES (${contactId}, ${email}, ${emailResult.template_key}, ${emailResult.subject}, ${resendResult.id}, 'sent', ${JSON.stringify({
-        audit_id: id,
-        url: audit.url,
-        score: audit.overall_score,
-      })})
-    `;
-  } catch (err) {
-    console.error('[audit/unlock] Email send failed:', err);
+  // Only send the unlock email if the scan is COMPLETED — otherwise the score
+  // is still 0 and the email would mislead the recipient. The scan-completion
+  // handler will send the email once the real score is available.
+  if (audit.status === 'completed') {
+    await sendUnlockEmailIfPending(id, contactId, audit.url, audit.overall_score, email);
   }
 
   const checkRows = await sql`
