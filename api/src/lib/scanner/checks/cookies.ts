@@ -1,4 +1,5 @@
 import type { CheckModule, ScanContext } from '../types.js';
+import { detectServerManagedCookies, GOOGLE_FP_COOKIES } from '../server-managed-cookies.js';
 
 const ANALYTICS_COOKIES = ['_ga', '_gid', '_fbp', '_fbc', '_gcl_au', '_gcl_aw'];
 const ITP_LIMITED_DURATION_DAYS = 7;
@@ -12,10 +13,28 @@ export const cookiesCheck: CheckModule = {
   run(ctx: ScanContext) {
     const postAccept = ctx.sessions.find((s) => s.phase === 'post-accept');
     const cookiesToAnalyze = postAccept?.cookies ?? ctx.cookies;
+    const smc = detectServerManagedCookies(ctx);
 
-    // We can only RELIABLY detect httpOnly (definitive server-set indicator).
-    // For analytics cookies, httpOnly is rarely true because the tracker JS
-    // needs to read them — but presence proves server origin when set.
+    // SIGNAL LE PLUS FORT : famille FP* (FPID, FPLC, FPGCLAW, FPGCLDC, FPGCLGB)
+    // Ces noms sont exclusifs aux setups sGTM server-managed — preuve définitive.
+    if (smc.detected.length > 0) {
+      const labels = smc.detected.map((n) => `${n} (${GOOGLE_FP_COOKIES[n] ?? ''})`);
+      const legacyNote = smc.hasLegacyGa || smc.hasLegacyGclAu
+        ? ` Cohabitation avec ${[smc.hasLegacyGa ? '_ga' : null, smc.hasLegacyGclAu ? '_gcl_au' : null].filter(Boolean).join(', ')} — possible migration en cours.`
+        : '';
+      return {
+        status: 'pass',
+        description: `Cookies server-managed détectés : ${smc.detected.join(', ')} — le naming FP* prouve qu'ils sont posés par sGTM via HTTP Set-Cookie (durée 2 ans préservée, bypass ITP).${legacyNote}`,
+        rawData: {
+          serverManagedFamily: smc.detected,
+          labels,
+          hasLegacyGa: smc.hasLegacyGa,
+          hasLegacyGclAu: smc.hasLegacyGclAu,
+        },
+      };
+    }
+
+    // Fallback : cookies classiques (_ga, _fbp, _gcl_au) — heuristiques plus fragiles
     const httpOnlyServerCookies: string[] = [];
     const firstPartyCookies: { name: string; longLived: boolean; expiresAt: string | null }[] = [];
 
