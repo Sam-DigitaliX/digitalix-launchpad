@@ -1,8 +1,8 @@
 import type { CheckModule, ScanContext } from '../types.js';
 import { detectServerManagedCookies, GOOGLE_FP_COOKIES } from '../server-managed-cookies.js';
+import { identifyCookieVendor } from '../cookie-vendors.js';
 
 const ANALYTICS_COOKIES = ['_ga', '_gid', '_fbp', '_fbc', '_gcl_au', '_gcl_aw'];
-const ITP_LIMITED_DURATION_DAYS = 7;
 
 export const cookiesCheck: CheckModule = {
   id: 'first-party-cookies',
@@ -24,91 +24,60 @@ export const cookiesCheck: CheckModule = {
         : '';
       return {
         status: 'pass',
-        description: `Cookies server-managed détectés : ${smc.detected.join(', ')} — le naming FP* prouve qu'ils sont posés par sGTM via HTTP Set-Cookie (durée 2 ans préservée, bypass ITP).${legacyNote}`,
+        description: `Cookies server-managed détectés : ${smc.detected.join(', ')} — le naming FP* prouve qu'ils sont posés par sGTM via HTTP Set-Cookie. **Durée préservée sur Safari : jusqu'à 2 ans** (bypass ITP cap).${legacyNote}`,
         rawData: {
           serverManagedFamily: smc.detected,
           labels,
           hasLegacyGa: smc.hasLegacyGa,
           hasLegacyGclAu: smc.hasLegacyGclAu,
+          safariDurationDays: 730,
         },
       };
     }
 
-    // Fallback : cookies classiques (_ga, _fbp, _gcl_au) — heuristiques plus fragiles
+    // Signal httpOnly : définitif pour un Set-Cookie server-side, mais rare
+    // pour les cookies analytics (ils doivent être lus par JS pour fonctionner).
     const httpOnlyServerCookies: string[] = [];
-    const firstPartyCookies: { name: string; longLived: boolean; expiresAt: string | null }[] = [];
+    const trackerCookiesFound: { name: string; vendor: string; role: string }[] = [];
 
     for (const cookie of cookiesToAnalyze) {
       if (!ANALYTICS_COOKIES.some((name) => cookie.name.startsWith(name))) continue;
-      if (cookie.isThirdParty) continue;
+      if (cookie.httpOnly) httpOnlyServerCookies.push(cookie.name);
 
-      if (cookie.httpOnly) {
-        httpOnlyServerCookies.push(cookie.name);
-      }
-
-      // Long-lived = expires more than ITP's 7-day cap. If a first-party
-      // analytics cookie persists beyond 7 days on Safari, it had to come
-      // from an HTTP response (server-set) — JS document.cookie writes get
-      // capped to 7 days by ITP. This is a real signal.
-      let longLived = false;
-      let expiresAt: string | null = null;
-      if (cookie.expires) {
-        const expDate = new Date(cookie.expires);
-        const daysFromNow = (expDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24);
-        longLived = daysFromNow > ITP_LIMITED_DURATION_DAYS;
-        expiresAt = cookie.expires;
-      } else if (cookie.maxAge) {
-        longLived = cookie.maxAge / (60 * 60 * 24) > ITP_LIMITED_DURATION_DAYS;
-      }
-
-      firstPartyCookies.push({ name: cookie.name, longLived, expiresAt });
+      const info = identifyCookieVendor(cookie.name);
+      if (info) trackerCookiesFound.push({ name: cookie.name, vendor: info.vendor, role: info.role });
     }
 
-    const total = firstPartyCookies.length;
-    const longLivedCount = firstPartyCookies.filter((c) => c.longLived).length;
-
     const rawData = {
+      serverManagedFamily: [],
       httpOnlyServerCookies,
-      firstPartyCookies,
-      longLivedCount,
+      trackerCookiesFound,
       sessionUsed: postAccept?.phase ?? null,
     };
 
-    if (total === 0) {
-      return {
-        status: 'info',
-        description: 'Aucun cookie analytics first-party détecté après acceptation. Les cookies sont peut-être posés côté client uniquement, ou le scan n\'a pas pu déclencher leur écriture.',
-        rawData,
-      };
-    }
-
-    // Strongest signal: any httpOnly first-party cookie = definitive server-set
     if (httpOnlyServerCookies.length > 0) {
       return {
         status: 'pass',
-        description: `Cookies analytics posés en server-side (httpOnly) : ${httpOnlyServerCookies.join(', ')} — résistants à ITP et accessibles seulement au serveur.`,
-        rawData,
+        description: `Cookies analytics posés via Set-Cookie HTTP (httpOnly) : ${httpOnlyServerCookies.join(', ')} — inaccessibles au JavaScript, garantie de provenance server-side. **Durée préservée sur Safari : jusqu'à 2 ans** (ITP ne cap pas les cookies HTTP server-set sur même domaine).`,
+        rawData: { ...rawData, safariDurationDays: 730 },
       };
     }
 
-    // Long-lived first-party cookies (>7 days) are likely server-set
-    // because Safari's ITP caps JS-set cookies at 7 days
-    if (longLivedCount > 0) {
-      const longLivedNames = firstPartyCookies.filter((c) => c.longLived).map((c) => c.name);
+    if (trackerCookiesFound.length === 0) {
       return {
-        status: 'pass',
-        description: `Cookies analytics first-party détectés avec durée > 7j : ${longLivedNames.join(', ')}. Indicateur fort qu'ils sont posés en HTTP server-side (durée préservée sur Safari/ITP).`,
+        status: 'info',
+        description: 'Aucun cookie analytics détecté après acceptation. Les cookies sont peut-être posés côté client uniquement, ou le scan n\'a pas pu déclencher leur écriture.',
         rawData,
       };
     }
 
-    // First-party cookies but all short-lived → likely JS-set, capped by ITP
-    const names = firstPartyCookies.map((c) => c.name);
+    // Cookies analytics présents mais aucun signal server-managed → warning pédagogique avec impact Safari
+    const summary = trackerCookiesFound.map((c) => `${c.name} (${c.vendor})`).join(', ');
     return {
       status: 'warning',
-      description: `Cookies analytics first-party détectés : ${names.join(', ')} — durée ≤ 7j ou non spécifiée. Probablement posés par JavaScript et donc soumis à la limite ITP Safari (7 jours max).`,
-      businessNote: 'Sur Safari (ITP), les cookies analytics posés par JavaScript sont capés à 7 jours. Posez-les en HTTP server-side (via sGTM) pour préserver leur durée de vie réelle (2 ans pour _ga, 3 mois pour _fbp).',
-      rawData,
+      description: `Aucun cookie server-managed détecté. Les cookies analytics présents (${summary}) sont probablement posés par JavaScript (via gtag.js / fbevents.js / etc.). **Impact Safari : durée cappée à 7 jours max** (ITP 2.1+, depuis 2019). Safari représente environ 20-25% du trafic en Europe (iOS + macOS) — la fenêtre d'attribution est divisée pour ces utilisateurs. Ces traceurs apparaissent aussi dans la carte "Cookies Tiers" (au sens CNIL, déposés par des tiers).`,
+      businessNote: 'Pour bypass la limite ITP 7j de Safari et préserver la durée réelle (2 ans pour _ga, 3 mois pour _fbp), activez "Server-managed cookies" dans le client GA4 / tag Google Ads de sGTM (génère FPID / FPGCLAW posés par HTTP Set-Cookie).',
+      rawData: { ...rawData, safariDurationDays: 7 },
     };
   },
 };
