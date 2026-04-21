@@ -24,12 +24,13 @@ export const cookiesCheck: CheckModule = {
         : '';
       return {
         status: 'pass',
-        description: `Cookies server-managed détectés : ${smc.detected.join(', ')} — le naming FP* prouve qu'ils sont posés par sGTM via HTTP Set-Cookie (durée 2 ans préservée, bypass ITP).${legacyNote}`,
+        description: `Cookies server-managed détectés : ${smc.detected.join(', ')} — le naming FP* prouve qu'ils sont posés par sGTM via HTTP Set-Cookie. **Durée préservée sur Safari : jusqu'à 2 ans** (bypass ITP cap).${legacyNote}`,
         rawData: {
           serverManagedFamily: smc.detected,
           labels,
           hasLegacyGa: smc.hasLegacyGa,
           hasLegacyGclAu: smc.hasLegacyGclAu,
+          safariDurationDays: 730,
         },
       };
     }
@@ -57,8 +58,8 @@ export const cookiesCheck: CheckModule = {
     if (httpOnlyServerCookies.length > 0) {
       return {
         status: 'pass',
-        description: `Cookies analytics posés via Set-Cookie HTTP (httpOnly) : ${httpOnlyServerCookies.join(', ')} — inaccessibles au JavaScript, résistants à l'ITP Safari.`,
-        rawData,
+        description: `Cookies analytics posés via Set-Cookie HTTP (httpOnly) : ${httpOnlyServerCookies.join(', ')} — inaccessibles au JavaScript, garantie de provenance server-side. **Durée préservée sur Safari : jusqu'à 2 ans** (ITP ne cap pas les cookies HTTP server-set sur même domaine).`,
+        rawData: { ...rawData, safariDurationDays: 730 },
       };
     }
 
@@ -70,13 +71,13 @@ export const cookiesCheck: CheckModule = {
       };
     }
 
-    // Cookies analytics présents mais aucun signal server-managed → warning pédagogique
+    // Cookies analytics présents mais aucun signal server-managed → warning pédagogique avec impact Safari
     const summary = trackerCookiesFound.map((c) => `${c.name} (${c.vendor})`).join(', ');
     return {
       status: 'warning',
-      description: `Aucun cookie server-managed détecté. Les cookies analytics présents (${summary}) sont posés par JavaScript — durée cappée à 7 jours sur Safari (ITP) et vulnérables aux adblockers. Ces traceurs déposés par des tiers apparaissent aussi dans la carte "Cookies Tiers".`,
-      businessNote: 'Activez "Server-managed cookies" dans le client GA4 / tag Google Ads de sGTM pour générer FPID / FPGCLAW — durée 2 ans préservée, résistance aux bloqueurs, et meilleure conformité CNIL (cookie réellement first-party au sens légal).',
-      rawData,
+      description: `Aucun cookie server-managed détecté. Les cookies analytics présents (${summary}) sont probablement posés par JavaScript (via gtag.js / fbevents.js / etc.). **Impact Safari : durée cappée à 7 jours max** (ITP 2.1+, depuis 2019). Safari représente environ 20-25% du trafic en Europe (iOS + macOS) — la fenêtre d'attribution est divisée pour ces utilisateurs. Ces traceurs apparaissent aussi dans la carte "Cookies Tiers" (au sens CNIL, déposés par des tiers).`,
+      businessNote: 'Pour bypass la limite ITP 7j de Safari et préserver la durée réelle (2 ans pour _ga, 3 mois pour _fbp), activez "Server-managed cookies" dans le client GA4 / tag Google Ads de sGTM (génère FPID / FPGCLAW posés par HTTP Set-Cookie).',
+      rawData: { ...rawData, safariDurationDays: 7 },
     };
   },
 };

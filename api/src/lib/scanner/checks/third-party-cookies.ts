@@ -98,10 +98,18 @@ export const thirdPartyCookiesCheck: CheckModule = {
     }
     const summary = parts.join(' ; ');
 
+    // Safari impact note — added to warning/fail cases to inform prospects
+    // about the real-world lifetime of these cookies beyond our Chromium scan.
+    const safariImpact = thirdPartyDomains.length > 0 && trackersOnFirstParty.length > 0
+      ? 'Impact Safari (≈ 20-25% du trafic EU) : cookies sur domaines tiers **bloqués entièrement** depuis 2020 (ITP 2.3) ; traceurs first-party posés par JavaScript **cappés à 7 jours max**.'
+      : thirdPartyDomains.length > 0
+      ? 'Impact Safari (≈ 20-25% du trafic EU) : cookies sur domaines tiers **bloqués entièrement** depuis 2020 (ITP 2.3).'
+      : 'Impact Safari (≈ 20-25% du trafic EU) : traceurs posés par JavaScript **cappés à 7 jours max** (ITP 2.1+).';
+
     if (total <= 2) {
       return {
         status: 'pass',
-        description: `${summary} — niveau acceptable.`,
+        description: `${summary} — niveau acceptable. ${safariImpact}`,
         rawData,
       };
     }
@@ -109,16 +117,16 @@ export const thirdPartyCookiesCheck: CheckModule = {
     if (total <= 10) {
       return {
         status: 'warning',
-        description: `${summary}. Au sens CNIL, ces cookies sont considérés comme tiers (déposés pour le compte d'un tiers) et nécessitent le consentement utilisateur.`,
-        businessNote: 'Vérifiez que tous ces traceurs sont couverts par votre bandeau de consentement et ne se déclenchent qu\'après acceptation explicite. Sinon, risque d\'infraction RGPD.',
+        description: `${summary}. Au sens CNIL, ces cookies sont considérés comme tiers (déposés pour le compte d'un tiers) et nécessitent le consentement utilisateur. ${safariImpact}`,
+        businessNote: 'Double enjeu. Côté RGPD : vérifiez que tous ces traceurs sont couverts par votre bandeau de consentement (aucune écriture avant acceptation explicite). Côté attribution : passez les traceurs Google en server-managed (FPID / FPGCLAW via sGTM) pour bypass la limite ITP 7j de Safari — sinon vous perdez 20-25% de fenêtre d\'attribution sur iOS/macOS.',
         rawData,
       };
     }
 
     return {
       status: 'fail',
-      description: `${summary}. Nombre élevé de traceurs tiers — impact direct sur la conformité RGPD et la vie privée.`,
-      businessNote: 'Trop de traceurs tiers sur votre site. Activez un consentement strict avant toute écriture de cookie et auditez régulièrement vos tags.',
+      description: `${summary}. Nombre élevé de traceurs tiers — impact direct sur la conformité RGPD et la vie privée. ${safariImpact}`,
+      businessNote: 'Trop de traceurs tiers. Activez un consentement strict avant toute écriture de cookie, auditez régulièrement vos tags, et basculez les essentiels (GA4, Google Ads) en server-managed via sGTM pour préserver l\'attribution sur Safari (≈ 20-25% du trafic EU).',
       rawData,
     };
   },
