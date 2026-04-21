@@ -236,7 +236,10 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 ### Chantier C — Backlog fonctionnel
 - [x] CRUD contacts in admin dashboard (edit, delete, notes, tags) (2026-04-13)
 - [x] Supabase code cleanup — 7 commentaires "Replaces: supabase.x" retirés (2026-04-20)
-- [x] Redirect chain analysis check — ajouté, 26 checks au total (2026-04-20)
+- [x] Redirect chain analysis check — ajouté (2026-04-20)
+- [x] Google Ads + Microsoft UET (Bing Ads) tracker checks ajoutés — 28 checks au total (2026-04-21)
+- [x] Audit precision overhaul — Enhanced Conversions / Meta CAPI / cookies first-party / dataLayer ecom réécrits pour être **honnêtes** (voir Done 2026-04-21) (2026-04-21)
+- [x] Server-managed cookies detection (FPID/FPLC/FPGCL*) + sGTM maturity levels + GTM masqué par custom loader + Sirdata/Consent Mode v2 via TCF API (2026-04-21)
 - [ ] QualificationForm.tsx:202 — resource download link (waiting for resource)
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Supabase : supprimer le projet côté dashboard supabase.com — action manuelle infra restante
@@ -398,6 +401,29 @@ _Aucun bug ouvert — CMP delay résolu (2026-04-20, voir Done)._
 - [x] Audit Results : section "Autres vérifications" (pass/info) déplacée AVANT "Recommandations" (fail/warning) pour que les actions restent collées au CTA gradient final et que l'utilisateur voie d'abord ce qui est OK. (2026-04-20)
 - [x] Fix critique : race condition unlock pendant scan — quand le user clique Débloquer avant la fin du scan, l'endpoint unlock écrit `unlocked_at = now()` mais `audit_checks` est vide → renvoie `checks: []`. Le SSE `result` event appliquait ensuite le mask gated sans checker l'unlock state → user voyait "Débloquez les résultats..." comme description dans TOUTES les cards alors qu'il avait donné son email. Fix backend : nouveau helper `buildSseResultPayload()` qui lit `unlocked_at` en DB avant de masquer. Fix frontend : n'écrase plus les checks avec un tableau vide quand unlock mid-scan retourne `[]`. (2026-04-20)
 - [x] Audit Results : CTA inline "Contactez un expert" retiré complètement — redondant avec le CTA gradient principal "Reserver mon Audit Offert". 1 CTA fort > 2 CTA moyens rapprochés. (2026-04-20)
+- [x] Audit : nouveaux checks **Google Ads** (détection AW-XXX via 4 signaux + mode hybride client/server/cookie-only explicite) + **Microsoft UET Bing Ads** (bat.bing.com + uetq). Ajout à TrackersTable, platform mapping Google/Microsoft, affichage loading method "Hybride (client + server)". 28 checks au total. (2026-04-21)
+- [x] Audit precision overhaul — 4 checks réécrits pour être **honnêtes** au lieu de sur-affirmer (2026-04-21) :
+  - **Meta CAPI** : check `_fbp httpOnly` était cassé (le cookie est toujours lu par JS, jamais httpOnly même server-side). Description/businessNote contradictoires. Nouvelle logique basée sur eventID seul (signal fiable de dédup CAPI). Pass si eventID détecté, warning si Pixel sans eventID.
+  - **Enhanced Conversions** : ajout parsing réseau (em/em_hash sur /pagead/conversion, user_data sur /g/collect). Inline regex strict (plus de faux positifs). Wording humble quand sGTM présent (EC peut être server-side, opaque à notre scan).
+  - **Cookies first-party** : drop du trap `httpOnly || (!isThirdParty && expires)` (faussé). Nouvelle logique : httpOnly (rare mais conclusif) + durée > 7j (si un cookie persiste au-delà, il vient forcément d'un HTTP Set-Cookie car ITP Safari cap les JS-set à 7j).
+  - **DataLayer e-commerce** : détection de 8 plugins connus (GTM4WP, WooCommerce DataLayer, Shopify Pixels, Magento GTM, PrestaShop, BigCommerce, etc.). Plugin détecté → pass avec note "events attendus sur pages produit/checkout (non scannées)". Sinon info (plus warning) avec reco manuelle. Events GA4 étendus (select_item, remove_from_cart, view_cart).
+- [x] Audit : **server-managed cookies detection** (FPID/FPLC/FPGCLAW/FPGCLDC/FPGCLGB) via nouveau helper `server-managed-cookies.ts` (2026-04-21) :
+  - Ces noms sont exclusifs aux setups sGTM "Server-managed cookies (recommended)" — preuve définitive par le naming
+  - **sgtm.ts** refondu avec niveaux de maturité 0/1/2 explicites (client-side / librairie proxifiée / server-managed complet) + edge case "gtm.js non proxifié + FP* présents" flagué comme "setup fragmenté à investiguer"
+  - **cookies.ts** : famille FP* comme signal prioritaire (pass immédiat avec label de rôle pour chaque cookie détecté)
+  - **capi-google.ts** : FPGCLAW ajouté comme signal fort pour Google Ads server-managed
+  - Distinction GTGA (Google Tag Gateway for Advertisers — proxy de librairie) vs sGTM (processing server-side) documentée dans les descriptions/businessNotes
+- [x] Audit : **GTM masqué par first-party load + custom loader** — bug où un setup server-side avancé causait "Installer Google Tag Manager" dans les recommandations (2026-04-21) :
+  - Pattern URL élargi : matche `gtm.js?id=GTM-XXX` sur n'importe quel domaine (pas que googletagmanager.com)
+  - Inline guards relâchés (accepte `'GTM-XXX'` en string literal)
+  - Network requests ajoutées comme source de détection (custom loader peut fetch gtm.js avec URL transformée)
+  - Fallback FP* cookies → pass "container GTM non visible, détecté indirectement via cookies server-managed"
+  - Fallback dataLayer actif seul → info "possible custom loader ou tag manager alternatif"
+  - TrackersTable : affiche "masqué (custom loader)" + loading method "Server-side (masqué)" quand détection indirecte
+- [x] Audit : **Sirdata + Consent Mode v2** sur setup server-side (2026-04-21) :
+  - Sirdata n'était pas identifié sur un sGTM proxifié (CMP_SCRIPT_PATTERNS rate quand l'URL proxifiée ne contient plus "sirdata")
+  - Fix : query IAB TCF API (`window.__tcfapi('getTCData', 2, ...)`) → récupère le `cmpId` officiel. Nouvelle table `TCF_CMP_IDS` (14 CMP courantes : Sirdata=92, Didomi=7, OneTrust=10, Axeptio=300, CookieYes=373, etc.). Cascade : TCF > script URLs > generic tag.
+  - Consent Mode v2 : l'extracteur cherchait `gcs`/`gcd` seulement sur `/g/collect` et `/j/collect`. Avec sGTM endpoint custom → on ratait les signaux. Fix : accepte gcs/gcd sur **n'importe quelle URL** + validation de format (gcs `/^G1\d{2}$/`, gcd ≥ 4 chars) pour éviter les faux positifs.
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
