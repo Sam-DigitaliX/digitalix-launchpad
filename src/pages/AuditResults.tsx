@@ -202,10 +202,36 @@ function getLoadingMethod(check: AuditCheck): string {
   return 'Direct';
 }
 
+function isTrackerDetected(check: AuditCheck): boolean {
+  const raw = typeof check.rawData === 'string' ? JSON.parse(check.rawData) : (check.rawData ?? {});
+  switch (check.id) {
+    case 'gtm':
+      return (raw.containerIds?.length ?? 0) > 0 || Boolean(raw.indirectDetection);
+    case 'ga4':
+      return (raw.measurementIds?.length ?? 0) > 0;
+    case 'google-ads':
+      return (raw.ids?.length ?? 0) > 0 || Boolean(raw.hasGclAw);
+    case 'meta-pixel':
+      return (raw.pixelIds?.length ?? 0) > 0 || Boolean(raw.hasScript);
+    case 'tiktok':
+      return Boolean(raw.pixelId) || Boolean(raw.hasScript);
+    case 'linkedin':
+      return Boolean(raw.partnerId) || Boolean(raw.hasScript);
+    case 'bing-ads':
+      return (raw.uetIds?.length ?? 0) > 0 || Boolean(raw.hasBatScript) || Boolean(raw.hasUetqInline);
+    case 'sgtm':
+      return Boolean(raw.gtmDomain) && !String(raw.gtmDomain).includes('googletagmanager.com');
+    default:
+      return check.status === 'pass' || check.status === 'warning' || check.status === 'fail';
+  }
+}
+
 const TrackersTable = ({ checks }: { checks: AuditCheck[] }) => {
   const trackerChecks = TRACKER_IDS
     .map((id) => checks.find((c) => c.id === id))
     .filter((c): c is AuditCheck => c !== undefined);
+
+  const detected = trackerChecks.filter(isTrackerDetected);
 
   if (trackerChecks.length === 0) return null;
 
@@ -227,7 +253,7 @@ const TrackersTable = ({ checks }: { checks: AuditCheck[] }) => {
               </tr>
             </thead>
             <tbody>
-              {trackerChecks.map((check) => (
+              {detected.map((check) => (
                 <tr key={check.id} className="border-b border-glass-border/40">
                   <td className="px-5 py-3 font-medium text-foreground">{check.name}</td>
                   <td className="px-5 py-3 text-muted-foreground">{TRACKER_PLATFORMS[check.id] ?? '—'}</td>
@@ -257,6 +283,11 @@ const TrackersTable = ({ checks }: { checks: AuditCheck[] }) => {
             </tbody>
           </table>
         </div>
+        {detected.length < trackerChecks.length && (
+          <div className="px-5 py-3 border-t border-glass-border/40 text-[11px] text-muted-foreground">
+            {detected.length} tracker{detected.length > 1 ? 's' : ''} détecté{detected.length > 1 ? 's' : ''} sur {trackerChecks.length} analysé{trackerChecks.length > 1 ? 's' : ''}.
+          </div>
+        )}
       </div>
     </div>
   );
