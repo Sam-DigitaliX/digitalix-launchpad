@@ -244,6 +244,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Supabase : supprimer le projet côté dashboard supabase.com — action manuelle infra restante
 - [ ] Cross-domain tracking detection (nouveau check audit — spec définie : sous-domaines racine + whitelist payment/booking + croisement config linker)
+- [ ] **Frontend : visualiser `maturityLevel` sGTM (0/1/2)** — la valeur est déjà calculée et exposée dans `rawData.maturityLevel` du check sgtm (voir `api/src/lib/scanner/checks/sgtm.ts`). Actuellement seulement dans la description textuelle ("Niveau 1/2", "Niveau 2/2"). À ajouter côté AuditResults.tsx : un badge dédié (ex. stepper 0→1→2 avec highlight du niveau courant, ou pastille colorée dans la TrackersTable ligne sGTM). Gros gain pédagogique pour que le prospect visualise où il en est dans sa maturité server-side.
 - [ ] Security headers analysis — **retiré du backlog** (hors scope tracking, dilue le positionnement server-side)
 
 ### Chantier D — Migrations majeures
