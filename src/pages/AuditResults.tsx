@@ -184,6 +184,8 @@ function getTrackerIds(check: AuditCheck): string {
   if (raw.pixelId) return raw.pixelId;
   if (raw.partnerId) return raw.partnerId;
   if (raw.gtmDomain) return raw.gtmDomain;
+  if (raw.indirectDetection === 'server-managed-cookies') return 'masqué (custom loader)';
+  if (raw.indirectDetection === 'datalayer-active') return 'non identifié';
   return '—';
 }
 
@@ -195,6 +197,7 @@ function getLoadingMethod(check: AuditCheck): string {
     if (raw.mode === 'server') return 'Server-side';
     if (raw.mode === 'client') return 'Client-side';
   }
+  if (check.id === 'gtm' && raw.indirectDetection === 'server-managed-cookies') return 'Server-side (masqué)';
   if (raw.viaGtm) return 'Via GTM';
   return 'Direct';
 }
