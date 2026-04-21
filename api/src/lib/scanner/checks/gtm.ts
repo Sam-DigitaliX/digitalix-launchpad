@@ -1,24 +1,37 @@
 import type { CheckModule, ScanContext } from '../types.js';
+import { detectServerManagedCookies } from '../server-managed-cookies.js';
 
-const GTM_SCRIPT_PATTERN = /googletagmanager\.com\/gtm\.js\?id=(GTM-[A-Z0-9]+)/g;
+// Match GTM container ID from any URL serving gtm.js (works for googletagmanager.com AND proxified custom domains)
+const GTM_SCRIPT_URL_ANY = /\/gtm\.js\?id=(GTM-[A-Z0-9]+)/;
 const GTM_INLINE_PATTERN = /GTM-[A-Z0-9]{6,}/g;
 
 function findGtmIds(ctx: ScanContext): string[] {
   const ids = new Set<string>();
 
+  // 1. Any external script URL serving gtm.js (proxified or not)
   for (const src of ctx.scripts) {
-    const match = GTM_SCRIPT_PATTERN.exec(src);
+    const match = GTM_SCRIPT_URL_ANY.exec(src);
     if (match) ids.add(match[1]);
-    GTM_SCRIPT_PATTERN.lastIndex = 0;
   }
 
+  // 2. Inline scripts — relaxed guard: gtm.start, gtm.js, or a 'GTM-XXX' string literal
   for (const script of ctx.inlineScripts) {
-    if (script.includes('gtm.start') || script.includes('googletagmanager.com/gtm.js')) {
-      let m: RegExpExecArray | null;
-      while ((m = GTM_INLINE_PATTERN.exec(script)) !== null) {
-        ids.add(m[0]);
-      }
-      GTM_INLINE_PATTERN.lastIndex = 0;
+    const looksLikeGtm =
+      /gtm\.(start|js)/.test(script) ||
+      /['"`]GTM-[A-Z0-9]+['"`]/.test(script);
+    if (!looksLikeGtm) continue;
+    let m: RegExpExecArray | null;
+    while ((m = GTM_INLINE_PATTERN.exec(script)) !== null) {
+      ids.add(m[0]);
+    }
+    GTM_INLINE_PATTERN.lastIndex = 0;
+  }
+
+  // 3. Network requests — a custom loader may fetch gtm.js itself even if HTML doesn't expose it
+  for (const session of ctx.sessions) {
+    for (const req of session.networkRequests) {
+      const match = GTM_SCRIPT_URL_ANY.exec(req.url);
+      if (match) ids.add(match[1]);
     }
   }
 
@@ -35,9 +48,40 @@ export const gtmCheck: CheckModule = {
     const ids = findGtmIds(ctx);
 
     if (ids.length === 0) {
+      // Fallback : signaux indirects que GTM EST actif mais masqué (custom loader + first-party)
+      const smc = detectServerManagedCookies(ctx);
+      const pushCount = ctx.sessions.reduce((acc, s) => acc + s.dataLayerPushes.length, 0);
+      const hasDataLayer = pushCount > 0;
+
+      // Cookies server-managed FP* = preuve forte que sGTM tourne, donc qu'un container GTM existe
+      if (smc.hasFpid || smc.hasFpgclaw) {
+        return {
+          status: 'pass',
+          description: `Container GTM non visible directement (chargement first-party + custom loader masquant l'appel à gtm.js) — détecté indirectement via cookies server-managed (${smc.detected.join(', ')}). Setup avancé, container ID non récupérable côté client.`,
+          rawData: {
+            containerIds: [],
+            indirectDetection: 'server-managed-cookies',
+            indirectSignals: smc.detected,
+          },
+        };
+      }
+
+      // dataLayer actif sans GTM visible : signal probable mais pas certain (peut être Tealium / Adobe Launch / autre)
+      if (hasDataLayer) {
+        return {
+          status: 'info',
+          description: `dataLayer actif (${pushCount} push${pushCount > 1 ? 'es' : ''}) mais aucun container GTM identifié dans les scripts. Possible custom loader, ou tag manager alternatif (Tealium, Adobe Launch). Vérification manuelle recommandée.`,
+          rawData: {
+            containerIds: [],
+            indirectDetection: 'datalayer-active',
+            pushCount,
+          },
+        };
+      }
+
       return {
         status: 'fail',
-        description: 'Aucun container Google Tag Manager détecté.',
+        description: 'Aucun container Google Tag Manager détecté (ni script direct, ni cookies server-managed, ni dataLayer actif).',
         businessNote: 'Sans Google Tag Manager, vous ne pouvez pas gérer vos tags marketing de manière centralisée. Chaque modification nécessite un développeur.',
         rawData: { containerIds: [] },
       };
