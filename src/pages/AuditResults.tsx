@@ -394,6 +394,85 @@ function CookieCard({
   );
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   Server-Side Maturity Stepper
+   ══════════════════════════════════════════════════════════════════ */
+
+const MATURITY_LEVELS = [
+  { num: 0, label: 'Client-side', desc: 'GTM sur googletagmanager.com' },
+  { num: 1, label: 'Librairie proxifiée', desc: 'GTM sur domaine first-party' },
+  { num: 2, label: 'Server-managed', desc: 'FP* cookies actifs' },
+];
+
+const ServerSideMaturity = ({ checks }: { checks: AuditCheck[] }) => {
+  const sgtm = checks.find((c) => c.id === 'sgtm');
+  if (!sgtm) return null;
+  const raw = parseRawData(sgtm);
+  const level = raw.maturityLevel as number | undefined;
+  if (level === undefined || level === null) return null;
+
+  return (
+    <div className="ev-card p-5">
+      <div className="relative z-10">
+        <div className="flex items-center justify-between mb-5">
+          <h3 className="text-sm font-bold text-foreground font-display">Maturité Server-Side</h3>
+          <span className="text-xs font-mono text-muted-foreground">
+            Niveau <span className="text-foreground font-semibold">{level}</span>/2
+          </span>
+        </div>
+
+        <div className="flex items-start">
+          {MATURITY_LEVELS.map((l, i) => {
+            const reached = level >= l.num;
+            const current = level === l.num;
+            const connectorReached = level > l.num;
+            return (
+              <div key={l.num} className={`flex items-start ${i < MATURITY_LEVELS.length - 1 ? 'flex-1' : ''}`}>
+                <div className="flex flex-col items-center gap-2">
+                  <div
+                    className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold shrink-0 transition-colors ${
+                      current
+                        ? 'bg-gradient-to-br from-primary to-secondary text-white shadow-lg shadow-primary/30'
+                        : reached
+                          ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                          : 'bg-white/[0.04] text-muted-foreground border border-glass-border'
+                    }`}
+                  >
+                    {reached && !current ? '✓' : l.num}
+                  </div>
+                  <div className="text-center max-w-[110px]">
+                    <div className={`text-[11px] font-medium ${reached ? 'text-foreground' : 'text-muted-foreground'}`}>
+                      {l.label}
+                    </div>
+                    <div className="text-[9px] text-muted-foreground/70 leading-tight mt-0.5">{l.desc}</div>
+                  </div>
+                </div>
+                {i < MATURITY_LEVELS.length - 1 && (
+                  <div className="flex-1 h-0.5 mt-[18px] mx-1">
+                    <div
+                      className={`h-full rounded-full ${
+                        connectorReached
+                          ? 'bg-gradient-to-r from-emerald-500/30 to-primary/40'
+                          : 'bg-glass-border'
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {sgtm.description && (
+          <p className="text-xs text-muted-foreground mt-5 pt-4 border-t border-glass-border/40">
+            {sgtm.description}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
 const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
   const privacyChecks = PRIVACY_IDS
     .map((id) => checks.find((c) => c.id === id))
@@ -1487,6 +1566,11 @@ const AuditResults = () => {
                       {/* Trackers table */}
                       <div className="animate-fade-in-up">
                         <TrackersTable checks={checks} />
+                      </div>
+
+                      {/* Server-side maturity stepper */}
+                      <div className="animate-fade-in-up mt-6">
+                        <ServerSideMaturity checks={checks} />
                       </div>
 
                       {/* Privacy & Consent section */}
