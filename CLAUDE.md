@@ -281,7 +281,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [x] SSE timeout 60s → 180s pour scans longs
 
 ### Bugs à investiguer
-_Aucun bug ouvert — CMP delay résolu (2026-04-20, voir Done)._
+- [ ] **Consent Mode v2 — extraction des 4 params obligatoires incomplète sur certains setups server-side** : sur `https://mprez.fr` (2026-04-21), la CMP Sirdata est bien identifiée via TCF API mais les 4 paramètres obligatoires (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) ne sont pas capturés. Hypothèses à tester : (a) `gtag('consent', 'default', ...)` pousse dans un dataLayer renommé par le custom loader, (b) consent default fire après la capture dataLayer, (c) params défaut envoyés directement via sGTM sans passer par `window.dataLayer`. À re-scanner sur d'autres setups sGTM similaires pour confirmer le pattern.
 
 ### Chantier F — Notifications Telegram temps réel (à planifier)
 **Contexte** : Le bot Telegram `@digitalix_monitor_bot` n'est utilisé que par le GitHub Action hebdomadaire. Objectif : push temps réel depuis l'API Hono quand un nouveau lead arrive ou change de statut.
