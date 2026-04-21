@@ -304,6 +304,96 @@ function parseRawData(check: AuditCheck): Record<string, unknown> {
   return typeof check.rawData === 'string' ? JSON.parse(check.rawData) : check.rawData;
 }
 
+interface CookieEntry {
+  name: string;
+  vendor: string;
+  role: string;
+  safariDurationDays?: number;
+  safariState?: 'capped' | 'blocked';
+  reason?: string;
+  domain?: string;
+}
+
+function SafariBadge({ days, state }: { days?: number; state?: 'capped' | 'blocked' }) {
+  if (state === 'blocked') {
+    return (
+      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-red-500/10 text-red-400 border border-red-500/20 whitespace-nowrap">
+        🚫 Bloqué Safari
+      </span>
+    );
+  }
+  if ((days ?? 7) <= 7) {
+    return (
+      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-amber-500/10 text-amber-400 border border-amber-500/20 whitespace-nowrap">
+        ⏱ 7j Safari
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 whitespace-nowrap">
+      ✓ 2 ans Safari
+    </span>
+  );
+}
+
+function CookieCard({
+  title,
+  check,
+  raw,
+  variant,
+}: {
+  title: string;
+  check: AuditCheck;
+  raw: Record<string, unknown>;
+  variant: 'first-party' | 'third-party';
+}) {
+  const cookies = (raw.cookies as CookieEntry[] | undefined) ?? [];
+  const safariPedagogy = (raw.safariPedagogy as string | undefined)
+    ?? (variant === 'third-party'
+      ? 'Safari bloque ou cap ces cookies à 7 jours. Ça concerne ≈ 25% de votre trafic EU.'
+      : 'Ces cookies server-managed résistent à Safari ITP et aux adblockers.');
+
+  return (
+    <div className="ev-card p-5">
+      <div className="relative z-10">
+        <div className="flex items-center gap-2 mb-2">
+          <StatusIcon status={check.status} />
+          <span className="font-semibold text-sm text-foreground">{title}</span>
+        </div>
+        <p className="text-xs text-muted-foreground mb-3">{check.description}</p>
+
+        {cookies.length > 0 && (
+          <div className="space-y-1.5 mb-3">
+            {cookies.map((c) => (
+              <div
+                key={`${c.name}-${c.domain ?? ''}`}
+                className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-md bg-white/[0.02] border border-glass-border/60"
+              >
+                <div className="flex-1 min-w-0">
+                  <div className="font-mono text-[11px] text-foreground truncate">{c.name}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">
+                    {c.vendor}{c.role ? ` — ${c.role}` : ''}
+                  </div>
+                </div>
+                <SafariBadge days={c.safariDurationDays} state={c.safariState} />
+              </div>
+            ))}
+          </div>
+        )}
+
+        {check.businessNote && (
+          <p className="text-xs text-amber-400/90 mb-3">{check.businessNote}</p>
+        )}
+
+        <div className="flex items-start gap-2 pt-2.5 border-t border-glass-border/40">
+          <span className="text-[11px]">💡</span>
+          <p className="text-[11px] text-muted-foreground/90 leading-relaxed">{safariPedagogy}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
   const privacyChecks = PRIVACY_IDS
     .map((id) => checks.find((c) => c.id === id))
@@ -446,46 +536,22 @@ const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
 
         {/* Third-party cookies */}
         {thirdParty && (
-          <div className="ev-card p-5">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3">
-                <StatusIcon status={thirdParty.status} />
-                <span className="font-semibold text-sm text-foreground">Cookies tiers</span>
-              </div>
-              <p className="text-sm text-muted-foreground">{thirdParty.description}</p>
-              {(thirdRaw.domains as string[] | undefined)?.length ? (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {(thirdRaw.domains as string[]).slice(0, 8).map((d) => (
-                    <span key={d} className="px-2 py-0.5 rounded font-mono text-[10px] bg-glass text-muted-foreground border border-glass-border">
-                      {d}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <CookieCard
+            title="Cookies tiers"
+            check={thirdParty}
+            raw={thirdRaw}
+            variant="third-party"
+          />
         )}
 
         {/* First-party cookies */}
         {firstParty && (
-          <div className="ev-card p-5">
-            <div className="relative z-10">
-              <div className="flex items-center gap-2 mb-3">
-                <StatusIcon status={firstParty.status} />
-                <span className="font-semibold text-sm text-foreground">Cookies first-party</span>
-              </div>
-              <p className="text-sm text-muted-foreground">{firstParty.description}</p>
-              {(firstRaw.serverCookies as string[] | undefined)?.length ? (
-                <div className="flex flex-wrap gap-1.5 mt-2">
-                  {(firstRaw.serverCookies as string[]).map((c) => (
-                    <span key={c} className="px-2 py-0.5 rounded font-mono text-[10px] bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                      {c}
-                    </span>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-          </div>
+          <CookieCard
+            title="Cookies first-party"
+            check={firstParty}
+            raw={firstRaw}
+            variant="first-party"
+          />
         )}
 
         {/* Privacy page */}
