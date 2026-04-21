@@ -16,7 +16,7 @@ async function sendUnlockEmailIfPending(
   auditId: string,
   contactId: string,
   url: string,
-  score: number | null,
+  score: number,
   email: string,
 ) {
   // Guard against double-send (scan-completion handler + unlock endpoint may both try)
@@ -420,7 +420,7 @@ app.post('/:id/unlock', async (c) => {
   // is still 0 and the email would mislead the recipient. The scan-completion
   // handler will send the email once the real score is available.
   if (audit.status === 'completed') {
-    await sendUnlockEmailIfPending(id, contactId, audit.url, audit.overall_score, email);
+    await sendUnlockEmailIfPending(id, contactId, audit.url, Number(audit.overall_score) || 0, email);
   }
 
   const checkRows = await sql`
