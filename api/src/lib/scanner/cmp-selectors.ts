@@ -152,6 +152,28 @@ export const CMP_DEFINITIONS: CmpDefinition[] = [
 ];
 
 /**
+ * IAB TCF CMP ID → name mapping. Official registry: https://cmplist.consensu.org
+ * Used as definitive CMP identification via `window.__tcfapi('getTCData', 2, ...)`
+ * when DOM + script-URL detection fail (e.g. server-side / proxified setups).
+ */
+export const TCF_CMP_IDS: Record<number, string> = {
+  5: 'Usercentrics',
+  6: 'Sourcepoint',
+  7: 'Didomi',
+  10: 'OneTrust',
+  14: 'Cybot (Cookiebot)',
+  28: 'Quantcast',
+  31: 'CookieFirst',
+  69: 'Consentmanager',
+  92: 'Sirdata',
+  127: 'Iubenda',
+  300: 'Axeptio',
+  313: 'Commanders Act',
+  365: 'Sourcepoint (mobile)',
+  373: 'CookieYes',
+};
+
+/**
  * Script URL signatures for CMP identification. Used as:
  * - Enrichment when generic "CMP custom" is detected in DOM (fetcher.ts)
  * - Fallback when no known CMP selector matched (cmp.ts)

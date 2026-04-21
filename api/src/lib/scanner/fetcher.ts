@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import {
   CMP_DEFINITIONS,
   CMP_SCRIPT_PATTERNS,
+  TCF_CMP_IDS,
   ARIA_ACCEPT_SELECTORS,
   ARIA_REJECT_SELECTORS,
   TEXT_ACCEPT_PATTERNS,
@@ -82,6 +83,35 @@ function isContinueWithoutPattern(label: string | null): boolean {
   return lower.includes('continuer sans') || lower.includes('continue without');
 }
 
+// IAB TCF API — definitive CMP identification (bypasses DOM / proxified URL obstacles)
+async function queryTcfCmp(page: Page): Promise<{ cmpId: number; cmpVersion?: number; name: string } | null> {
+  try {
+    const tcData = await page.evaluate(() =>
+      new Promise<{ cmpId?: number; cmpVersion?: number } | null>((resolve) => {
+        const w = window as unknown as { __tcfapi?: (cmd: string, v: number, cb: (data: unknown, ok: boolean) => void) => void };
+        if (typeof w.__tcfapi !== 'function') { resolve(null); return; }
+        const timeout = setTimeout(() => resolve(null), 2000);
+        try {
+          w.__tcfapi('getTCData', 2, (data: unknown, ok: boolean) => {
+            clearTimeout(timeout);
+            if (!ok || !data || typeof data !== 'object') { resolve(null); return; }
+            const d = data as { cmpId?: number; cmpVersion?: number };
+            resolve({ cmpId: d.cmpId, cmpVersion: d.cmpVersion });
+          });
+        } catch {
+          clearTimeout(timeout);
+          resolve(null);
+        }
+      })
+    );
+    if (!tcData || typeof tcData.cmpId !== 'number') return null;
+    const name = TCF_CMP_IDS[tcData.cmpId] ?? `CMP TCF #${tcData.cmpId}`;
+    return { cmpId: tcData.cmpId, cmpVersion: tcData.cmpVersion, name };
+  } catch {
+    return null;
+  }
+}
+
 async function detectCmp(page: Page, startTime: number): Promise<{ cmp: DetectedCmp | null; matchedIndex: number }> {
   // Try known CMP selectors
   for (let i = 0; i < CMP_DEFINITIONS.length; i++) {
@@ -155,18 +185,26 @@ async function detectCmp(page: Page, startTime: number): Promise<{ cmp: Detected
     if (genericCmp.found) {
       const rejectLabel = await findRejectLabelFallback(page);
 
-      // Enrich name via script URL signatures so we don't just say "CMP custom"
-      const scriptUrls = await page.evaluate(() =>
-        Array.from(document.scripts).map((s) => s.src).filter(Boolean).join(' ')
-      ).catch(() => '');
-      const lower = scriptUrls.toLowerCase();
-      const matchedVendor = CMP_SCRIPT_PATTERNS.find((sig) =>
-        sig.patterns.some((p) => lower.includes(p.toLowerCase()))
-      );
+      // Priority 1: TCF API — definitive identification via IAB CMP ID
+      // (works even on server-side setups where script URLs are proxified)
+      const tcf = await queryTcfCmp(page);
 
-      const name = matchedVendor
-        ? matchedVendor.name
-        : `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`;
+      // Priority 2: script URL signatures (the CMP's own CDN domain)
+      let vendorFromScripts: string | null = null;
+      if (!tcf) {
+        const scriptUrls = await page.evaluate(() =>
+          Array.from(document.scripts).map((s) => s.src).filter(Boolean).join(' ')
+        ).catch(() => '');
+        const lower = scriptUrls.toLowerCase();
+        const matched = CMP_SCRIPT_PATTERNS.find((sig) =>
+          sig.patterns.some((p) => lower.includes(p.toLowerCase()))
+        );
+        if (matched) vendorFromScripts = matched.name;
+      }
+
+      const name = tcf?.name
+        ?? vendorFromScripts
+        ?? `CMP custom (${genericCmp.tag}${genericCmp.id ? '#' + genericCmp.id : ''})`;
 
       return {
         cmp: {
@@ -259,17 +297,18 @@ function extractConsentState(requests: NetworkRequest[], dataLayerPushes: Record
   const gcsValues: string[] = [];
   const gcdValues: string[] = [];
 
+  // gcs/gcd params are discriminant on their own — accept them on any URL
+  // (sGTM proxied setups can route GA4 traffic to custom endpoints)
   for (const req of requests) {
-    if (req.url.includes('/g/collect') || req.url.includes('/j/collect')) {
-      try {
-        const params = new URL(req.url).searchParams;
-        const gcs = params.get('gcs');
-        const gcd = params.get('gcd');
-        if (gcs) gcsValues.push(gcs);
-        if (gcd) gcdValues.push(gcd);
-      } catch {
-        // malformed URL
-      }
+    try {
+      const params = new URL(req.url).searchParams;
+      const gcs = params.get('gcs');
+      const gcd = params.get('gcd');
+      // gcs format is G1xx (G100, G101, G111) — filter against random query strings
+      if (gcs && /^G1\d{2}$/.test(gcs)) gcsValues.push(gcs);
+      if (gcd && gcd.length >= 4) gcdValues.push(gcd);
+    } catch {
+      // malformed URL
     }
   }
 
