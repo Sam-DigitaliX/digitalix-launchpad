@@ -425,6 +425,25 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
   - Sirdata n'était pas identifié sur un sGTM proxifié (CMP_SCRIPT_PATTERNS rate quand l'URL proxifiée ne contient plus "sirdata")
   - Fix : query IAB TCF API (`window.__tcfapi('getTCData', 2, ...)`) → récupère le `cmpId` officiel. Nouvelle table `TCF_CMP_IDS` (14 CMP courantes : Sirdata=92, Didomi=7, OneTrust=10, Axeptio=300, CookieYes=373, etc.). Cascade : TCF > script URLs > generic tag.
   - Consent Mode v2 : l'extracteur cherchait `gcs`/`gcd` seulement sur `/g/collect` et `/j/collect`. Avec sGTM endpoint custom → on ratait les signaux. Fix : accepte gcs/gcd sur **n'importe quelle URL** + validation de format (gcs `/^G1\d{2}$/`, gcd ≥ 4 chars) pour éviter les faux positifs.
+- [x] Fix critique : **email "Score 0/100" envoyé pendant le scan** — quand l'user cliquait Débloquer avant la fin du scan, l'endpoint lisait `audit.overall_score = 0` (valeur DB par défaut) et envoyait l'email immédiatement. Fix : nouveau helper `sendUnlockEmailIfPending()` avec guard anti-double-envoi via `email_logs`. Endpoint unlock n'envoie que si `audit.status === 'completed'`, sinon persiste juste l'unlock. Handler fin de scan détecte unlock en attente (via `unlocked_at`) et envoie avec le vrai score. (2026-04-21)
+- [x] **Audit cookies — refonte complète classification selon définition user** (2026-04-21) :
+  - Définition adoptée : **third-party = navigateur communique directement avec un vendor externe** (et non classification domain-based CNIL/technique)
+  - Recherche CNIL (définition officielle) + IAB TCF + docs WebKit ITP consultées
+  - Nouveau champ `firstPartyCommunication: boolean` par cookie dans `cookie-vendors.ts` :
+    - `true` uniquement pour FP\* family (browser ↔ sGTM sur notre domaine) + Matomo self-hosted
+    - `false` pour tous les trackers vendor client-side (_ga, _gcl_au, _fbp, _ttp, _uetsid, li_fat_id, _scid, _pin_unauth, _hjSession\* ...)
+    - Helper `identifyCookieVendorWithContext()` override Matomo en third-party si script chargé depuis `*.matomo.cloud`
+  - `cookies.ts` réécrit : ne liste que les cookies `firstPartyCommunication: true`. Heuristique durée > 7j retirée (invalide sur Chromium, seul Safari applique ITP)
+  - `third-party-cookies.ts` réécrit : liste les cookies vendor client-side + ceux sur domaines techniquement tiers. rawData expose `cookies: [{name, vendor, role, safariDurationDays, safariState}]`
+- [x] **Audit cookies — Safari ITP impact standardisé sur les 2 cards** (2026-04-21) :
+  - Recherche : Safari ITP 2.1+ cap les cookies JS-set à 7 jours ; ITP 2.3 bloque entièrement les cookies sur domaines tiers (depuis 2020) ; HTTP Set-Cookie same-origin préserve la durée. Safari ≈ 20-25% du trafic EU (Statcounter)
+  - Ligne pédagogique `safariPedagogy` dans rawData, toujours présente dans les 2 cards
+  - Third-party : *"Safari bloque ou cap ces cookies à 7 jours. Ça concerne ≈ 25% de votre trafic EU."*
+  - First-party : *"Ces cookies server-managed résistent à Safari ITP et aux adblockers."*
+- [x] **Audit Results — CookieCard component + TrackersTable dynamique** (2026-04-21) :
+  - Nouveau composant réutilisable `CookieCard` (AuditResults.tsx) : layout cohérent pour les 2 cards (status icon, title, description courte, liste structurée de cookies, businessNote amber, ligne pédagogique Safari séparée par border)
+  - Composant `SafariBadge` par cookie : 🟢 `✓ 2 ans Safari` (FP\*/httpOnly), 🟡 `⏱ 7j Safari` (capped), 🔴 `🚫 Bloqué Safari` (domaine tiers)
+  - `TrackersTable` dynamique : fonction `isTrackerDetected()` qui filtre les lignes sur la présence de signaux en rawData. Seuls les trackers détectés apparaissent. Footer "N détectés sur M analysés" si certains masqués. Page de résultats beaucoup plus légère sur les sites avec peu de trackers.
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
