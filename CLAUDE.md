@@ -244,7 +244,7 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - [ ] Setup email samuel@probr.io — migré vers ~/workspace/Probr.io
 - [ ] Supabase : supprimer le projet côté dashboard supabase.com — action manuelle infra restante
 - [ ] Cross-domain tracking detection (nouveau check audit — spec définie : sous-domaines racine + whitelist payment/booking + croisement config linker)
-- [ ] **Frontend : visualiser `maturityLevel` sGTM (0/1/2)** — la valeur est déjà calculée et exposée dans `rawData.maturityLevel` du check sgtm (voir `api/src/lib/scanner/checks/sgtm.ts`). Actuellement seulement dans la description textuelle ("Niveau 1/2", "Niveau 2/2"). À ajouter côté AuditResults.tsx : un badge dédié (ex. stepper 0→1→2 avec highlight du niveau courant, ou pastille colorée dans la TrackersTable ligne sGTM). Gros gain pédagogique pour que le prospect visualise où il en est dans sa maturité server-side.
+- [x] Frontend : visualisation `maturityLevel` sGTM (stepper 0→1→2) (2026-04-21)
 - [ ] Security headers analysis — **retiré du backlog** (hors scope tracking, dilue le positionnement server-side)
 
 ### Chantier D — Migrations majeures
@@ -444,6 +444,13 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
   - Nouveau composant réutilisable `CookieCard` (AuditResults.tsx) : layout cohérent pour les 2 cards (status icon, title, description courte, liste structurée de cookies, businessNote amber, ligne pédagogique Safari séparée par border)
   - Composant `SafariBadge` par cookie : 🟢 `✓ 2 ans Safari` (FP\*/httpOnly), 🟡 `⏱ 7j Safari` (capped), 🔴 `🚫 Bloqué Safari` (domaine tiers)
   - `TrackersTable` dynamique : fonction `isTrackerDetected()` qui filtre les lignes sur la présence de signaux en rawData. Seuls les trackers détectés apparaissent. Footer "N détectés sur M analysés" si certains masqués. Page de résultats beaucoup plus légère sur les sites avec peu de trackers.
+- [x] **Audit Results — Stepper maturité Server-Side** (2026-04-21) :
+  - Nouveau composant `ServerSideMaturity` qui lit `rawData.maturityLevel` (0/1/2) du check sgtm et affiche un stepper horizontal visuel entre TrackersTable et PrivacySection
+  - Étape courante : pastille primary→secondary gradient + shadow ; étapes passées : emerald ✓ ; étapes futures : muted
+  - Connecteurs colorés quand atteints
+  - Labels : Client-side / Librairie proxifiée / Server-managed
+  - Description du check sGTM affichée en context sous le stepper
+  - Gros gain pédagogique — le prospect voit sa position server-side en 1 coup d'œil
 
 ## Important Notes
 - **Do NOT use Supabase SDK** — all data access goes through the Hono API
