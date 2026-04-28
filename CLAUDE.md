@@ -346,6 +346,33 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 
 **Reco en cours** : attendre validation produit (les 3 questions ci-dessus) avant d'investir. Si oui → partir sur Option MVP pour valider avant le full site.
 
+### Chantier H — Pages partenaires co-brandées (LIVRÉ — 2026-04-21)
+Système réplicable de landing pages dédiées par partenaire pour distribuer l'audit tracking sous co-branding.
+
+**Architecture** :
+- Route `/partenaires/:slug` (ex. `/partenaires/le-mage-du-sea`)
+- Config dans `src/data/partners.ts` (objet TS, type-safe) — ajouter un partenaire = ~5 lignes
+- Page `src/pages/PartnerAuditTracking.tsx` co-brandée (header DigitaliX × partenaire + logo + badge + intro override)
+- Slug propagé via `location.state` jusqu'à `startAudit(url, partnerSlug)`
+- Backend : nouvelle colonne `audits.partner_slug` (migration 006), index dédié
+- Auto-tag : à l'unlock, contact taggé `partenaire-<slug>` automatiquement
+- Slug inconnu → redirect vers `/audit-tracking` (graceful fallback)
+
+**Propriété clé** : tout partenaire bénéficie automatiquement des évolutions de l'audit (form, scan, 28 checks, page résultats, emails, etc.). Une seule code base, un seul déploiement. Différenciation uniquement sur le wrapping visuel.
+
+**Ajouter un partenaire** (≤30 secondes) :
+1. Edit `src/data/partners.ts` → ajouter une entrée `{ slug, name, logoUrl?, badge?, intro? }`
+2. Optionnel : déposer le logo dans `/public/partners/`
+3. Push → live
+
+**Suivi des leads par partenaire** :
+- Tag `partenaire-<slug>` filtrable dans le dashboard admin
+- Colonne `audits.partner_slug` requêtable directement (stats SQL : leads, score moyen, conversions par partenaire)
+
+**Évolutions futures possibles** :
+- Cookie de fallback `dx_partner=<slug>` (30j) pour préserver l'attribution sur visites de retour
+- Page admin dédiée "Stats partenaires" (leads / conversions / score moyen par slug)
+
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
 - Telegram bot: @digitalix_monitor_bot (chat ID: 6155735961)
