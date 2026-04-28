@@ -18,6 +18,7 @@ const Services = lazy(() => import("./pages/Services"));
 const ServiceDetail = lazy(() => import("./pages/ServiceDetail"));
 const AuditTracking = lazy(() => import("./pages/AuditTracking"));
 const AuditResults = lazy(() => import("./pages/AuditResults"));
+const PartnerAuditTracking = lazy(() => import("./pages/PartnerAuditTracking"));
 const About = lazy(() => import("./pages/About"));
 const CaseStudies = lazy(() => import("./pages/CaseStudies"));
 const CaseStudyDetail = lazy(() => import("./pages/CaseStudyDetail"));
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/services/:slug" element={<ServiceDetail />} />
             <Route path="/audit-tracking" element={<AuditTracking />} />
             <Route path="/audit-tracking/resultats/:id" element={<AuditResults />} />
+            <Route path="/partenaires/:slug" element={<PartnerAuditTracking />} />
             <Route path="/brand" element={<Brand />} />
             <Route path="/a-propos" element={<About />} />
             <Route path="/cas-clients" element={<CaseStudies />} />

@@ -128,6 +128,9 @@ function extractDomain(url: string): string {
 app.post('/', async (c) => {
   const body = await c.req.json();
   const rawUrl = body.url;
+  const partnerSlug = typeof body.partner_slug === 'string' && body.partner_slug.length > 0
+    ? body.partner_slug.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 64)
+    : null;
 
   if (!rawUrl || typeof rawUrl !== 'string') {
     return c.json({ error: 'url is required' }, 400);
@@ -150,8 +153,8 @@ app.post('/', async (c) => {
 
   // Create audit row with status 'scanning'
   const auditRows = await sql`
-    INSERT INTO audits (url, domain, status, overall_score)
-    VALUES (${url}, ${extractDomain(url)}, 'scanning', 0)
+    INSERT INTO audits (url, domain, status, overall_score, partner_slug)
+    VALUES (${url}, ${extractDomain(url)}, 'scanning', 0, ${partnerSlug})
     RETURNING id, created_at
   `;
 
@@ -374,7 +377,7 @@ app.post('/:id/unlock', async (c) => {
   }
 
   const auditRows = await sql`
-    SELECT id, url, status, overall_score FROM audits WHERE id = ${id} LIMIT 1
+    SELECT id, url, status, overall_score, partner_slug FROM audits WHERE id = ${id} LIMIT 1
   `;
 
   if (auditRows.length === 0) {
@@ -382,6 +385,7 @@ app.post('/:id/unlock', async (c) => {
   }
 
   const audit = auditRows[0];
+  const partnerSlug = audit.partner_slug as string | null;
 
   const contactRows = await sql`
     INSERT INTO contacts (email, gdpr_consent, gdpr_consent_at, first_seen_at, last_seen_at)
@@ -401,6 +405,15 @@ app.post('/:id/unlock', async (c) => {
     VALUES (${contactId}, 'prospect')
     ON CONFLICT (contact_id, label) DO NOTHING
   `;
+
+  // Auto-tag partner attribution if audit was launched via /partenaires/<slug>
+  if (partnerSlug) {
+    await sql`
+      INSERT INTO contact_tags (contact_id, label)
+      VALUES (${contactId}, ${'partenaire-' + partnerSlug})
+      ON CONFLICT (contact_id, label) DO NOTHING
+    `;
+  }
 
   await sql`
     UPDATE audits SET contact_id = ${contactId}, unlocked_at = now()

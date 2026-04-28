@@ -1005,6 +1005,7 @@ const AuditResults = () => {
   const isReturningFromEmail = !isNewScan && !!cid;
 
   const auditUrl = (location.state as { url?: string })?.url || "";
+  const partnerSlug = (location.state as { partnerSlug?: string })?.partnerSlug;
 
   const [phase, setPhase] = useState<"scanning" | "results" | "error">("scanning");
   const [scoreAnimated, setScoreAnimated] = useState(false);
@@ -1047,7 +1048,7 @@ const AuditResults = () => {
 
     if (isNewScan && auditUrl) {
       // New scan: POST to create audit, then stream progress via SSE
-      startAudit(auditUrl)
+      startAudit(auditUrl, partnerSlug)
         .then(({ id }) => {
           // Update URL to real audit ID (without losing state)
           window.history.replaceState(

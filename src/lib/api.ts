@@ -105,10 +105,10 @@ export interface AuditProgressEvent {
 }
 
 /** Create an audit and get the ID back (scan runs in background) */
-export function startAudit(url: string) {
+export function startAudit(url: string, partnerSlug?: string) {
   return request<{ id: string }>('/api/audit', {
     method: 'POST',
-    body: JSON.stringify({ url }),
+    body: JSON.stringify({ url, partner_slug: partnerSlug }),
   });
 }
 
