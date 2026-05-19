@@ -50,16 +50,28 @@ jobs:
           SERVER_JSON=$(curl -s --max-time 5 -H "Authorization: Bearer $COOLIFY_API_TOKEN" http://148.230.108.196:8000/api/v1/servers 2>/dev/null)
           TRAEFIK_CURRENT=$(echo "$SERVER_JSON" | jq -r '.[0].settings.detected_traefik_version // .[0].detected_traefik_version // "?"' | tr -d '\n')
 
-          if [ "$COOLIFY_CURRENT" = "$COOLIFY_LATEST" ]; then
+          # Helper: returns "ok" if current >= latest, "behind" otherwise
+          version_status() {
+            local current="$1" latest="$2"
+            if [ "$current" = "?" ] || [ -z "$current" ] || [ "$latest" = "?" ] || [ -z "$latest" ]; then
+              echo "unknown"; return
+            fi
+            if [ "$current" = "$latest" ]; then echo "ok"; return; fi
+            local top
+            top=$(printf '%s\n%s\n' "$current" "$latest" | sort -V | tail -1)
+            if [ "$top" = "$current" ]; then echo "ok"; else echo "behind"; fi
+          }
+
+          COOLIFY_STATUS=$(version_status "$COOLIFY_CURRENT" "$COOLIFY_LATEST")
+          if [ "$COOLIFY_STATUS" = "ok" ] || [ "$COOLIFY_STATUS" = "unknown" ]; then
             echo "✅ Coolify $COOLIFY_CURRENT" >> "$REPORT_FILE"
           else
             echo "🔶 Coolify $COOLIFY_CURRENT → $COOLIFY_LATEST" >> "$REPORT_FILE"
             echo "  _→ UI Coolify > Settings > Update_" >> "$REPORT_FILE"
           fi
 
-          if [ "$TRAEFIK_CURRENT" = "?" ] || [ -z "$TRAEFIK_CURRENT" ]; then
-            echo "✅ Traefik OK" >> "$REPORT_FILE"
-          elif [ "$TRAEFIK_CURRENT" = "$TRAEFIK_LATEST" ]; then
+          TRAEFIK_STATUS=$(version_status "$TRAEFIK_CURRENT" "$TRAEFIK_LATEST")
+          if [ "$TRAEFIK_STATUS" = "ok" ] || [ "$TRAEFIK_STATUS" = "unknown" ]; then
             echo "✅ Traefik $TRAEFIK_CURRENT" >> "$REPORT_FILE"
           else
             echo "🔶 Traefik $TRAEFIK_CURRENT → $TRAEFIK_LATEST" >> "$REPORT_FILE"
