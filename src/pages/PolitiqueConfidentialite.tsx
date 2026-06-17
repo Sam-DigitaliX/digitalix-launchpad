@@ -1,10 +1,13 @@
 import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
+import { useNoIndex } from "@/hooks/useNoIndex";
 
 const LAST_UPDATED = "17 juin 2026";
 
 const PolitiqueConfidentialite = () => {
+  useNoIndex();
+
   return (
     <div className="min-h-screen bg-background">
       <EvervaultGlow />
