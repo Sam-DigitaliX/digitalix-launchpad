@@ -10,6 +10,7 @@ import { ContactStep } from './steps/ContactStep';
 import { OutcomeStep } from './steps/OutcomeStep';
 import { X, Flame, ScanSearch } from 'lucide-react';
 import { getBehavioralData, BehavioralData } from '@/lib/trackingUtils';
+import { trackLead } from '@/lib/tracking';
 
 const FULL_STEP_LABELS = ['Profil', 'Situation', 'Besoin', 'Contact', 'Résultat'];
 const AUDIT_STEP_LABELS = ['Profil', 'Besoin', 'Contact', 'Résultat'];
@@ -141,6 +142,16 @@ export function QualificationForm({ onClose, auditContext }: QualificationFormPr
             source: 'post_audit_cta',
           }),
         },
+      });
+
+      // Push generate_lead to the dataLayer (GTM gates the tags via Consent Mode)
+      trackLead({
+        source: auditContext ? 'post_audit' : 'qualification_form',
+        leadScore: scoringResult.score,
+        isQualified: scoringResult.isQualified,
+        profileType: validData.profile_type,
+        auditId: auditContext?.id,
+        auditScore: auditContext?.score,
       });
 
       // Show result

@@ -4,6 +4,7 @@ import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { ScoringResult } from '../types';
 import { Calendar, Download, CheckCircle2, Loader2, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { trackBookingIntent } from '@/lib/tracking';
 
 /** Small inline orbit animation reusing the .orbit-loader CSS */
 function OrbitIcon({ className = '' }: { className?: string }) {
@@ -36,14 +37,7 @@ export function OutcomeStep({ result, onDownloadResource }: OutcomeStepProps) {
     setIsCalendarOpen(open);
     if (open) {
       setIsCalendarLoading(true);
-      
-      // Track calendar modal open for qualified leads
-      window.dataLayer = window.dataLayer || [];
-      window.dataLayer.push({
-        event: 'calendar_modal_open',
-        event_category: 'engagement',
-        event_label: 'qualified_lead_booking',
-      });
+      trackBookingIntent();
     }
   };
   

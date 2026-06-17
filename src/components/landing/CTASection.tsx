@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { trackCtaClick } from "@/lib/tracking";
 
 const CTASection = () => {
   return (
@@ -32,7 +33,16 @@ const CTASection = () => {
             sans engagement.
           </p>
           <Button variant="heroGradient" size="xl" className="group" asChild>
-            <Link to="/contact">
+            <Link
+              to="/contact"
+              onClick={() =>
+                trackCtaClick({
+                  ctaLabel: "Réserver mon Audit",
+                  ctaLocation: "cta_section",
+                  ctaDestination: "/contact",
+                })
+              }
+            >
               Réserver mon Audit
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Link>
