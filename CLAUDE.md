@@ -394,6 +394,21 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
   - [ ] Vérifier post-deploy : default denied au chargement, `gcs`/`gcd` sur les hits, re-scan digitalix.xyz avec l'audit tool (Didomi cmpId 7 détecté, 0 violation pré-consentement)
 - **Identité légale** : EI Samuel Marangé, nom commercial DigitaliX, SIREN 849 349 253, SIRET 84934925300013, TVA FR70849349253, contact RGPD `privacy@digitalix.xyz`, hébergeurs Vercel (front) + Hostinger (API/DB).
 
+### Chantier J — Plan de taggage dataLayer / GA4 (branche `feat/datalayer-tracking`, 2026-06-17)
+**Contexte** : GTM chargé mais dataLayer quasi vide (seulement `virtual_page_view` + `calendar_modal_open`). Aucune conversion trackée → GTM n'avait rien à remonter à GA4/Ads/Meta.
+
+**Phase 1 — dataLayer client-side (FAIT) :**
+- Helper centralisé `src/lib/tracking.ts` (typé, source unique des events). Pushes consent-agnostic (GTM gère le gating via Consent Mode).
+- Events : `generate_lead` (form qualif + post-audit + audit unlock), `audit_start`, `audit_complete`, `booking_intent` (remplace `calendar_modal_open`), `cta_click`.
+- `generate_lead` porte `lead_score`, `is_qualified`, `profile_type`, `value`/`currency` (50 qualifié / 10 sinon / 20 audit), `ga_client_id` (cookie `_ga`), `gclid` (depuis visites stockées).
+- Câblé dans : `QualificationForm.tsx` (submit), `AuditResults.tsx` (start/complete/unlock), `OutcomeStep.tsx` (booking intent), `CTASection.tsx` (cta_click).
+- **Note** : `/contact` et `/consultants` partagent `QualificationForm` → même `generate_lead` (`lead_source: qualification_form`), distinction via `page_location`. `cta_click` câblé sur `CTASection` (réutilisé multi-pages) ; extensible aux autres CTA.
+
+**Phase 2 — conversion booking server-side (À FAIRE, décidé 2026-06-17) :**
+- Le calendrier est un **embed iframe Google Calendar Appointment Schedule** (`calendar.google.com/...`, cross-origin) → `booking_complete` **non captable côté client** (pas de postMessage, SOP).
+- **Décision : reconstruire une UI de réservation custom sur la Google Calendar API** (freebusy + events.insert) → prefill des slots avec infos déjà collectées + capture du booking + déclenchement conversion **server-side** (GA4 Measurement Protocol + Meta CAPI + Google Ads), attribué par email/`client_id`. Gros chantier (dispo, fuseaux, anti-double-booking).
+- Prérequis attribution : persister `ga_client_id` + `gclid` **sur le contact en DB** (aujourd'hui seulement poussés dans le dataLayer). `CALENDAR_URL` actuel dans `OutcomeStep.tsx:24`.
+
 ### Done
 - [x] Supabase → PostgreSQL migration (2026-04-10)
 - [x] Deploy API on Coolify + configure DNS (api.digitalix.xyz)

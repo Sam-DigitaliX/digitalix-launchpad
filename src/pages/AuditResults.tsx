@@ -4,6 +4,7 @@ import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
 import { startAudit, streamAuditProgress, getAudit, unlockAudit, trackAuditEmailClick, ApiError } from "@/lib/api";
+import { trackAuditStart, trackAuditComplete, trackLead } from "@/lib/tracking";
 import type { AuditProgressEvent } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1048,6 +1049,7 @@ const AuditResults = () => {
 
     if (isNewScan && auditUrl) {
       // New scan: POST to create audit, then stream progress via SSE
+      trackAuditStart({ auditUrl, partnerSlug });
       startAudit(auditUrl, partnerSlug)
         .then(({ id }) => {
           // Update URL to real audit ID (without losing state)
@@ -1063,6 +1065,7 @@ const AuditResults = () => {
             (event) => {
               if (event.type === "result" && event.result) {
                 // Scan complete — show results
+                trackAuditComplete({ auditId: id, overallScore: event.result.overallScore });
                 setAuditResult({ ...event.result, id, createdAt: "" });
                 setChecks(event.result.checks ?? []);
                 setPhase("results");
@@ -1175,6 +1178,14 @@ const AuditResults = () => {
         setChecks(result.checks);
       }
       setIsUnlocked(true);
+
+      // Unlocking = email captured = a lead
+      trackLead({
+        source: 'audit_unlock',
+        auditId: effectiveId,
+        auditScore: auditResult?.overallScore ?? null,
+        value: 20,
+      });
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);
       setEmailError("Erreur lors du déblocage. Veuillez réessayer.");
