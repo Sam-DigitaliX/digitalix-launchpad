@@ -4,5 +4,19 @@
   "framework": "vite",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/mentions-legales",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noai, noimageai" }
+      ]
+    },
+    {
+      "source": "/politique-de-confidentialite",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noai, noimageai" }
+      ]
+    }
   ]
 }
