@@ -1,7 +1,16 @@
 <!doctype html>
 <html lang="fr">
   <head>
-    <!-- Google Tag Manager -->
+    <!-- Didomi CMP — must load BEFORE GTM. Google Consent Mode v2 (advanced) is
+         managed entirely in the Didomi console: Didomi sets the GCM default (denied)
+         and pushes consent updates. Do NOT add a gtag('consent','default',...) here
+         — duplicating the default state across console + code causes GCM conflicts. -->
+    <script type="text/javascript">(function(){(function(e,i,o){var n=document.createElement("link");n.rel="preconnect";n.as="script";var t=document.createElement("link");t.rel="dns-prefetch";t.as="script";var r=document.createElement("script");r.id="spcloader";r.type="text/javascript";r["async"]=true;r.charset="utf-8";window.didomiConfig=window.didomiConfig||{};window.didomiConfig.sdkPath=window.didomiConfig.sdkPath||o||"https://sdk.privacy-center.org/";const d=window.didomiConfig.sdkPath;var a=d+e+"/loader.js?target_type=notice&target="+i;if(window.didomiConfig&&window.didomiConfig.user){var c=window.didomiConfig.user;var s=c.country;var f=c.region;if(s){a=a+"&country="+s;if(f){a=a+"&region="+f}}}n.href=d;t.href=d;r.src=a;var m=document.getElementsByTagName("script")[0];m.parentNode.insertBefore(n,m);m.parentNode.insertBefore(t,m);m.parentNode.insertBefore(r,m)})("c9077260-74ef-4f4a-94f0-80cae9cfe5c3","GrdXFGiG")})();</script>
+    <!-- End Didomi CMP -->
+
+    <!-- Google Tag Manager — loaded after Didomi. Google tags (GA4/Ads) must be
+         gated on the `didomi-ready` event in the GTM container (no didomiVendorsEnabled
+         trigger and no native GTM consent checks on the google / googleana-4TXnJigR vendors). -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
     new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
