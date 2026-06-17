@@ -152,6 +152,9 @@ export function QualificationForm({ onClose, auditContext }: QualificationFormPr
         profileType: validData.profile_type,
         auditId: auditContext?.id,
         auditScore: auditContext?.score,
+        email: validData.email,
+        phone: validData.phone,
+        fullName: validData.full_name,
       });
 
       // Show result

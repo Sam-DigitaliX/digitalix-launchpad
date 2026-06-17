@@ -1185,6 +1185,7 @@ const AuditResults = () => {
         auditId: effectiveId,
         auditScore: auditResult?.overallScore ?? null,
         value: 20,
+        email: email.trim(),
       });
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);

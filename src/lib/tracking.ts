@@ -20,6 +20,55 @@ interface TrackLeadParams {
   value?: number;
   auditId?: string;
   auditScore?: number | null;
+  /** PII for Enhanced Conversions / server-side match — pushed as `user_data`. */
+  email?: string | null;
+  phone?: string | null;
+  fullName?: string | null;
+}
+
+/**
+ * Google Enhanced Conversions `user_data` object. Values are sent in plaintext —
+ * GTM/Google normalizes and SHA-256-hashes them before transmission. Built only
+ * when an email or phone is present, and pushed alongside the conversion event.
+ * @see https://support.google.com/google-ads/answer/13258081
+ */
+interface UserData {
+  email?: string;
+  phone_number?: string;
+  address?: { first_name?: string; last_name?: string };
+}
+
+/** Normalize a phone to E.164 (best-effort, FR default). Returns null if unusable. */
+function normalizePhone(phone: string): string | null {
+  const trimmed = phone.trim();
+  if (trimmed.startsWith('+')) {
+    const digits = trimmed.slice(1).replace(/\D/g, '');
+    return digits.length >= 8 ? `+${digits}` : null;
+  }
+  const digits = trimmed.replace(/\D/g, '');
+  // French national format: leading 0 + 9 digits → +33
+  if (digits.length === 10 && digits.startsWith('0')) return `+33${digits.slice(1)}`;
+  if (digits.length >= 8) return `+${digits}`;
+  return null;
+}
+
+function buildUserData(params: TrackLeadParams): UserData | undefined {
+  const data: UserData = {};
+  if (params.email) data.email = params.email.trim().toLowerCase();
+  if (params.phone) {
+    const normalized = normalizePhone(params.phone);
+    if (normalized) data.phone_number = normalized;
+  }
+  if (params.fullName) {
+    const parts = params.fullName.trim().split(/\s+/);
+    if (parts.length > 0) {
+      data.address = {
+        first_name: parts[0],
+        last_name: parts.length > 1 ? parts.slice(1).join(' ') : undefined,
+      };
+    }
+  }
+  return data.email || data.phone_number ? data : undefined;
 }
 
 /** Push a payload, stripping undefined keys to keep the dataLayer clean. */
@@ -69,6 +118,7 @@ export function trackLead(params: TrackLeadParams): void {
     audit_score: params.auditScore,
     ga_client_id: getGaClientId(),
     gclid: getGclid(),
+    user_data: buildUserData(params),
   });
 }
 
