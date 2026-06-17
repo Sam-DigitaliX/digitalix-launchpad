@@ -10,6 +10,7 @@ Live at: https://digitalix.xyz (deployed via Vercel)
 - **Database**: PostgreSQL 18 (Coolify, Docker)
 - **Email**: Resend (domain: digitalix.xyz, from: noreply@digitalix.xyz)
 - **Tracking**: GTM (GTM-PD3X686F) with virtual_page_view for SPA tracking
+- **Consent**: Didomi CMP (SDK `c9077260-74ef-4f4a-94f0-80cae9cfe5c3`, notice `GrdXFGiG`), loaded before GTM in `index.html`. Google Consent Mode v2 (advanced) managed **entirely in the Didomi console** — no hardcoded `gtag('consent','default')` (would conflict). Re-open notice via footer "Consent choices" → `window.Didomi.preferences.show()`
 - **Analytics**: Vercel Speed Insights
 
 ## Architecture
@@ -38,6 +39,8 @@ React 18 + Vite            Hono + Node.js 20          digitalix-db
 | `/cas-clients/:slug` | Case Study Detail | Individual case study |
 | `/brand` | Brand Guide | Design system reference |
 | `/admin` | Admin Dashboard | Key-based auth via sessionStorage |
+| `/mentions-legales` | Mentions légales | EI Samuel Marangé, hébergeurs, PI |
+| `/politique-de-confidentialite` | Politique de confidentialité | RGPD, sous-traitants, rétention 3 ans |
 
 ### Backend API (`api/`)
 - **Base URL**: `https://api.digitalix.xyz` (env: `VITE_API_URL`)
@@ -379,6 +382,17 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - GitHub Secrets: `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `COOLIFY_API_TOKEN`, `HOSTINGER_API_TOKEN`
 - Checks: API health, Coolify/Traefik versions, VPS state, npm outdated (key packages), GitHub issues
 - Verdict: OK / PAS URGENT / ACTION REQUISE
+
+### Chantier I — Didomi + Consent Mode v2 sur le site (branche `feat/didomi-consent-mode`, 2026-06-17)
+**Contexte** : le site se positionne expert RGPD/Consent Mode/Didomi mais chargeait GTM sans aucune CMP ni Consent Mode. Cordonnier mal chaussé corrigé.
+- [x] Loader Didomi placé **avant** GTM dans `index.html`. Pas de `gtag('consent','default')` hardcodé — le default `denied` + les updates sont gérés par la console Didomi (doc Didomi : "don't use more than one way to configure GCM"). Mode **advanced** choisi.
+- [x] Pages légales créées : `/mentions-legales` + `/politique-de-confidentialite` (cette dernière corrige un **lien mort 404** déjà référencé par l'email gate de l'audit dans `AuditResults.tsx`).
+- [x] Footer refondu (`src/components/landing/Footer.tsx`) : colonnes Services/Société/Légal, réseaux, SIREN, + bouton "Consent choices" → `window.Didomi.preferences.show()`. Type `window.Didomi` ajouté dans `vite-env.d.ts`.
+- **Actions hors-repo restantes (Samuel)** avant merge/prod :
+  - [ ] Console Didomi : activer Google Consent Mode (new flow) en mode **advanced**
+  - [ ] Container GTM : tags Google (GA4/Ads) sur trigger `didomi-ready`, retirer triggers `didomiVendorsEnabled` + consent checks natifs GTM sur vendors `google` / `googleana-4TXnJigR`
+  - [ ] Vérifier post-deploy : default denied au chargement, `gcs`/`gcd` sur les hits, re-scan digitalix.xyz avec l'audit tool (Didomi cmpId 7 détecté, 0 violation pré-consentement)
+- **Identité légale** : EI Samuel Marangé, nom commercial DigitaliX, SIREN 849 349 253, SIRET 84934925300013, TVA FR70849349253, contact RGPD `privacy@digitalix.xyz`, hébergeurs Vercel (front) + Hostinger (API/DB).
 
 ### Done
 - [x] Supabase → PostgreSQL migration (2026-04-10)
