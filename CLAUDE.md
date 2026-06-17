@@ -404,6 +404,22 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Câblé dans : `QualificationForm.tsx` (submit), `AuditResults.tsx` (start/complete/unlock), `OutcomeStep.tsx` (booking intent), `CTASection.tsx` (cta_click).
 - **Note** : `/contact` et `/consultants` partagent `QualificationForm` → même `generate_lead` (`lead_source: qualification_form`), distinction via `page_location`. `cta_click` câblé sur `CTASection` (réutilisé multi-pages) ; extensible aux autres CTA.
 
+**GTM web container — build (workspace dédié `4`, NON publié, 2026-06-18) :**
+- Container web `GTM-PD3X686F` (accountId `6274627309`, containerId `209382913`). GA4 Measurement ID = `G-Z77KTMJYZ4`. Container serveur déjà existant : `sGTM - DigitaliX` `GTM-N5FHRMJS` (containerId `255835480`) — à héberger sur Stape.
+- Base déjà OK avant intervention : config tag GA4 `send_page_view=false`, event `page_view` sur `virtual_page_view`, DLVs page_*, User-Provided Data (Enhanced Conversions auto).
+- Ajouté dans workspace `4` : 17 DLVs (lead_source, lead_score, is_qualified, profile_type, value, currency, audit_id, audit_score, ga_client_id, gclid, audit_url, partner_slug, overall_score, booking_type, cta_label, cta_location, cta_destination) + 5 Event Settings vars + 5 triggers Custom Event + 5 tags GA4 Event (generate_lead, audit_start, audit_complete, booking_intent, cta_click).
+- Config vérifiée vs doc Google + Simo Ahava (tracking SPA) : `send_page_view=false` + page_view manuel sur custom event = best practice confirmée ; params dynamiques en event-scope (pas config-scope) ; Custom Event trigger > History Change.
+- **Manuel restant (hors GTM, côté GA4/Ads)** :
+  - GA4 admin : marquer `generate_lead` (et booking_complete à terme) comme Key Event ; enregistrer les params en custom dimensions ; **décocher Enhanced Measurement "Page changes based on browser history events"** (sinon double page_view).
+  - Google Ads : tag de conversion (besoin conversion ID/label) sur `generate_lead` — pas encore créé.
+  - Vérifier en Preview : ordre consent default → config → page_view ; `didomi-ready` fire au load (advanced, pas basic).
+- **Code à fixer** : `page_title` jamais mis à jour par route (pas de react-helmet) → GA4 reçoit un titre statique sur toutes les pages SPA. À corriger (mapping route→titre).
+
+**Décision archi server-side (2026-06-18, recherche sourcée Stape/Google MP/Simo/Meta) : HYBRIDE.**
+- Stape sGTM (container `GTM-N5FHRMJS`) pour les events web → GA4/Ads/Meta server-side (dogfooding + cookies FPID httpOnly résistants ITP Safari + Cookie Keeper). Plan Pro ~17$/mois.
+- Hono backend pour la conversion booking offline uniquement (webhook Calendar) → **routée via l'endpoint sGTM Stape**, pas en appels API directs (1 seul pipe consent-governed, dedup, pas de code API tripliqué).
+- Prérequis : persister `ga_client_id`+`gclid`+`_fbp`/`_fbc` sur le contact en DB au submit (pour l'attribution offline). GA4 MP exige client_id+session_id (<24h) et timestamp <72h. Ads offline migre vers Data Manager API (deadline ~15 juin 2026 — à vérifier).
+
 **Phase 2 — conversion booking server-side (À FAIRE, décidé 2026-06-17) :**
 - Le calendrier est un **embed iframe Google Calendar Appointment Schedule** (`calendar.google.com/...`, cross-origin) → `booking_complete` **non captable côté client** (pas de postMessage, SOP).
 - **Décision : reconstruire une UI de réservation custom sur la Google Calendar API** (freebusy + events.insert) → prefill des slots avec infos déjà collectées + capture du booking + déclenchement conversion **server-side** (GA4 Measurement Protocol + Meta CAPI + Google Ads), attribué par email/`client_id`. Gros chantier (dispo, fuseaux, anti-double-booking).
