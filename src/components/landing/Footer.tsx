@@ -24,7 +24,7 @@ const legalLinks = [
 ];
 
 const socialLinks = [
-  { label: "LinkedIn", href: "https://fr.linkedin.com/company/digitalix-xyz", icon: Linkedin },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/samlepirate/", icon: Linkedin },
   { label: "Malt", href: "https://www.malt.fr/profile/samuelmarange" },
   { label: "Trustpilot", href: "https://fr.trustpilot.com/review/digitalix.xyz" },
 ];
@@ -34,7 +34,9 @@ const linkClass =
 
 const Footer = () => {
   const openConsentPreferences = () => {
-    window.Didomi?.preferences.show();
+    // 'information' opens the notice intro screen (page 1) instead of the
+    // detailed purposes list (page 2, the default).
+    window.Didomi?.preferences.show("information");
   };
 
   return (
@@ -111,7 +113,7 @@ const Footer = () => {
               ))}
               <li>
                 <button type="button" onClick={openConsentPreferences} className={linkClass}>
-                  Consent choices
+                  Choix de consentement
                 </button>
               </li>
             </ul>
