@@ -4,7 +4,7 @@ interface Window {
   dataLayer: Record<string, unknown>[];
   Didomi?: {
     preferences: {
-      show: () => void;
+      show: (view?: "information" | "purposes" | "vendors") => void;
     };
   };
 }
