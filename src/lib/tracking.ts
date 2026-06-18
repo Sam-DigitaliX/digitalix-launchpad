@@ -132,11 +132,11 @@ export function trackAuditStart(params: { auditUrl: string; partnerSlug?: string
 }
 
 /** `audit_complete` — scan finished, results displayed. */
-export function trackAuditComplete(params: { auditId: string; overallScore: number }): void {
+export function trackAuditComplete(params: { auditId: string; auditScore: number }): void {
   push({
     event: 'audit_complete',
     audit_id: params.auditId,
-    overall_score: params.overallScore,
+    audit_score: params.auditScore,
   });
 }
 

@@ -1065,7 +1065,7 @@ const AuditResults = () => {
             (event) => {
               if (event.type === "result" && event.result) {
                 // Scan complete — show results
-                trackAuditComplete({ auditId: id, overallScore: event.result.overallScore });
+                trackAuditComplete({ auditId: id, auditScore: event.result.overallScore });
                 setAuditResult({ ...event.result, id, createdAt: "" });
                 setChecks(event.result.checks ?? []);
                 setPhase("results");
