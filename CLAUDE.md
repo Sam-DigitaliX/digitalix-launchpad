@@ -494,6 +494,10 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
   - **cookies.ts** : famille FP* comme signal prioritaire (pass immédiat avec label de rôle pour chaque cookie détecté)
   - **capi-google.ts** : FPGCLAW ajouté comme signal fort pour Google Ads server-managed
   - Distinction GTGA (Google Tag Gateway for Advertisers — proxy de librairie) vs sGTM (processing server-side) documentée dans les descriptions/businessNotes
+- [x] Audit : **sous-détection server-side sur custom-domain corrigée** (2026-06-18, après faux négatif sur digitalix.xyz lui-même) :
+  - **Fix #1 — classification cookie eTLD+1** (`fetcher.ts` `cookieIsThirdParty`) : l'ancien test par suffixe ratait les sous-domaines du même domaine racine (`dgx.digitalix.xyz` vs `www.digitalix.xyz`). Nouveau `registrableDomain()` (eTLD+1 + set de suffixes multi-parties type `co.uk`). Un FPID posé sur un sous-domaine sGTM est désormais classé first-party (capté). Améliore aussi toutes les cards cookies (capi-meta/google, third-party-cookies).
+  - **Fix #2 — signal server-side indépendant du cookie** (`sgtm.ts` `detectServerSideCollect`) : détecte les hits GA4 `/g/collect` routés vers un host **first-party non-Google** (ex. `dgx.digitalix.xyz`). Le niveau 2 reste réservé au FPID, mais le message niveau 1 affirme désormais « hits routés server-side vers ton domaine » et oriente vers l'activation des server-managed cookies. `serverSideCollect`/`serverSideCollectHost` exposés en rawData.
+  - Constat sur digitalix.xyz : lib proxifiée OK mais **FPID jamais capté** (que `_ga`/`_ga_*`) → soit server-managed cookies pas activé dans le client GA4 serveur, soit hits non routés — à vérifier côté config Stape.
 - [x] Audit : **GTM masqué par first-party load + custom loader** — bug où un setup server-side avancé causait "Installer Google Tag Manager" dans les recommandations (2026-04-21) :
   - Pattern URL élargi : matche `gtm.js?id=GTM-XXX` sur n'importe quel domaine (pas que googletagmanager.com)
   - Inline guards relâchés (accepte `'GTM-XXX'` en string literal)
