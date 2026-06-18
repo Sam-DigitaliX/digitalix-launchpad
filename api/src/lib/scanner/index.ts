@@ -39,9 +39,9 @@ const CATEGORY_NAMES: Record<string, string> = {
 
 const CATEGORY_WEIGHTS: Record<string, number> = {
   tracking: 0.30,
-  serverside: 0.25,
+  serverside: 0.30,
   privacy: 0.30,
-  performance: 0.15,
+  performance: 0.10,
 };
 
 const IMPACT_WEIGHTS: Record<string, number> = {

@@ -678,8 +678,14 @@ function detectEcommerce($: cheerio.CheerioAPI, html: string, scripts: string[])
   if (html.includes('woocommerce') || html.includes('wc-add-to-cart') || $('body').hasClass('woocommerce')) {
     return 'WooCommerce';
   }
-  // Magento
-  if (html.includes('Magento') || html.includes('mage/cookies') || scripts.some((s) => s.includes('mage/'))) {
+  // Magento — require specific markers. NB: '/mage/' must keep the leading slash;
+  // a bare 'mage/' is a substring of 'image/' and false-matches any /image/ asset.
+  if (
+    html.includes('mage/cookies') ||
+    html.includes('Magento_') ||
+    html.includes('/static/frontend/') ||
+    scripts.some((s) => s.includes('/mage/') || s.includes('mage/cookies') || s.includes('Magento_'))
+  ) {
     return 'Magento';
   }
   // PrestaShop
