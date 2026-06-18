@@ -41,7 +41,7 @@ function looksLikeGa4Collect(url: string): boolean {
  * server container (e.g. dgx.digitalix.xyz), incl. obfuscated custom-loader hits.
  * Direct server-side signal, independent of the FPID cookie.
  */
-function detectServerSideCollect(ctx: ScanContext): string | null {
+export function detectServerSideCollect(ctx: ScanContext): string | null {
   for (const session of ctx.sessions) {
     for (const req of session.networkRequests) {
       let host: string;

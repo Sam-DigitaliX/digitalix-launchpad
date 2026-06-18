@@ -1,5 +1,6 @@
 import type { CheckModule, ScanContext } from '../types.js';
 import { identifyCookieVendorWithContext, type CookieVendorInfo } from '../cookie-vendors.js';
+import { detectServerSideCollect } from './sgtm.js';
 
 interface CookieEntry {
   name: string;
@@ -45,6 +46,19 @@ export const cookiesCheck: CheckModule = {
     };
 
     if (firstPartyCookies.length === 0) {
+      // Si la collecte est routée server-side mais qu'aucun FP* n'est observé, c'est
+      // (presque toujours) parce que le conteneur serveur ne pose pas le FPID httpOnly
+      // au trafic bot de l'audit — pas parce que le setup est client-side. On évite
+      // alors la contradiction avec la card Server-Side GTM.
+      const serverSideCollect = detectServerSideCollect(ctx) !== null;
+      if (serverSideCollect) {
+        return {
+          status: 'info',
+          description: 'Cookies server-managed non observables au scan : le FPID (httpOnly) n\'est pas posé pour le trafic bot/headless de l\'audit. Votre collecte GA4 est pourtant routée server-side (voir carte "Server-Side GTM"). À confirmer en DevTools (cookie FPID sur votre domaine).',
+          businessNote: 'Le mode des cookies (server-managed FPID, httpOnly, résistant à l\'ITP Safari) ne peut pas être vérifié automatiquement : votre conteneur serveur bloque le trafic bot de l\'audit (comportement normal). Vérifiez manuellement la présence du cookie FPID.',
+          rawData: { ...rawData, serverSideCollect: true, cookieModeObservable: false },
+        };
+      }
       return {
         status: 'info',
         description: 'Aucun cookie server-managed détecté. Vos traceurs analytics/ads sont posés côté client (voir carte "Cookies Tiers").',
