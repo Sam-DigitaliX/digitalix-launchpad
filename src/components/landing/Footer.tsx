@@ -128,6 +128,10 @@ const Footer = () => {
           </p>
           <p className="text-xs text-muted-foreground font-mono">SIREN 849 349 253</p>
         </div>
+
+        <p className="mt-4 text-center font-mono text-[11px] text-muted-foreground/50">
+          Made with ❤️ and respect 🛡️
+        </p>
       </div>
     </footer>
   );
