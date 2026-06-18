@@ -56,6 +56,10 @@ export interface ScanSession {
   dataLayerPushes: Record<string, unknown>[];
   /** Scripts loaded (src URLs) */
   scriptsLoaded: string[];
+  /** Cookie names seen in Set-Cookie response headers from first-party (server-side)
+   *  non-Google hosts — catches server-managed cookies (FPID) even when the cookie-jar
+   *  snapshot misses them (httpOnly, fresh-visit timing on cross-subdomain). */
+  serverSetCookieNames: string[];
 }
 
 /* ──────────────────── CMP ──────────────────── */
