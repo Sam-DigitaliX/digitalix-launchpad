@@ -1,0 +1,1373 @@
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e6]:
+        - link "DigitaliX" [ref=e7] [cursor=pointer]:
+          - /url: "#"
+          - img "DigitaliX" [ref=e9]
+        - navigation [ref=e10]:
+          - link "Accueil" [ref=e11] [cursor=pointer]:
+            - /url: /
+          - button "Solutions" [ref=e12] [cursor=pointer]:
+            - text: Solutions
+            - img [ref=e13]
+          - button "Services" [ref=e15] [cursor=pointer]:
+            - text: Services
+            - img [ref=e16]
+          - button "Ressources" [ref=e18] [cursor=pointer]:
+            - text: Ressources
+            - img [ref=e19]
+          - link "Contact" [ref=e21] [cursor=pointer]:
+            - /url: /contact
+        - link "Réserver mon Audit" [ref=e23] [cursor=pointer]:
+          - /url: /contact
+    - main [ref=e24]:
+      - generic [ref=e29]:
+        - generic [ref=e34]: Server-Side Tracking Experts
+        - heading "Le server-side, sans la complexité." [level=1] [ref=e35]
+        - paragraph [ref=e36]: Déployé. Maintenu. Conforme.
+        - paragraph [ref=e37]: On migre votre tracking côté serveur pour récupérer les conversions que les adblockers et iOS vous font perdre.
+        - link "Réserver mon Audit Offert" [ref=e38] [cursor=pointer]:
+          - /url: /contact
+          - text: Réserver mon Audit Offert
+          - img
+        - generic [ref=e39]:
+          - generic [ref=e40]:
+            - generic [ref=e41]: 4.75/5
+            - generic [ref=e42]:
+              - img [ref=e43]
+              - img [ref=e45]
+              - img [ref=e47]
+              - img [ref=e49]
+              - img [ref=e51]
+          - generic [ref=e53]: –
+          - generic [ref=e54]: 32 avis
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - generic [ref=e59]: Avis vérifiés
+        - generic [ref=e62]:
+          - img "Bambuser" [ref=e64]
+          - img "Métropole Grand Nancy" [ref=e66]
+          - img "Ville de Nancy" [ref=e68]
+          - img "Nestlé" [ref=e70]
+          - img "Purina One" [ref=e72]
+          - img "Cosa" [ref=e74]
+          - img "CosaVostra" [ref=e76]
+          - img "Wamiz" [ref=e78]
+          - img "NetOffensive" [ref=e80]
+          - img "Talents Digital" [ref=e82]
+          - img "Talents Legal" [ref=e84]
+          - img "Le Mage du SEA" [ref=e86]
+          - img "Prescient Studio" [ref=e88]
+          - img "Ades Bootcamp" [ref=e90]
+          - img "Be Langue" [ref=e92]
+          - img "CybershowParis" [ref=e94]
+          - img "Actiomservice" [ref=e96]
+          - img "Agence SW" [ref=e98]
+          - img "Alpes Blanc" [ref=e100]
+          - img "FISE Montpellier" [ref=e102]
+          - img "FTO" [ref=e104]
+          - img "Hotel Clément Ader" [ref=e106]
+          - img "Hotel St Exupéry" [ref=e108]
+          - img "LNE" [ref=e110]
+          - img "Promo Assurances" [ref=e112]
+          - img "Ref Bikes" [ref=e114]
+          - img "Réseau Stan" [ref=e116]
+          - img "Thermoclima Est" [ref=e118]
+          - img "Vertigo Media" [ref=e120]
+          - img "Mprez" [ref=e122]
+          - img "Réserver.fr" [ref=e124]
+          - img "Véritable Immo" [ref=e126]
+          - img "Bambuser" [ref=e128]
+          - img "Métropole Grand Nancy" [ref=e130]
+          - img "Ville de Nancy" [ref=e132]
+          - img "Nestlé" [ref=e134]
+          - img "Purina One" [ref=e136]
+          - img "Cosa" [ref=e138]
+          - img "CosaVostra" [ref=e140]
+          - img "Wamiz" [ref=e142]
+          - img "NetOffensive" [ref=e144]
+          - img "Talents Digital" [ref=e146]
+          - img "Talents Legal" [ref=e148]
+          - img "Le Mage du SEA" [ref=e150]
+          - img "Prescient Studio" [ref=e152]
+          - img "Ades Bootcamp" [ref=e154]
+          - img "Be Langue" [ref=e156]
+          - img "CybershowParis" [ref=e158]
+          - img "Actiomservice" [ref=e160]
+          - img "Agence SW" [ref=e162]
+          - img "Alpes Blanc" [ref=e164]
+          - img "FISE Montpellier" [ref=e166]
+          - img "FTO" [ref=e168]
+          - img "Hotel Clément Ader" [ref=e170]
+          - img "Hotel St Exupéry" [ref=e172]
+          - img "LNE" [ref=e174]
+          - img "Promo Assurances" [ref=e176]
+          - img "Ref Bikes" [ref=e178]
+          - img "Réseau Stan" [ref=e180]
+          - img "Thermoclima Est" [ref=e182]
+          - img "Vertigo Media" [ref=e184]
+          - img "Mprez" [ref=e186]
+          - img "Réserver.fr" [ref=e188]
+          - img "Véritable Immo" [ref=e190]
+      - generic [ref=e191]:
+        - generic [ref=e192]:
+          - heading "Notre expertise à votre service" [level=2] [ref=e193]
+          - paragraph [ref=e194]: Chaque domaine que nous maîtrisons pour récupérer vos données perdues et maximiser votre ROI.
+        - generic [ref=e196]:
+          - generic [ref=e197]:
+            - generic [ref=e199]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); const hash = sha256(email.trim().toLowerCase()); gtag(\"con fig\", \"AW-CONVERSION_ID\"); return fetch(endpoint, { method: \"POST\" }); dataLayer.push({ event: \"purchase\" }); dataLayer. push({ event: \"purchase\" }); } const hash = sha256(email.trim ().toLowerCase()); } const sGTM = new ServerContainer(); data Layer.push({ event: \"purchase\" }); function sendCAPI(event) { if (consent.granted) { track(event); } } if (consent.granted ) { track(event); } dataLayer.push({ event: \"purchase\" }); if (consent.granted) { track(event); } if (consent.granted) { t rack(event); } if (consent.granted) { track(event); } if (con sent.granted) { track(event); } const hash = sha256(email.tri m().toLowerCase()); dataLayer.push({ event: \"purchase\" }); fb"
+            - generic [ref=e200]:
+              - img
+              - generic [ref=e206]:
+                - generic [ref=e207]:
+                  - img [ref=e208]
+                  - generic [ref=e210]: DigitaliX
+                - generic [ref=e211]:
+                  - heading "GTM Server-Side" [level=3] [ref=e213]
+                  - paragraph [ref=e214]: Infrastructure sGTM sur Google Cloud
+          - generic [ref=e215]:
+            - generic [ref=e217]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); server.tag(\"GA4\", { measurement_id }); server.tag(\"GA4\", { measurement_id }); if (consent.granted) { track(event); } if (consent.granted) { track(event); } return fetch(endpoint, { method: \"POST\" }); const hash = sha256(email.trim().toLowe rCase()); if (consent.granted) { track(event); } return fet ch(endpoint, { method: \"POST\" }); return fetch(endpoint, { method: \"POST\" }); fbq(\"track\", \"Purchase\", { value: 42.00 }) ; const pixel = await initPixel(config); return fetch(endpo int, { method: \"POST\" }); server.tag(\"GA4\", { measurement_id }); function sendCAPI(event) { const hash = sha256(email.trim ().toLowerCase()); } const sGTM = new ServerContainer(); cons t pixel = await initPixel(config); } server.tag(\"GA4\", { meas"
+            - generic [ref=e218]:
+              - img
+              - generic [ref=e224]:
+                - generic [ref=e225]:
+                  - img [ref=e226]
+                  - generic [ref=e228]: DigitaliX
+                - generic [ref=e229]:
+                  - heading "Meta CAPI" [level=3] [ref=e231]
+                  - paragraph [ref=e232]: Conversion API Facebook & Instagram
+          - generic [ref=e233]:
+            - generic [ref=e235]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); function sendCAPI(event) { dataLayer.push({ event: \"purcha se\" }); server.tag(\"GA4\", { measurement_id }); const hash = s ha256(email.trim().toLowerCase()); export const CONSENT_MODE = \"v2\"; } } fbq(\"track\", \"Purchase\", { value: 42.00 }); if (c onsent.granted) { track(event); } if (consent.granted) { trac k(event); } function sendCAPI(event) { gtag(\"config\", \"AW-CON VERSION_ID\"); export const CONSENT_MODE = \"v2\"; function send CAPI(event) { const sGTM = new ServerContainer(); const pixel = await initPixel(config); return fetch(endpoint, { method : \"POST\" }); if (consent.granted) { track(event); } export co nst CONSENT_MODE = \"v2\"; const hash = sha256(email.trim().toL owerCase()); function sendCAPI(event) { } return fetch(endp"
+            - generic [ref=e236]:
+              - img
+              - generic [ref=e242]:
+                - generic [ref=e243]:
+                  - img [ref=e244]
+                  - generic [ref=e246]: DigitaliX
+                - generic [ref=e247]:
+                  - heading "Enhanced Conversions" [level=3] [ref=e249]
+                  - paragraph [ref=e250]: Google Ads Server-Side
+          - generic [ref=e251]:
+            - generic [ref=e253]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); server.tag(\"GA4\", { measurement_id }); const hash = sha256 (email.trim().toLowerCase()); if (consent.granted) { track(ev ent); } } dataLayer.push({ event: \"purchase\" }); dataLayer.pu sh({ event: \"purchase\" }); } fbq(\"track\", \"Purchase\", { value : 42.00 }); dataLayer.push({ event: \"purchase\" }); const pixe l = await initPixel(config); server.tag(\"GA4\", { measurement_ id }); if (consent.granted) { track(event); } const pixel = a wait initPixel(config); const sGTM = new ServerContainer(); c onst sGTM = new ServerContainer(); const sGTM = new ServerCon tainer(); return fetch(endpoint, { method: \"POST\" }); const hash = sha256(email.trim().toLowerCase()); fbq(\"track\", \"Pur chase\", { value: 42.00 }); export const CONSENT_MODE = \"v2\";"
+            - generic [ref=e254]:
+              - img
+              - generic [ref=e261]:
+                - generic [ref=e262]:
+                  - img [ref=e263]
+                  - generic [ref=e265]: DigitaliX
+                - generic [ref=e266]:
+                  - heading "Consent Mode v2" [level=3] [ref=e268]
+                  - paragraph [ref=e269]: Conformité RGPD native
+          - generic [ref=e270]:
+            - generic [ref=e272]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); return fetch(endpoint, { method: \"POST\" }); function sen dCAPI(event) { const hash = sha256(email.trim().toLowerCase() ); server.tag(\"GA4\", { measurement_id }); server.tag(\"GA4\", { measurement_id }); if (consent.granted) { track(event); } ex port const CONSENT_MODE = \"v2\"; gtag(\"config\", \"AW-CONVERSION _ID\"); export const CONSENT_MODE = \"v2\"; function sendCAPI(ev ent) { const hash = sha256(email.trim().toLowerCase()); ret urn fetch(endpoint, { method: \"POST\" }); if (consent.granted) { track(event); } export const CONSENT_MODE = \"v2\"; dataLaye r.push({ event: \"purchase\" }); function sendCAPI(event) { ser ver.tag(\"GA4\", { measurement_id }); const sGTM = new ServerCo ntainer(); return fetch(endpoint, { method: \"POST\" }); if ("
+            - generic [ref=e273]:
+              - img
+              - generic [ref=e279]:
+                - generic [ref=e280]:
+                  - img [ref=e281]
+                  - generic [ref=e283]: DigitaliX
+                - generic [ref=e284]:
+                  - heading "Audit Data Layer" [level=3] [ref=e286]
+                  - paragraph [ref=e287]: Diagnostic & optimisation tracking
+          - generic [ref=e288]:
+            - generic [ref=e290]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); return fetch(endpoint, { method: \"POST\" }); gtag(\"config \", \"AW-CONVERSION_ID\"); gtag(\"config\", \"AW-CONVERSION_ID\"); c onst sGTM = new ServerContainer(); dataLayer.push({ event: \"p urchase\" }); server.tag(\"GA4\", { measurement_id }); dataLayer .push({ event: \"purchase\" }); const sGTM = new ServerContaine r(); if (consent.granted) { track(event); } return fetch(en dpoint, { method: \"POST\" }); const sGTM = new ServerContainer (); if (consent.granted) { track(event); } const sGTM = new S erverContainer(); if (consent.granted) { track(event); } cons t pixel = await initPixel(config); fbq(\"track\", \"Purchase\", { value: 42.00 }); if (consent.granted) { track(event); } re turn fetch(endpoint, { method: \"POST\" }); export const CONSEN"
+            - generic [ref=e291]:
+              - img
+              - generic [ref=e297]:
+                - generic [ref=e298]:
+                  - img [ref=e299]
+                  - generic [ref=e301]: DigitaliX
+                - generic [ref=e302]:
+                  - heading "Analytics GA4" [level=3] [ref=e304]
+                  - paragraph [ref=e305]: Configuration & dashboards
+          - generic [ref=e306]:
+            - generic [ref=e308]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); return fetch(endpoint, { method: \"POST\" }); export const CONSENT_MODE = \"v2\"; return fetch(endpoint, { method: \"POS T\" }); } export const CONSENT_MODE = \"v2\"; export const CONSE NT_MODE = \"v2\"; } if (consent.granted) { track(event); } cons t pixel = await initPixel(config); gtag(\"config\", \"AW-CONVERS ION_ID\"); const sGTM = new ServerContainer(); gtag(\"config\", \"AW-CONVERSION_ID\"); if (consent.granted) { track(event); } i f (consent.granted) { track(event); } gtag(\"config\", \"AW-CONV ERSION_ID\"); dataLayer.push({ event: \"purchase\" }); export co nst CONSENT_MODE = \"v2\"; const sGTM = new ServerContainer(); function sendCAPI(event) { const pixel = await initPixel(conf ig); dataLayer.push({ event: \"purchase\" }); dataLayer.push({"
+            - generic [ref=e309]:
+              - img
+              - generic [ref=e315]:
+                - generic [ref=e316]:
+                  - img [ref=e317]
+                  - generic [ref=e319]: DigitaliX
+                - generic [ref=e320]:
+                  - heading "GTM Server-Side" [level=3] [ref=e322]
+                  - paragraph [ref=e323]: Infrastructure sGTM sur Google Cloud
+          - generic [ref=e324]:
+            - generic [ref=e326]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); } const pixel = await initPixel(config); } fbq(\"track\", \"P urchase\", { value: 42.00 }); const sGTM = new ServerContainer (); dataLayer.push({ event: \"purchase\" }); } export const CON SENT_MODE = \"v2\"; server.tag(\"GA4\", { measurement_id }); fbq( \"track\", \"Purchase\", { value: 42.00 }); if (consent.granted) { track(event); } const hash = sha256(email.trim().toLowerCas e()); dataLayer.push({ event: \"purchase\" }); const hash = sha 256(email.trim().toLowerCase()); export const CONSENT_MODE = \"v2\"; function sendCAPI(event) { gtag(\"config\", \"AW-CONVERSIO N_ID\"); fbq(\"track\", \"Purchase\", { value: 42.00 }); server.ta g(\"GA4\", { measurement_id }); const sGTM = new ServerContaine r(); return fetch(endpoint, { method: \"POST\" }); export con"
+            - generic [ref=e327]:
+              - img
+              - generic [ref=e334]:
+                - generic [ref=e335]:
+                  - img [ref=e336]
+                  - generic [ref=e338]: DigitaliX
+                - generic [ref=e339]:
+                  - heading "Meta CAPI" [level=3] [ref=e341]
+                  - paragraph [ref=e342]: Conversion API Facebook & Instagram
+          - generic [ref=e343]:
+            - generic [ref=e345]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); dataLayer.push({ event: \"purchase\" }); fbq(\"track\", \"Purch ase\", { value: 42.00 }); } } gtag(\"config\", \"AW-CONVERSION_ID \"); } const hash = sha256(email.trim().toLowerCase()); server .tag(\"GA4\", { measurement_id }); fbq(\"track\", \"Purchase\", { v alue: 42.00 }); export const CONSENT_MODE = \"v2\"; export cons t CONSENT_MODE = \"v2\"; return fetch(endpoint, { method: \"PO ST\" }); const sGTM = new ServerContainer(); const sGTM = new ServerContainer(); const hash = sha256(email.trim().toLowerCa se()); export const CONSENT_MODE = \"v2\"; const hash = sha256( email.trim().toLowerCase()); const sGTM = new ServerContainer (); return fetch(endpoint, { method: \"POST\" }); const sGTM = new ServerContainer(); const pixel = await initPixel(config"
+            - generic [ref=e346]:
+              - img
+              - generic [ref=e352]:
+                - generic [ref=e353]:
+                  - img [ref=e354]
+                  - generic [ref=e356]: DigitaliX
+                - generic [ref=e357]:
+                  - heading "Enhanced Conversions" [level=3] [ref=e359]
+                  - paragraph [ref=e360]: Google Ads Server-Side
+          - generic [ref=e361]:
+            - generic [ref=e363]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); function sendCAPI(event) { export const CONSENT_MODE = \"v2 \"; dataLayer.push({ event: \"purchase\" }); export const CONSEN T_MODE = \"v2\"; const pixel = await initPixel(config); export const CONSENT_MODE = \"v2\"; const hash = sha256(email.trim().t oLowerCase()); dataLayer.push({ event: \"purchase\" }); } fbq(\" track\", \"Purchase\", { value: 42.00 }); server.tag(\"GA4\", { me asurement_id }); } fbq(\"track\", \"Purchase\", { value: 42.00 }) ; fbq(\"track\", \"Purchase\", { value: 42.00 }); const hash = sh a256(email.trim().toLowerCase()); export const CONSENT_MODE = \"v2\"; if (consent.granted) { track(event); } export const CO NSENT_MODE = \"v2\"; const pixel = await initPixel(config); con st hash = sha256(email.trim().toLowerCase()); dataLayer.push("
+            - generic [ref=e364]:
+              - img
+              - generic [ref=e370]:
+                - generic [ref=e371]:
+                  - img [ref=e372]
+                  - generic [ref=e374]: DigitaliX
+                - generic [ref=e375]:
+                  - heading "Consent Mode v2" [level=3] [ref=e377]
+                  - paragraph [ref=e378]: Conformité RGPD native
+          - generic [ref=e379]:
+            - generic [ref=e381]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); if (consent.granted) { track(event); } const pixel = await initPixel(config); const pixel = await initPixel(config); fb q(\"track\", \"Purchase\", { value: 42.00 }); fbq(\"track\", \"Purch ase\", { value: 42.00 }); if (consent.granted) { track(event); } const hash = sha256(email.trim().toLowerCase()); gtag(\"con fig\", \"AW-CONVERSION_ID\"); return fetch(endpoint, { method: \"POST\" }); fbq(\"track\", \"Purchase\", { value: 42.00 }); const hash = sha256(email.trim().toLowerCase()); fbq(\"track\", \"Pur chase\", { value: 42.00 }); gtag(\"config\", \"AW-CONVERSION_ID\") ; dataLayer.push({ event: \"purchase\" }); fbq(\"track\", \"Purcha se\", { value: 42.00 }); export const CONSENT_MODE = \"v2\"; ser ver.tag(\"GA4\", { measurement_id }); } server.tag(\"GA4\", { mea"
+            - generic [ref=e382]:
+              - img
+              - generic [ref=e388]:
+                - generic [ref=e389]:
+                  - img [ref=e390]
+                  - generic [ref=e392]: DigitaliX
+                - generic [ref=e393]:
+                  - heading "Audit Data Layer" [level=3] [ref=e395]
+                  - paragraph [ref=e396]: Diagnostic & optimisation tracking
+          - generic [ref=e397]:
+            - generic [ref=e399]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); dataLayer.push({ event: \"purchase\" }); } const hash = sha2 56(email.trim().toLowerCase()); server.tag(\"GA4\", { measureme nt_id }); return fetch(endpoint, { method: \"POST\" }); serve r.tag(\"GA4\", { measurement_id }); return fetch(endpoint, { method: \"POST\" }); const sGTM = new ServerContainer(); } cons t pixel = await initPixel(config); dataLayer.push({ event: \"p urchase\" }); const pixel = await initPixel(config); return fetch(endpoint, { method: \"POST\" }); const hash = sha256(emai l.trim().toLowerCase()); } const pixel = await initPixel(conf ig); const hash = sha256(email.trim().toLowerCase()); dataLay er.push({ event: \"purchase\" }); export const CONSENT_MODE = \" v2\"; const sGTM = new ServerContainer(); } return fetch(end"
+            - generic [ref=e400]:
+              - img
+              - generic [ref=e407]:
+                - generic [ref=e408]:
+                  - img [ref=e409]
+                  - generic [ref=e411]: DigitaliX
+                - generic [ref=e412]:
+                  - heading "Analytics GA4" [level=3] [ref=e414]
+                  - paragraph [ref=e415]: Configuration & dashboards
+          - generic [ref=e416]:
+            - generic [ref=e418]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); if (consent.granted) { track(event); } return fetch(endp oint, { method: \"POST\" }); server.tag(\"GA4\", { measurement_id }); if (consent.granted) { track(event); } return fetch(en dpoint, { method: \"POST\" }); const hash = sha256(email.trim() .toLowerCase()); export const CONSENT_MODE = \"v2\"; export con st CONSENT_MODE = \"v2\"; function sendCAPI(event) { if (consen t.granted) { track(event); } } const sGTM = new ServerContain er(); dataLayer.push({ event: \"purchase\" }); const pixel = aw ait initPixel(config); server.tag(\"GA4\", { measurement_id }); server.tag(\"GA4\", { measurement_id }); const pixel = await i nitPixel(config); if (consent.granted) { track(event); } cons t hash = sha256(email.trim().toLowerCase()); function sendCAP"
+            - generic [ref=e419]:
+              - img
+              - generic [ref=e425]:
+                - generic [ref=e426]:
+                  - img [ref=e427]
+                  - generic [ref=e429]: DigitaliX
+                - generic [ref=e430]:
+                  - heading "GTM Server-Side" [level=3] [ref=e432]
+                  - paragraph [ref=e433]: Infrastructure sGTM sur Google Cloud
+          - generic [ref=e434]:
+            - generic [ref=e436]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); function sendCAPI(event) { if (consent.granted) { track(ev ent); } function sendCAPI(event) { const hash = sha256(email. trim().toLowerCase()); if (consent.granted) { track(event); } } server.tag(\"GA4\", { measurement_id }); const pixel = await initPixel(config); dataLayer.push({ event: \"purchase\" }); } const pixel = await initPixel(config); if (consent.granted) { track(event); } const sGTM = new ServerContainer(); fbq(\"tra ck\", \"Purchase\", { value: 42.00 }); function sendCAPI(event) { fbq(\"track\", \"Purchase\", { value: 42.00 }); gtag(\"config\", \"AW-CONVERSION_ID\"); return fetch(endpoint, { method: \"POST \" }); return fetch(endpoint, { method: \"POST\" }); dataLayer .push({ event: \"purchase\" }); server.tag(\"GA4\", { measurement"
+            - generic [ref=e437]:
+              - img
+              - generic [ref=e443]:
+                - generic [ref=e444]:
+                  - img [ref=e445]
+                  - generic [ref=e447]: DigitaliX
+                - generic [ref=e448]:
+                  - heading "Meta CAPI" [level=3] [ref=e450]
+                  - paragraph [ref=e451]: Conversion API Facebook & Instagram
+          - generic [ref=e452]:
+            - generic [ref=e454]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); gtag(\"config\", \"AW-CONVERSION_ID\"); const hash = sha256(em ail.trim().toLowerCase()); return fetch(endpoint, { method: \"POST\" }); function sendCAPI(event) { return fetch(endpoin t, { method: \"POST\" }); const sGTM = new ServerContainer(); d ataLayer.push({ event: \"purchase\" }); export const CONSENT_MO DE = \"v2\"; fbq(\"track\", \"Purchase\", { value: 42.00 }); export const CONSENT_MODE = \"v2\"; const sGTM = new ServerContainer( ); dataLayer.push({ event: \"purchase\" }); dataLayer.push({ ev ent: \"purchase\" }); const hash = sha256(email.trim().toLowerC ase()); const pixel = await initPixel(config); server.tag(\"GA 4\", { measurement_id }); dataLayer.push({ event: \"purchase\" } ); fbq(\"track\", \"Purchase\", { value: 42.00 }); return fetch"
+            - generic [ref=e455]:
+              - img
+              - generic [ref=e461]:
+                - generic [ref=e462]:
+                  - img [ref=e463]
+                  - generic [ref=e465]: DigitaliX
+                - generic [ref=e466]:
+                  - heading "Enhanced Conversions" [level=3] [ref=e468]
+                  - paragraph [ref=e469]: Google Ads Server-Side
+          - generic [ref=e470]:
+            - generic [ref=e472]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); return fetch(endpoint, { method: \"POST\" }); export const CONSENT_MODE = \"v2\"; if (consent.granted) { track(event); } return fetch(endpoint, { method: \"POST\" }); server.tag(\"GA4 \", { measurement_id }); const hash = sha256(email.trim().toLo werCase()); export const CONSENT_MODE = \"v2\"; const hash = sh a256(email.trim().toLowerCase()); fbq(\"track\", \"Purchase\", { value: 42.00 }); gtag(\"config\", \"AW-CONVERSION_ID\"); dataLaye r.push({ event: \"purchase\" }); fbq(\"track\", \"Purchase\", { val ue: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); } server.tag(\"GA4\", { measurement_i d }); export const CONSENT_MODE = \"v2\"; gtag(\"config\", \"AW-CO NVERSION_ID\"); if (consent.granted) { track(event); } const h"
+            - generic [ref=e473]:
+              - img
+              - generic [ref=e480]:
+                - generic [ref=e481]:
+                  - img [ref=e482]
+                  - generic [ref=e484]: DigitaliX
+                - generic [ref=e485]:
+                  - heading "Consent Mode v2" [level=3] [ref=e487]
+                  - paragraph [ref=e488]: Conformité RGPD native
+          - generic [ref=e489]:
+            - generic [ref=e491]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); fbq(\"track\", \"Purchase\", { value: 42.00 }); const sGTM = n ew ServerContainer(); return fetch(endpoint, { method: \"POS T\" }); fbq(\"track\", \"Purchase\", { value: 42.00 }); } fbq(\"tra ck\", \"Purchase\", { value: 42.00 }); fbq(\"track\", \"Purchase\", { value: 42.00 }); const sGTM = new ServerContainer(); if (co nsent.granted) { track(event); } function sendCAPI(event) { s erver.tag(\"GA4\", { measurement_id }); return fetch(endpoint , { method: \"POST\" }); const pixel = await initPixel(config); gtag(\"config\", \"AW-CONVERSION_ID\"); server.tag(\"GA4\", { meas urement_id }); server.tag(\"GA4\", { measurement_id }); const h ash = sha256(email.trim().toLowerCase()); return fetch(endp oint, { method: \"POST\" }); if (consent.granted) { track(event"
+            - generic [ref=e492]:
+              - img
+              - generic [ref=e498]:
+                - generic [ref=e499]:
+                  - img [ref=e500]
+                  - generic [ref=e502]: DigitaliX
+                - generic [ref=e503]:
+                  - heading "Audit Data Layer" [level=3] [ref=e505]
+                  - paragraph [ref=e506]: Diagnostic & optimisation tracking
+          - generic [ref=e507]:
+            - generic [ref=e509]: "const sGTM = new ServerContainer(); function sendCAPI(event) { return fetch(endpoint, { method: \"POST\" }); } if (consent .granted) { track(event); } dataLayer.push({ event: \"purchase \" }); const hash = sha256(email.trim().toLowerCase()); gtag(\" config\", \"AW-CONVERSION_ID\"); fbq(\"track\", \"Purchase\", { valu e: 42.00 }); export const CONSENT_MODE = \"v2\"; const pixel = await initPixel(config); server.tag(\"GA4\", { measurement_id } ); const pixel = await initPixel(config); const pixel = await initPixel(config); const hash = sha256(email.trim().toLowerC ase()); function sendCAPI(event) { function sendCAPI(event) { if (consent.granted) { track(event); } server.tag(\"GA4\", { m easurement_id }); dataLayer.push({ event: \"purchase\" }); cons t pixel = await initPixel(config); function sendCAPI(event) { const hash = sha256(email.trim().toLowerCase()); dataLayer.p ush({ event: \"purchase\" }); const sGTM = new ServerContainer( ); function sendCAPI(event) { if (consent.granted) { track(ev ent); } export const CONSENT_MODE = \"v2\"; gtag(\"config\", \"AW- CONVERSION_ID\"); return fetch(endpoint, { method: \"POST\" }) ; const hash = sha256(email.trim().toLowerCase()); return f"
+            - generic [ref=e510]:
+              - img
+              - generic [ref=e516]:
+                - generic [ref=e517]:
+                  - img [ref=e518]
+                  - generic [ref=e520]: DigitaliX
+                - generic [ref=e521]:
+                  - heading "Analytics GA4" [level=3] [ref=e523]
+                  - paragraph [ref=e524]: Configuration & dashboards
+      - generic [ref=e528]:
+        - generic [ref=e529]:
+          - generic [ref=e534]: DÉMONSTRATION LIVE
+          - heading "Découvrez votre tracking en temps réel" [level=3] [ref=e535]
+          - paragraph [ref=e536]:
+            - text: Depuis votre arrivée sur ce site, nous avons collecté et analysé ces données sur votre navigation. C'est
+            - strong [ref=e537]: exactement ce que nous mettons en place
+            - text: pour vos clients.
+          - generic [ref=e538]:
+            - img [ref=e539]
+            - paragraph [ref=e541]:
+              - strong [ref=e542]: 100% local
+              - text: — Ces données sont stockées uniquement sur votre appareil et ne sont jamais envoyées à un serveur.
+          - generic [ref=e543]:
+            - button "Voir comment l'implémenter" [ref=e544] [cursor=pointer]:
+              - text: Voir comment l'implémenter
+              - img
+            - button "Supprimer mes données" [ref=e545] [cursor=pointer]:
+              - img
+              - text: Supprimer mes données
+        - generic [ref=e546]:
+          - generic [ref=e547]:
+            - generic [ref=e548]: 18 Juin 2026
+            - paragraph [ref=e549]: Date de votre première visite
+          - generic [ref=e550]:
+            - generic [ref=e551]: direct
+            - paragraph [ref=e552]: Source de votre première visite
+          - generic [ref=e553]:
+            - generic [ref=e554]: direct
+            - paragraph [ref=e555]: Source de votre visite actuelle
+          - generic [ref=e556]:
+            - generic [ref=e557]: "2"
+            - paragraph [ref=e558]: Pages vues (toutes visites)
+          - generic [ref=e559]:
+            - generic [ref=e560]: Prospect
+            - paragraph [ref=e561]: Votre profil comportemental
+          - generic [ref=e562]:
+            - generic [ref=e563]: "1"
+            - paragraph [ref=e564]: Nombre de sessions
+      - generic [ref=e566]:
+        - heading "Pourquoi passer au Server-Side ?" [level=2] [ref=e568]
+        - generic [ref=e569]:
+          - generic [ref=e570]:
+            - img [ref=e572]
+            - heading "Infrastructure Server-Side" [level=3] [ref=e575]
+            - paragraph [ref=e576]: Vos données transitent par votre propre serveur, contournant les blocages navigateur.
+          - generic [ref=e577]:
+            - img [ref=e579]
+            - heading "Conformité RGPD native" [level=3] [ref=e582]
+            - paragraph [ref=e583]: Consent Mode v2, anonymisation et respect du consentement intégrés dès le départ.
+          - generic [ref=e584]:
+            - img [ref=e586]
+            - heading "+90% de précision" [level=3] [ref=e588]
+            - paragraph [ref=e589]: Récupérez les conversions perdues par les adblockers et les restrictions iOS/Safari.
+      - generic [ref=e590]:
+        - generic [ref=e591]:
+          - generic [ref=e594]: Avis Clients
+          - heading "Ce que nos clients disent de nous" [level=2] [ref=e595]
+        - generic [ref=e597]:
+          - generic [ref=e598]:
+            - generic [ref=e599]:
+              - generic [ref=e600]:
+                - generic [ref=e601]: S
+                - generic [ref=e602]:
+                  - generic [ref=e603]:
+                    - generic [ref=e604]: Sophie Martin
+                    - generic [ref=e605]:
+                      - img [ref=e606]
+                      - text: Vérifié
+                  - text: E-commerce Mode
+              - img [ref=e609]
+            - generic [ref=e612]:
+              - img [ref=e613]
+              - img [ref=e615]
+              - img [ref=e617]
+              - img [ref=e619]
+              - img [ref=e621]
+            - paragraph [ref=e623]: "\"ROI multiplié par 3 en 2 mois\""
+            - paragraph [ref=e624]: Grâce au server-side tracking, on a récupéré 35% de données perdues. Nos campagnes Google Ads sont enfin optimisées avec des données fiables.
+          - generic [ref=e625]:
+            - generic [ref=e626]:
+              - generic [ref=e627]:
+                - generic [ref=e628]: T
+                - generic [ref=e629]:
+                  - generic [ref=e630]:
+                    - generic [ref=e631]: Thomas Dubois
+                    - generic [ref=e632]:
+                      - img [ref=e633]
+                      - text: Vérifié
+                  - text: SaaS B2B
+              - img [ref=e636]
+            - generic [ref=e639]:
+              - img [ref=e640]
+              - img [ref=e642]
+              - img [ref=e644]
+              - img [ref=e646]
+              - img [ref=e648]
+            - paragraph [ref=e650]: "\"Enfin des données fiables\""
+            - paragraph [ref=e651]: L'équipe a migré notre tracking en 2 semaines. Le support est réactif et les dashboards sont clairs. Je recommande sans hésiter.
+          - generic [ref=e652]:
+            - generic [ref=e653]:
+              - generic [ref=e654]:
+                - generic [ref=e655]: M
+                - generic [ref=e656]:
+                  - generic [ref=e657]:
+                    - generic [ref=e658]: Marie Leroy
+                    - generic [ref=e659]:
+                      - img [ref=e660]
+                      - text: Vérifié
+                  - text: Agence Marketing
+              - img [ref=e663]
+            - generic [ref=e666]:
+              - img [ref=e667]
+              - img [ref=e669]
+              - img [ref=e671]
+              - img [ref=e673]
+              - img [ref=e675]
+            - paragraph [ref=e677]: "\"Expertise rare et précieuse\""
+            - paragraph [ref=e678]: Difficile de trouver des experts GTM server-side en France. DigitaliX maîtrise parfaitement le sujet et vulgarise très bien les concepts.
+          - generic [ref=e679]:
+            - generic [ref=e680]:
+              - generic [ref=e681]:
+                - generic [ref=e682]: L
+                - generic [ref=e683]:
+                  - generic [ref=e684]:
+                    - generic [ref=e685]: Lucas Bernard
+                    - generic [ref=e686]:
+                      - img [ref=e687]
+                      - text: Vérifié
+                  - text: Lead Gen B2B
+              - img [ref=e690]
+            - generic [ref=e693]:
+              - img [ref=e694]
+              - img [ref=e696]
+              - img [ref=e698]
+              - img [ref=e700]
+              - img [ref=e702]
+            - paragraph [ref=e704]: "\"Taux de conversion +40%\""
+            - paragraph [ref=e705]: Depuis la mise en place du tracking server-side, nos audiences de remarketing sont bien plus précises. Le ROAS a explosé.
+          - generic [ref=e706]:
+            - generic [ref=e707]:
+              - generic [ref=e708]:
+                - generic [ref=e709]: É
+                - generic [ref=e710]:
+                  - generic [ref=e711]:
+                    - generic [ref=e712]: Émilie Rousseau
+                    - generic [ref=e713]:
+                      - img [ref=e714]
+                      - text: Vérifié
+                  - text: Marketplace
+              - img [ref=e717]
+            - generic [ref=e720]:
+              - img [ref=e721]
+              - img [ref=e723]
+              - img [ref=e725]
+              - img [ref=e727]
+              - img [ref=e729]
+            - paragraph [ref=e731]: "\"Migration sans accroc\""
+            - paragraph [ref=e732]: L'équipe a géré la migration complète sans aucune perte de données. Transition fluide et résultats immédiats sur nos KPIs.
+          - generic [ref=e733]:
+            - generic [ref=e734]:
+              - generic [ref=e735]:
+                - generic [ref=e736]: A
+                - generic [ref=e737]:
+                  - generic [ref=e738]:
+                    - generic [ref=e739]: Antoine Mercier
+                    - generic [ref=e740]:
+                      - img [ref=e741]
+                      - text: Vérifié
+                  - text: E-commerce Luxe
+              - img [ref=e744]
+            - generic [ref=e747]:
+              - img [ref=e748]
+              - img [ref=e750]
+              - img [ref=e752]
+              - img [ref=e754]
+              - img [ref=e756]
+            - paragraph [ref=e758]: "\"Conformité RGPD assurée\""
+            - paragraph [ref=e759]: Enfin une solution qui respecte la vie privée tout en gardant des données marketing exploitables. Un vrai game-changer.
+          - generic [ref=e760]:
+            - generic [ref=e761]:
+              - generic [ref=e762]:
+                - generic [ref=e763]: S
+                - generic [ref=e764]:
+                  - generic [ref=e765]:
+                    - generic [ref=e766]: Sophie Martin
+                    - generic [ref=e767]:
+                      - img [ref=e768]
+                      - text: Vérifié
+                  - text: E-commerce Mode
+              - img [ref=e771]
+            - generic [ref=e774]:
+              - img [ref=e775]
+              - img [ref=e777]
+              - img [ref=e779]
+              - img [ref=e781]
+              - img [ref=e783]
+            - paragraph [ref=e785]: "\"ROI multiplié par 3 en 2 mois\""
+            - paragraph [ref=e786]: Grâce au server-side tracking, on a récupéré 35% de données perdues. Nos campagnes Google Ads sont enfin optimisées avec des données fiables.
+          - generic [ref=e787]:
+            - generic [ref=e788]:
+              - generic [ref=e789]:
+                - generic [ref=e790]: T
+                - generic [ref=e791]:
+                  - generic [ref=e792]:
+                    - generic [ref=e793]: Thomas Dubois
+                    - generic [ref=e794]:
+                      - img [ref=e795]
+                      - text: Vérifié
+                  - text: SaaS B2B
+              - img [ref=e798]
+            - generic [ref=e801]:
+              - img [ref=e802]
+              - img [ref=e804]
+              - img [ref=e806]
+              - img [ref=e808]
+              - img [ref=e810]
+            - paragraph [ref=e812]: "\"Enfin des données fiables\""
+            - paragraph [ref=e813]: L'équipe a migré notre tracking en 2 semaines. Le support est réactif et les dashboards sont clairs. Je recommande sans hésiter.
+          - generic [ref=e814]:
+            - generic [ref=e815]:
+              - generic [ref=e816]:
+                - generic [ref=e817]: M
+                - generic [ref=e818]:
+                  - generic [ref=e819]:
+                    - generic [ref=e820]: Marie Leroy
+                    - generic [ref=e821]:
+                      - img [ref=e822]
+                      - text: Vérifié
+                  - text: Agence Marketing
+              - img [ref=e825]
+            - generic [ref=e828]:
+              - img [ref=e829]
+              - img [ref=e831]
+              - img [ref=e833]
+              - img [ref=e835]
+              - img [ref=e837]
+            - paragraph [ref=e839]: "\"Expertise rare et précieuse\""
+            - paragraph [ref=e840]: Difficile de trouver des experts GTM server-side en France. DigitaliX maîtrise parfaitement le sujet et vulgarise très bien les concepts.
+          - generic [ref=e841]:
+            - generic [ref=e842]:
+              - generic [ref=e843]:
+                - generic [ref=e844]: L
+                - generic [ref=e845]:
+                  - generic [ref=e846]:
+                    - generic [ref=e847]: Lucas Bernard
+                    - generic [ref=e848]:
+                      - img [ref=e849]
+                      - text: Vérifié
+                  - text: Lead Gen B2B
+              - img [ref=e852]
+            - generic [ref=e855]:
+              - img [ref=e856]
+              - img [ref=e858]
+              - img [ref=e860]
+              - img [ref=e862]
+              - img [ref=e864]
+            - paragraph [ref=e866]: "\"Taux de conversion +40%\""
+            - paragraph [ref=e867]: Depuis la mise en place du tracking server-side, nos audiences de remarketing sont bien plus précises. Le ROAS a explosé.
+          - generic [ref=e868]:
+            - generic [ref=e869]:
+              - generic [ref=e870]:
+                - generic [ref=e871]: É
+                - generic [ref=e872]:
+                  - generic [ref=e873]:
+                    - generic [ref=e874]: Émilie Rousseau
+                    - generic [ref=e875]:
+                      - img [ref=e876]
+                      - text: Vérifié
+                  - text: Marketplace
+              - img [ref=e879]
+            - generic [ref=e882]:
+              - img [ref=e883]
+              - img [ref=e885]
+              - img [ref=e887]
+              - img [ref=e889]
+              - img [ref=e891]
+            - paragraph [ref=e893]: "\"Migration sans accroc\""
+            - paragraph [ref=e894]: L'équipe a géré la migration complète sans aucune perte de données. Transition fluide et résultats immédiats sur nos KPIs.
+          - generic [ref=e895]:
+            - generic [ref=e896]:
+              - generic [ref=e897]:
+                - generic [ref=e898]: A
+                - generic [ref=e899]:
+                  - generic [ref=e900]:
+                    - generic [ref=e901]: Antoine Mercier
+                    - generic [ref=e902]:
+                      - img [ref=e903]
+                      - text: Vérifié
+                  - text: E-commerce Luxe
+              - img [ref=e906]
+            - generic [ref=e909]:
+              - img [ref=e910]
+              - img [ref=e912]
+              - img [ref=e914]
+              - img [ref=e916]
+              - img [ref=e918]
+            - paragraph [ref=e920]: "\"Conformité RGPD assurée\""
+            - paragraph [ref=e921]: Enfin une solution qui respecte la vie privée tout en gardant des données marketing exploitables. Un vrai game-changer.
+          - generic [ref=e922]:
+            - generic [ref=e923]:
+              - generic [ref=e924]:
+                - generic [ref=e925]: S
+                - generic [ref=e926]:
+                  - generic [ref=e927]:
+                    - generic [ref=e928]: Sophie Martin
+                    - generic [ref=e929]:
+                      - img [ref=e930]
+                      - text: Vérifié
+                  - text: E-commerce Mode
+              - img [ref=e933]
+            - generic [ref=e936]:
+              - img [ref=e937]
+              - img [ref=e939]
+              - img [ref=e941]
+              - img [ref=e943]
+              - img [ref=e945]
+            - paragraph [ref=e947]: "\"ROI multiplié par 3 en 2 mois\""
+            - paragraph [ref=e948]: Grâce au server-side tracking, on a récupéré 35% de données perdues. Nos campagnes Google Ads sont enfin optimisées avec des données fiables.
+          - generic [ref=e949]:
+            - generic [ref=e950]:
+              - generic [ref=e951]:
+                - generic [ref=e952]: T
+                - generic [ref=e953]:
+                  - generic [ref=e954]:
+                    - generic [ref=e955]: Thomas Dubois
+                    - generic [ref=e956]:
+                      - img [ref=e957]
+                      - text: Vérifié
+                  - text: SaaS B2B
+              - img [ref=e960]
+            - generic [ref=e963]:
+              - img [ref=e964]
+              - img [ref=e966]
+              - img [ref=e968]
+              - img [ref=e970]
+              - img [ref=e972]
+            - paragraph [ref=e974]: "\"Enfin des données fiables\""
+            - paragraph [ref=e975]: L'équipe a migré notre tracking en 2 semaines. Le support est réactif et les dashboards sont clairs. Je recommande sans hésiter.
+          - generic [ref=e976]:
+            - generic [ref=e977]:
+              - generic [ref=e978]:
+                - generic [ref=e979]: M
+                - generic [ref=e980]:
+                  - generic [ref=e981]:
+                    - generic [ref=e982]: Marie Leroy
+                    - generic [ref=e983]:
+                      - img [ref=e984]
+                      - text: Vérifié
+                  - text: Agence Marketing
+              - img [ref=e987]
+            - generic [ref=e990]:
+              - img [ref=e991]
+              - img [ref=e993]
+              - img [ref=e995]
+              - img [ref=e997]
+              - img [ref=e999]
+            - paragraph [ref=e1001]: "\"Expertise rare et précieuse\""
+            - paragraph [ref=e1002]: Difficile de trouver des experts GTM server-side en France. DigitaliX maîtrise parfaitement le sujet et vulgarise très bien les concepts.
+          - generic [ref=e1003]:
+            - generic [ref=e1004]:
+              - generic [ref=e1005]:
+                - generic [ref=e1006]: L
+                - generic [ref=e1007]:
+                  - generic [ref=e1008]:
+                    - generic [ref=e1009]: Lucas Bernard
+                    - generic [ref=e1010]:
+                      - img [ref=e1011]
+                      - text: Vérifié
+                  - text: Lead Gen B2B
+              - img [ref=e1014]
+            - generic [ref=e1017]:
+              - img [ref=e1018]
+              - img [ref=e1020]
+              - img [ref=e1022]
+              - img [ref=e1024]
+              - img [ref=e1026]
+            - paragraph [ref=e1028]: "\"Taux de conversion +40%\""
+            - paragraph [ref=e1029]: Depuis la mise en place du tracking server-side, nos audiences de remarketing sont bien plus précises. Le ROAS a explosé.
+          - generic [ref=e1030]:
+            - generic [ref=e1031]:
+              - generic [ref=e1032]:
+                - generic [ref=e1033]: É
+                - generic [ref=e1034]:
+                  - generic [ref=e1035]:
+                    - generic [ref=e1036]: Émilie Rousseau
+                    - generic [ref=e1037]:
+                      - img [ref=e1038]
+                      - text: Vérifié
+                  - text: Marketplace
+              - img [ref=e1041]
+            - generic [ref=e1044]:
+              - img [ref=e1045]
+              - img [ref=e1047]
+              - img [ref=e1049]
+              - img [ref=e1051]
+              - img [ref=e1053]
+            - paragraph [ref=e1055]: "\"Migration sans accroc\""
+            - paragraph [ref=e1056]: L'équipe a géré la migration complète sans aucune perte de données. Transition fluide et résultats immédiats sur nos KPIs.
+          - generic [ref=e1057]:
+            - generic [ref=e1058]:
+              - generic [ref=e1059]:
+                - generic [ref=e1060]: A
+                - generic [ref=e1061]:
+                  - generic [ref=e1062]:
+                    - generic [ref=e1063]: Antoine Mercier
+                    - generic [ref=e1064]:
+                      - img [ref=e1065]
+                      - text: Vérifié
+                  - text: E-commerce Luxe
+              - img [ref=e1068]
+            - generic [ref=e1071]:
+              - img [ref=e1072]
+              - img [ref=e1074]
+              - img [ref=e1076]
+              - img [ref=e1078]
+              - img [ref=e1080]
+            - paragraph [ref=e1082]: "\"Conformité RGPD assurée\""
+            - paragraph [ref=e1083]: Enfin une solution qui respecte la vie privée tout en gardant des données marketing exploitables. Un vrai game-changer.
+        - generic [ref=e1085]:
+          - generic [ref=e1086]:
+            - generic [ref=e1087]:
+              - generic [ref=e1088]:
+                - generic [ref=e1089]: C
+                - generic [ref=e1090]:
+                  - generic [ref=e1091]:
+                    - generic [ref=e1092]: Clara Fontaine
+                    - generic [ref=e1093]:
+                      - img [ref=e1094]
+                      - text: Vérifié
+                  - text: Agence SEA
+              - img [ref=e1097]
+            - generic [ref=e1100]:
+              - img [ref=e1101]
+              - img [ref=e1103]
+              - img [ref=e1105]
+              - img [ref=e1107]
+              - img [ref=e1109]
+            - paragraph [ref=e1111]: "\"Indispensable pour nos clients\""
+            - paragraph [ref=e1112]: On recommande DigitaliX à tous nos clients e-commerce. La qualité des données remontées est incomparable avec le client-side.
+          - generic [ref=e1113]:
+            - generic [ref=e1114]:
+              - generic [ref=e1115]:
+                - generic [ref=e1116]: J
+                - generic [ref=e1117]:
+                  - generic [ref=e1118]:
+                    - generic [ref=e1119]: Julien Moreau
+                    - generic [ref=e1120]:
+                      - img [ref=e1121]
+                      - text: Vérifié
+                  - text: DTC Brand
+              - img [ref=e1124]
+            - generic [ref=e1127]:
+              - img [ref=e1128]
+              - img [ref=e1130]
+              - img [ref=e1132]
+              - img [ref=e1134]
+              - img [ref=e1136]
+            - paragraph [ref=e1138]: "\"Support exceptionnel\""
+            - paragraph [ref=e1139]: Chaque question trouve une réponse en moins de 2h. L'équipe comprend vraiment les enjeux business derrière le tracking.
+          - generic [ref=e1140]:
+            - generic [ref=e1141]:
+              - generic [ref=e1142]:
+                - generic [ref=e1143]: "N"
+                - generic [ref=e1144]:
+                  - generic [ref=e1145]:
+                    - generic [ref=e1146]: Nadia Benali
+                    - generic [ref=e1147]:
+                      - img [ref=e1148]
+                      - text: Vérifié
+                  - text: Travel Tech
+              - img [ref=e1151]
+            - generic [ref=e1154]:
+              - img [ref=e1155]
+              - img [ref=e1157]
+              - img [ref=e1159]
+              - img [ref=e1161]
+              - img [ref=e1163]
+            - paragraph [ref=e1165]: "\"Données enfin complètes\""
+            - paragraph [ref=e1166]: On passait à côté de 30% de nos conversions à cause des adblockers. Problème résolu grâce au server-side tracking.
+          - generic [ref=e1167]:
+            - generic [ref=e1168]:
+              - generic [ref=e1169]:
+                - generic [ref=e1170]: P
+                - generic [ref=e1171]:
+                  - generic [ref=e1172]:
+                    - generic [ref=e1173]: Pierre Dupont
+                    - generic [ref=e1174]:
+                      - img [ref=e1175]
+                      - text: Vérifié
+                  - text: Fintech
+              - img [ref=e1178]
+            - generic [ref=e1181]:
+              - img [ref=e1182]
+              - img [ref=e1184]
+              - img [ref=e1186]
+              - img [ref=e1188]
+              - img [ref=e1190]
+            - paragraph [ref=e1192]: "\"Audit révélateur\""
+            - paragraph [ref=e1193]: L'audit initial a révélé des failles majeures dans notre setup. La correction a immédiatement amélioré la qualité de nos données.
+          - generic [ref=e1194]:
+            - generic [ref=e1195]:
+              - generic [ref=e1196]:
+                - generic [ref=e1197]: C
+                - generic [ref=e1198]:
+                  - generic [ref=e1199]:
+                    - generic [ref=e1200]: Camille Lefèvre
+                    - generic [ref=e1201]:
+                      - img [ref=e1202]
+                      - text: Vérifié
+                  - text: Retail Omnicanal
+              - img [ref=e1205]
+            - generic [ref=e1208]:
+              - img [ref=e1209]
+              - img [ref=e1211]
+              - img [ref=e1213]
+              - img [ref=e1215]
+              - img [ref=e1217]
+            - paragraph [ref=e1219]: "\"Vision 360° enfin possible\""
+            - paragraph [ref=e1220]: Le croisement des données online/offline est devenu possible grâce à un tracking fiable. Merci DigitaliX !
+          - generic [ref=e1221]:
+            - generic [ref=e1222]:
+              - generic [ref=e1223]:
+                - generic [ref=e1224]: M
+                - generic [ref=e1225]:
+                  - generic [ref=e1226]:
+                    - generic [ref=e1227]: Maxime Girard
+                    - generic [ref=e1228]:
+                      - img [ref=e1229]
+                      - text: Vérifié
+                  - text: EdTech
+              - img [ref=e1232]
+            - generic [ref=e1235]:
+              - img [ref=e1236]
+              - img [ref=e1238]
+              - img [ref=e1240]
+              - img [ref=e1242]
+              - img [ref=e1244]
+            - paragraph [ref=e1246]: "\"Setup rapide et efficace\""
+            - paragraph [ref=e1247]: En 10 jours, tout était en place. Les résultats se sont vus dès la première semaine sur nos campagnes Meta.
+          - generic [ref=e1248]:
+            - generic [ref=e1249]:
+              - generic [ref=e1250]:
+                - generic [ref=e1251]: C
+                - generic [ref=e1252]:
+                  - generic [ref=e1253]:
+                    - generic [ref=e1254]: Clara Fontaine
+                    - generic [ref=e1255]:
+                      - img [ref=e1256]
+                      - text: Vérifié
+                  - text: Agence SEA
+              - img [ref=e1259]
+            - generic [ref=e1262]:
+              - img [ref=e1263]
+              - img [ref=e1265]
+              - img [ref=e1267]
+              - img [ref=e1269]
+              - img [ref=e1271]
+            - paragraph [ref=e1273]: "\"Indispensable pour nos clients\""
+            - paragraph [ref=e1274]: On recommande DigitaliX à tous nos clients e-commerce. La qualité des données remontées est incomparable avec le client-side.
+          - generic [ref=e1275]:
+            - generic [ref=e1276]:
+              - generic [ref=e1277]:
+                - generic [ref=e1278]: J
+                - generic [ref=e1279]:
+                  - generic [ref=e1280]:
+                    - generic [ref=e1281]: Julien Moreau
+                    - generic [ref=e1282]:
+                      - img [ref=e1283]
+                      - text: Vérifié
+                  - text: DTC Brand
+              - img [ref=e1286]
+            - generic [ref=e1289]:
+              - img [ref=e1290]
+              - img [ref=e1292]
+              - img [ref=e1294]
+              - img [ref=e1296]
+              - img [ref=e1298]
+            - paragraph [ref=e1300]: "\"Support exceptionnel\""
+            - paragraph [ref=e1301]: Chaque question trouve une réponse en moins de 2h. L'équipe comprend vraiment les enjeux business derrière le tracking.
+          - generic [ref=e1302]:
+            - generic [ref=e1303]:
+              - generic [ref=e1304]:
+                - generic [ref=e1305]: "N"
+                - generic [ref=e1306]:
+                  - generic [ref=e1307]:
+                    - generic [ref=e1308]: Nadia Benali
+                    - generic [ref=e1309]:
+                      - img [ref=e1310]
+                      - text: Vérifié
+                  - text: Travel Tech
+              - img [ref=e1313]
+            - generic [ref=e1316]:
+              - img [ref=e1317]
+              - img [ref=e1319]
+              - img [ref=e1321]
+              - img [ref=e1323]
+              - img [ref=e1325]
+            - paragraph [ref=e1327]: "\"Données enfin complètes\""
+            - paragraph [ref=e1328]: On passait à côté de 30% de nos conversions à cause des adblockers. Problème résolu grâce au server-side tracking.
+          - generic [ref=e1329]:
+            - generic [ref=e1330]:
+              - generic [ref=e1331]:
+                - generic [ref=e1332]: P
+                - generic [ref=e1333]:
+                  - generic [ref=e1334]:
+                    - generic [ref=e1335]: Pierre Dupont
+                    - generic [ref=e1336]:
+                      - img [ref=e1337]
+                      - text: Vérifié
+                  - text: Fintech
+              - img [ref=e1340]
+            - generic [ref=e1343]:
+              - img [ref=e1344]
+              - img [ref=e1346]
+              - img [ref=e1348]
+              - img [ref=e1350]
+              - img [ref=e1352]
+            - paragraph [ref=e1354]: "\"Audit révélateur\""
+            - paragraph [ref=e1355]: L'audit initial a révélé des failles majeures dans notre setup. La correction a immédiatement amélioré la qualité de nos données.
+          - generic [ref=e1356]:
+            - generic [ref=e1357]:
+              - generic [ref=e1358]:
+                - generic [ref=e1359]: C
+                - generic [ref=e1360]:
+                  - generic [ref=e1361]:
+                    - generic [ref=e1362]: Camille Lefèvre
+                    - generic [ref=e1363]:
+                      - img [ref=e1364]
+                      - text: Vérifié
+                  - text: Retail Omnicanal
+              - img [ref=e1367]
+            - generic [ref=e1370]:
+              - img [ref=e1371]
+              - img [ref=e1373]
+              - img [ref=e1375]
+              - img [ref=e1377]
+              - img [ref=e1379]
+            - paragraph [ref=e1381]: "\"Vision 360° enfin possible\""
+            - paragraph [ref=e1382]: Le croisement des données online/offline est devenu possible grâce à un tracking fiable. Merci DigitaliX !
+          - generic [ref=e1383]:
+            - generic [ref=e1384]:
+              - generic [ref=e1385]:
+                - generic [ref=e1386]: M
+                - generic [ref=e1387]:
+                  - generic [ref=e1388]:
+                    - generic [ref=e1389]: Maxime Girard
+                    - generic [ref=e1390]:
+                      - img [ref=e1391]
+                      - text: Vérifié
+                  - text: EdTech
+              - img [ref=e1394]
+            - generic [ref=e1397]:
+              - img [ref=e1398]
+              - img [ref=e1400]
+              - img [ref=e1402]
+              - img [ref=e1404]
+              - img [ref=e1406]
+            - paragraph [ref=e1408]: "\"Setup rapide et efficace\""
+            - paragraph [ref=e1409]: En 10 jours, tout était en place. Les résultats se sont vus dès la première semaine sur nos campagnes Meta.
+          - generic [ref=e1410]:
+            - generic [ref=e1411]:
+              - generic [ref=e1412]:
+                - generic [ref=e1413]: C
+                - generic [ref=e1414]:
+                  - generic [ref=e1415]:
+                    - generic [ref=e1416]: Clara Fontaine
+                    - generic [ref=e1417]:
+                      - img [ref=e1418]
+                      - text: Vérifié
+                  - text: Agence SEA
+              - img [ref=e1421]
+            - generic [ref=e1424]:
+              - img [ref=e1425]
+              - img [ref=e1427]
+              - img [ref=e1429]
+              - img [ref=e1431]
+              - img [ref=e1433]
+            - paragraph [ref=e1435]: "\"Indispensable pour nos clients\""
+            - paragraph [ref=e1436]: On recommande DigitaliX à tous nos clients e-commerce. La qualité des données remontées est incomparable avec le client-side.
+          - generic [ref=e1437]:
+            - generic [ref=e1438]:
+              - generic [ref=e1439]:
+                - generic [ref=e1440]: J
+                - generic [ref=e1441]:
+                  - generic [ref=e1442]:
+                    - generic [ref=e1443]: Julien Moreau
+                    - generic [ref=e1444]:
+                      - img [ref=e1445]
+                      - text: Vérifié
+                  - text: DTC Brand
+              - img [ref=e1448]
+            - generic [ref=e1451]:
+              - img [ref=e1452]
+              - img [ref=e1454]
+              - img [ref=e1456]
+              - img [ref=e1458]
+              - img [ref=e1460]
+            - paragraph [ref=e1462]: "\"Support exceptionnel\""
+            - paragraph [ref=e1463]: Chaque question trouve une réponse en moins de 2h. L'équipe comprend vraiment les enjeux business derrière le tracking.
+          - generic [ref=e1464]:
+            - generic [ref=e1465]:
+              - generic [ref=e1466]:
+                - generic [ref=e1467]: "N"
+                - generic [ref=e1468]:
+                  - generic [ref=e1469]:
+                    - generic [ref=e1470]: Nadia Benali
+                    - generic [ref=e1471]:
+                      - img [ref=e1472]
+                      - text: Vérifié
+                  - text: Travel Tech
+              - img [ref=e1475]
+            - generic [ref=e1478]:
+              - img [ref=e1479]
+              - img [ref=e1481]
+              - img [ref=e1483]
+              - img [ref=e1485]
+              - img [ref=e1487]
+            - paragraph [ref=e1489]: "\"Données enfin complètes\""
+            - paragraph [ref=e1490]: On passait à côté de 30% de nos conversions à cause des adblockers. Problème résolu grâce au server-side tracking.
+          - generic [ref=e1491]:
+            - generic [ref=e1492]:
+              - generic [ref=e1493]:
+                - generic [ref=e1494]: P
+                - generic [ref=e1495]:
+                  - generic [ref=e1496]:
+                    - generic [ref=e1497]: Pierre Dupont
+                    - generic [ref=e1498]:
+                      - img [ref=e1499]
+                      - text: Vérifié
+                  - text: Fintech
+              - img [ref=e1502]
+            - generic [ref=e1505]:
+              - img [ref=e1506]
+              - img [ref=e1508]
+              - img [ref=e1510]
+              - img [ref=e1512]
+              - img [ref=e1514]
+            - paragraph [ref=e1516]: "\"Audit révélateur\""
+            - paragraph [ref=e1517]: L'audit initial a révélé des failles majeures dans notre setup. La correction a immédiatement amélioré la qualité de nos données.
+          - generic [ref=e1518]:
+            - generic [ref=e1519]:
+              - generic [ref=e1520]:
+                - generic [ref=e1521]: C
+                - generic [ref=e1522]:
+                  - generic [ref=e1523]:
+                    - generic [ref=e1524]: Camille Lefèvre
+                    - generic [ref=e1525]:
+                      - img [ref=e1526]
+                      - text: Vérifié
+                  - text: Retail Omnicanal
+              - img [ref=e1529]
+            - generic [ref=e1532]:
+              - img [ref=e1533]
+              - img [ref=e1535]
+              - img [ref=e1537]
+              - img [ref=e1539]
+              - img [ref=e1541]
+            - paragraph [ref=e1543]: "\"Vision 360° enfin possible\""
+            - paragraph [ref=e1544]: Le croisement des données online/offline est devenu possible grâce à un tracking fiable. Merci DigitaliX !
+          - generic [ref=e1545]:
+            - generic [ref=e1546]:
+              - generic [ref=e1547]:
+                - generic [ref=e1548]: M
+                - generic [ref=e1549]:
+                  - generic [ref=e1550]:
+                    - generic [ref=e1551]: Maxime Girard
+                    - generic [ref=e1552]:
+                      - img [ref=e1553]
+                      - text: Vérifié
+                  - text: EdTech
+              - img [ref=e1556]
+            - generic [ref=e1559]:
+              - img [ref=e1560]
+              - img [ref=e1562]
+              - img [ref=e1564]
+              - img [ref=e1566]
+              - img [ref=e1568]
+            - paragraph [ref=e1570]: "\"Setup rapide et efficace\""
+            - paragraph [ref=e1571]: En 10 jours, tout était en place. Les résultats se sont vus dès la première semaine sur nos campagnes Meta.
+      - generic [ref=e1573]:
+        - heading "Une solution adaptée à votre profil" [level=2] [ref=e1575]
+        - paragraph [ref=e1576]: Consultant, e-commerce ou SaaS — nous avons une offre pensée pour vous.
+        - generic [ref=e1577]:
+          - generic [ref=e1578]:
+            - img [ref=e1580]
+            - heading "Consultants & Agences" [level=3] [ref=e1585]
+            - paragraph [ref=e1586]: Vous gérez le tracking de vos clients ? Offrez-leur une infrastructure server-side fiable et conforme. Devenez autonome sur le setup et la maintenance.
+            - link "Découvrir l'offre" [ref=e1587] [cursor=pointer]:
+              - /url: /consultants
+              - text: Découvrir l'offre
+              - img
+          - generic [ref=e1588]:
+            - img [ref=e1590]
+            - heading "E-commerce & Annonceurs" [level=3] [ref=e1592]
+            - paragraph [ref=e1593]: Vous perdez des conversions à cause des adblockers et d'iOS ? Récupérez vos données perdues et boostez votre ROAS sans effort technique.
+            - button "Bientôt disponible" [disabled]:
+              - generic: Bientôt disponible
+          - generic [ref=e1594]:
+            - img [ref=e1596]
+            - heading "SaaS" [level=3] [ref=e1598]
+            - paragraph [ref=e1599]: Trackez chaque étape du funnel — du signup au MRR — même quand vos utilisateurs bloquent tout.
+            - button "Bientôt disponible" [disabled]:
+              - generic: Bientôt disponible
+      - generic [ref=e1601]:
+        - generic [ref=e1602]:
+          - generic [ref=e1604]: Notre Méthodologie
+          - heading "De l'Audit au Monitoring" [level=2] [ref=e1605]
+          - paragraph [ref=e1606]: Une approche structurée et transparente pour transformer votre infrastructure data en un avantage compétitif.
+        - generic [ref=e1610]:
+          - generic [ref=e1613]:
+            - generic [ref=e1615]:
+              - generic [ref=e1616]:
+                - img [ref=e1618]
+                - generic [ref=e1623]:
+                  - generic [ref=e1624]: Étape 01
+                  - heading "Audit & Diagnostic" [level=3] [ref=e1625]
+              - paragraph [ref=e1626]: Analyse complète de votre infrastructure data existante
+              - list [ref=e1627]:
+                - listitem [ref=e1628]:
+                  - img [ref=e1629]
+                  - generic [ref=e1632]: Cartographie des tags et pixels actuels
+                - listitem [ref=e1633]:
+                  - img [ref=e1634]
+                  - generic [ref=e1637]: Identification des pertes de données
+                - listitem [ref=e1638]:
+                  - img [ref=e1639]
+                  - generic [ref=e1642]: Évaluation de la conformité RGPD
+                - listitem [ref=e1643]:
+                  - img [ref=e1644]
+                  - generic [ref=e1647]: Rapport détaillé avec recommandations
+              - generic [ref=e1648]:
+                - img [ref=e1649]
+                - text: 1-2 semaines
+            - generic [ref=e1653]: "01"
+          - generic [ref=e1656]:
+            - generic [ref=e1658]:
+              - generic [ref=e1659]:
+                - img [ref=e1661]
+                - generic [ref=e1672]:
+                  - generic [ref=e1673]: Étape 02
+                  - heading "Architecture & Setup" [level=3] [ref=e1674]
+              - paragraph [ref=e1675]: Conception et déploiement de votre infrastructure server-side
+              - list [ref=e1676]:
+                - listitem [ref=e1677]:
+                  - img [ref=e1678]
+                  - generic [ref=e1681]: Configuration du conteneur GTM Server
+                - listitem [ref=e1682]:
+                  - img [ref=e1683]
+                  - generic [ref=e1686]: Migration des tags prioritaires
+                - listitem [ref=e1687]:
+                  - img [ref=e1688]
+                  - generic [ref=e1691]: Mise en place du tracking first-party
+                - listitem [ref=e1692]:
+                  - img [ref=e1693]
+                  - generic [ref=e1696]: Tests en environnement de staging
+              - generic [ref=e1697]:
+                - img [ref=e1698]
+                - text: 2-3 semaines
+            - generic [ref=e1702]: "02"
+          - generic [ref=e1705]:
+            - generic [ref=e1707]:
+              - generic [ref=e1708]:
+                - img [ref=e1710]
+                - generic [ref=e1712]:
+                  - generic [ref=e1713]: Étape 03
+                  - heading "Validation & QA" [level=3] [ref=e1714]
+              - paragraph [ref=e1715]: Tests rigoureux pour garantir l'intégrité des données
+              - list [ref=e1716]:
+                - listitem [ref=e1717]:
+                  - img [ref=e1718]
+                  - generic [ref=e1721]: Validation des conversions
+                - listitem [ref=e1722]:
+                  - img [ref=e1723]
+                  - generic [ref=e1726]: Tests cross-browser et cross-device
+                - listitem [ref=e1727]:
+                  - img [ref=e1728]
+                  - generic [ref=e1731]: Vérification de la conformité légale
+                - listitem [ref=e1732]:
+                  - img [ref=e1733]
+                  - generic [ref=e1736]: Documentation technique complète
+              - generic [ref=e1737]:
+                - img [ref=e1738]
+                - text: 1 semaine
+            - generic [ref=e1742]: "03"
+          - generic [ref=e1745]:
+            - generic [ref=e1747]:
+              - generic [ref=e1748]:
+                - img [ref=e1750]
+                - generic [ref=e1753]:
+                  - generic [ref=e1754]: Étape 04
+                  - heading "Monitoring & Optimisation" [level=3] [ref=e1755]
+              - paragraph [ref=e1756]: Suivi continu et amélioration des performances
+              - list [ref=e1757]:
+                - listitem [ref=e1758]:
+                  - img [ref=e1759]
+                  - generic [ref=e1762]: Dashboards de monitoring en temps réel
+                - listitem [ref=e1763]:
+                  - img [ref=e1764]
+                  - generic [ref=e1767]: Alertes automatiques en cas d'anomalie
+                - listitem [ref=e1768]:
+                  - img [ref=e1769]
+                  - generic [ref=e1772]: Optimisations continues
+                - listitem [ref=e1773]:
+                  - img [ref=e1774]
+                  - generic [ref=e1777]: Support technique dédié
+              - generic [ref=e1778]:
+                - img [ref=e1779]
+                - text: Continu
+            - generic [ref=e1783]: "04"
+      - generic [ref=e1785]:
+        - generic [ref=e1788]: Ils nous font confiance
+        - generic [ref=e1789]:
+          - img "Bambuser" [ref=e1791]
+          - img "Métropole Grand Nancy" [ref=e1793]
+          - img "Ville de Nancy" [ref=e1795]
+          - img "Nestlé" [ref=e1797]
+          - img "Purina One" [ref=e1799]
+          - img "Cosa" [ref=e1801]
+          - img "Wamiz" [ref=e1803]
+          - img "NetOffensive" [ref=e1805]
+          - img "Talents Digital" [ref=e1807]
+          - img "Talents Legal" [ref=e1809]
+          - img "Le Mage du SEA" [ref=e1811]
+          - img "Prescient Studio" [ref=e1813]
+          - img "Ades Bootcamp" [ref=e1815]
+          - img "Be Langue" [ref=e1817]
+          - img "CybershowParis" [ref=e1819]
+          - img "Mprez" [ref=e1821]
+          - img "FISE Montpellier" [ref=e1823]
+          - img "Hotel Clement Ader" [ref=e1825]
+          - img "Hotel Saint Exupery" [ref=e1827]
+          - img "Réserver.fr" [ref=e1829]
+          - img "French Tax Online" [ref=e1831]
+          - img "Promo Assurances" [ref=e1833]
+          - img "Actiomservice" [ref=e1835]
+          - img "Véritable Immobilier" [ref=e1837]
+          - img "RefBikes" [ref=e1839]
+          - img "Alpes Blanc" [ref=e1841]
+          - img "Réseau Stan" [ref=e1843]
+          - img "Vertigo Media Performance" [ref=e1845]
+          - img "AgenceSW" [ref=e1847]
+          - img "La Nouvelle Equipe" [ref=e1849]
+          - img "CosaVostra" [ref=e1851]
+      - generic [ref=e1854]:
+        - generic [ref=e1855]:
+          - heading "Questions Fréquentes" [level=2] [ref=e1856]
+          - paragraph [ref=e1857]: Expertise Tracking & Web Analytics – DigitaliX
+        - generic [ref=e1858]:
+          - heading "Qu'est-ce que le tracking server-side et pourquoi est-ce crucial aujourd'hui ?" [level=3] [ref=e1860]:
+            - button "Qu'est-ce que le tracking server-side et pourquoi est-ce crucial aujourd'hui ?" [ref=e1861] [cursor=pointer]:
+              - generic [ref=e1862]: Qu'est-ce que le tracking server-side et pourquoi est-ce crucial aujourd'hui ?
+              - img [ref=e1863]
+          - heading "Quels sont les avantages concrets pour mon ROI publicitaire ?" [level=3] [ref=e1866]:
+            - button "Quels sont les avantages concrets pour mon ROI publicitaire ?" [ref=e1867] [cursor=pointer]:
+              - generic [ref=e1868]: Quels sont les avantages concrets pour mon ROI publicitaire ?
+              - img [ref=e1869]
+          - heading "L'agence DigitaliX intervient-elle uniquement à Nancy ?" [level=3] [ref=e1872]:
+            - button "L'agence DigitaliX intervient-elle uniquement à Nancy ?" [ref=e1873] [cursor=pointer]:
+              - generic [ref=e1874]: L'agence DigitaliX intervient-elle uniquement à Nancy ?
+              - img [ref=e1875]
+          - heading "Qu'est-ce que la Conversion API (CAPI) de Meta et est-ce inclus dans vos services ?" [level=3] [ref=e1878]:
+            - button "Qu'est-ce que la Conversion API (CAPI) de Meta et est-ce inclus dans vos services ?" [ref=e1879] [cursor=pointer]:
+              - generic [ref=e1880]: Qu'est-ce que la Conversion API (CAPI) de Meta et est-ce inclus dans vos services ?
+              - img [ref=e1881]
+          - heading "Le tracking server-side est-il compatible avec le RGPD et le Consent Mode v2 ?" [level=3] [ref=e1884]:
+            - button "Le tracking server-side est-il compatible avec le RGPD et le Consent Mode v2 ?" [ref=e1885] [cursor=pointer]:
+              - generic [ref=e1886]: Le tracking server-side est-il compatible avec le RGPD et le Consent Mode v2 ?
+              - img [ref=e1887]
+          - heading "Combien coûte et combien de temps prend la mise en place ?" [level=3] [ref=e1890]:
+            - button "Combien coûte et combien de temps prend la mise en place ?" [ref=e1891] [cursor=pointer]:
+              - generic [ref=e1892]: Combien coûte et combien de temps prend la mise en place ?
+              - img [ref=e1893]
+          - heading "Est-ce compatible avec mon CMS (Shopify, WordPress, PrestaShop...) ?" [level=3] [ref=e1896]:
+            - button "Est-ce compatible avec mon CMS (Shopify, WordPress, PrestaShop...) ?" [ref=e1897] [cursor=pointer]:
+              - generic [ref=e1898]: Est-ce compatible avec mon CMS (Shopify, WordPress, PrestaShop...) ?
+              - img [ref=e1899]
+          - heading "Pourquoi faire appel à un expert DigitaliX plutôt que de le faire soi-même ?" [level=3] [ref=e1902]:
+            - button "Pourquoi faire appel à un expert DigitaliX plutôt que de le faire soi-même ?" [ref=e1903] [cursor=pointer]:
+              - generic [ref=e1904]: Pourquoi faire appel à un expert DigitaliX plutôt que de le faire soi-même ?
+              - img [ref=e1905]
+      - generic [ref=e1910]:
+        - heading "Votre tracking actuel vous coûte de l'argent." [level=2] [ref=e1911]
+        - paragraph [ref=e1912]: Identifions vos fuites de conversions en 15 minutes. Audit offert, sans engagement.
+        - link "Réserver mon Audit" [ref=e1913] [cursor=pointer]:
+          - /url: /contact
+          - text: Réserver mon Audit
+          - img
+    - contentinfo [ref=e1914]:
+      - generic [ref=e1915]:
+        - generic [ref=e1916]:
+          - generic [ref=e1917]:
+            - link "DigitaliX" [ref=e1918] [cursor=pointer]:
+              - /url: /
+              - img "DigitaliX" [ref=e1919]
+            - paragraph [ref=e1920]: Experts du tracking server-side, GTM & conformité RGPD. Basés près de Nancy, partout en France et au Luxembourg.
+            - generic [ref=e1921]:
+              - link "LinkedIn" [ref=e1922] [cursor=pointer]:
+                - /url: https://www.linkedin.com/in/samlepirate/
+                - img [ref=e1923]
+              - link "Malt" [ref=e1927] [cursor=pointer]:
+                - /url: https://www.malt.fr/profile/samuelmarange
+              - link "Trustpilot" [ref=e1928] [cursor=pointer]:
+                - /url: https://fr.trustpilot.com/review/digitalix.xyz
+          - generic [ref=e1929]:
+            - heading "Services" [level=3] [ref=e1930]
+            - list [ref=e1931]:
+              - listitem [ref=e1932]:
+                - link "Audit Tracking" [ref=e1933] [cursor=pointer]:
+                  - /url: /services/audit-tracking
+              - listitem [ref=e1934]:
+                - link "Migration Server-Side" [ref=e1935] [cursor=pointer]:
+                  - /url: /services/migration-server-side
+              - listitem [ref=e1936]:
+                - link "Intégration CAPI" [ref=e1937] [cursor=pointer]:
+                  - /url: /services/integration-capi
+              - listitem [ref=e1938]:
+                - link "Conformité RGPD" [ref=e1939] [cursor=pointer]:
+                  - /url: /services/conformite-rgpd
+              - listitem [ref=e1940]:
+                - link "Monitoring & Maintenance" [ref=e1941] [cursor=pointer]:
+                  - /url: /services/monitoring-maintenance
+              - listitem [ref=e1942]:
+                - link "Formation" [ref=e1943] [cursor=pointer]:
+                  - /url: /services/formation
+          - generic [ref=e1944]:
+            - heading "Société" [level=3] [ref=e1945]
+            - list [ref=e1946]:
+              - listitem [ref=e1947]:
+                - link "À propos" [ref=e1948] [cursor=pointer]:
+                  - /url: /a-propos
+              - listitem [ref=e1949]:
+                - link "Cas clients" [ref=e1950] [cursor=pointer]:
+                  - /url: /cas-clients
+              - listitem [ref=e1951]:
+                - link "Audit gratuit" [ref=e1952] [cursor=pointer]:
+                  - /url: /audit-tracking
+              - listitem [ref=e1953]:
+                - link "Contact" [ref=e1954] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e1955]:
+            - heading "Légal" [level=3] [ref=e1956]
+            - list [ref=e1957]:
+              - listitem [ref=e1958]:
+                - link "Mentions légales" [ref=e1959] [cursor=pointer]:
+                  - /url: /mentions-legales
+              - listitem [ref=e1960]:
+                - link "Politique de confidentialité" [ref=e1961] [cursor=pointer]:
+                  - /url: /politique-de-confidentialite
+              - listitem [ref=e1962]:
+                - button "Choix de consentement" [ref=e1963] [cursor=pointer]
+        - generic [ref=e1964]:
+          - paragraph [ref=e1965]: © 2026 DigitaliX — Samuel Marangé. Server-Side Tracking Specialists.
+          - paragraph [ref=e1966]: SIREN 849 349 253
+        - paragraph [ref=e1967]: Made with ❤️ and respect 🛡️
