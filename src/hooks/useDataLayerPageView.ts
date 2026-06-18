@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
+import { resolvePageTitle } from '@/lib/pageTitles';
 
 /**
  * Pushes a `virtual_page_view` event to the GTM dataLayer on every
@@ -14,13 +15,17 @@ export function useDataLayerPageView() {
   const previousUrl = useRef(document.referrer);
 
   useEffect(() => {
-    // Small delay so React has time to update <title> after navigation
+    // Set the per-route title synchronously so the tab + the page_view hit both
+    // carry the correct title (the SPA otherwise kept the static index.html one).
+    const title = resolvePageTitle(location.pathname);
+    document.title = title;
+
     const raf = requestAnimationFrame(() => {
       window.dataLayer = window.dataLayer || [];
       window.dataLayer.push({
         event: 'virtual_page_view',
         page_location: window.location.href,
-        page_title: document.title,
+        page_title: title,
         page_referrer: previousUrl.current,
       });
 
