@@ -1017,6 +1017,17 @@ const AuditResults = () => {
   const [auditResult, setAuditResult] = useState<AuditResult | null>(null);
   const [checks, setChecks] = useState<AuditCheck[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+
+  // Defer generate_lead until audit_complete so it carries the real score and the
+  // GA4 funnel stays ordered (audit_start → audit_complete → generate_lead).
+  // Fallback: flush with whatever score we have so a captured email is never lost.
+  const pendingLeadRef = useRef<{ email: string; auditId: string | null } | null>(null);
+  const flushPendingLead = (auditScore: number | null) => {
+    const pending = pendingLeadRef.current;
+    if (!pending) return;
+    pendingLeadRef.current = null;
+    trackLead({ source: "audit_unlock", auditId: pending.auditId, auditScore, value: 20, email: pending.email });
+  };
   const [isRateLimited, setIsRateLimited] = useState(false);
 
   const [email, setEmail] = useState("");
@@ -1068,6 +1079,7 @@ const AuditResults = () => {
                 // Scan complete — show results
                 trackAuditComplete({ auditId: id, auditScore: event.result.overallScore });
                 setAuditResult({ ...event.result, id, createdAt: "" });
+                flushPendingLead(event.result.overallScore);
                 setChecks(event.result.checks ?? []);
                 setPhase("results");
                 setTimeout(() => setScoreAnimated(true), 300);
@@ -1076,6 +1088,7 @@ const AuditResults = () => {
               }
 
               if (event.type === "error") {
+                flushPendingLead(null); // fallback — don't lose a captured lead
                 setErrorMessage(event.label);
                 setPhase("error");
                 source.close();
@@ -1098,12 +1111,15 @@ const AuditResults = () => {
                     setChecks(result.checks);
                     setPhase("results");
                     setTimeout(() => setScoreAnimated(true), 300);
+                    flushPendingLead(result.overallScore ?? null);
                   } else if (result.status === "failed") {
+                    flushPendingLead(null);
                     setErrorMessage(result.errorMessage || "Analyse échouée.");
                     setPhase("error");
                   }
                 })
                 .catch(() => {
+                  flushPendingLead(null);
                   setErrorMessage("Connexion perdue. Veuillez réessayer.");
                   setPhase("error");
                 });
@@ -1185,14 +1201,15 @@ const AuditResults = () => {
       }
       setIsUnlocked(true);
 
-      // Unlocking = email captured = a lead
-      trackLead({
-        source: 'audit_unlock',
-        auditId: effectiveId,
-        auditScore: auditResult?.overallScore ?? null,
-        value: 20,
-        email: email.trim(),
-      });
+      // Unlocking = email captured = a lead. If the audit is already complete, fire
+      // generate_lead now with the score; otherwise defer it until audit_complete
+      // (flushPendingLead) so it carries the real score and respects the funnel order.
+      const completedScore = auditResult?.overallScore ?? null;
+      if (completedScore != null) {
+        trackLead({ source: 'audit_unlock', auditId: effectiveId, auditScore: completedScore, value: 20, email: email.trim() });
+      } else {
+        pendingLeadRef.current = { email: email.trim(), auditId: effectiveId };
+      }
     } catch (err) {
       console.error("[AuditResults] Unlock error:", err);
       setEmailError("Erreur lors du déblocage. Veuillez réessayer.");

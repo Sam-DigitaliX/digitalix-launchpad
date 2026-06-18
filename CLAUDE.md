@@ -393,6 +393,7 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Events : `generate_lead` (form qualif + post-audit + audit unlock), `audit_start`, `audit_complete`, `booking_intent` (remplace `calendar_modal_open`), `cta_click`.
 - `generate_lead` porte `lead_score`, `is_qualified`, `profile_type`, `value`/`currency` (50 qualifié / 10 sinon / 20 audit), `ga_client_id` (cookie `_ga`), `gclid` (depuis visites stockées).
 - Câblé dans : `QualificationForm.tsx` (submit), `AuditResults.tsx` (start/complete/unlock), `OutcomeStep.tsx` (booking intent), `CTASection.tsx` (cta_click).
+- **Tunnel audit ordonné (fix race condition, 2026-06-18)** : si l'user déverrouille **pendant** le scan, `generate_lead` est **déféré** jusqu'à `audit_complete` (porte le vrai `audit_score`, tunnel GA4 `audit_start → audit_complete → generate_lead`). Fallback anti-perte : sur échec/timeout/onglet fermé, `generate_lead` part quand même (score partiel). Client : `pendingLeadRef` + `flushPendingLead()` dans `AuditResults.tsx`. Backend : la notif Telegram suit le même pattern via `notifyAuditLeadOnce()` (claim atomique sur `audits.lead_notified_at`, migration 008) — fire à l'unlock si complété, sinon à la fin de scan, fallback sur échec.
 - **Note** : `/contact` et `/consultants` partagent `QualificationForm` → même `generate_lead` (`lead_source: qualification_form`), distinction via `page_location`. `cta_click` câblé sur `CTASection` (réutilisé multi-pages) ; extensible aux autres CTA.
 
 **GTM web container — PUBLIÉ + validé DebugView (workspace `4`, 2026-06-18) :**

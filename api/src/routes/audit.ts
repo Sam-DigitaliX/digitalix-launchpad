@@ -50,6 +50,44 @@ async function sendUnlockEmailIfPending(
   }
 }
 
+/**
+ * Fire the Telegram lead notification for an audit lead, exactly once.
+ * The unlock endpoint and the scan-completion handler may both try (unlock during
+ * scan defers to completion); the atomic claim on `lead_notified_at` guarantees a
+ * single send. Fire-and-forget — never throws.
+ */
+async function notifyAuditLeadOnce(
+  auditId: string,
+  contactId: string,
+  email: string,
+  data: { url: string; score: number; completed: boolean; failed?: boolean; partnerSlug: string | null; trafficSource: string | null },
+) {
+  try {
+    const claimed = await sql`
+      UPDATE audits SET lead_notified_at = now()
+      WHERE id = ${auditId} AND lead_notified_at IS NULL
+      RETURNING id
+    `;
+    if (claimed.length === 0) return; // already notified
+
+    await sendLeadNotification({
+      contactId,
+      email,
+      leadSource: 'audit_unlock',
+      interactionType: 'audit_unlock',
+      trafficSource: data.trafficSource,
+      auditId,
+      auditUrl: data.url,
+      auditScore: data.score,
+      auditPending: !data.completed && !data.failed,
+      auditFailed: data.failed ?? false,
+      partnerSlug: data.partnerSlug,
+    });
+  } catch (err) {
+    console.error('[audit] lead notif failed', err);
+  }
+}
+
 async function buildSseResultPayload(id: string, result: ScanResult) {
   const rows = await sql`SELECT unlocked_at FROM audits WHERE id = ${id} LIMIT 1`;
   const isUnlocked = rows.length > 0 && rows[0].unlocked_at !== null;
@@ -206,7 +244,7 @@ app.post('/', async (c) => {
       // If user unlocked during the scan, send the unlock email NOW with the real score
       try {
         const unlockInfo = await sql`
-          SELECT a.unlocked_at, a.contact_id, c.email
+          SELECT a.unlocked_at, a.contact_id, a.partner_slug, c.email, c.traffic_source
           FROM audits a
           LEFT JOIN contacts c ON c.id = a.contact_id
           WHERE a.id = ${auditId}
@@ -215,9 +253,17 @@ app.post('/', async (c) => {
         const row = unlockInfo[0];
         if (row?.unlocked_at && row.contact_id && row.email) {
           await sendUnlockEmailIfPending(auditId, row.contact_id, url, result.overallScore, row.email);
+          // Deferred lead notif with the real score (audit_start → audit_complete → lead)
+          void notifyAuditLeadOnce(auditId, row.contact_id, row.email, {
+            url,
+            score: result.overallScore,
+            completed: true,
+            partnerSlug: (row.partner_slug as string | null) ?? null,
+            trafficSource: (row.traffic_source as string | null) ?? null,
+          });
         }
       } catch (err) {
-        console.error('[audit] Deferred unlock email failed:', err);
+        console.error('[audit] Deferred unlock email/notif failed:', err);
       }
 
       // Push a final event to wake up SSE listeners
@@ -233,6 +279,31 @@ app.post('/', async (c) => {
 
       state.done = true;
       pushEvent(auditId, { type: 'error', label: errorMessage });
+
+      // Fallback: if the user unlocked during a scan that then failed, the lead is
+      // still captured — notify with the failed state rather than losing it.
+      try {
+        const unlockInfo = await sql`
+          SELECT a.unlocked_at, a.contact_id, a.url, a.partner_slug, c.email, c.traffic_source
+          FROM audits a
+          LEFT JOIN contacts c ON c.id = a.contact_id
+          WHERE a.id = ${auditId}
+          LIMIT 1
+        `;
+        const row = unlockInfo[0];
+        if (row?.unlocked_at && row.contact_id && row.email) {
+          void notifyAuditLeadOnce(auditId, row.contact_id, row.email, {
+            url: row.url as string,
+            score: 0,
+            completed: false,
+            failed: true,
+            partnerSlug: (row.partner_slug as string | null) ?? null,
+            trafficSource: (row.traffic_source as string | null) ?? null,
+          });
+        }
+      } catch (e) {
+        console.error('[audit] failed-scan lead notif error', e);
+      }
     }
   })();
 
@@ -446,19 +517,18 @@ app.post('/:id/unlock', async (c) => {
     })})
   `;
 
-  // Real-time Telegram lead notification (fire-and-forget — never blocks the response).
-  void sendLeadNotification({
-    contactId,
-    email,
-    leadSource: 'audit_unlock',
-    interactionType: 'audit_unlock',
-    trafficSource,
-    auditId: id,
-    auditUrl: audit.url as string,
-    auditScore: Number(audit.overall_score) || 0,
-    auditPending: audit.status !== 'completed',
-    partnerSlug,
-  });
+  // Lead notification: fire NOW only if the scan is already completed (real score).
+  // If the user unlocked mid-scan, defer to the scan-completion handler so the notif
+  // (and the email) carry the real score — exactly-once via lead_notified_at.
+  if (audit.status === 'completed') {
+    void notifyAuditLeadOnce(id, contactId, email, {
+      url: audit.url as string,
+      score: Number(audit.overall_score) || 0,
+      completed: true,
+      partnerSlug,
+      trafficSource,
+    });
+  }
 
   // Only send the unlock email if the scan is COMPLETED — otherwise the score
   // is still 0 and the email would mislead the recipient. The scan-completion
