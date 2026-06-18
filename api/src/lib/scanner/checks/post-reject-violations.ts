@@ -31,10 +31,12 @@ export const postRejectViolationsCheck: CheckModule = {
       ANALYTICS_COOKIE_PREFIXES.some((prefix) => c.name.startsWith(prefix))
     );
 
-    // Check Consent Mode: if gcs starts with G1, pings are anonymized (OK for Advanced mode)
+    // Consent Mode gcs after reject: 'G100' = ad+analytics storage denied (anonymized,
+    // cookieless modeling ping — conforme). Any other G1xx = a storage GRANTED despite
+    // the reject → real violation. (Previous `includes('11')` was a buggy substring test.)
     const gcsValues = postReject.consentState.gcsValues;
-    const hasAnonymizedPings = gcsValues.some((g) => g.startsWith('G1'));
-    const hasGrantedPings = gcsValues.some((g) => g.includes('11'));
+    const hasAnonymizedPings = gcsValues.includes('G100');
+    const hasGrantedPings = gcsValues.some((g) => /^G1[01][01]$/.test(g) && g !== 'G100');
 
     const cookieNames = [...new Set(violatingCookies.map((c) => c.name))];
 
@@ -42,7 +44,7 @@ export const postRejectViolationsCheck: CheckModule = {
       if (hasAnonymizedPings) {
         return {
           status: 'pass',
-          description: 'Refus respecté. Consent Mode Advanced actif : pings Google anonymisés (sans identifiant), aucun cookie analytics.',
+          description: 'Refus respecté. Consent Mode v2 actif : pings Google anonymisés (gcs=G100, sans cookie ni identifiant — modélisation), aucun cookie analytics. Conforme RGPD.',
           rawData: { violatingCookies: [], gcsValues, hasAnonymizedPings: true },
         };
       }

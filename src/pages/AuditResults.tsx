@@ -661,35 +661,6 @@ const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
 
 const IMPACT_ORDER: Record<string, number> = { critical: 0, high: 1, medium: 2, low: 3 };
 
-const ACTION_PREFIXES: Record<string, string> = {
-  gtm: 'Installer',
-  ga4: 'Configurer',
-  'meta-pixel': 'Installer',
-  'enhanced-conv': 'Activer',
-  datalayer: 'Configurer',
-  sgtm: 'Passer au',
-  'capi-google': 'Configurer',
-  'capi-meta': 'Configurer',
-  'first-party-cookies': 'Activer',
-  cmp: 'Installer',
-  'consent-mode': 'Configurer',
-  'pre-consent-violations': 'Corriger',
-  'post-reject-violations': 'Corriger',
-  'third-party-cookies': 'Vérifier',
-  'privacy-page': 'Ajouter',
-  'page-load': 'Optimiser',
-  'script-loading': 'Optimiser',
-  'scripts-count': 'Réduire',
-  'redirect-chain': 'Optimiser',
-  lcp: 'Améliorer',
-  cls: 'Corriger',
-  tbt: 'Améliorer',
-  'tag-firing-order': 'Corriger',
-  tiktok: 'Installer',
-  linkedin: 'Installer',
-  ecommerce: 'Configurer',
-};
-
 const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
   const actionableChecks = checks
     .filter((c) => c.status === 'fail' || c.status === 'warning')
@@ -706,7 +677,6 @@ const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
 
       <div className="space-y-3">
         {actionableChecks.map((check, i) => {
-          const prefix = ACTION_PREFIXES[check.id] ?? 'Configurer';
           return (
             <div key={check.id} className="ev-card p-5">
               <div className="relative z-10">
@@ -722,7 +692,7 @@ const RecommendationsSection = ({ checks }: { checks: AuditCheck[] }) => {
                     {/* Title + badge */}
                     <div className="flex items-center gap-2 flex-wrap mb-2">
                       <span className="font-bold text-foreground">
-                        {prefix} {check.name}
+                        {check.name}
                       </span>
                       <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${IMPACT_COLORS[check.impact] ?? IMPACT_COLORS.medium}`}>
                         {IMPACT_LABELS[check.impact] ?? check.impact}

@@ -41,7 +41,7 @@ function looksLikeGa4Collect(url: string): boolean {
  * server container (e.g. dgx.digitalix.xyz), incl. obfuscated custom-loader hits.
  * Direct server-side signal, independent of the FPID cookie.
  */
-function detectServerSideCollect(ctx: ScanContext): string | null {
+export function detectServerSideCollect(ctx: ScanContext): string | null {
   for (const session of ctx.sessions) {
     for (const req of session.networkRequests) {
       let host: string;
@@ -102,9 +102,13 @@ export const sgtmCheck: CheckModule = {
     const libProxied = gtmDomain !== null && !isGoogleLibDomain;
     const libFirstParty = libProxied && gtmDomain ? isFirstPartyDomain(gtmDomain, ctx.domain) : false;
 
-    // Niveau de maturité 0 / 1 / 2 (niveau 3 = + CAPI, géré par les checks dédiés)
+    // Niveau de maturité 0 / 1 / 2 (niveau 3 = + CAPI, géré par les checks dédiés).
+    // Niveau 2 = server-side réel : soit cookies server-managed confirmés (FPID),
+    // soit collecte GA4 routée vers le domaine first-party (le routage server-side EST
+    // l'accomplissement ; le mode cookie est un raffinement non observable au scan).
     let maturityLevel: 0 | 1 | 2 = 0;
     if (smc.hasFpid || smc.hasFpgclaw) maturityLevel = 2;
+    else if (serverSideCollect) maturityLevel = 2;
     else if (libProxied) maturityLevel = 1;
 
     const rawData = {
@@ -150,37 +154,34 @@ export const sgtmCheck: CheckModule = {
       };
     }
 
-    // Niveau 1 — librairie proxifiée (et/ou hits server-side) mais cookies JS-managed
+    // Niveau 1 — librairie proxifiée mais PAS de collecte server-side ni FP* cookies
     if (maturityLevel === 1) {
-      const legacyList = [smc.hasLegacyGa ? '_ga' : null, smc.hasLegacyGclAu ? '_gcl_au' : null].filter(Boolean).join(', ');
       const proxiedNote = libFirstParty ? 'first-party' : 'custom';
-
-      // Hits GA4 déjà routés server-side vers le domaine first-party : on l'affirme,
-      // il ne manque que les server-managed cookies (FPID) pour atteindre le Niveau 2.
-      if (serverSideCollect) {
-        return {
-          status: 'warning',
-          description: `Setup server-side actif : librairie proxifiée (${gtmDomain}) ET hits GA4 routés server-side vers votre domaine first-party (${serverSideCollectHost}). En revanche, cookies toujours JS-managed${legacyList ? ' (' + legacyList + ')' : ''} — aucun FPID détecté, durée cappée à 7 jours sur Safari (ITP). Niveau 1/2.`,
-          businessNote: 'Vos hits sont déjà traités par votre conteneur serveur (très bien — résistant aux adblockers). Dernière marche vers le Niveau 2 : activez "Server-managed cookies (recommended)" dans le client GA4 de votre conteneur serveur pour poser des cookies FPID httpOnly (2 ans, résistants à l\'ITP Safari) au lieu des cookies JS-managed actuels.',
-          rawData,
-        };
-      }
-
       return {
         status: 'warning',
-        description: `Container web proxifié (${gtmDomain}, ${proxiedNote}) mais cookies toujours en JS-managed${legacyList ? ' (' + legacyList + ')' : ''}. Durée de vie cappée à 7 jours sur Safari (ITP). Niveau 1/2.`,
-        businessNote: 'Vous avez proxifié la librairie GTM (bon début, bypass adblockers) mais le client GA4 dans sGTM reste en "JavaScript-managed cookies". Activez "Server-managed cookies" dans votre tag GA4 pour passer en Niveau 2 et préserver la durée de vie des cookies (2 ans).',
+        description: `Container web proxifié (${gtmDomain}, ${proxiedNote}) mais aucune collecte GA4 routée server-side détectée, ni cookies server-managed. Niveau 1/2.`,
+        businessNote: 'Vous avez proxifié la librairie GTM (bon début, bypass adblockers) mais la collecte ne semble pas routée vers un conteneur serveur. Configurez le server_container_url + un client GA4 server-managed pour passer en Niveau 2.',
         rawData,
       };
     }
 
-    // Niveau 2 — server-managed complet
-    const transitionNote = smc.hasLegacyGa || smc.hasLegacyGclAu
-      ? ` (cohabitation avec ${[smc.hasLegacyGa ? '_ga' : null, smc.hasLegacyGclAu ? '_gcl_au' : null].filter(Boolean).join(', ')} — possible migration en cours, vérifier l'absence de double-comptage)`
-      : '';
+    // Niveau 2 — cookies server-managed confirmés (FPID)
+    if (smc.hasFpid || smc.hasFpgclaw) {
+      const transitionNote = smc.hasLegacyGa || smc.hasLegacyGclAu
+        ? ` (cohabitation avec ${[smc.hasLegacyGa ? '_ga' : null, smc.hasLegacyGclAu ? '_gcl_au' : null].filter(Boolean).join(', ')} — possible migration en cours, vérifier l'absence de double-comptage)`
+        : '';
+      return {
+        status: 'pass',
+        description: `sGTM en mode server-managed cookies détecté (${smc.detected.join(', ')}) via ${gtmDomain}. Setup Niveau 2/2${transitionNote}.`,
+        rawData,
+      };
+    }
+
+    // Niveau 2 — server-side confirmé via collecte routée first-party (mode cookie non observable au scan)
     return {
       status: 'pass',
-      description: `sGTM en mode server-managed cookies détecté (${smc.detected.join(', ')}) via ${gtmDomain}. Setup Niveau 2/2${transitionNote}.`,
+      description: `Server-side confirmé : librairie proxifiée (${gtmDomain}) + collecte GA4 routée vers votre domaine first-party (${serverSideCollectHost}). Niveau 2/2. Le mode des cookies (server-managed FPID, httpOnly) n'est pas vérifiable au scan — les conteneurs serveur bloquent souvent le trafic bot/headless de l'audit. À confirmer en DevTools (cookie FPID sur votre domaine).`,
+      businessNote: 'Votre tracking est bien en server-side : librairie proxifiée + hits GA4 traités par votre propre conteneur serveur (résistant aux adblockers). Seul point non vérifiable automatiquement : si les cookies sont posés en server-managed (FPID httpOnly, 2 ans, résistants à l\'ITP Safari) — à confirmer manuellement.',
       rawData,
     };
   },
