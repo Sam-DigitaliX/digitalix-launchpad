@@ -38,6 +38,9 @@ export const preConsentViolationsCheck: CheckModule = {
     );
     const anonymizedPings: string[] = [];
     const violatingRequests = trackingRequests.filter((r) => {
+      // Adblocker-detection probes (a=adblocker_check) and HEAD requests carry no
+      // data and aren't tracking — never a violation.
+      if (r.method === 'HEAD' || r.url.includes('a=adblocker_check') || r.url.includes('adblocker_check')) return false;
       let gcs: string | null = null;
       try { gcs = new URL(r.url).searchParams.get('gcs'); } catch { /* keep null */ }
       if (gcs === 'G100') {
@@ -46,6 +49,8 @@ export const preConsentViolationsCheck: CheckModule = {
       }
       return true; // no gcs, or a storage granted before consent → real violation
     });
+
+    const consentModeActive = ctx.sessions.some((s) => s.consentState.hasConsentMode);
 
     const cookieNames = [...new Set(violatingCookies.map((c) => c.name))];
     const requestDomains = [...new Set(violatingRequests.map((r) => {
@@ -68,19 +73,43 @@ export const preConsentViolationsCheck: CheckModule = {
       };
     }
 
-    const issues: string[] = [];
-    if (cookieNames.length > 0) {
-      issues.push(`${cookieNames.length} cookie(s) analytics (${cookieNames.join(', ')})`);
-    }
+    const rawDataOut = {
+      violatingCookies: cookieNames,
+      violatingRequests: requestDomains,
+      anonymizedPings: [...new Set(anonymizedPings)],
+      consentModeActive,
+    };
+
+    // Real tracking requests (non-probe, non-anonymized) before consent = hard violation.
     if (requestDomains.length > 0) {
+      const issues: string[] = [];
+      if (cookieNames.length > 0) issues.push(`${cookieNames.length} cookie(s) analytics (${cookieNames.join(', ')})`);
       issues.push(`${requestDomains.length} requête(s) tracking (${requestDomains.join(', ')})`);
+      return {
+        status: 'fail',
+        description: `Violation RGPD : ${issues.join(' et ')} AVANT consentement. Données collectées sans accord de l'utilisateur.`,
+        businessNote: 'Des trackers se lancent avant le consentement. Violation RGPD détectable lors d\'un contrôle CNIL. (Pings anonymisés Consent Mode gcs=G100 et sondes adblocker non comptés.)',
+        rawData: rawDataOut,
+      };
+    }
+
+    // Cookie-only findings under an active Consent Mode v2 : un cookie analytics observé
+    // avant consentement peut refléter le default de consentement (géo) de l'environnement
+    // de scan — un visiteur EU "denied" n'en obtient pas. Warning nuancé, pas un fail dur.
+    if (consentModeActive) {
+      return {
+        status: 'warning',
+        description: `Cookies analytics observés avant consentement (${cookieNames.join(', ')}) — mais Consent Mode v2 est actif. Peut refléter le default de consentement de l'environnement de scan (géo) plutôt qu'une vraie fuite : un visiteur EU (default "denied") n'obtient normalement pas ces cookies. À vérifier en conditions réelles (DevTools EU, avant consentement).`,
+        businessNote: 'En Consent Mode v2 "denied" strict, gtag ne doit pas écrire de cookie analytics avant consentement. Vérifiez en conditions réelles EU : si c\'est le cas pour de vrais visiteurs, à corriger côté CMP ; sinon c\'est un artefact d\'environnement de scan.',
+        rawData: rawDataOut,
+      };
     }
 
     return {
       status: 'fail',
-      description: `Violation RGPD : ${issues.join(' et ')} détecté(s) AVANT consentement. Les données sont collectées sans accord de l'utilisateur.`,
-      businessNote: 'Des trackers se lancent avant le consentement utilisateur. C\'est une violation RGPD détectable lors d\'un contrôle CNIL. (Les pings anonymisés Consent Mode gcs=G100 ne sont PAS comptés ici — seuls les cookies/hits identifiants le sont.)',
-      rawData: { violatingCookies: cookieNames, violatingRequests: requestDomains, anonymizedPings: [...new Set(anonymizedPings)] },
+      description: `Violation RGPD : ${cookieNames.length} cookie(s) analytics (${cookieNames.join(', ')}) posé(s) AVANT consentement, sans Consent Mode pour les gater.`,
+      businessNote: 'Des cookies analytics sont posés avant le consentement, sans Consent Mode. Violation RGPD détectable lors d\'un contrôle CNIL.',
+      rawData: rawDataOut,
     };
   },
 };

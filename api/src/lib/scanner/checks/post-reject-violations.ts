@@ -37,6 +37,7 @@ export const postRejectViolationsCheck: CheckModule = {
     const gcsValues = postReject.consentState.gcsValues;
     const hasAnonymizedPings = gcsValues.includes('G100');
     const hasGrantedPings = gcsValues.some((g) => /^G1[01][01]$/.test(g) && g !== 'G100');
+    const consentModeActive = ctx.sessions.some((s) => s.consentState.hasConsentMode);
 
     const cookieNames = [...new Set(violatingCookies.map((c) => c.name))];
 
@@ -56,19 +57,37 @@ export const postRejectViolationsCheck: CheckModule = {
       };
     }
 
-    const issues: string[] = [];
-    if (cookieNames.length > 0) {
-      issues.push(`${cookieNames.length} cookie(s) analytics encore présent(s) : ${cookieNames.join(', ')}`);
-    }
+    const rawDataOut = { violatingCookies: cookieNames, gcsValues, hasGrantedPings, consentModeActive };
+
+    // Pings "granted" malgré le refus = vraie violation (le refus est ignoré pour les hits).
     if (hasGrantedPings) {
+      const issues: string[] = [];
+      if (cookieNames.length > 0) issues.push(`${cookieNames.length} cookie(s) analytics : ${cookieNames.join(', ')}`);
       issues.push('pings Google en mode "granted" malgré le refus');
+      return {
+        status: 'fail',
+        description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas appliqué.`,
+        businessNote: 'Des hits Google partent en mode "granted" malgré le refus. Violation RGPD.',
+        rawData: rawDataOut,
+      };
+    }
+
+    // Cookies seuls après refus, sous Consent Mode v2 actif (pings non "granted") → warning
+    // nuancé : peut refléter le default de consentement (géo) de l'environnement de scan.
+    if (consentModeActive) {
+      return {
+        status: 'warning',
+        description: `Cookies analytics observés après refus (${cookieNames.join(', ')}) — mais Consent Mode v2 est actif et les pings ne sont pas "granted". Peut refléter le default de consentement de l'environnement de scan (géo) : un visiteur EU qui refuse n'obtient normalement pas ces cookies. À vérifier en conditions réelles (DevTools EU, après refus).`,
+        businessNote: 'Après un refus, gtag ne doit pas écrire de cookie analytics. Vérifiez en conditions réelles EU : si c\'est le cas, à corriger côté CMP ; sinon c\'est un artefact d\'environnement de scan.',
+        rawData: rawDataOut,
+      };
     }
 
     return {
       status: 'fail',
-      description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas correctement appliqué.`,
-      businessNote: 'Des cookies analytics persistent après le refus de consentement. C\'est une violation RGPD.',
-      rawData: { violatingCookies: cookieNames, gcsValues, hasGrantedPings },
+      description: `Violation RGPD : ${cookieNames.length} cookie(s) analytics encore présent(s) après refus (${cookieNames.join(', ')}), sans Consent Mode. Le refus n'est pas appliqué.`,
+      businessNote: 'Des cookies analytics persistent après le refus de consentement, sans Consent Mode. Violation RGPD.',
+      rawData: rawDataOut,
     };
   },
 };
