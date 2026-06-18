@@ -30,9 +30,27 @@ function extractDomain(url: string): string {
   return new URL(url).hostname.replace(/^www\./, '');
 }
 
+// Common multi-part public suffixes so registrableDomain doesn't treat "co.uk" as the root.
+const MULTI_PART_TLDS = new Set([
+  'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'me.uk',
+  'com.au', 'net.au', 'org.au',
+  'co.nz', 'co.jp', 'co.za', 'com.br', 'com.mx', 'com.tr', 'com.sg',
+]);
+
+/** Registrable domain (eTLD+1), e.g. dgx.digitalix.xyz → digitalix.xyz. */
+function registrableDomain(host: string): string {
+  const clean = host.replace(/^\./, '').replace(/^www\./, '').toLowerCase();
+  const parts = clean.split('.');
+  if (parts.length <= 2) return clean;
+  const lastTwo = parts.slice(-2).join('.');
+  return MULTI_PART_TLDS.has(lastTwo) ? parts.slice(-3).join('.') : lastTwo;
+}
+
+// First-party = same registrable domain (eTLD+1). Subdomains of the same root
+// (e.g. dgx.digitalix.xyz vs www.digitalix.xyz) are first-party — critical for
+// detecting server-managed cookies (FPID) set on a sGTM subdomain.
 function cookieIsThirdParty(cookieDomain: string, pageDomain: string): boolean {
-  const clean = cookieDomain.replace(/^\./, '').replace(/^www\./, '');
-  return !pageDomain.endsWith(clean) && !clean.endsWith(pageDomain);
+  return registrableDomain(cookieDomain) !== registrableDomain(pageDomain);
 }
 
 /* ──────────────────── Cookie conversion ──────────────────── */

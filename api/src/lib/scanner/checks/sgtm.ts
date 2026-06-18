@@ -8,6 +8,56 @@ function isFirstPartyDomain(gtmDomain: string, siteDomain: string): boolean {
   return cleanGtm.endsWith(siteDomain) || siteDomain.endsWith(cleanGtm);
 }
 
+const GOOGLE_COLLECT_HOSTS = ['google-analytics.com', 'analytics.google.com', 'googletagmanager.com'];
+
+/**
+ * Does this request look like a GA4 collection hit? Catches both the plain form
+ * (`/g/collect`) and the Stape custom-loader obfuscated form, where the path is a
+ * random hash and the `/g/collect?...` payload is base64-encoded inside a query
+ * param value (e.g. dgx.digitalix.xyz/dd8qqdhbapwnu?<hash>=<base64>).
+ */
+function looksLikeGa4Collect(url: string): boolean {
+  if (url.includes('/g/collect') || url.includes('/j/collect')) return true;
+  try {
+    const u = new URL(url);
+    for (const [, value] of u.searchParams) {
+      if (value.length < 24) continue;
+      try {
+        const decoded = Buffer.from(decodeURIComponent(value), 'base64').toString('utf8');
+        if (decoded.includes('/g/collect') || decoded.includes('tid=G-')) return true;
+      } catch {
+        // not base64 — ignore
+      }
+    }
+  } catch {
+    // bad URL
+  }
+  return false;
+}
+
+/**
+ * GA4 collection routed server-side: a collection hit to a host that is first-party
+ * to the site but NOT a Google domain → the hits are processed by the user's own
+ * server container (e.g. dgx.digitalix.xyz), incl. obfuscated custom-loader hits.
+ * Direct server-side signal, independent of the FPID cookie.
+ */
+function detectServerSideCollect(ctx: ScanContext): string | null {
+  for (const session of ctx.sessions) {
+    for (const req of session.networkRequests) {
+      let host: string;
+      try {
+        host = new URL(req.url).hostname;
+      } catch {
+        continue;
+      }
+      if (GOOGLE_COLLECT_HOSTS.some((g) => host.includes(g))) continue;
+      if (!isFirstPartyDomain(host.replace(/^www\./, ''), ctx.domain)) continue;
+      if (looksLikeGa4Collect(req.url)) return host;
+    }
+  }
+  return null;
+}
+
 function findGtmDomain(ctx: ScanContext): string | null {
   // 1. Real network requests from Playwright sessions
   for (const session of ctx.sessions) {
@@ -45,6 +95,8 @@ export const sgtmCheck: CheckModule = {
   run(ctx: ScanContext) {
     const gtmDomain = findGtmDomain(ctx);
     const smc = detectServerManagedCookies(ctx);
+    const serverSideCollectHost = detectServerSideCollect(ctx);
+    const serverSideCollect = serverSideCollectHost !== null;
 
     const isGoogleLibDomain = gtmDomain?.includes('googletagmanager.com') ?? true;
     const libProxied = gtmDomain !== null && !isGoogleLibDomain;
@@ -60,6 +112,8 @@ export const sgtmCheck: CheckModule = {
       libProxied,
       libFirstParty,
       maturityLevel,
+      serverSideCollect,
+      serverSideCollectHost,
       serverManagedCookies: smc.detected,
       hasFpid: smc.hasFpid,
       hasFpgclaw: smc.hasFpgclaw,
@@ -96,10 +150,22 @@ export const sgtmCheck: CheckModule = {
       };
     }
 
-    // Niveau 1 — librairie proxifiée mais cookies JS-managed
+    // Niveau 1 — librairie proxifiée (et/ou hits server-side) mais cookies JS-managed
     if (maturityLevel === 1) {
       const legacyList = [smc.hasLegacyGa ? '_ga' : null, smc.hasLegacyGclAu ? '_gcl_au' : null].filter(Boolean).join(', ');
       const proxiedNote = libFirstParty ? 'first-party' : 'custom';
+
+      // Hits GA4 déjà routés server-side vers le domaine first-party : on l'affirme,
+      // il ne manque que les server-managed cookies (FPID) pour atteindre le Niveau 2.
+      if (serverSideCollect) {
+        return {
+          status: 'warning',
+          description: `Setup server-side actif : librairie proxifiée (${gtmDomain}) ET hits GA4 routés server-side vers votre domaine first-party (${serverSideCollectHost}). En revanche, cookies toujours JS-managed${legacyList ? ' (' + legacyList + ')' : ''} — aucun FPID détecté, durée cappée à 7 jours sur Safari (ITP). Niveau 1/2.`,
+          businessNote: 'Vos hits sont déjà traités par votre conteneur serveur (très bien — résistant aux adblockers). Dernière marche vers le Niveau 2 : activez "Server-managed cookies (recommended)" dans le client GA4 de votre conteneur serveur pour poser des cookies FPID httpOnly (2 ans, résistants à l\'ITP Safari) au lieu des cookies JS-managed actuels.',
+          rawData,
+        };
+      }
+
       return {
         status: 'warning',
         description: `Container web proxifié (${gtmDomain}, ${proxiedNote}) mais cookies toujours en JS-managed${legacyList ? ' (' + legacyList + ')' : ''}. Durée de vie cappée à 7 jours sur Safari (ITP). Niveau 1/2.`,
