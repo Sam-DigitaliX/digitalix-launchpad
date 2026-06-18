@@ -427,12 +427,13 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Hono backend pour la conversion booking offline uniquement (webhook Calendar) → **routée via l'endpoint sGTM Stape**, pas en appels API directs (1 seul pipe consent-governed, dedup, pas de code API tripliqué).
 - Prérequis : persister `ga_client_id`+`gclid`+`_fbp`/`_fbc` sur le contact en DB au submit (pour l'attribution offline). GA4 MP exige client_id+session_id (<24h) et timestamp <72h. Ads offline migre vers Data Manager API (deadline ~15 juin 2026 — à vérifier).
 
-**sGTM build — TOUT en workspaces, NON publié (gate : `dgx.digitalix.xyz` doit répondre 200, 2026-06-18) :**
-- Domaine server-side : **`dgx.digitalix.xyz`** (CNAME Cloudflare → cible Stape, DNS only/SSL Stape). Custom loader Stape : `load.dgx.digitalix.xyz`.
-- Container serveur `GTM-N5FHRMJS` (workspace `3` "sGTM — GA4 forwarding") : GA4 Client (FPID, server, 2 ans — préexistant) + built-in `Client Name` activée + trigger `All GA4 client events` (`{{_event}}` matchRegex `.*` + filtre `Client Name = GA4`) + tag `GA4 - Forward to GA4` (`sgtmgaaw`, mode rely-on-incoming-request).
-- Container web `GTM-PD3X686F` (workspace `5` "Server-side routing — dgx") : ajout `server_container_url = https://dgx.digitalix.xyz` + `first_party_collection = true` sur `GTAG - Config_settings`.
-- Code : PR #137 (custom loader Stape dans index.html, après Didomi) — **non mergée**.
-- **Checklist publication (quand 200)** : (1) `curl -I https://dgx.digitalix.xyz/healthy` + `.../dd8qqdhbapwnu.js` → 200 ; (2) publier workspace serveur `3` AVANT web `5` (sinon hits perdus) ; (3) merger PR #137 ; (4) test Preview + GA4 DebugView : Request URL = dgx.digitalix.xyz, cookie FPID httpOnly posé, events toujours dans GA4.
+**sGTM build — PUBLIÉ EN PROD (gate `dgx.digitalix.xyz` 200 levé, 2026-06-18) :**
+- Domaine server-side : **`dgx.digitalix.xyz`** (CNAME Cloudflare → cible Stape, DNS only/SSL Stape). Custom loader Stape : `load.dgx.digitalix.xyz`. Gate vérifié : `dgx.digitalix.xyz/healthy` → 200, `load.dgx.digitalix.xyz/dd8qqdhbapwnu.js` → 200 (408KB JS). Note : `/healthy` et `/ns.html` sur le sous-domaine `load.dgx` répondent 403 (normal, le custom loader ne sert que les chemins obfusqués).
+- Container serveur `GTM-N5FHRMJS` (containerId `255835480`) : **publié v2 live** depuis workspace `3`. GA4 Client (FPID, server, 2 ans — préexistant) + built-in `Client Name` activée + trigger `All GA4 client events` (`{{_event}}` matchRegex `.*` + filtre `Client Name = GA4`) + tag `GA4 - Forward to GA4` (`sgtmgaaw`, mode rely-on-incoming-request).
+- Container web `GTM-PD3X686F` (containerId `209382913`) : **publié v4 live** depuis workspace `5`. `server_container_url = https://dgx.digitalix.xyz` + `first_party_collection = true` sur `GTAG - Config_settings`.
+- Code : PR #137 (custom loader Stape dans index.html, après Didomi) — **mergée** (`9e9db86`, 2026-06-18), branche supprimée, auto-deploy Vercel. Loader pointe `https://load.dgx.digitalix.xyz/dd8qqdhbapwnu.js?dum9rb2=...`, noscript iframe sur `load.dgx.digitalix.xyz/ns.html`.
+- Ordre de publication respecté : serveur AVANT web (sinon hits perdus), puis merge.
+- **Reste à valider post-deploy (Samuel)** : test Preview + GA4 DebugView → Request URL = `dgx.digitalix.xyz`, cookie FPID httpOnly posé, events toujours reçus dans GA4. Vérifier aussi le noscript `ns.html` (404 possible si Stape ne le sert pas sous loader obfusqué — impact négligeable).
 
 **Phase 2 — conversion booking server-side (À FAIRE, décidé 2026-06-17) :**
 - Le calendrier est un **embed iframe Google Calendar Appointment Schedule** (`calendar.google.com/...`, cross-origin) → `booking_complete` **non captable côté client** (pas de postMessage, SOP).
