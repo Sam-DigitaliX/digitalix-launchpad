@@ -404,7 +404,14 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Câblé dans : `QualificationForm.tsx` (submit), `AuditResults.tsx` (start/complete/unlock), `OutcomeStep.tsx` (booking intent), `CTASection.tsx` (cta_click).
 - **Note** : `/contact` et `/consultants` partagent `QualificationForm` → même `generate_lead` (`lead_source: qualification_form`), distinction via `page_location`. `cta_click` câblé sur `CTASection` (réutilisé multi-pages) ; extensible aux autres CTA.
 
-**GTM web container — build (workspace dédié `4`, NON publié, 2026-06-18) :**
+**GTM web container — PUBLIÉ + validé DebugView (workspace `4`, 2026-06-18) :**
+- Chaîne complète validée end-to-end : dataLayer → GTM → GA4 (`generate_lead` vu en DebugView avec tous params + user_data + user properties).
+- Ajouts post-build : `user_data` (email/phone) câblé sur le tag `generate_lead` (event param → variable `UPD - Manual (dataLayer)`, awec mode MANUAL, clés snake_case `email`/`phone_number` ; adresse non incluse car GA4 exige le groupe complet `postal_code`+`country`). User properties sur `generate_lead` (`profile_type`, `lead_source`, `is_qualified`) + sur `audit_start` (`partner_slug`). `overall_score` unifié → `audit_score` (1 seule métrique). Microsoft Clarity (template Luratic, id `x8pq2azslc`, Consent Mode built-in, fire sur `didomi-ready` only).
+- Config tag GA4 fire sur `cE - didomi-ready` (pattern Didomi advanced confirmé), pas sur virtual_page_view.
+- Custom definitions créées en GA4 : 4 User-scoped (`profile_type`, `lead_source`, `is_qualified`, `partner_slug`) + 6 Event-scoped (`audit_id`, `audit_url`, `booking_type`, `cta_label`, `cta_location`, `cta_destination`) + 2 métriques (`lead_score`, `audit_score`). PII (`user_data`/email/phone) jamais en CD.
+- Restant : marquer `generate_lead` en Key Event (par nom, latence liste Événements 24-48h) ; décocher Enhanced Measurement "Page changes based on browser history events" ; fix code `page_title` par route (titre statique aujourd'hui).
+
+**GTM web container — build (workspace dédié `4`, 2026-06-18) :**
 - Container web `GTM-PD3X686F` (accountId `6274627309`, containerId `209382913`). GA4 Measurement ID = `G-Z77KTMJYZ4`. Container serveur déjà existant : `sGTM - DigitaliX` `GTM-N5FHRMJS` (containerId `255835480`) — à héberger sur Stape.
 - Base déjà OK avant intervention : config tag GA4 `send_page_view=false`, event `page_view` sur `virtual_page_view`, DLVs page_*, User-Provided Data (Enhanced Conversions auto).
 - Ajouté dans workspace `4` : 17 DLVs (lead_source, lead_score, is_qualified, profile_type, value, currency, audit_id, audit_score, ga_client_id, gclid, audit_url, partner_slug, overall_score, booking_type, cta_label, cta_location, cta_destination) + 5 Event Settings vars + 5 triggers Custom Event + 5 tags GA4 Event (generate_lead, audit_start, audit_complete, booking_intent, cta_click).
