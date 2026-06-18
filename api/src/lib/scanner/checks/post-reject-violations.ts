@@ -1,93 +1,67 @@
 import type { CheckModule, ScanContext } from '../types.js';
+import { decodeGcsList } from '../consent-signals.js';
 
 const ANALYTICS_COOKIE_PREFIXES = ['_ga', '_gid', '_fbp', '_fbc', '_gcl', '_ttp', '_li_'];
 
 export const postRejectViolationsCheck: CheckModule = {
   id: 'post-reject-violations',
   category: 'privacy',
-  name: 'Respect du Refus de Consentement',
-  impact: 'critical',
+  name: 'Signaux de consentement (après refus)',
+  impact: 'high',
   gated: true,
   run(ctx: ScanContext) {
     const postReject = ctx.sessions.find((s) => s.phase === 'post-reject');
 
     if (!postReject) {
-      if (ctx.degradedMode) {
-        return {
-          status: 'info',
-          description: 'Pas de CMP détectée — vérification post-refus impossible.',
-          rawData: {},
-        };
-      }
       return {
         status: 'info',
-        description: 'Session post-refus non disponible.',
+        description: ctx.degradedMode
+          ? 'Pas de CMP détectée — vérification post-refus impossible.'
+          : 'Session post-refus non disponible.',
         rawData: {},
       };
     }
 
-    // Check if analytics cookies persist after rejection
-    const violatingCookies = postReject.cookies.filter((c) =>
-      ANALYTICS_COOKIE_PREFIXES.some((prefix) => c.name.startsWith(prefix))
-    );
-
-    // Consent Mode gcs after reject: 'G100' = ad+analytics storage denied (anonymized,
-    // cookieless modeling ping — conforme). Any other G1xx = a storage GRANTED despite
-    // the reject → real violation. (Previous `includes('11')` was a buggy substring test.)
-    const gcsValues = postReject.consentState.gcsValues;
-    const hasAnonymizedPings = gcsValues.includes('G100');
-    const hasGrantedPings = gcsValues.some((g) => /^G1[01][01]$/.test(g) && g !== 'G100');
     const consentModeActive = ctx.sessions.some((s) => s.consentState.hasConsentMode);
+    const gcsAfterReject = decodeGcsList(postReject.consentState.gcsValues);
+    const gcdAfterReject = [...new Set(postReject.consentState.gcdValues)];
 
-    const cookieNames = [...new Set(violatingCookies.map((c) => c.name))];
+    const cookieNames = [...new Set(
+      postReject.cookies.filter((c) => ANALYTICS_COOKIE_PREFIXES.some((p) => c.name.startsWith(p))).map((c) => c.name)
+    )];
+    // gcs avec une storage "granted" après refus (≠ G100).
+    const grantedAfterReject = postReject.consentState.gcsValues.some((g) => /^G1[01][01]$/.test(g) && g !== 'G100');
 
-    if (cookieNames.length === 0 && !hasGrantedPings) {
-      if (hasAnonymizedPings) {
-        return {
-          status: 'pass',
-          description: 'Refus respecté. Consent Mode v2 actif : pings Google anonymisés (gcs=G100, sans cookie ni identifiant — modélisation), aucun cookie analytics. Conforme RGPD.',
-          rawData: { violatingCookies: [], gcsValues, hasAnonymizedPings: true },
-        };
-      }
+    const rawData = {
+      consentModeActive,
+      gcsAfterReject,
+      gcdAfterReject,
+      cookies: cookieNames,
+      grantedAfterReject,
+    };
 
-      return {
-        status: 'pass',
-        description: 'Refus respecté. Aucun cookie analytics ni ping tracking après refus — conforme RGPD.',
-        rawData: { violatingCookies: [], gcsValues },
-      };
-    }
-
-    const rawDataOut = { violatingCookies: cookieNames, gcsValues, hasGrantedPings, consentModeActive };
-
-    // Pings "granted" malgré le refus = vraie violation (le refus est ignoré pour les hits).
-    if (hasGrantedPings) {
-      const issues: string[] = [];
-      if (cookieNames.length > 0) issues.push(`${cookieNames.length} cookie(s) analytics : ${cookieNames.join(', ')}`);
-      issues.push('pings Google en mode "granted" malgré le refus');
-      return {
-        status: 'fail',
-        description: `Violation RGPD : ${issues.join('. ')}. Le refus de consentement n'est pas appliqué.`,
-        businessNote: 'Des hits Google partent en mode "granted" malgré le refus. Violation RGPD.',
-        rawData: rawDataOut,
-      };
-    }
-
-    // Cookies seuls après refus, sous Consent Mode v2 actif (pings non "granted") → warning
-    // nuancé : peut refléter le default de consentement (géo) de l'environnement de scan.
-    if (consentModeActive) {
+    // Filet de sécurité : refus manifestement ignoré ET aucun Consent Mode → verdict.
+    if (!consentModeActive && (cookieNames.length > 0 || grantedAfterReject)) {
+      const bits: string[] = [];
+      if (cookieNames.length) bits.push(`cookies analytics (${cookieNames.join(', ')})`);
+      if (grantedAfterReject) bits.push('pings Google en mode "granted"');
       return {
         status: 'warning',
-        description: `Cookies analytics observés après refus (${cookieNames.join(', ')}) — mais Consent Mode v2 est actif et les pings ne sont pas "granted". Peut refléter le default de consentement de l'environnement de scan (géo) : un visiteur EU qui refuse n'obtient normalement pas ces cookies. À vérifier en conditions réelles (DevTools EU, après refus).`,
-        businessNote: 'Après un refus, gtag ne doit pas écrire de cookie analytics. Vérifiez en conditions réelles EU : si c\'est le cas, à corriger côté CMP ; sinon c\'est un artefact d\'environnement de scan.',
-        rawData: rawDataOut,
+        description: `Après refus : ${bits.join(' + ')}, ET aucun Consent Mode détecté. Le refus ne semble pas appliqué — point de conformité RGPD à corriger.`,
+        businessNote: 'Des traceurs persistent après un refus, sans Consent Mode. À traiter en priorité (risque lors d\'un contrôle CNIL).',
+        rawData,
       };
     }
 
+    // Sinon : informatif, décodage pédagogique, sans verdict.
+    const gcsStr = gcsAfterReject.length ? gcsAfterReject.map((d) => `${d.gcs} = ${d.label}`).join(' · ') : 'aucun signal gcs capté au scan';
+    const gcdStr = gcdAfterReject.length ? gcdAfterReject.join(', ') : '—';
+
     return {
-      status: 'fail',
-      description: `Violation RGPD : ${cookieNames.length} cookie(s) analytics encore présent(s) après refus (${cookieNames.join(', ')}), sans Consent Mode. Le refus n'est pas appliqué.`,
-      businessNote: 'Des cookies analytics persistent après le refus de consentement, sans Consent Mode. Violation RGPD.',
-      rawData: rawDataOut,
+      status: 'info',
+      description: `Signaux de consentement (gcs) après refus : ${gcsStr}. gcd (brut) : ${gcdStr}.`,
+      businessNote: `Lecture prudente : ces signaux reflètent l'environnement du scan, pas forcément un visiteur réel.${consentModeActive ? ' Consent Mode v2 détecté : un gcs=G100 après refus = comportement attendu (pings anonymisés, aucun tracking identifiant).' : ''} À confirmer en conditions réelles (DevTools, géo EU, après refus).`,
+      rawData,
     };
   },
 };

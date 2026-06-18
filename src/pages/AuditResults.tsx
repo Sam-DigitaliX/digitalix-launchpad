@@ -581,7 +581,7 @@ const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <StatusIcon status={preConsent.status} />
-                <span className="font-semibold text-sm text-foreground">Violations pré-consentement</span>
+                <span className="font-semibold text-sm text-foreground">Consentement — signaux avant consentement</span>
               </div>
               <p className="text-sm text-muted-foreground">{preConsent.description}</p>
               {preConsent.businessNote && preConsent.status !== 'pass' && (
@@ -605,7 +605,7 @@ const PrivacySection = ({ checks }: { checks: AuditCheck[] }) => {
             <div className="relative z-10">
               <div className="flex items-center gap-2 mb-3">
                 <StatusIcon status={postReject.status} />
-                <span className="font-semibold text-sm text-foreground">Respect du refus</span>
+                <span className="font-semibold text-sm text-foreground">Consentement — signaux après refus</span>
               </div>
               <p className="text-sm text-muted-foreground">{postReject.description}</p>
               {postReject.businessNote && postReject.status !== 'pass' && (

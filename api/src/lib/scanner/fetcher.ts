@@ -319,9 +319,23 @@ function extractConsentState(requests: NetworkRequest[], dataLayerPushes: Record
   // (sGTM proxied setups can route GA4 traffic to custom endpoints)
   for (const req of requests) {
     try {
-      const params = new URL(req.url).searchParams;
-      const gcs = params.get('gcs');
-      const gcd = params.get('gcd');
+      const u = new URL(req.url);
+      let gcs = u.searchParams.get('gcs');
+      let gcd = u.searchParams.get('gcd');
+
+      // Obfuscated server-side hits (Stape custom loader): the /g/collect payload is
+      // base64-encoded inside a query value. Decode it and extract gcs/gcd from there.
+      if (!gcs || !gcd) {
+        for (const [, value] of u.searchParams) {
+          if (value.length < 24) continue;
+          let decoded = '';
+          try { decoded = Buffer.from(decodeURIComponent(value), 'base64').toString('utf8'); } catch { continue; }
+          if (!gcs) { const m = decoded.match(/[?&]gcs=(G1\d{2})/); if (m) gcs = m[1]; }
+          if (!gcd) { const m = decoded.match(/[?&]gcd=([A-Za-z0-9]+)/); if (m) gcd = m[1]; }
+          if (gcs && gcd) break;
+        }
+      }
+
       // gcs format is G1xx (G100, G101, G111) — filter against random query strings
       if (gcs && /^G1\d{2}$/.test(gcs)) gcsValues.push(gcs);
       if (gcd && gcd.length >= 4) gcdValues.push(gcd);
