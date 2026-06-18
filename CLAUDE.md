@@ -287,34 +287,25 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 ### Bugs à investiguer
 - [ ] **Consent Mode v2 — extraction des 4 params obligatoires incomplète sur certains setups server-side** : sur `https://mprez.fr` (2026-04-21), la CMP Sirdata est bien identifiée via TCF API mais les 4 paramètres obligatoires (`ad_storage`, `ad_user_data`, `ad_personalization`, `analytics_storage`) ne sont pas capturés. Hypothèses à tester : (a) `gtag('consent', 'default', ...)` pousse dans un dataLayer renommé par le custom loader, (b) consent default fire après la capture dataLayer, (c) params défaut envoyés directement via sGTM sans passer par `window.dataLayer`. À re-scanner sur d'autres setups sGTM similaires pour confirmer le pattern.
 
-### Chantier F — Notifications Telegram temps réel (à planifier)
-**Contexte** : Le bot Telegram `@digitalix_monitor_bot` n'est utilisé que par le GitHub Action hebdomadaire. Objectif : push temps réel depuis l'API Hono quand un nouveau lead arrive ou change de statut.
+### Chantier F — Notifications Telegram temps réel (V1 LIVRÉE — 2026-06-18, bot leads dédié)
+**Objectif** : push temps réel depuis l'API Hono à chaque nouveau lead (tous les `generate_lead` : audit unlock + formulaire qualif/contact), pensé comme **instrument** (triage + attribution + action), pas simple info. Cas d'usage moteur : mesurer l'impact d'un post LinkedIn en voyant les leads tomber avec leur source.
 
-**Pré-requis d'infra** :
-- [ ] Ajouter `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` en env vars Coolify (mêmes valeurs que GitHub Secrets)
+**Implémenté (PR Telegram lead notifications)** :
+- Helper `api/src/lib/telegram.ts` — `sendLeadNotification()` fire-and-forget (ne throw/bloque jamais la réponse API). Parse mode **HTML** + **blockquote** (`expandable` pour lead simple, dépliée pour hot/qualifié) + **inline keyboard** boutons URL (Ouvrir le contact / Voir l'audit). Compteur « Nᵉ lead du jour » (count interactions du jour par type) + température lue depuis `admin_contacts_overview`.
+- Déclencheurs : `POST /api/contacts` (formulaire) + `POST /api/audit/:id/unlock` (audit). **Tous les leads** notifiés (ping unitaire).
+- **Attribution persistée** (migration `007_contact_attribution.sql`) : colonnes `lead_source`, `traffic_source`, `ga_client_id`, `gclid` sur `contacts`. Le frontend envoie `current_visit_source` + `ga_client_id` + `gclid` au unlock (`AuditResults`) et au submit form (`QualificationForm`). **Bonus** : débloque le prérequis attribution du Chantier J Phase 2 (MP / conversions offline server-side).
+- **Bot dédié** : variables `TELEGRAM_LEADS_BOT_TOKEN` + `TELEGRAM_LEADS_CHAT_ID` (séparé de `@digitalix_monitor_bot` monitoring). Deep links : `PUBLIC_SITE_URL` (défaut `https://digitalix.xyz`).
 
-**Enrichir la logique de statut** (la vue `admin_contacts_overview` ignore `audit_count` pour la temperature) :
-- [ ] Option A : `lead_temperature` devient `hot` aussi quand `audit_count >= 2` (actuellement ne prend pas en compte le multi-audit)
-- [ ] Option B : tag auto `récurrent` si `audit_count >= 2`, `très engagé` si `>= 3`
-- [ ] Reco : faire les deux
+**Manuel restant (Samuel) avant que ça marche en prod** :
+- [ ] Créer le nouveau bot (@BotFather) + chat dédié leads
+- [ ] Poser `TELEGRAM_LEADS_BOT_TOKEN` + `TELEGRAM_LEADS_CHAT_ID` (+ option `PUBLIC_SITE_URL`) en env vars **Coolify** (API)
+- [x] Migration `007` : tourne **automatiquement** au déploiement (Dockerfile CMD `migrate.js && index.js`, `ADD COLUMN IF NOT EXISTS` idempotent) — rien à faire
+- [ ] Valider le rendu de `<blockquote expandable>` par un envoi de test après déploiement
 
-**Détection des transitions** (approche retenue) :
-- [ ] Dans les routes `POST /api/contacts` et `POST /api/audit/:id/unlock` :
-  1. SELECT temperature + audit_count AVANT UPSERT
-  2. UPSERT contact + interaction
-  3. SELECT AFTER → diff → trigger notif si changement
-- [ ] Helper `api/src/lib/telegram.ts` (fire-and-forget, log erreurs sans bloquer l'user)
-
-**Typologie de notifs à implémenter** (choix final en attente) :
-- [ ] 🆕 Nouveau contact (première fois dans la DB)
-- [ ] 🔁 Audit récurrent (passe à 2, 3, 5 audits — seuils configurables)
-- [ ] 📈 Changement de temperature (warm → hot)
-- [ ] 🎯 Qualification form (avec score)
-
-**Questions produit en suspens** :
-- Enrichir la temperature (A+B) ou juste tags (B) ?
-- Les 4 types de notifs ou sous-ensemble ?
-- Emojis/sons distincts pour les leads hot ?
+**Évolutions possibles (non faites)** :
+- Enrichir la température multi-audit (`audit_count >= 2` → hot ; tags `récurrent`/`très engagé`)
+- Récap groupé si burst (anti-spam pendant un pic viral) — choix actuel = ping unitaire
+- Notif sur changement de statut/température (pas juste création)
 
 ### Chantier G — Internationalisation EN/US (à valider produit avant de coder)
 **Contexte** : site 100% FR aujourd'hui, aucune infra i18n. Ouvrir le marché EN (UK/US/EU non-FR) demande une vraie traduction + adaptation produit.

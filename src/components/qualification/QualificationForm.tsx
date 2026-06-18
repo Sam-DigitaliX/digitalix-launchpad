@@ -10,7 +10,7 @@ import { ContactStep } from './steps/ContactStep';
 import { OutcomeStep } from './steps/OutcomeStep';
 import { X, Flame, ScanSearch } from 'lucide-react';
 import { getBehavioralData, BehavioralData } from '@/lib/trackingUtils';
-import { trackLead } from '@/lib/tracking';
+import { trackLead, getGaClientId, getGclid } from '@/lib/tracking';
 
 const FULL_STEP_LABELS = ['Profil', 'Situation', 'Besoin', 'Contact', 'Résultat'];
 const AUDIT_STEP_LABELS = ['Profil', 'Besoin', 'Contact', 'Résultat'];
@@ -118,6 +118,10 @@ export function QualificationForm({ onClose, auditContext }: QualificationFormPr
         gdpr_consent_at: new Date().toISOString(),
         newsletter_optin: validData.newsletter_optin ?? false,
         behavioral_profile: behavioralData?.profileLabel ?? null,
+        lead_source: auditContext ? 'audit_contact_request' : 'qualification_form',
+        traffic_source: behavioralData?.currentSource ?? null,
+        ga_client_id: getGaClientId(),
+        gclid: getGclid(),
         interaction_type: auditContext ? 'audit_contact_request' : 'qualification_form',
         interaction_metadata: {
           current_situation: validData.current_situation,

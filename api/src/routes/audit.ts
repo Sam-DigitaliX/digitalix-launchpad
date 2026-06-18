@@ -5,6 +5,7 @@ import { scanUrl } from '../lib/scanner/index.js';
 import { checkRateLimit } from '../lib/rate-limit.js';
 import { sendEmail } from '../lib/resend.js';
 import { buildAuditUnlockEmail } from '../lib/email-templates.js';
+import { sendLeadNotification } from '../lib/telegram.js';
 import type { ScanProgressEvent } from '../lib/scanner/types.js';
 import type { ScanResult } from '../lib/scanner/index.js';
 
@@ -367,6 +368,9 @@ app.post('/:id/unlock', async (c) => {
   const body = await c.req.json();
   const email = body.email;
   const gdprConsent = body.gdpr_consent;
+  const trafficSource = (body.traffic_source as string | undefined) ?? null;
+  const gaClientId = (body.ga_client_id as string | undefined) ?? null;
+  const gclid = (body.gclid as string | undefined) ?? null;
 
   if (!email || typeof email !== 'string' || !email.includes('@')) {
     return c.json({ error: 'Valid email is required' }, 400);
@@ -388,11 +392,23 @@ app.post('/:id/unlock', async (c) => {
   const partnerSlug = audit.partner_slug as string | null;
 
   const contactRows = await sql`
-    INSERT INTO contacts (email, gdpr_consent, gdpr_consent_at, first_seen_at, last_seen_at)
-    VALUES (${email}, true, now(), now(), now())
+    INSERT INTO contacts (
+      email, gdpr_consent, gdpr_consent_at,
+      lead_source, traffic_source, ga_client_id, gclid,
+      first_seen_at, last_seen_at
+    )
+    VALUES (
+      ${email}, true, now(),
+      'audit_unlock', ${trafficSource}, ${gaClientId}, ${gclid},
+      now(), now()
+    )
     ON CONFLICT (email) DO UPDATE SET
       gdpr_consent = true,
       gdpr_consent_at = COALESCE(contacts.gdpr_consent_at, now()),
+      lead_source    = COALESCE(contacts.lead_source, EXCLUDED.lead_source),
+      traffic_source = COALESCE(contacts.traffic_source, EXCLUDED.traffic_source),
+      ga_client_id   = COALESCE(contacts.ga_client_id, EXCLUDED.ga_client_id),
+      gclid          = COALESCE(EXCLUDED.gclid, contacts.gclid),
       last_seen_at = now()
     RETURNING id
   `;
@@ -426,8 +442,23 @@ app.post('/:id/unlock', async (c) => {
       audit_id: id,
       url: audit.url,
       score: audit.overall_score,
+      traffic_source: trafficSource,
     })})
   `;
+
+  // Real-time Telegram lead notification (fire-and-forget — never blocks the response).
+  void sendLeadNotification({
+    contactId,
+    email,
+    leadSource: 'audit_unlock',
+    interactionType: 'audit_unlock',
+    trafficSource,
+    auditId: id,
+    auditUrl: audit.url as string,
+    auditScore: Number(audit.overall_score) || 0,
+    auditPending: audit.status !== 'completed',
+    partnerSlug,
+  });
 
   // Only send the unlock email if the scan is COMPLETED — otherwise the score
   // is still 0 and the email would mislead the recipient. The scan-completion
