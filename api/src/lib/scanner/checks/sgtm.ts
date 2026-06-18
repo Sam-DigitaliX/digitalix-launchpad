@@ -11,25 +11,48 @@ function isFirstPartyDomain(gtmDomain: string, siteDomain: string): boolean {
 const GOOGLE_COLLECT_HOSTS = ['google-analytics.com', 'analytics.google.com', 'googletagmanager.com'];
 
 /**
- * GA4 collection routed server-side: a `/g/collect` (or `/j/collect`) request to a
- * host that is first-party to the site but NOT a Google domain → the hits are
- * processed by the user's own server container (e.g. dgx.digitalix.xyz). This is a
- * direct server-side signal, independent of the FPID cookie.
+ * Does this request look like a GA4 collection hit? Catches both the plain form
+ * (`/g/collect`) and the Stape custom-loader obfuscated form, where the path is a
+ * random hash and the `/g/collect?...` payload is base64-encoded inside a query
+ * param value (e.g. dgx.digitalix.xyz/dd8qqdhbapwnu?<hash>=<base64>).
+ */
+function looksLikeGa4Collect(url: string): boolean {
+  if (url.includes('/g/collect') || url.includes('/j/collect')) return true;
+  try {
+    const u = new URL(url);
+    for (const [, value] of u.searchParams) {
+      if (value.length < 24) continue;
+      try {
+        const decoded = Buffer.from(decodeURIComponent(value), 'base64').toString('utf8');
+        if (decoded.includes('/g/collect') || decoded.includes('tid=G-')) return true;
+      } catch {
+        // not base64 — ignore
+      }
+    }
+  } catch {
+    // bad URL
+  }
+  return false;
+}
+
+/**
+ * GA4 collection routed server-side: a collection hit to a host that is first-party
+ * to the site but NOT a Google domain → the hits are processed by the user's own
+ * server container (e.g. dgx.digitalix.xyz), incl. obfuscated custom-loader hits.
+ * Direct server-side signal, independent of the FPID cookie.
  */
 function detectServerSideCollect(ctx: ScanContext): string | null {
   for (const session of ctx.sessions) {
     for (const req of session.networkRequests) {
-      const url = req.url;
-      if (!url.includes('/g/collect') && !url.includes('/j/collect')) continue;
+      let host: string;
       try {
-        const host = new URL(url).hostname;
-        const isGoogle = GOOGLE_COLLECT_HOSTS.some((g) => host.includes(g));
-        if (!isGoogle && isFirstPartyDomain(host.replace(/^www\./, ''), ctx.domain)) {
-          return host;
-        }
+        host = new URL(req.url).hostname;
       } catch {
-        // continue
+        continue;
       }
+      if (GOOGLE_COLLECT_HOSTS.some((g) => host.includes(g))) continue;
+      if (!isFirstPartyDomain(host.replace(/^www\./, ''), ctx.domain)) continue;
+      if (looksLikeGa4Collect(req.url)) return host;
     }
   }
   return null;
