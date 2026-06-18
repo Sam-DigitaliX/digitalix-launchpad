@@ -684,46 +684,37 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
 /* ──────────────────── E-commerce detection ──────────────────── */
 
 function detectEcommerce($: cheerio.CheerioAPI, html: string, scripts: string[]): string | null {
+  // La détection doit reposer sur des signaux TECHNIQUES (meta generator, chemins
+  // d'assets/scripts, objets JS) — JAMAIS le nom de marque dans le texte de la page,
+  // sinon un site qui *mentionne* "PrestaShop"/"WooCommerce"/"Magento" (ex. une
+  // agence tracking qui liste les plateformes qu'elle audite) est mal identifié.
+  const metaGen = ($('meta[name="generator"]').attr('content') ?? '').toLowerCase();
+  const scriptSrcs = scripts.join('\n');
+  const bodyClass = $('body').attr('class') ?? '';
+
   // Shopify
-  if (html.includes('Shopify.shop') || html.includes('cdn.shopify.com') || scripts.some((s) => s.includes('cdn.shopify.com'))) {
+  if (metaGen.includes('shopify') || /cdn\.shopify\.com/.test(scriptSrcs) || /window\.Shopify|Shopify\.(shop|theme)\b/.test(html)) {
     return 'Shopify';
   }
   // WooCommerce
-  if (html.includes('woocommerce') || html.includes('wc-add-to-cart') || $('body').hasClass('woocommerce')) {
+  if (metaGen.includes('woocommerce') || /\bwoocommerce\b/.test(bodyClass) || /wp-content\/plugins\/woocommerce/.test(scriptSrcs) || /wp-content\/plugins\/woocommerce|wc_add_to_cart_params/.test(html)) {
     return 'WooCommerce';
   }
-  // Magento — require specific markers. NB: '/mage/' must keep the leading slash;
-  // a bare 'mage/' is a substring of 'image/' and false-matches any /image/ asset.
-  if (
-    html.includes('mage/cookies') ||
-    html.includes('Magento_') ||
-    html.includes('/static/frontend/') ||
-    scripts.some((s) => s.includes('/mage/') || s.includes('mage/cookies') || s.includes('Magento_'))
-  ) {
+  // Magento (NB: bare 'mage/' is a substring of 'image/')
+  if (metaGen.includes('magento') || scripts.some((s) => /\/mage\/|mage\/cookies|Magento_/.test(s)) || /mage\/cookies|Magento_[A-Z]|\/static\/frontend\//.test(html)) {
     return 'Magento';
   }
-  // PrestaShop
-  if (html.includes('prestashop') || html.includes('PrestaShop') || $('meta[name="generator"]').attr('content')?.includes('PrestaShop')) {
+  // PrestaShop — meta generator, chemins de modules ou objet JS global
+  if (metaGen.includes('prestashop') || /\/modules\/ps_/.test(scriptSrcs) || /\/modules\/ps_|var\s+prestashop\s*=|prestashop\.modules/.test(html)) {
     return 'PrestaShop';
   }
-  // Salesforce Commerce Cloud
-  if (html.includes('demandware') || scripts.some((s) => s.includes('demandware'))) {
+  // Salesforce Commerce Cloud (Demandware)
+  if (/demandware|dwAnalytics/.test(scriptSrcs) || /demandware\.store|dwAnalytics\./.test(html)) {
     return 'Salesforce Commerce Cloud';
   }
   // BigCommerce
-  if (html.includes('BigCommerce') || scripts.some((s) => s.includes('bigcommerce.com'))) {
+  if (/bigcommerce\.com/.test(scriptSrcs) || /window\.BCData|stencilBootstrap/.test(html)) {
     return 'BigCommerce';
-  }
-  // Generic cart detection
-  const metaGenerator = $('meta[name="generator"]').attr('content') ?? '';
-  if (metaGenerator) {
-    const lower = metaGenerator.toLowerCase();
-    if (lower.includes('shopify')) return 'Shopify';
-    if (lower.includes('woocommerce') || lower.includes('wordpress')) {
-      if (html.includes('woocommerce')) return 'WooCommerce';
-    }
-    if (lower.includes('magento')) return 'Magento';
-    if (lower.includes('prestashop')) return 'PrestaShop';
   }
 
   return null;
