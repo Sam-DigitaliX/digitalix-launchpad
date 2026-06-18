@@ -296,11 +296,12 @@ Admin routes require `Authorization: Bearer <admin-key>` header.
 - **Attribution persistée** (migration `007_contact_attribution.sql`) : colonnes `lead_source`, `traffic_source`, `ga_client_id`, `gclid` sur `contacts`. Le frontend envoie `current_visit_source` + `ga_client_id` + `gclid` au unlock (`AuditResults`) et au submit form (`QualificationForm`). **Bonus** : débloque le prérequis attribution du Chantier J Phase 2 (MP / conversions offline server-side).
 - **Bot dédié** : variables `TELEGRAM_LEADS_BOT_TOKEN` + `TELEGRAM_LEADS_CHAT_ID` (séparé de `@digitalix_monitor_bot` monitoring). Deep links : `PUBLIC_SITE_URL` (défaut `https://digitalix.xyz`).
 
-**Manuel restant (Samuel) avant que ça marche en prod** :
-- [ ] Créer le nouveau bot (@BotFather) + chat dédié leads
-- [ ] Poser `TELEGRAM_LEADS_BOT_TOKEN` + `TELEGRAM_LEADS_CHAT_ID` (+ option `PUBLIC_SITE_URL`) en env vars **Coolify** (API)
-- [x] Migration `007` : tourne **automatiquement** au déploiement (Dockerfile CMD `migrate.js && index.js`, `ADD COLUMN IF NOT EXISTS` idempotent) — rien à faire
-- [ ] Valider le rendu de `<blockquote expandable>` par un envoi de test après déploiement
+**Statut : LIVE et validé (2026-06-18).**
+- [x] Bot dédié (@BotFather) + chat créés. `chat_id` = `6155735961`.
+- [x] `TELEGRAM_LEADS_BOT_TOKEN` + `TELEGRAM_LEADS_CHAT_ID` + `PUBLIC_SITE_URL` posés en env vars **Coolify** (app `digitalix-api`, via MCP).
+- [x] Migration `007` : tourne automatiquement au déploiement (Dockerfile CMD `migrate.js && index.js`, `ADD COLUMN IF NOT EXISTS` idempotent).
+- [x] Rendu `<blockquote expandable>` validé par envoi de test (Telegram, OK).
+- [ ] (Sécu) Rotation du `TELEGRAM_LEADS_BOT_TOKEN` — exposé en clair pendant le setup.
 
 **Évolutions possibles (non faites)** :
 - Enrichir la température multi-audit (`audit_count >= 2` → hot ; tags `récurrent`/`très engagé`)
