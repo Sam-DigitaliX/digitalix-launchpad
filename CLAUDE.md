@@ -409,7 +409,7 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Ajouts post-build : `user_data` (email/phone) câblé sur le tag `generate_lead` (event param → variable `UPD - Manual (dataLayer)`, awec mode MANUAL, clés snake_case `email`/`phone_number` ; adresse non incluse car GA4 exige le groupe complet `postal_code`+`country`). User properties sur `generate_lead` (`profile_type`, `lead_source`, `is_qualified`) + sur `audit_start` (`partner_slug`). `overall_score` unifié → `audit_score` (1 seule métrique). Microsoft Clarity (template Luratic, id `x8pq2azslc`, Consent Mode built-in, fire sur `didomi-ready` only).
 - Config tag GA4 fire sur `cE - didomi-ready` (pattern Didomi advanced confirmé), pas sur virtual_page_view.
 - Custom definitions créées en GA4 : 4 User-scoped (`profile_type`, `lead_source`, `is_qualified`, `partner_slug`) + 6 Event-scoped (`audit_id`, `audit_url`, `booking_type`, `cta_label`, `cta_location`, `cta_destination`) + 2 métriques (`lead_score`, `audit_score`). PII (`user_data`/email/phone) jamais en CD.
-- Restant : marquer `generate_lead` en Key Event (par nom, latence liste Événements 24-48h) ; décocher Enhanced Measurement "Page changes based on browser history events" ; fix code `page_title` par route (titre statique aujourd'hui).
+- Restant : marquer `generate_lead` en Key Event (par nom, latence liste Événements 24-48h) ; décocher Enhanced Measurement "Page changes based on browser history events". (`page_title` par route : ✅ fait — voir ci-dessous)
 
 **GTM web container — build (workspace dédié `4`, 2026-06-18) :**
 - Container web `GTM-PD3X686F` (accountId `6274627309`, containerId `209382913`). GA4 Measurement ID = `G-Z77KTMJYZ4`. Container serveur déjà existant : `sGTM - DigitaliX` `GTM-N5FHRMJS` (containerId `255835480`) — à héberger sur Stape.
@@ -420,7 +420,7 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
   - GA4 admin : marquer `generate_lead` (et booking_complete à terme) comme Key Event ; enregistrer les params en custom dimensions ; **décocher Enhanced Measurement "Page changes based on browser history events"** (sinon double page_view).
   - Google Ads : tag de conversion (besoin conversion ID/label) sur `generate_lead` — pas encore créé.
   - Vérifier en Preview : ordre consent default → config → page_view ; `didomi-ready` fire au load (advanced, pas basic).
-- **Code à fixer** : `page_title` jamais mis à jour par route (pas de react-helmet) → GA4 reçoit un titre statique sur toutes les pages SPA. À corriger (mapping route→titre).
+- **page_title par route** : ✅ **réglé** (commit `d2c86f7`, PR #136) — `src/lib/pageTitles.ts` (`resolvePageTitle()` : mapping de routes + humanisation des slugs pour routes dynamiques) + `src/hooks/useDataLayerPageView.ts` set `document.title` synchroniquement avant le push `page_view`. GA4 reçoit désormais un titre par page.
 
 **Décision archi server-side (2026-06-18, recherche sourcée Stape/Google MP/Simo/Meta) : HYBRIDE.**
 - Stape sGTM (container `GTM-N5FHRMJS`) pour les events web → GA4/Ads/Meta server-side (dogfooding + cookies FPID httpOnly résistants ITP Safari + Cookie Keeper). Plan Pro ~17$/mois.
