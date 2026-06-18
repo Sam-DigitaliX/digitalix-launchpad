@@ -364,9 +364,16 @@ async function runSession(
   sessionNum: number,
 ): Promise<ScanSession> {
   const context: BrowserContext = await browser.newContext({
-    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36',
+    userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
     locale: 'fr-FR',
     viewport: { width: 1440, height: 900 },
+  });
+
+  // Present as a real browser so bot-detection (e.g. Stape) serves the representative
+  // experience — incl. server-managed cookies (FPID). An audit must measure what a
+  // real visitor receives, not a degraded bot variant.
+  await context.addInitScript(() => {
+    Object.defineProperty(navigator, 'webdriver', { get: () => undefined });
   });
 
   const page = await context.newPage();
@@ -518,7 +525,7 @@ export async function fetchPage(url: string, onProgress: OnProgress = noopProgre
   const domain = extractDomain(url);
   const browser = await chromium.launch({
     headless: true,
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu'],
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu', '--disable-blink-features=AutomationControlled'],
   });
 
   try {
