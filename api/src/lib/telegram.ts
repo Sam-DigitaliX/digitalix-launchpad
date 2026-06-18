@@ -34,6 +34,8 @@ export interface LeadNotification {
   auditScore?: number | null;
   /** Scan not finished yet → score not meaningful. */
   auditPending?: boolean;
+  /** Scan failed → lead still captured, but no score. */
+  auditFailed?: boolean;
   partnerSlug?: string | null;
 }
 
@@ -80,8 +82,12 @@ function buildHtml(n: LeadNotification, temperature: string, dayCount: number): 
   if (n.company) lines.push(`🏢 ${esc(n.company)}`);
   if (n.profileType) lines.push(`🧭 Profil : ${esc(n.profileType)}`);
   if (n.auditUrl) {
-    const score = n.auditPending ? 'scan en cours' : `<b>${n.auditScore ?? 0}/100</b>`;
-    lines.push(`🛠 ${esc(domainOf(n.auditUrl))} — site audité ${score}`);
+    const label = n.auditFailed
+      ? 'audit échoué'
+      : n.auditPending
+        ? 'scan en cours'
+        : `site audité <b>${n.auditScore ?? 0}/100</b>`;
+    lines.push(`🛠 ${esc(domainOf(n.auditUrl))} — ${label}`);
   }
   if (n.partnerSlug) lines.push(`🤝 Partenaire : ${esc(n.partnerSlug)}`);
   lines.push(`🌡 ${TEMP_LABELS[temperature] ?? 'Tiède'} · entrée : ${esc(entry)}`);
