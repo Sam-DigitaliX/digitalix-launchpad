@@ -48,5 +48,20 @@ export function detectServerManagedCookies(ctx: ScanContext): ServerManagedCooki
     if (c.name === '_gcl_au') hasLegacyGclAu = true;
   }
 
+  // Fallback: FP* seen in Set-Cookie response headers from server-side hosts.
+  // Catches FPID on a fresh-visit scan where the cookie-jar snapshot misses the
+  // httpOnly cross-subdomain cookie (the Set-Cookie header is conclusive).
+  const serverSet = new Set<string>();
+  for (const s of ctx.sessions) {
+    for (const n of s.serverSetCookieNames ?? []) serverSet.add(n);
+  }
+  for (const name of names) {
+    if (serverSet.has(name)) {
+      if (!detected.includes(name)) detected.push(name);
+      if (name === 'FPID') hasFpid = true;
+      if (name === 'FPGCLAW') hasFpgclaw = true;
+    }
+  }
+
   return { detected, hasFpid, hasFpgclaw, hasLegacyGa, hasLegacyGclAu };
 }

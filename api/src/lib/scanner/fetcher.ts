@@ -374,6 +374,7 @@ async function runSession(
   // Capture network requests
   const networkRequests: NetworkRequest[] = [];
   const scriptsLoaded: string[] = [];
+  const serverSetCookieNames: string[] = [];
 
   page.on('request', (req) => {
     networkRequests.push({
@@ -392,6 +393,26 @@ async function runSession(
     if (entry) entry.status = res.status();
     if (res.request().resourceType() === 'script') {
       scriptsLoaded.push(reqUrl);
+    }
+
+    // Capture Set-Cookie names from first-party (server-side) non-Google responses.
+    // Catches server-managed cookies (FPID) even if the cookie-jar snapshot misses
+    // them (httpOnly, fresh-visit timing on a cross-subdomain server endpoint).
+    try {
+      const rhost = new URL(reqUrl).hostname.replace(/^www\./, '');
+      const sameSite = registrableDomain(rhost) === registrableDomain(pageDomain);
+      const isGoogle = /google-analytics\.com|googletagmanager\.com|analytics\.google\.com|google\.[a-z.]+|doubleclick\.net/.test(rhost);
+      if (sameSite && !isGoogle) {
+        void res.headerValue('set-cookie').then((sc) => {
+          if (!sc) return;
+          for (const line of sc.split('\n')) {
+            const name = line.split('=')[0]?.trim();
+            if (name && !serverSetCookieNames.includes(name)) serverSetCookieNames.push(name);
+          }
+        }).catch(() => {});
+      }
+    } catch {
+      // ignore malformed URLs
     }
   });
 
@@ -483,7 +504,7 @@ async function runSession(
       onProgress({ type: 'issues_count', session: sessionNum, totalSessions: 3, label: `${trackingRequests.length} requêtes tracking détectées`, issuesCount: trackingRequests.length });
     }
 
-    return { phase, cookies, networkRequests, consentState, dataLayerPushes, scriptsLoaded };
+    return { phase, cookies, networkRequests, consentState, dataLayerPushes, scriptsLoaded, serverSetCookieNames };
   } finally {
     await context.close();
   }
