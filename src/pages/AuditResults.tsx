@@ -4,7 +4,8 @@ import Header from "@/components/landing/Header";
 import EvervaultGlow from "@/components/landing/EvervaultGlow";
 import Footer from "@/components/landing/Footer";
 import { startAudit, streamAuditProgress, getAudit, unlockAudit, trackAuditEmailClick, ApiError } from "@/lib/api";
-import { trackAuditStart, trackAuditComplete, trackLead } from "@/lib/tracking";
+import { trackAuditStart, trackAuditComplete, trackLead, getGaClientId, getGclid } from "@/lib/tracking";
+import { getBehavioralData } from "@/lib/trackingUtils";
 import type { AuditProgressEvent } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -1171,7 +1172,12 @@ const AuditResults = () => {
     setEmailSubmitting(true);
 
     try {
-      const result = await unlockAudit(effectiveId, email.trim(), consentChecked);
+      const visitor = getBehavioralData();
+      const result = await unlockAudit(effectiveId, email.trim(), consentChecked, {
+        traffic_source: visitor?.currentSource ?? null,
+        ga_client_id: getGaClientId(),
+        gclid: getGclid(),
+      });
       // If unlock happens during scan, checks[] is empty in DB — keep current state
       // and let the SSE result event populate with full (unlocked) descriptions.
       if (result.checks.length > 0) {

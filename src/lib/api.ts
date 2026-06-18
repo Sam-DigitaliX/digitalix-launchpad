@@ -46,6 +46,10 @@ export interface UpsertContactParams {
   gdpr_consent_at?: string | null;
   newsletter_optin?: boolean | null;
   behavioral_profile?: string | null;
+  lead_source?: string | null;
+  traffic_source?: string | null;
+  ga_client_id?: string | null;
+  gclid?: string | null;
   interaction_type?: string | null;
   interaction_metadata?: Record<string, unknown> | null;
 }
@@ -141,10 +145,21 @@ export function getAudit(id: string) {
   return request<AuditResult>('/api/audit/' + id);
 }
 
-export function unlockAudit(id: string, email: string, gdprConsent: boolean) {
+export interface LeadAttribution {
+  traffic_source?: string | null;
+  ga_client_id?: string | null;
+  gclid?: string | null;
+}
+
+export function unlockAudit(
+  id: string,
+  email: string,
+  gdprConsent: boolean,
+  attribution?: LeadAttribution,
+) {
   return request<{ success: boolean; checks: AuditCheck[]; contactId: string }>('/api/audit/' + id + '/unlock', {
     method: 'POST',
-    body: JSON.stringify({ email, gdpr_consent: gdprConsent }),
+    body: JSON.stringify({ email, gdpr_consent: gdprConsent, ...attribution }),
   });
 }
 
