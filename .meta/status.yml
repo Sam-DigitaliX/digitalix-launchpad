@@ -1,0 +1,28 @@
+repo: digitalix-launchpad
+last_reviewed: 2026-06-23
+roadmap:
+  - id: launchpad-i18n
+    title: "i18n EN/US"
+    tier: backlog
+    status: todo
+    pointer: "CLAUDE.md Chantier G"
+    gated_on: "3-5 signaux de demande"
+  - id: launchpad-cross-domain-detection
+    title: "Cross-domain tracking detection (check audit)"
+    tier: backlog
+    status: todo
+    pointer: "CLAUDE.md"
+  - id: launchpad-deps-batch1
+    title: "Migrations deps (Batch 1)"
+    tier: backlog
+    status: todo
+    pointer: "CLAUDE.md Chantier D"
+  - id: launchpad-consent-mode-bug
+    title: "Bug Consent Mode v2 extraction incomplète sGTM"
+    tier: backlog
+    status: todo
+    pointer: "CLAUDE.md Bugs"
+runtime:
+  deploy_target: coolify
+  domains: [api.digitalix.xyz]
+  services: [postgres]
