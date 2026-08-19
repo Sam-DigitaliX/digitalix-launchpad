@@ -158,8 +158,27 @@ jobs:
 
       - name: Send to Telegram
         run: |
+          set -uo pipefail
           REPORT=$(cat "${{ steps.audit.outputs.report_file }}")
-          curl -s -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
-            -d "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
-            -d "parse_mode=Markdown" \
-            --data-urlencode "text=$REPORT"
+
+          # Limite Telegram : 4096 caractères, vérifiée avant l'envoi et pas après l'échec.
+          if [ "${#REPORT}" -gt 4000 ]; then
+            REPORT="${REPORT:0:3900}"$'\n\n_… rapport tronqué, voir le run GitHub Actions._'
+          fi
+
+          RESP=$(curl -sS -X POST "https://api.telegram.org/bot${{ secrets.TELEGRAM_BOT_TOKEN }}/sendMessage" \
+            --data-urlencode "chat_id=${{ secrets.TELEGRAM_CHAT_ID }}" \
+            --data-urlencode "parse_mode=Markdown" \
+            --data-urlencode "text=$REPORT")
+
+          # Sans ce contrôle, un rejet de Telegram passait inaperçu : le job restait vert
+          # et le rapport n'arrivait jamais. Le parse_mode Markdown (legacy) est fragile —
+          # un `_` ou un `*` isolé dans un nom de paquet suffit à faire échouer le parsing.
+          # here-string et non `echo | grep -q` : sous pipefail la sortie anticipée de grep
+          # ferme le tube et fait échouer le pipeline sur un envoi pourtant réussi.
+          if ! grep -q '"ok":true' <<< "$RESP"; then
+            echo "::error::Envoi Telegram refusé — le rapport d'audit n'est pas parti."
+            printf '%s\n' "$RESP"
+            exit 1
+          fi
+          echo "Rapport envoyé."
