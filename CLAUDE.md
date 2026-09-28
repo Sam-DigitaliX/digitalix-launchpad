@@ -368,6 +368,14 @@ Système réplicable de landing pages dédiées par partenaire pour distribuer l
 - Cookie de fallback `dx_partner=<slug>` (30j) pour préserver l'attribution sur visites de retour
 - Page admin dédiée "Stats partenaires" (leads / conversions / score moyen par slug)
 
+### Chantier K — Design system dans Claude Design (LIVRÉ — 2026-09-28)
+Design system importé via `/design-sync` dans le projet Claude Design **« DigitaliX Design System »** (`https://claude.ai/design/p/4de221c3-e9ff-4d56-8bbd-4c4436fb28f1`, privé).
+- **Périmètre** : 14 composants réellement utilisés par le site (Button, Input, Label, Checkbox, Select, Dialog, Sheet, Tooltip, Accordion, Separator, Skeleton, Toast, BlockProgressLoader, OrbitLoader) + tokens + classes `ev-*`. Les 35 autres composants shadcn ne sont pas synchronisés.
+- **Package synthétique** `.design-sync/ds/` (`@digitalix/ui`) : `index.ts` ré-exporte le périmètre ; `build.mjs` génère les `.d.ts` (tsc) + compile le CSS Tailwind (`ds/dist/styles.css`) et embarque les woff2 Geist. Ajouter un composant au périmètre = l'exporter dans `ds/index.ts` + écrire `.design-sync/previews/<Name>.tsx`.
+- Aperçus rédigés à partir des usages réels du site, tous validés visuellement ; wrapper dark `preview-kit/Surface.tsx` (la carte d'aperçu est blanche, la DA est dark-only).
+- Conventions pour l'agent de design : `.design-sync/conventions.md` (inclus dans le README uploadé). Détails et risques de re-sync : `.design-sync/NOTES.md`.
+- **Re-sync** : taper `/design-sync` dans Claude Code à la racine du repo (incrémental grâce à `_ds_sync.json`).
+
 ### Monitoring
 - Weekly audit: GitHub Action (`.github/workflows/weekly-audit.yml`) — dimanche 20h Paris
 - Telegram bot: @digitalix_monitor_bot (chat ID: 6155735961)

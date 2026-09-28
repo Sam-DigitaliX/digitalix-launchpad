@@ -1,0 +1,7 @@
+{
+  "name": "@digitalix/ui",
+  "version": "1.0.0",
+  "private": true,
+  "module": "./index.ts",
+  "types": "./types/.design-sync/ds/index.d.ts"
+}

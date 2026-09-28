@@ -1,6 +1,12 @@
 repo: digitalix-launchpad
-last_reviewed: 2026-06-23
+last_reviewed: 2026-09-28
 roadmap:
+  - id: launchpad-claude-design-ds
+    title: "Design system synchronisé dans Claude Design (/design-sync)"
+    tier: backlog
+    status: done
+    done_date: 2026-09-28
+    pointer: "CLAUDE.md Chantier K"
   - id: launchpad-i18n
     title: "i18n EN/US"
     tier: backlog
