@@ -1,0 +1,92 @@
+{
+  "projectId": "4de221c3-e9ff-4d56-8bbd-4c4436fb28f1",
+  "shape": "package",
+  "pkg": "@digitalix/ui",
+  "globalName": "DigitalixUI",
+  "entry": ".design-sync/ds/index.ts",
+  "buildCmd": "node .design-sync/ds/build.mjs",
+  "srcDir": "../../src",
+  "tsconfig": "../../tsconfig.app.json",
+  "cssEntry": "dist/styles.css",
+  "componentSrcMap": {
+    "AccordionContent": null,
+    "AccordionItem": null,
+    "AccordionTrigger": null,
+    "DialogClose": null,
+    "DialogContent": null,
+    "DialogDescription": null,
+    "DialogFooter": null,
+    "DialogHeader": null,
+    "DialogTitle": null,
+    "DialogTrigger": null,
+    "SelectContent": null,
+    "SelectGroup": null,
+    "SelectItem": null,
+    "SelectLabel": null,
+    "SelectSeparator": null,
+    "SelectTrigger": null,
+    "SelectValue": null,
+    "SheetClose": null,
+    "SheetContent": null,
+    "SheetDescription": null,
+    "SheetFooter": null,
+    "SheetHeader": null,
+    "SheetTitle": null,
+    "SheetTrigger": null,
+    "ToastAction": null,
+    "ToastClose": null,
+    "ToastDescription": null,
+    "ToastProvider": null,
+    "ToastTitle": null,
+    "ToastViewport": null,
+    "TooltipContent": null,
+    "TooltipProvider": null,
+    "TooltipTrigger": null
+  },
+  "overrides": {
+    "Select": {
+      "cardMode": "single",
+      "primaryStory": "Open",
+      "viewport": "480x420"
+    },
+    "Dialog": {
+      "cardMode": "single",
+      "viewport": "720x420"
+    },
+    "Sheet": {
+      "cardMode": "single",
+      "viewport": "760x560"
+    },
+    "OrbitLoader": {
+      "cardMode": "single",
+      "viewport": "480x320"
+    },
+    "Accordion": {
+      "cardMode": "column"
+    },
+    "BlockProgressLoader": {
+      "cardMode": "column"
+    },
+    "Checkbox": {
+      "cardMode": "column"
+    },
+    "Input": {
+      "cardMode": "column"
+    },
+    "Label": {
+      "cardMode": "column"
+    },
+    "Separator": {
+      "cardMode": "column"
+    },
+    "Toast": {
+      "cardMode": "single",
+      "primaryStory": "Variants"
+    },
+    "Tooltip": {
+      "cardMode": "single",
+      "primaryStory": "OnIcon"
+    }
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}
